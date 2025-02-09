@@ -207,6 +207,12 @@ public final class SqlConst {
                 return " WITH(INDEX(" + indexName + "))";
             }
 
+            case PGSQL:
+            case OPEN_GAUSS:
+            case KING_BASE: {
+                return " USE INDEX(" + indexName + ")";
+            }
+
             default: {
                 return " FORCE INDEX(" + indexName + ")";
             }
@@ -222,16 +228,6 @@ public final class SqlConst {
                 return AS;
             }
         }
-    }
-
-    public static char[] SINGLE_QUOT(DbType dbType) {
-        switch (dbType) {
-            case OPEN_GAUSS:
-            case PGSQL: {
-                return DOUBLE_QUOT;
-            }
-        }
-        return SINGLE_QUOT;
     }
 
     public static String CURRENT_DATE(DbType dbType) {

@@ -68,7 +68,6 @@ public class EntityNotForceUpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUserModel = sysUserMapper.getById(1);
-            sysUserModel.setId(null);
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(sysUserModel, false);
             SysUser sysUser = sysUserMapper.getById(1);
@@ -82,7 +81,6 @@ public class EntityNotForceUpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUserModel = sysUserMapper.getById(1);
-            sysUserModel.setId(null);
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(sysUserModel);
             SysUser sysUser = sysUserMapper.getById(1);
@@ -96,7 +94,6 @@ public class EntityNotForceUpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUserModel = sysUserMapper.getById(1);
-            sysUserModel.setId(null);
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(sysUserModel, SysUser::getId);
             SysUser sysUser = sysUserMapper.getById(1);

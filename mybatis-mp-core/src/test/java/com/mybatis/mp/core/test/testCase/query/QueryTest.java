@@ -711,4 +711,18 @@ public class QueryTest extends BaseTest {
             assertEquals(list.size(), 3);
         }
     }
+
+
+    @Test
+    public void orderByTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list =
+                    QueryChain.of(sysUserMapper)
+                            .orderBy(SysUser::getUserName, c -> c.concat("aa"))
+                            .list();
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 3);
+        }
+    }
 }
