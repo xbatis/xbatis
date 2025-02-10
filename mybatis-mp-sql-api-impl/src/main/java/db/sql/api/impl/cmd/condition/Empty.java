@@ -20,7 +20,7 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-public class Empty<COLUMN, V> extends BaseCondition<Cmd, Void> {
+public class Empty extends BaseCondition<Empty, Cmd, Void> {
 
     private final Cmd field;
 
@@ -30,7 +30,7 @@ public class Empty<COLUMN, V> extends BaseCondition<Cmd, Void> {
     }
 
     @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+    public StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.ORACLE) {
             return new IsNull(this.field).sql(module, parent, context, sqlBuilder);
         }

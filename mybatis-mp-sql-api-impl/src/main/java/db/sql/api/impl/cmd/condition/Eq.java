@@ -21,7 +21,7 @@ import db.sql.api.impl.tookit.SqlConst;
 
 import java.io.Serializable;
 
-public class Eq extends BasicCondition {
+public class Eq extends BasicCondition<Eq> {
 
     public Eq(Cmd key, Cmd value) {
         super(SqlConst.EQ, key, value);

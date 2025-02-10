@@ -14,42 +14,57 @@
 
 package db.sql.api.impl.cmd.condition;
 
+
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.impl.cmd.basic.NULL;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-public class IsNotNull extends BaseCondition<IsNotNull, Cmd, NULL> {
+import java.io.Serializable;
+
+public abstract class AbstractBetween<T extends AbstractBetween<T>> extends BaseCondition<T, Cmd, Cmd[]> {
 
     private final Cmd field;
 
-    public IsNotNull(Cmd field) {
-        super(SqlConst.IS_NOT);
+    private final Cmd[] value;
+
+    public AbstractBetween(char[] operator, Cmd field, Cmd value, Cmd value2) {
+        super(operator);
         this.field = field;
+        this.value = new Cmd[]{value, value2};
+    }
+
+    public AbstractBetween(Cmd key, Cmd value1, Cmd value2) {
+        this(SqlConst.BETWEEN, key, value1, value2);
+    }
+
+    public AbstractBetween(Cmd key, Serializable value1, Serializable value2) {
+        this(key, Methods.cmd(value1), Methods.cmd(value2));
     }
 
     @Override
     public StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         field.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(getOperator());
-        NULL.NULL.sql(module, this, context, sqlBuilder);
+        value[0].sql(module, this, context, sqlBuilder);
+        sqlBuilder.append(SqlConst.AND);
+        value[1].sql(module, this, context, sqlBuilder);
         return sqlBuilder;
     }
 
-
     @Override
     public Cmd getField() {
-        return field;
+        return this.field;
     }
 
     @Override
-    public NULL getValue() {
-        return NULL.NULL;
+    public Cmd[] getValue() {
+        return this.value;
     }
 
     @Override
     public boolean contain(Cmd cmd) {
-        return CmdUtils.contain(cmd, this.field);
+        return CmdUtils.contain(cmd, this.field, this.value);
     }
 }

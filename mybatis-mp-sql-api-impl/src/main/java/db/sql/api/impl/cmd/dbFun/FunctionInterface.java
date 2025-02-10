@@ -817,7 +817,7 @@ public interface FunctionInterface extends Cmd {
      * @param value2 结束区间值
      * @return Between
      */
-    default Between notBetween(Serializable value1, Serializable value2) {
+    default NotBetween notBetween(Serializable value1, Serializable value2) {
         return Methods.notBetween(this, value1, value2);
     }
 
@@ -883,6 +883,70 @@ public interface FunctionInterface extends Cmd {
      */
     default NotLike notLike(LikeMode mode, Cmd value) {
         return Methods.notLike(mode, this, value);
+    }
+
+    /**
+     * 条件判断（iLIKE模糊匹配）
+     *
+     * @param value 匹配值
+     * @return Like
+     */
+    default ILike iLike(String value) {
+        return iLike(LikeMode.DEFAULT, value);
+    }
+
+    /**
+     * 条件判断（iLIKE模糊匹配）
+     *
+     * @param mode  匹配方式；例如LikeMode.LEFT
+     * @param value 匹配值
+     * @return Like
+     */
+    default ILike iLike(LikeMode mode, String value) {
+        return Methods.iLike(mode, this, value);
+    }
+
+    /**
+     * 条件判断（iLIKE模糊匹配）
+     *
+     * @param mode  匹配方式；例如LikeMode.LEFT
+     * @param value 匹配值
+     * @return Like
+     */
+    default ILike iLike(LikeMode mode, Cmd value) {
+        return Methods.iLike(mode, this, value);
+    }
+
+    /**
+     * 条件判断（NOT ILIKE模糊匹配）
+     *
+     * @param value 匹配值
+     * @return Like
+     */
+    default NotILike notILike(String value) {
+        return notILike(LikeMode.DEFAULT, value);
+    }
+
+    /**
+     * 条件判断（NOT iLIKE模糊匹配）
+     *
+     * @param mode  匹配方式；例如LikeMode.LEFT
+     * @param value 匹配值
+     * @return Like
+     */
+    default NotILike notILike(LikeMode mode, String value) {
+        return Methods.notILike(mode, this, value);
+    }
+
+    /**
+     * 条件判断（NOT iLIKE模糊匹配）
+     *
+     * @param mode  匹配方式；例如LikeMode.LEFT
+     * @param value 匹配值
+     * @return Like
+     */
+    default NotILike notILike(LikeMode mode, Cmd value) {
+        return Methods.notILike(mode, this, value);
     }
 
     /**

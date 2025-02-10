@@ -16,16 +16,10 @@ package db.sql.api.impl.cmd.condition;
 
 import db.sql.api.Cmd;
 import db.sql.api.cmd.LikeMode;
-import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
 
-public class NotILike extends ILike {
-
+public class NotILike extends AbstractILike<NotILike> {
     public NotILike(LikeMode mode, Cmd key, Cmd value) {
         super(SqlConst.NOT_I_LIKE, mode, key, value);
-    }
-
-    public NotILike(LikeMode mode, Cmd key, Object value) {
-        this(mode, key, Methods.cmd(value));
     }
 }

@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class In extends BaseCondition<Cmd, List<Cmd>> {
+public class In extends BaseCondition<In, Cmd, List<Cmd>> {
 
     private final Cmd key;
 
@@ -74,10 +74,10 @@ public class In extends BaseCondition<Cmd, List<Cmd>> {
     }
 
     @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        key.sql(module, this, context, sqlBuilder);
+    public StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        sqlBuilder = key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(getOperator()).append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
-        CmdUtils.join(module, this, context, sqlBuilder, this.values, SqlConst.DELIMITER);
+        sqlBuilder = CmdUtils.join(module, this, context, sqlBuilder, this.values, SqlConst.DELIMITER);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
         return sqlBuilder;
     }

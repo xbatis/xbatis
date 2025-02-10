@@ -19,7 +19,7 @@ import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.tookit.CmdUtils;
 
-public abstract class BasicCondition extends BaseCondition<Cmd, Cmd> {
+public abstract class BasicCondition<T extends BasicCondition<T>> extends BaseCondition<T, Cmd, Cmd> {
 
     protected Cmd field;
 
@@ -42,10 +42,10 @@ public abstract class BasicCondition extends BaseCondition<Cmd, Cmd> {
     }
 
     @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        field.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(getOperator());
-        value.sql(module, this, context, sqlBuilder);
+    public StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        sqlBuilder = field.sql(module, this, context, sqlBuilder);
+        sqlBuilder = sqlBuilder.append(getOperator());
+        sqlBuilder = value.sql(module, this, context, sqlBuilder);
         return sqlBuilder;
     }
 

@@ -20,7 +20,7 @@ import db.sql.api.impl.tookit.SqlConst;
 
 import java.io.Serializable;
 
-public class Gte extends BasicCondition {
+public class Gte extends BasicCondition<Gte> {
 
     public Gte(Cmd key, Cmd value) {
         super(SqlConst.GTE, key, value);

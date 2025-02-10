@@ -1251,7 +1251,7 @@ public final class Methods {
      */
     public static Ne isNotEmpty(Cmd column) {
         Objects.requireNonNull(column);
-        return new Ne(column, SqlConst.EMPTY);
+        return new Ne(column, value(SqlConst.EMPTY));
     }
 
     /**
@@ -1524,7 +1524,7 @@ public final class Methods {
             mode = (LikeMode) values[0];
             value = values[1];
         }
-        return new Like(mode, column, value);
+        return new Like(mode, column, cmd(value));
     }
 
     /**
@@ -1553,7 +1553,7 @@ public final class Methods {
             mode = (LikeMode) values[0];
             value = values[1];
         }
-        return new NotLike(mode, column, value);
+        return new NotLike(mode, column, cmd(value));
     }
 
     /**
@@ -1582,7 +1582,7 @@ public final class Methods {
             mode = (LikeMode) values[0];
             value = values[1];
         }
-        return new ILike(mode, column, value);
+        return new ILike(mode, column, cmd(value));
     }
 
     /**
@@ -1611,7 +1611,7 @@ public final class Methods {
             mode = (LikeMode) values[0];
             value = values[1];
         }
-        return new NotILike(mode, column, value);
+        return new NotILike(mode, column, cmd(value));
     }
 
     /**

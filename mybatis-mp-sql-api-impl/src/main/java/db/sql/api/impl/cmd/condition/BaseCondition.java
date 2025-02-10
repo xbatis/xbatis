@@ -16,9 +16,13 @@ package db.sql.api.impl.cmd.condition;
 
 
 import db.sql.api.Cmd;
+import db.sql.api.SqlBuilderContext;
+import db.sql.api.impl.cmd.basic.AbstractAlias;
 import db.sql.api.impl.cmd.basic.Condition;
+import db.sql.api.impl.cmd.struct.query.Select;
+import db.sql.api.impl.tookit.SqlConst;
 
-public abstract class BaseCondition<COLUMN extends Cmd, V> implements Condition<COLUMN, V> {
+public abstract class BaseCondition<T extends BaseCondition<T, COLUMN, V>, COLUMN extends Cmd, V> extends AbstractAlias<T> implements Condition<COLUMN, V> {
 
     protected char[] operator;
 
@@ -28,5 +32,33 @@ public abstract class BaseCondition<COLUMN extends Cmd, V> implements Condition<
 
     public char[] getOperator() {
         return operator;
+    }
+
+    abstract StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder);
+
+    /**
+     * 拼接别名
+     *
+     * @param module
+     * @param user
+     * @param context
+     * @param sqlBuilder
+     */
+    void appendAlias(Cmd module, Cmd user, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        //拼接 select 的别名
+        if (module instanceof Select && user instanceof Select) {
+            if (this.getAlias() != null) {
+                sqlBuilder.append(SqlConst.AS(context.getDbType()));
+                sqlBuilder.append(this.getAlias());
+            }
+
+        }
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        sqlBuilder = this.conditionSql(module, parent, context, sqlBuilder);
+        this.appendAlias(module, parent, context, sqlBuilder);
+        return sqlBuilder;
     }
 }

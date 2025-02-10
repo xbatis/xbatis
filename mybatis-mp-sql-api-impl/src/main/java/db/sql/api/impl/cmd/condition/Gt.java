@@ -21,7 +21,7 @@ import db.sql.api.impl.tookit.SqlConst;
 import java.io.Serializable;
 
 
-public class Gt extends BasicCondition {
+public class Gt extends BasicCondition<Gt> {
 
     public Gt(Cmd key, Cmd value) {
         super(SqlConst.GT, key, value);
