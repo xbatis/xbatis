@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 public interface IConditionMethod<SELF extends IConditionMethod,
@@ -145,6 +146,34 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     default SELF or(boolean when, ICondition condition) {
         if (when && condition != null) {
             conditionChain().or(condition);
+        }
+        return (SELF) this;
+    }
+
+    default SELF and(Supplier<ICondition> condition) {
+        return this.and(true, condition);
+    }
+
+    default SELF or(Supplier<ICondition> condition) {
+        return this.or(true, condition);
+    }
+
+    default SELF and(boolean when, Supplier<ICondition> condition) {
+        if (when) {
+            ICondition cond = condition.get();
+            if (cond != null) {
+                conditionChain().and(cond);
+            }
+        }
+        return (SELF) this;
+    }
+
+    default SELF or(boolean when, Supplier<ICondition> condition) {
+        if (when) {
+            ICondition cond = condition.get();
+            if (cond != null) {
+                conditionChain().or(cond);
+            }
         }
         return (SELF) this;
     }
