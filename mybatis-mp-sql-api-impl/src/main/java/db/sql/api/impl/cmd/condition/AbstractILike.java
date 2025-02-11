@@ -21,7 +21,7 @@ import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
 
-public class AbstractILike<T extends AbstractILike<T>> extends AbstractLike<T> {
+public abstract class AbstractILike<T extends AbstractILike<T>> extends AbstractLike<T> {
 
     public AbstractILike(char[] operator, LikeMode mode, Cmd key, Cmd value) {
         super(operator, mode, key, value);
