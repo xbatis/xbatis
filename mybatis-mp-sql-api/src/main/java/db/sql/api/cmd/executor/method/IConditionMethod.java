@@ -127,6 +127,28 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         return (SELF) this;
     }
 
+    default SELF and(ICondition condition) {
+        return this.and(true, condition);
+    }
+
+    default SELF or(ICondition condition) {
+        return this.or(true, condition);
+    }
+
+    default SELF and(boolean when, ICondition condition) {
+        if (when) {
+            conditionChain().and(condition);
+        }
+        return (SELF) this;
+    }
+
+    default SELF or(boolean when, ICondition condition) {
+        if (when) {
+            conditionChain().or(condition);
+        }
+        return (SELF) this;
+    }
+
     @Override
     default SELF andNested(Consumer<CONDITION_CHAIN> consumer) {
         conditionChain().andNested(consumer);
