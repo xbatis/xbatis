@@ -136,14 +136,14 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     }
 
     default SELF and(boolean when, ICondition condition) {
-        if (when) {
+        if (when && condition != null) {
             conditionChain().and(condition);
         }
         return (SELF) this;
     }
 
     default SELF or(boolean when, ICondition condition) {
-        if (when) {
+        if (when && condition != null) {
             conditionChain().or(condition);
         }
         return (SELF) this;
