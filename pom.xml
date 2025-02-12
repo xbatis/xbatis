@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+  ~  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License").
   ~  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.mybatis-mp</groupId>
     <artifactId>mybatis-mp</artifactId>
-    <version>1.7.9</version>
+    <version>1.8.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>mybatis-mp-annotation</module>
@@ -62,10 +62,10 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <mybatis-mp.version>1.7.9</mybatis-mp.version>
-        <mybatis-mp-generator-core.version>1.0.7</mybatis-mp-generator-core.version>
-        <mybatis-mp-datasource-routing.version>1.0.2</mybatis-mp-datasource-routing.version>
-        <mybatis-mp-spring-boot-starter.version>1.7.9</mybatis-mp-spring-boot-starter.version>
+        <mybatis-mp.version>1.8.0</mybatis-mp.version>
+        <mybatis-mp-generator-core.version>1.0.8</mybatis-mp-generator-core.version>
+        <mybatis-mp-datasource-routing.version>1.0.3</mybatis-mp-datasource-routing.version>
+        <mybatis-mp-spring-boot-starter.version>1.8.0</mybatis-mp-spring-boot-starter.version>
 
         <!-- mybatis version -->
         <mybatis.version>3.5.19</mybatis.version>

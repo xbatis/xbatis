@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -330,6 +330,37 @@ public class FetchTest extends BaseTest {
             });
 
             assertEquals(Arrays.asList("test1", "test2"), list3.get(0).getSysRoleNames());
+        }
+    }
+
+    @Test
+    public void fetchNullValue() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<FetchSysUserNullVo> list = QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .returnType(FetchSysUserNullVo.class)
+                    .list();
+            System.out.println(list);
+            assertEquals(3, list.size());
+            assertEquals("NULL", list.get(0).getRoleName());
+            assertEquals("测试", list.get(1).getRoleName());
+            assertEquals("测试", list.get(2).getRoleName());
+        }
+    }
+
+    @Test
+    public void fetchNullValue2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<FetchSysUserNullVo> list = QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .returnType(FetchSysUserNullVo.class)
+                    .eq(SysUser::getId, 1)
+                    .list();
+            System.out.println(list);
+            assertEquals(1, list.size());
+            assertEquals("NULL", list.get(0).getRoleName());
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -78,6 +78,8 @@ public interface IInsert<SELF extends IInsert,
     SELF values(List<Object> values, boolean enableNull);
 
     <T> SELF conflictKeys(Getter<T>... conflictKeys);
+
+    SELF conflictKeys(String... conflictKeys);
 
     <T> SELF onConflict(Consumer<IConflictAction<T>> action);
 

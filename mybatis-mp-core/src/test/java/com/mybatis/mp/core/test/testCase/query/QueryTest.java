@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -707,6 +707,20 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUser> list = QueryChain.of(sysUserMapper).timeout(1).fetchSize(1).fetchDirection(ResultSet.FETCH_FORWARD).list();
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 3);
+        }
+    }
+
+
+    @Test
+    public void orderByTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list =
+                    QueryChain.of(sysUserMapper)
+                            .orderBy(SysUser::getUserName, c -> c.concat("aa"))
+                            .list();
             list.stream().forEach(System.out::println);
             assertEquals(list.size(), 3);
         }

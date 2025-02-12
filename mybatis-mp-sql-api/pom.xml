@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+  ~  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License").
   ~  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
     <parent>
         <groupId>cn.mybatis-mp</groupId>
         <artifactId>mybatis-mp</artifactId>
-        <version>1.7.9</version>
+        <version>1.8.0</version>
     </parent>
 
     <url>https://gitee.com/mybatis-mp</url>

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -45,7 +45,11 @@ public class PagingListSqlSource implements SqlSource {
             pager = (IPager<?>) parameterObject;
         } else {
             Map<String, Object> params = (Map<String, Object>) parameterObject;
-            pager = (IPager<?>) params.get("arg0");
+            if (params.containsKey("param1")) {
+                pager = (IPager<?>) params.get("param1");
+            } else {
+                pager = (IPager<?>) params.get("arg0");
+            }
         }
         return new PagingBoundSql(this.configuration, PagingUtil.getLimitedSQL(getDbType(), pager, sql), boundSql);
     }

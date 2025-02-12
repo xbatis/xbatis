@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ public class SaveStrategy<T> {
     private Set<String> forceFields;
 
     private Getter<T>[] conflictKeys;
+
+    private String[] conflictColumns;
 
     private Consumer<IConflictAction<T>> conflictAction;
 
@@ -62,6 +64,17 @@ public class SaveStrategy<T> {
      */
     public SaveStrategy<T> conflictKeys(Getter<T>... conflictKeys) {
         this.conflictKeys = conflictKeys;
+        return this;
+    }
+
+    /**
+     * 设置 争议/冲突字段
+     *
+     * @param conflictKeys 争议/冲突字段 - 重复数据的KEY
+     * @return SELF
+     */
+    public SaveStrategy conflictKeys(String... conflictKeys) {
+        this.conflictColumns = conflictKeys;
         return this;
     }
 

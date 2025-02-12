@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -99,6 +99,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     protected Map<String, Consumer<Where>> fetchFilters;
 
+    protected Map<String, Boolean> fetchEnables;
+
     public AbstractQuery(CMD_FACTORY $) {
         this.$ = $;
         this.conditionFactory = $.createConditionFactory();
@@ -160,8 +162,24 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
+    public <T> SELF fetchEnable(Getter<T> getter, Boolean enable) {
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
+        String key = lambdaFieldInfo.getType().getName() + "." + lambdaFieldInfo.getName();
+        if (Objects.isNull(fetchEnables)) {
+            this.fetchEnables = new HashMap<>();
+        }
+        fetchEnables.put(key, enable);
+        return (SELF) this;
+    }
+
+    @Override
     public Map<String, Consumer<Where>> getFetchFilters() {
         return fetchFilters;
+    }
+
+    @Override
+    public Map<String, Boolean> getFetchEnables() {
+        return fetchEnables;
     }
 
     public void setFetchFilters(Map<String, Consumer<Where>> fetchFilters) {
@@ -169,6 +187,13 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
             throw new RuntimeException("Can't call setFetchFilters when the this.fetchFilters has value");
         }
         this.fetchFilters = fetchFilters;
+    }
+
+    public void setFetchEnables(Map<String, Boolean> fetchEnables) {
+        if (Objects.nonNull(this.fetchEnables)) {
+            throw new RuntimeException("Can't call fetchEnables when the this.fetchEnables has value");
+        }
+        this.fetchEnables = fetchEnables;
     }
 
     @Override

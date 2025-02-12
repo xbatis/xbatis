@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -15,18 +15,11 @@
 package db.sql.api.impl.cmd.condition;
 
 import db.sql.api.Cmd;
-import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
 
-import java.io.Serializable;
-
-public class Lt extends BasicCondition {
+public class Lt extends BasicCondition<Lt> {
 
     public Lt(Cmd key, Cmd value) {
         super(SqlConst.LT, key, value);
-    }
-
-    public Lt(Cmd key, Serializable value) {
-        this(key, Methods.cmd(value));
     }
 }

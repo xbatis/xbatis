@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.condition.Like;
-import db.sql.api.impl.cmd.struct.query.OrderBy;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
@@ -50,11 +49,11 @@ public class BasicValue extends AbstractField<BasicValue> {
         if (Objects.nonNull(originValue) && originValue instanceof String && parent instanceof Like && ((Like) parent).getMode() != LikeMode.NONE) {
             originValue = originValue.toString().replaceAll("%", "\\\\%").replaceAll("_", "\\\\_%");
         }
-        if (context.getSqlMode() == SQLMode.PRINT || module instanceof OrderBy) {
+        if (context.getSqlMode() == SQLMode.PRINT) {
             if (originValue instanceof Number) {
                 sqlBuilder.append(originValue);
             } else {
-                sqlBuilder.append(SqlConst.SINGLE_QUOT(context.getDbType())).append(originValue).append(SqlConst.SINGLE_QUOT(context.getDbType()));
+                sqlBuilder.append(SqlConst.SINGLE_QUOT).append(originValue).append(SqlConst.SINGLE_QUOT);
             }
         } else {
             sqlBuilder.append(context.addParam(value));

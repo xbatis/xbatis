@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -207,6 +207,12 @@ public final class SqlConst {
                 return " WITH(INDEX(" + indexName + "))";
             }
 
+            case PGSQL:
+            case OPEN_GAUSS:
+            case KING_BASE: {
+                return " USE INDEX(" + indexName + ")";
+            }
+
             default: {
                 return " FORCE INDEX(" + indexName + ")";
             }
@@ -222,16 +228,6 @@ public final class SqlConst {
                 return AS;
             }
         }
-    }
-
-    public static char[] SINGLE_QUOT(DbType dbType) {
-        switch (dbType) {
-            case OPEN_GAUSS:
-            case PGSQL: {
-                return DOUBLE_QUOT;
-            }
-        }
-        return SINGLE_QUOT;
     }
 
     public static String CURRENT_DATE(DbType dbType) {

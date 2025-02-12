@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-public class Empty<COLUMN, V> extends BaseCondition<Cmd, Void> {
+public class Empty extends BaseCondition<Empty, Cmd, Void> {
 
     private final Cmd field;
 
@@ -30,7 +30,7 @@ public class Empty<COLUMN, V> extends BaseCondition<Cmd, Void> {
     }
 
     @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+    public StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.ORACLE) {
             return new IsNull(this.field).sql(module, parent, context, sqlBuilder);
         }

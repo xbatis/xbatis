@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -17,10 +17,11 @@ package db.sql.api.impl.cmd.condition;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-public class NotEmpty<COLUMN, V> extends BaseCondition<Cmd, Void> {
+public class NotEmpty extends BaseCondition<NotEmpty, Cmd, Void> {
 
     private final Cmd field;
 
@@ -30,11 +31,11 @@ public class NotEmpty<COLUMN, V> extends BaseCondition<Cmd, Void> {
     }
 
     @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+    public StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.KING_BASE) {
             return new IsNotNull(this.field).sql(module, parent, context, sqlBuilder);
         }
-        return new Ne(this.field, "").sql(module, parent, context, sqlBuilder);
+        return new Ne(this.field, Methods.value("")).conditionSql(module, parent, context, sqlBuilder);
     }
 
     @Override

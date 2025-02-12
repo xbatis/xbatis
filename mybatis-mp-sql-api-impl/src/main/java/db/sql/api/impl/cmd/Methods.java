@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -1251,7 +1251,7 @@ public final class Methods {
      */
     public static Ne isNotEmpty(Cmd column) {
         Objects.requireNonNull(column);
-        return new Ne(column, SqlConst.EMPTY);
+        return new Ne(column, value(SqlConst.EMPTY));
     }
 
     /**
@@ -1524,7 +1524,7 @@ public final class Methods {
             mode = (LikeMode) values[0];
             value = values[1];
         }
-        return new Like(mode, column, value);
+        return new Like(mode, column, cmd(value));
     }
 
     /**
@@ -1553,7 +1553,7 @@ public final class Methods {
             mode = (LikeMode) values[0];
             value = values[1];
         }
-        return new NotLike(mode, column, value);
+        return new NotLike(mode, column, cmd(value));
     }
 
     /**
@@ -1582,7 +1582,7 @@ public final class Methods {
             mode = (LikeMode) values[0];
             value = values[1];
         }
-        return new ILike(mode, column, value);
+        return new ILike(mode, column, cmd(value));
     }
 
     /**
@@ -1611,7 +1611,7 @@ public final class Methods {
             mode = (LikeMode) values[0];
             value = values[1];
         }
-        return new NotILike(mode, column, value);
+        return new NotILike(mode, column, cmd(value));
     }
 
     /**

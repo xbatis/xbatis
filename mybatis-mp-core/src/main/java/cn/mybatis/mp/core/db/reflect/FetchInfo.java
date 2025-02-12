@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package cn.mybatis.mp.core.db.reflect;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
+import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.annotations.Fetch;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -59,6 +61,8 @@ public class FetchInfo {
 
     private final boolean isUseResultFetchKeyValue;
 
+    private final Object nullFillValue;
+
     public FetchInfo(Class clazz, Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy, String groupBy) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
@@ -84,9 +88,23 @@ public class FetchInfo {
 
         this.isUseIn = isUseIn;
         this.isUseResultFetchKeyValue = this.isUseIn && Objects.isNull(this.eqGetFieldInvoker) && this.returnType.getPackage().getName().contains("java.lang");
+        if (fetch.nullFillValue().isEmpty() || fetch.nullFillValue().contains("{")) {
+            nullFillValue = null;
+        } else {
+            nullFillValue = TypeConvertUtil.convert(fetch.nullFillValue(), this.fieldInfo.getTypeClass());
+        }
     }
 
     public void setValue(Object object, Object value) {
+        if (value == null) {
+            if (this.fetch.nullFillValue().isEmpty()) {
+                return;
+            } else if (this.nullFillValue != null) {
+                value = this.nullFillValue;
+            } else {
+                value = MybatisMpConfig.getDefaultValue(this.getFieldInfo().getClazz(), this.getFieldInfo().getTypeClass(), this.fetch.nullFillValue());
+            }
+        }
         try {
             writeFieldInvoker.invoke(object, new Object[]{value});
         } catch (IllegalAccessException e) {

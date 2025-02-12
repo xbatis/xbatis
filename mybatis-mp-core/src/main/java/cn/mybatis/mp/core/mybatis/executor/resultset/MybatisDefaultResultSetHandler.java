@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     //Fetch 信息
     private Map<Class, List<FetchInfo>> fetchInfosMap;
     private Map<String, Consumer<Where>> fetchFilters;
+    private Map<String, Boolean> fetchEnables;
     private Consumer onRowEvent;
     private Class<?> returnType;
     private Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap;
@@ -83,6 +84,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
                     BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
                     this.fetchFilters = baseQuery.getFetchFilters();
+                    this.fetchEnables = baseQuery.getFetchEnables();
                     this.putEnumValueInfoMap = resultInfo.getPutEnumValueInfoMap();
                     this.putValueInfoMap = resultInfo.getPutValueInfoMap();
                     this.createdEventInfos = resultInfo.getCreatedEventInfos();
@@ -262,6 +264,20 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         for (FetchInfo fetchInfo : fetchInfos) {
+            String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getField().getName();
+            Boolean fetchEnable = Objects.isNull(fetchEnables) || !fetchEnables.containsKey(fetchKey) || fetchEnables.get(fetchKey);
+            fetchEnable = fetchEnable == null ? true : fetchEnable;
+            if (!fetchEnable) {
+                if (fetchInfo.getFieldInfo().getTypeClass().isAssignableFrom(Collections.class)) {
+                    try {
+                        fetchInfo.getWriteFieldInvoker().invoke(rowValue, new Object[]{new ArrayList()});
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                return rowValue;
+            }
+
             Object onValue;
             try {
                 if (Objects.nonNull(fetchInfo.getValueTypeHandler())) {
@@ -325,8 +341,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         });
 
-        String fetchKey = fetchInfo.getField().getDeclaringClass().getName() + "." + fetchInfo.getField().getName();
+        String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getField().getName();
         boolean hasFetchFilter = !Objects.isNull(fetchFilters) && fetchFilters.containsKey(fetchKey);
+        query.setFetchEnables(fetchEnables);
         query.setFetchFilters(fetchFilters);
         if (hasFetchFilter) {
             fetchFilters.get(fetchKey).accept(query.$where());
@@ -337,6 +354,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     public void fillFetchData(FetchInfo fetchInfo, List<FetchObject> values, List<Object> fetchData) {
         if (Objects.isNull(fetchData) || fetchData.isEmpty()) {
+            //需要Fetch数据是空的 则直接设置null
+            values.stream().forEach(i -> setValue(i.getValue(), null, fetchInfo));
             return;
         }
 
@@ -457,6 +476,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             fetchInfo.setValue(rowValue, matchValues);
         } else {
             if (Objects.isNull(matchValues) || matchValues.isEmpty()) {
+                fetchInfo.setValue(rowValue, null);
                 return;
             } else if (matchValues.size() > 1 && !fetchInfo.getFetch().multiValueErrorIgnore()) {
                 throw new TooManyResultsException("fetch action found more than 1 record");

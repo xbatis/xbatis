@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class NotIn extends BaseCondition<Cmd, List<Cmd>> {
+public class NotIn extends BaseCondition<NotIn, Cmd, List<Cmd>> {
 
     private final Cmd key;
 
@@ -74,11 +74,11 @@ public class NotIn extends BaseCondition<Cmd, List<Cmd>> {
     }
 
     @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        key.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(getOperator()).append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
-        CmdUtils.join(module, this, context, sqlBuilder, this.values, SqlConst.DELIMITER);
-        sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
+    public StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        sqlBuilder = key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = sqlBuilder.append(getOperator()).append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
+        sqlBuilder = CmdUtils.join(module, this, context, sqlBuilder, this.values, SqlConst.DELIMITER);
+        sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
         return sqlBuilder;
     }
 

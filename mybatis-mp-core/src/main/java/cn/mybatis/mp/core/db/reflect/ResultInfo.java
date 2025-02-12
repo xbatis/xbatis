@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -359,16 +359,16 @@ public class ResultInfo {
             return null;
         }
         if (value.startsWith("[") && value.endsWith("]")) {
-            StringBuilder targetSelectColumnBuilder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             int startIndex = 1;
             while (true) {
                 int start = value.indexOf("{", startIndex);
                 if (start == -1) {
-                    if (targetSelectColumnBuilder.length() == 0) {
+                    if (builder.length() == 0 && value.length() <= 2) {
                         throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
                     } else {
-                        targetSelectColumnBuilder.append(value, startIndex, value.length() - 1);
-                        return targetSelectColumnBuilder.toString();
+                        builder.append(value, startIndex, value.length() - 1);
+                        return builder.toString();
                     }
                 }
                 int end = value.indexOf("}", start);
@@ -380,7 +380,7 @@ public class ResultInfo {
                 if (Objects.isNull(targetSelectTargetFieldInfo)) {
                     throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
                 }
-                targetSelectColumnBuilder.append(value, startIndex, start).append(targetSelectTargetFieldInfo.getColumnName());
+                builder.append(value, startIndex, start).append(targetSelectTargetFieldInfo.getColumnName());
                 startIndex = end + 1;
             }
         }
@@ -418,11 +418,29 @@ public class ResultInfo {
         String valueColumn = fetch.column();
         TypeHandler<?> valueTypeHandler = null;
         if (StringPool.EMPTY.equals(valueColumn)) {
-            if (!fetch.source().isAnnotationPresent(Table.class)) {
-                throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the source: " + fetch.source().getName() + " is not a entity");
+            TableFieldInfo fetchFieldInfo;
+
+            TableInfo fetchTableInfo;
+            if (fetch.source() != Void.class) {
+                if (!fetch.source().isAnnotationPresent(Table.class)) {
+                    throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the source: " + fetch.source().getName() + " is not a entity");
+                }
+                fetchTableInfo = Tables.get(fetch.source());
+                fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
+            } else {
+                if (clazz.isAnnotationPresent(Table.class)) {
+                    fetchTableInfo = Tables.get(clazz);
+                } else if (clazz.isAnnotationPresent(ResultEntity.class)) {
+                    ResultEntity resultEntity = (ResultEntity) clazz.getAnnotation(ResultEntity.class);
+                    fetchTableInfo = Tables.get(resultEntity.value());
+                } else if (clazz.isAnnotationPresent(NestedResultEntity.class)) {
+                    NestedResultEntity nestedResultEntity = (NestedResultEntity) clazz.getAnnotation(NestedResultEntity.class);
+                    fetchTableInfo = Tables.get(nestedResultEntity.target());
+                } else {
+                    throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the source: " + fetch.source().getName() + " is not a entity");
+                }
+                fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
             }
-            TableInfo fetchTableInfo = Tables.get(fetch.source());
-            TableFieldInfo fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
 
             if (Objects.isNull(fetchFieldInfo)) {
                 throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + fetch.property() + " is not a entity field");
@@ -430,9 +448,9 @@ public class ResultInfo {
             valueTypeHandler = fetchFieldInfo.getTypeHandler();
             //以字段为基础的查询
             //创建前缀
-            tableCount = createPrefix(fetch.source(), fetch.storey(), parseResult.tablePrefixes, tableCount);
+            tableCount = createPrefix(fetchTableInfo.getType(), fetch.storey(), parseResult.tablePrefixes, tableCount);
             //获取前缀
-            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetch.source(), fetch.storey());
+            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), fetch.storey());
 
             resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, fetch.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
             valueColumn = tablePrefix + fetchFieldInfo.getColumnName();

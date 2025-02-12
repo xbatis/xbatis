@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -110,4 +110,9 @@ public @interface Fetch {
      * @return
      */
     boolean forceUseIn() default false;
+
+    /**
+     * 当值为null时，填充的值
+     */
+    String nullFillValue() default "";
 }
