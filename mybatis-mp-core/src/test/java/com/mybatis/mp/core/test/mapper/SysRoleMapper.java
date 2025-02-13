@@ -55,4 +55,6 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
     List<SysRole> selectQueryCustomSql(Query<?> query);
 
     List<SysRole> selectQueryCustomSql2(@Param("query") Query<?> query, int xx);
+
+    List<SysRole> selectQueryCustomSql3(Query<?> query);
 }

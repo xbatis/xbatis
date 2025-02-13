@@ -14,7 +14,9 @@
 
 package cn.mybatis.mp.core.sql.executor;
 
+import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.HashMap;
@@ -82,7 +84,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      */
     public String getQueryScript() {
         return xmlScriptMap.computeIfAbsent(XmlScriptType.QUERY, key -> {
-            return XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "selectScriptParams", this, this.dbType);
+            return XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "queryScriptParams", this, this.dbType);
         }).getSql();
     }
 
@@ -207,4 +209,8 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
         }).getSql();
     }
 
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        return super.sql(module, parent, context, sqlBuilder);
+    }
 }

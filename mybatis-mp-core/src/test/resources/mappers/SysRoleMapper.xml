@@ -90,4 +90,8 @@
         ${query.groupByScript}
         ${query.havingScript}
     </select>
+
+    <select id="selectQueryCustomSql3">
+        select * from ( ${queryScript} ) t
+    </select>
 </mapper>

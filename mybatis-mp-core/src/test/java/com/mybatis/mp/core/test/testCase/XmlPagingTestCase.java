@@ -163,6 +163,24 @@ public class XmlPagingTestCase extends BaseTest {
     }
 
     @Test
+    public void selectQueryCustomSql3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            Query query = Query.create()
+                    .select(SysRole.class)
+                    .from(SysRole.class)
+                    .in(SysRole::getId, 1, 2)
+                    .orderBy(SysRole::getCreateTime);
+
+            List<SysRole> list = sysRoleMapper.selectQueryCustomSql3(query);
+            assertEquals(2, list.size());
+            assertEquals(2, list.get(1).getId());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+        }
+    }
+
+    @Test
     public void withSqlSessionTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
