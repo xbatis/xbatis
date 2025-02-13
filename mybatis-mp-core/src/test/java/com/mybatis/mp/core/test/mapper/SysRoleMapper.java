@@ -16,6 +16,7 @@ package com.mybatis.mp.core.test.mapper;
 
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
+import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.db.annotations.Paging;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.vo.JsonTypeTestVo;
@@ -51,4 +52,7 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
 
     List<SysRole> selectCustomSql2(Where where);
 
+    List<SysRole> selectQueryCustomSql(Query<?> query);
+
+    List<SysRole> selectQueryCustomSql2(@Param("query") Query<?> query, int xx);
 }

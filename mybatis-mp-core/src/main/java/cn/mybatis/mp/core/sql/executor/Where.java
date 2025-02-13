@@ -16,18 +16,14 @@ package cn.mybatis.mp.core.sql.executor;
 
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import db.sql.api.DbType;
-import db.sql.api.SQLMode;
-import db.sql.api.SqlBuilderContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class Where extends db.sql.api.impl.cmd.struct.Where {
 
     private DbType dbType;
-    private String whereScript;
     private String mybatisParamNamespace;
-    private List<Object> scriptParams;
+    private XmlScript whereScript;
 
     public Where() {
         super(new MybatisCmdFactory().createConditionFactory());
@@ -51,28 +47,25 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
         }
     }
 
-    public List<Object> getScriptParams() {
-        return scriptParams;
+    /**
+     * 只给 xml 生成动态sql 用
+     *
+     * @return
+     */
+    public List<Object> getWhereScriptParams() {
+        return whereScript.getScriptParams();
     }
 
+    /**
+     * 只给 xml 生成动态sql 用
+     *
+     * @return
+     */
     public String getWhereScript() {
         if (whereScript != null) {
-            return whereScript;
+            return whereScript.getSql();
         }
-        scriptParams = new ArrayList<>();
-
-        SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(this.dbType, SQLMode.PREPARED) {
-            @Override
-            public String addParam(Object value) {
-                scriptParams.add(value);
-                if (mybatisParamNamespace == null) {
-                    return "#{scriptParams[" + (scriptParams.size() - 1) + "]}";
-                }
-                return "#{" + mybatisParamNamespace + "scriptParams[" + (scriptParams.size() - 1) + "]}";
-            }
-        };
-        whereScript = this.sql(null, null, sqlBuilderContext, new StringBuilder()).toString();
-        whereScript = whereScript.replaceFirst("WHERE", "");
-        return whereScript;
+        this.whereScript = XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "whereScriptParams", this, this.dbType, "WHERE");
+        return whereScript.getSql();
     }
 }

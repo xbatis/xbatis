@@ -210,6 +210,8 @@ public interface IQuery<SELF extends IQuery
 
     ORDERBY getOrderBy();
 
+    HAVING getHaving();
+
     LIMIT getLimit();
 
     FORUPDATE getForUpdate();

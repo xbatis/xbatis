@@ -15,9 +15,11 @@
 package com.mybatis.mp.core.test.testCase;
 
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
+import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.mapper.SysRoleMapper;
+import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -115,6 +117,44 @@ public class XmlPagingTestCase extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             List<SysRole> list = sysRoleMapper.selectCustomSql2(WhereUtil.create().in(SysRole::getId, 1, 2));
+            assertEquals(2, list.size());
+            assertEquals(2, list.get(1).getId());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+        }
+    }
+
+    @Test
+    public void selectQueryCustomSql() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            Query query = Query.create()
+                    .select(SysRole.class)
+                    .select(Methods.value(1))
+                    .from(SysRole.class)
+                    .in(SysRole::getId, 1, 2)
+                    .orderBy(SysRole::getCreateTime);
+
+            List<SysRole> list = sysRoleMapper.selectQueryCustomSql(query);
+            assertEquals(2, list.size());
+            assertEquals(2, list.get(1).getId());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+        }
+    }
+
+    @Test
+    public void selectQueryCustomSql2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            Query query = Query.create()
+                    .select(SysRole.class)
+                    .select(Methods.value(1))
+                    .from(SysRole.class)
+                    .in(SysRole::getId, 1, 2)
+                    .orderBy(SysRole::getCreateTime);
+
+            List<SysRole> list = sysRoleMapper.selectQueryCustomSql2(query, 1);
             assertEquals(2, list.size());
             assertEquals(2, list.get(1).getId());
             assertNotNull(list.get(0).getCreateTime());

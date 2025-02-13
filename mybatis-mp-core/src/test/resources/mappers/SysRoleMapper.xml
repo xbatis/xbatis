@@ -74,4 +74,20 @@
         select * from sys_role t
         <where>${whereScript}</where>
     </select>
+
+    <select id="selectQueryCustomSql">
+        select ${selectScript} from ${fromScript}
+        <where>${whereScript}</where>
+        ${orderByScript}
+        ${groupByScript}
+        ${havingScript}
+    </select>
+
+    <select id="selectQueryCustomSql2">
+        select ${query.selectScript} from ${query.fromScript}
+        <where>${query.whereScript}</where>
+        ${query.orderByScript}
+        ${query.groupByScript}
+        ${query.havingScript}
+    </select>
 </mapper>

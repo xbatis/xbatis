@@ -20,6 +20,7 @@ import cn.mybatis.mp.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
+import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.executor.Where;
 import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.db.annotations.Paging;
@@ -99,6 +100,16 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                     where.setMybatisParamName("param" + (i + 1));
                 }
                 where.setDbType(getDbType());
+            } else if (arg != null && arg instanceof Query) {
+                Parameter[] parameters = method.getParameters();
+                Param param = parameters[i].getAnnotation(Param.class);
+                Query query = (Query) arg;
+                if (param != null) {
+                    query.setMybatisParamName(param.value());
+                } else if (args.length > 1) {
+                    query.setMybatisParamName("param" + (i + 1));
+                }
+                query.setDbType(getDbType());
             }
         }
     }

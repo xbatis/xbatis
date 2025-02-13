@@ -793,6 +793,11 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
+    public Having getHaving() {
+        return this.having;
+    }
+
+    @Override
     public OrderBy getOrderBy() {
         return this.orderBy;
     }
