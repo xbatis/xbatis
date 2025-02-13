@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.mybatis-mp</groupId>
     <artifactId>mybatis-mp</artifactId>
-    <version>1.8.0</version>
+    <version>1.8.1-RC1</version>
     <packaging>pom</packaging>
     <modules>
         <module>mybatis-mp-annotation</module>
@@ -62,10 +62,10 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <mybatis-mp.version>1.8.0</mybatis-mp.version>
+        <mybatis-mp.version>1.8.1-RC1</mybatis-mp.version>
         <mybatis-mp-generator-core.version>1.0.8</mybatis-mp-generator-core.version>
         <mybatis-mp-datasource-routing.version>1.0.3</mybatis-mp-datasource-routing.version>
-        <mybatis-mp-spring-boot-starter.version>1.8.0</mybatis-mp-spring-boot-starter.version>
+        <mybatis-mp-spring-boot-starter.version>1.8.1-RC1</mybatis-mp-spring-boot-starter.version>
 
         <!-- mybatis version -->
         <mybatis.version>3.5.19</mybatis.version>
