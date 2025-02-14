@@ -36,7 +36,7 @@ public final class MappedStatementUtil {
                 mapperName = ms.getId().substring(0, dot);
                 methodName = ms.getId().substring(dot + 1);
             }
-            mapperClass = Class.forName(mapperName);
+            mapperClass = Class.forName(mapperName, false, Thread.currentThread().getContextClassLoader());
         } catch (Exception e) {
             return null;
         }

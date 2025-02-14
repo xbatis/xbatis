@@ -57,7 +57,7 @@ public final class LambdaUtil {
     }
 
     public static <T, R> LambdaFieldInfo<T> getFieldInfo(GetterFun<T, R> getter) {
-        return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter.getClass().getClassLoader()));
+        return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), Thread.currentThread().getContextClassLoader()));
     }
 
     public static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
