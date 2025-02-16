@@ -12,7 +12,7 @@
  *
  */
 
-package db.sql.api.impl.tookit;
+package db.sql.api.tookit;
 
 import java.util.Objects;
 import java.util.regex.Pattern;

@@ -19,17 +19,19 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.tookit.SqlInjectionUtils;
 
 import java.util.Objects;
 
 public class Column extends AbstractDatasetField<Column> {
 
     public Column(String name) {
-        super(null, name);
+        this(null, name);
     }
 
     public Column(IDataset dataset, String name) {
         super(dataset, name);
+        SqlInjectionUtils.check(name);
     }
 
     @Override
