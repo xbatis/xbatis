@@ -1,44 +1,44 @@
-# 官网文档：<strong style="color:red">http://mybatis-mp.cn </strong> !!!
+# 官网文档：<strong style="color:red">http://xbatis.cn </strong> !!!
 
-## 喜欢的朋友加入QQ群：<font color="red">121908790</font> ，群里不仅可以提mybatis-mp框架问题，还可以帮你解决后端的各种问题！
+## 喜欢的朋友加入QQ群：<font color="red">121908790</font> ，群里不仅可以提xbatis框架问题，还可以帮你解决后端的各种问题！
 
 ##### 另外，喜欢的朋友，帮忙关注 和 star（点点小爱心）！
 
 > <strong style="color:red">特别申明：禁止在非法项目中使用，否则后果自负！</strong>
 
 <p align="center">
-    <a target="_blank" href="https://search.maven.org/search?q=mybatis-mp">
-        <img src="https://img.shields.io/maven-central/v/cn.mybatis-mp/mybatis-mp?label=Maven%20Central" alt="Maven" />
+    <a target="_blank" href="https://search.maven.org/search?q=xbatis">
+        <img src="https://img.shields.io/maven-central/v/cn.xbatis/xbatis?label=Maven%20Central" alt="Maven" />
     </a>
     <a target="_blank" href="https://www.apache.org/licenses/LICENSE-2.0.txt">
 		<img src="https://img.shields.io/:license-Apache2-blue.svg" alt="Apache 2" />
 	</a>
-    <a target="_blank" href='https://gitee.com/mybatis-mp/mybatis-mp'>
-		<img src='https://gitee.com/mybatis-mp/mybatis-mp/badge/star.svg' alt='Gitee star'/>
+    <a target="_blank" href='https://gitee.com/xbatis/xbatis'>
+		<img src='https://gitee.com/xbatis/xbatis/badge/star.svg' alt='Gitee star'/>
 	</a>
 </p>
 
 ## 与众不同的 几大亮点：
 
-#### 1：mybatis-mp - 亮点一：可自定义动态默认值
+#### 1：xbatis - 亮点一：可自定义动态默认值
 
-#### 2：mybatis-mp - 亮点二：支持不同数据库ID自增配置
+#### 2：xbatis - 亮点二：支持不同数据库ID自增配置
 
-#### 3：mybatis-mp - 亮点三：逻辑删除，可自动填充删除时间
+#### 3：xbatis - 亮点三：逻辑删除，可自动填充删除时间
 
-#### 4：mybatis-mp - 亮点四：可自定义sql（sql模板）
+#### 4：xbatis - 亮点四：可自定义sql（sql模板）
 
-#### 5：mybatis-mp - 亮点五：mapWithKey（把查询转成一个 map）
+#### 5：xbatis - 亮点五：mapWithKey（把查询转成一个 map）
 
-#### 6：mybatis-mp - 亮点 六：部分字段 新增 和 修改
+#### 6：xbatis - 亮点 六：部分字段 新增 和 修改
 
-#### 7：mybatis-mp - 亮点七：枚举的良好支持
+#### 7：xbatis - 亮点七：枚举的良好支持
 
-#### 8：mybatis-mp - 亮点八：mybatis-xml returnType 的 ORM 映射
+#### 8：xbatis - 亮点八：mybatis-xml returnType 的 ORM 映射
 
-#### 9：mybatis-mp - 亮点九：优雅的 XML和 @Select查询 自动分页
+#### 9：xbatis - 亮点九：优雅的 XML和 @Select查询 自动分页
 
-#### 10：mybatis-mp - 亮点十：支持多层嵌套VO，自动映射以及自动select 所需列
+#### 10：xbatis - 亮点十：支持多层嵌套VO，自动映射以及自动select 所需列
 
 ## 特征
 
@@ -77,7 +77,7 @@
 
 # springboot接入示例：
 
-https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
+https://gitee.com/xbatis/xbatis-spring-boot-demo
 
 # 快速开始
 
@@ -89,9 +89,9 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>cn.mybatis-mp</groupId>
-            <artifactId>mybatis-mp-spring-boot-parent</artifactId>
-            <version>1.8.1-RC3</version>
+            <groupId>cn.xbatis</groupId>
+            <artifactId>xbatis-spring-boot-parent</artifactId>
+            <version>1.8.1</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -102,8 +102,8 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
 ```xml
 <dependencies>
     <dependency>
-        <groupId>cn.mybatis-mp</groupId>
-        <artifactId>mybatis-mp-spring-boot-starter</artifactId>
+        <groupId>cn.xbatis</groupId>
+        <artifactId>xbatis-spring-boot-starter</artifactId>
     </dependency>
 </dependencies>
 ```
@@ -114,9 +114,9 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>cn.mybatis-mp</groupId>
-            <artifactId>mybatis-mp-spring-boot-parent</artifactId>
-            <version>1.8.1-RC3-spring-boot3</version>
+            <groupId>cn.xbatis</groupId>
+            <artifactId>xbatis-spring-boot-parent</artifactId>
+            <version>1.8.1-spring-boot3</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -127,8 +127,8 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
 ```xml
 <dependencies>
     <dependency>
-        <groupId>cn.mybatis-mp</groupId>
-        <artifactId>mybatis-mp-spring-boot-starter</artifactId>
+        <groupId>cn.xbatis</groupId>
+        <artifactId>xbatis-spring-boot-starter</artifactId>
     </dependency>
 </dependencies>
 ```

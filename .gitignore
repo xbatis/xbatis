@@ -35,4 +35,4 @@ build/
 .DS_Store
 
 /generate/
-/mybatis-mp-benchmark/
+/xbatis-benchmark/

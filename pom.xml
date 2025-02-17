@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn).
+  ~  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License").
   ~  you may not use this file except in compliance with the License.
@@ -17,34 +17,34 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <name>mybatis-mp</name>
-    <url>https://gitee.com/mybatis-mp</url>
+    <name>xbatis</name>
+    <url>https://gitee.com/xbatis</url>
     <description>
         一款基于mybatis的ORM框架
     </description>
-    <groupId>cn.mybatis-mp</groupId>
-    <artifactId>mybatis-mp</artifactId>
-    <version>1.8.1-RC3</version>
+    <groupId>cn.xbatis</groupId>
+    <artifactId>xbatis</artifactId>
+    <version>1.8.1</version>
     <packaging>pom</packaging>
     <modules>
-        <module>mybatis-mp-annotation</module>
-        <module>mybatis-mp-core</module>
-        <module>mybatis-mp-sql-api</module>
-        <module>mybatis-mp-sql-api-impl</module>
+        <module>xbatis-annotation</module>
+        <module>xbatis-core</module>
+        <module>xbatis-sql-api</module>
+        <module>xbatis-sql-api-impl</module>
     </modules>
     <issueManagement>
         <system>Gitee Issue</system>
-        <url>https://gitee.com/mybatis-mp/mybatis-mp/issues</url>
+        <url>https://gitee.com/xbatis/xbatis/issues</url>
     </issueManagement>
     <licenses>
         <license>
             <name>Apache-2.0</name>
-            <url>https://gitee.com/mybatis-mp/mybatis-mp/blob/master/LICENSE</url>
+            <url>https://gitee.com/xbatis/xbatis/blob/master/LICENSE</url>
         </license>
     </licenses>
     <scm>
-        <connection>https://gitee.com/mybatis-mp/mybatis-mp.git</connection>
-        <url>https://gitee.com/mybatis-mp/mybatis-mp/tree/master</url>
+        <connection>https://gitee.com/xbatis/xbatis.git</connection>
+        <url>https://gitee.com/xbatis/xbatis/tree/master</url>
     </scm>
     <developers>
         <developer>
@@ -62,10 +62,10 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <mybatis-mp.version>1.8.1-RC3</mybatis-mp.version>
-        <mybatis-mp-generator-core.version>1.0.8</mybatis-mp-generator-core.version>
-        <mybatis-mp-datasource-routing.version>1.0.3</mybatis-mp-datasource-routing.version>
-        <mybatis-mp-spring-boot-starter.version>1.8.1-RC3</mybatis-mp-spring-boot-starter.version>
+        <xbatis.version>1.8.1</xbatis.version>
+        <xbatis-generator-core.version>1.0.8</xbatis-generator-core.version>
+        <xbatis-datasource-routing.version>1.0.3</xbatis-datasource-routing.version>
+        <xbatis-spring-boot-starter.version>1.8.1</xbatis-spring-boot-starter.version>
 
         <!-- mybatis version -->
         <mybatis.version>3.5.19</mybatis.version>
@@ -105,39 +105,39 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>cn.mybatis-mp</groupId>
-                <artifactId>mybatis-mp-sql-api</artifactId>
-                <version>${mybatis-mp.version}</version>
+                <groupId>cn.xbatis</groupId>
+                <artifactId>xbatis-sql-api</artifactId>
+                <version>${xbatis.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.mybatis-mp</groupId>
-                <artifactId>mybatis-mp-sql-api-impl</artifactId>
-                <version>${mybatis-mp.version}</version>
+                <groupId>cn.xbatis</groupId>
+                <artifactId>xbatis-sql-api-impl</artifactId>
+                <version>${xbatis.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.mybatis-mp</groupId>
-                <artifactId>mybatis-mp-annotation</artifactId>
-                <version>${mybatis-mp.version}</version>
+                <groupId>cn.xbatis</groupId>
+                <artifactId>xbatis-annotation</artifactId>
+                <version>${xbatis.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.mybatis-mp</groupId>
-                <artifactId>mybatis-mp-core</artifactId>
-                <version>${mybatis-mp.version}</version>
+                <groupId>cn.xbatis</groupId>
+                <artifactId>xbatis-core</artifactId>
+                <version>${xbatis.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.mybatis-mp</groupId>
-                <artifactId>mybatis-mp-generator-core</artifactId>
-                <version>${mybatis-mp-generator-core.version}</version>
+                <groupId>cn.xbatis</groupId>
+                <artifactId>xbatis-generator-core</artifactId>
+                <version>${xbatis-generator-core.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.mybatis-mp</groupId>
-                <artifactId>mybatis-mp-datasource-routing</artifactId>
-                <version>${mybatis-mp-datasource-routing.version}</version>
+                <groupId>cn.xbatis</groupId>
+                <artifactId>xbatis-datasource-routing</artifactId>
+                <version>${xbatis-datasource-routing.version}</version>
             </dependency>
             <dependency>
-                <groupId>cn.mybatis-mp</groupId>
-                <artifactId>mybatis-mp-spring-boot-starter</artifactId>
-                <version>${mybatis-mp-spring-boot-starter.version}</version>
+                <groupId>cn.xbatis</groupId>
+                <artifactId>xbatis-spring-boot-starter</artifactId>
+                <version>${xbatis-spring-boot-starter.version}</version>
             </dependency>
 
             <dependency>
@@ -352,7 +352,6 @@
             <id>maven-release</id>
             <build>
                 <plugins>
-                    <!-- Source -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
@@ -381,28 +380,16 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.7.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            <publishingServerId>central</publishingServerId>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
         </profile>
     </profiles>
 </project>
