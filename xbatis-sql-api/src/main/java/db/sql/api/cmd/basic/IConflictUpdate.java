@@ -33,7 +33,7 @@ public interface IConflictUpdate<T> {
      * @param fields
      * @return
      */
-    void overwrite(Getter<T>... fields);
+    IConflictUpdate<T> overwrite(Getter<T>... fields);
 
     /**
      * 覆盖所有修改字段
@@ -41,13 +41,14 @@ public interface IConflictUpdate<T> {
      *
      * @return
      */
-    void overwriteAll();
+    IConflictUpdate<T> overwriteAll();
 
     /**
-     * 覆盖所有修改字段
-     * 除主键外
-     *
+     * 忽略字段
+     * @param fields
      * @return
      */
-    boolean isOverwriteAll();
+    IConflictUpdate<T> ignore(Getter<T>... fields);
+
+
 }

@@ -25,13 +25,25 @@ import db.sql.api.impl.cmd.struct.insert.InsertFields;
 import db.sql.api.impl.cmd.struct.update.UpdateSets;
 import db.sql.api.tookit.CmdUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConflictUpdate<T> implements IConflictUpdate<T>, Cmd {
 
     private final CmdFactory cmdFactory;
 
     private boolean overwriteAll;
 
+    private List<TableField> customizeSetValueFields;
+
+    private List<TableField> overwriteFields;
+
+    private List<TableField> ignoreFields;
+
     private UpdateSets updateSets;
+
+    //是否已经执行
+    private boolean execute;
 
     public ConflictUpdate(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;
@@ -39,43 +51,80 @@ public class ConflictUpdate<T> implements IConflictUpdate<T>, Cmd {
 
     @Override
     public IConflictUpdate<T> set(Getter<T> field, Object value) {
+        if (customizeSetValueFields == null) {
+            this.customizeSetValueFields = new ArrayList<>();
+        }
         if (this.updateSets == null) {
             this.updateSets = new UpdateSets();
         }
-        updateSets.set(cmdFactory.field(field), Methods.cmd(value));
+        TableField tableField = cmdFactory.field(field);
+        this.updateSets.set(tableField, Methods.cmd(value));
+        this.customizeSetValueFields.add(tableField);
         return this;
     }
 
     @Override
-    public void overwrite(Getter<T>... fields) {
-        if (this.updateSets == null) {
-            this.updateSets = new UpdateSets();
-        }
+    public IConflictUpdate<T> overwrite(Getter<T>... fields) {
         for (Getter<T> field : fields) {
             TableField tableField = cmdFactory.field(field);
-            updateSets.set(tableField, new ConflictUpdateTableField(tableField));
+            if (this.overwriteFields == null) {
+                this.overwriteFields = new ArrayList<>();
+            }
+            this.overwriteFields.add(tableField);
         }
+        return this;
     }
 
     @Override
-    public void overwriteAll() {
+    public IConflictUpdate<T> overwriteAll() {
         this.overwriteAll = true;
+        return this;
     }
 
     @Override
-    public boolean isOverwriteAll() {
-        return overwriteAll;
+    public IConflictUpdate<T> ignore(Getter<T>... fields) {
+        for (Getter<T> field : fields) {
+            TableField tableField = cmdFactory.field(field);
+            if (this.ignoreFields == null) {
+                this.ignoreFields = new ArrayList<>();
+            }
+            this.ignoreFields.add(tableField);
+        }
+        return this;
     }
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (this.overwriteAll && this.updateSets == null) {
-            this.updateSets = new UpdateSets();
-            AbstractInsert insert = (AbstractInsert) module;
-            InsertFields insertFields = insert.getInsertFields();
-            insertFields.getFields().stream().filter(item -> !item.isId()).forEach(item -> {
-                updateSets.set(item, new ConflictUpdateTableField(item));
-            });
+        if (!this.execute) {
+            this.execute = true;
+            if (this.updateSets == null) {
+                this.updateSets = new UpdateSets();
+            }
+            if (this.overwriteAll) {
+                AbstractInsert insert = (AbstractInsert) module;
+                InsertFields insertFields = insert.getInsertFields();
+                insertFields.getFields().stream().filter(item -> !item.isId()).forEach(i -> {
+                    if (this.ignoreFields != null && this.ignoreFields.contains(i)) {
+                        return;
+                    }
+                    if (this.customizeSetValueFields != null && this.customizeSetValueFields.contains(i)) {
+                        return;
+                    }
+                    updateSets.set(i, new ConflictUpdateTableField(i));
+                });
+            } else if (this.overwriteFields != null) {
+                this.overwriteFields.forEach(i -> {
+                    if (this.ignoreFields != null && this.ignoreFields.contains(i)) {
+                        return;
+                    }
+                    if (this.customizeSetValueFields != null && this.customizeSetValueFields.contains(i)) {
+                        return;
+                    }
+                    updateSets.set(i, new ConflictUpdateTableField(i));
+                });
+            } else if (this.customizeSetValueFields == null) {
+                throw new IllegalStateException("conflict update not set");
+            }
         }
 
         if (this.updateSets == null) {
