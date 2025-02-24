@@ -26,7 +26,7 @@ public interface INotInGetterCompare<RV> {
         return this.notIn(true, column, 1, query);
     }
 
-    default <T> RV notIn(Getter<T> column, boolean when, IQuery query) {
+    default <T> RV notIn(boolean when, Getter<T> column, IQuery query) {
         return this.notIn(when, column, 1, query);
     }
 
