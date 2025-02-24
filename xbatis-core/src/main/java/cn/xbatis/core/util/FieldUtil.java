@@ -53,7 +53,7 @@ public final class FieldUtil {
         if (Modifier.isFinal(field.getModifiers())) {
             return false;
         }
-        return !field.isAnnotationPresent(Ignore.class);
+        return field.isAnnotationPresent(Ignore.class);
     }
 
     public static List<Field> getResultMappingFields(Class clazz) {
