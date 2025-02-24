@@ -39,6 +39,11 @@ public class SubQuery extends BaseSubQuery<SubQuery> {
         super(alias, where);
     }
 
+    public <T> SubQuery as(Getter<T> alias) {
+        this.alias = SqlUtil.getAsName(alias);
+        return this;
+    }
+
     public static SubQuery create() {
         return new SubQuery();
     }

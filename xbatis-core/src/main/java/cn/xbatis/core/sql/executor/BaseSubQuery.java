@@ -31,7 +31,7 @@ import java.util.Map;
 
 public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSubQuery<Q, MybatisCmdFactory> {
 
-    private final String alias;
+    protected String alias;
 
     public BaseSubQuery(String alias) {
         super(new MybatisCmdFactory("st"));
@@ -56,7 +56,8 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
 
     @Override
     public Q as(String alias) {
-        throw new RuntimeException("not support");
+        this.alias = alias;
+        return (Q) this;
     }
 
     @Override
