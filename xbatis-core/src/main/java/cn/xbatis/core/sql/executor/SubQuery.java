@@ -14,7 +14,9 @@
 
 package cn.xbatis.core.sql.executor;
 
+import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.impl.tookit.SqlUtil;
 
 /**
  * 子查询
@@ -49,7 +51,15 @@ public class SubQuery extends BaseSubQuery<SubQuery> {
         return new SubQuery(alias);
     }
 
+    public static <T> SubQuery create(Getter<T> alias) {
+        return new SubQuery(SqlUtil.getAsName(alias));
+    }
+
     public static SubQuery create(String alias, Where where) {
         return new SubQuery(alias, where);
+    }
+
+    public static <T> SubQuery create(Getter<T> alias, Where where) {
+        return new SubQuery(SqlUtil.getAsName(alias), where);
     }
 }
