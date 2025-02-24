@@ -15,6 +15,7 @@
 package cn.xbatis.core.util;
 
 import cn.xbatis.db.annotations.Ignore;
+import cn.xbatis.db.annotations.Ignores;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 
 import java.lang.reflect.Field;
@@ -56,14 +57,25 @@ public final class FieldUtil {
         return field.isAnnotationPresent(Ignore.class);
     }
 
-    public static List<Field> getResultMappingFields(Class clazz) {
+    public static List<Field> getResultMappingFields(Class<?> clazz) {
         List<Field> fieldList = new ArrayList<>();
         Set<String> fieldNameSet = new HashSet<>();
         Set<String> ignoreFieldNameSet = new HashSet<>();
-        Class parseClass = clazz;
+        Class<?> parseClass = clazz;
         while (parseClass != null) {
+            Ignores ignores = parseClass.getAnnotation(Ignores.class);
+            if (ignores != null) {
+                for (String ignoreFieldName : ignores.value()) {
+                    fieldNameSet.add(ignoreFieldName);
+                }
+            }
+
             Field[] fields = parseClass.getDeclaredFields();
             for (Field field : fields) {
+                boolean isIgnore = ignoreFieldNameSet.contains(field.getName());
+                if (isIgnore) {
+                    continue;
+                }
                 if (isResultMappingField(field)) {
                     if (fieldNameSet.contains(field.getName()) || ignoreFieldNameSet.contains(field.getName())) {
                         continue;
