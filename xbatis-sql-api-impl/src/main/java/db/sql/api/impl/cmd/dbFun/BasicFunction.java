@@ -48,7 +48,7 @@ public abstract class BasicFunction<T extends BasicFunction<T>> extends Abstract
         return CmdUtils.contain(cmd, this.key);
     }
 
-    /*****************以下为去除广告*******************/
+    /*****************以下为去除警告*******************/
 
     @Override
     @SafeVarargs
