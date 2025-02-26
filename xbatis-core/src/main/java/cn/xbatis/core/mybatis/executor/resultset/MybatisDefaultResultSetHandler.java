@@ -23,6 +23,7 @@ import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.util.*;
 import cn.xbatis.db.annotations.ResultEntity;
 import db.sql.api.Cmd;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.basic.TableField;
@@ -431,6 +432,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         if (Objects.nonNull(fetchInfo.getGroupBy()) && !StringPool.EMPTY.equals(fetchInfo.getGroupBy())) {
             query.groupBy(fetchInfo.getGroupBy());
+        }
+
+        if (Objects.nonNull(fetchInfo.getOtherConditions()) && !StringPool.EMPTY.equals(fetchInfo.getOtherConditions())) {
+            query.and(q -> Methods.cTpl(fetchInfo.getOtherConditions()));
         }
 
         List<Object> resultList = new ArrayList<>(conditionList.size());

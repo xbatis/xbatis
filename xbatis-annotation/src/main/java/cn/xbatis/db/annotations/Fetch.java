@@ -115,4 +115,11 @@ public @interface Fetch {
      * 当值为null时，填充的值
      */
     String nullFillValue() default "";
+
+    /**
+     * 其他条件
+     *
+     * @return
+     */
+    String otherConditions() default "";
 }

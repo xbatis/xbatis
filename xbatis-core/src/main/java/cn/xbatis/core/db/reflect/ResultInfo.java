@@ -478,6 +478,8 @@ public class ResultInfo {
 
         String groupBy = parseDynamicColumn(clazz, field, fetchTargetTableInfo, "@Fetch", "groupBy", fetch.groupBy());
 
+        String otherConditions = parseDynamicColumn(clazz, field, fetchTargetTableInfo, "@Fetch", "otherConditions", fetch.otherConditions());
+
         String targetMatchColumn = fetchTargetFieldInfo.getColumnName();
 
         FieldInfo fieldInfo = new FieldInfo(clazz, field);
@@ -513,7 +515,7 @@ public class ResultInfo {
             }
         }
 
-        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy, groupBy));
+        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy, groupBy, otherConditions));
         return tableCount;
     }
 

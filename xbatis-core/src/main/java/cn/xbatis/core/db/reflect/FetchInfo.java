@@ -49,6 +49,8 @@ public class FetchInfo {
 
     private final String groupBy;
 
+    private final String otherConditions;
+
     private final GetFieldInvoker eqGetFieldInvoker;
 
     private final SetFieldInvoker writeFieldInvoker;
@@ -63,7 +65,7 @@ public class FetchInfo {
 
     private final Object nullFillValue;
 
-    public FetchInfo(Class clazz, Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy, String groupBy) {
+    public FetchInfo(Class clazz, Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy, String groupBy, String otherConditions) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.fetch = fetch;
@@ -77,6 +79,7 @@ public class FetchInfo {
         this.returnType = returnType;
         this.orderBy = orderBy;
         this.groupBy = groupBy;
+        this.otherConditions = otherConditions;
 
         boolean isUseIn = true;
 
