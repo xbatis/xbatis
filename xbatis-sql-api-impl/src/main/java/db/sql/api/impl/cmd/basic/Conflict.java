@@ -30,12 +30,9 @@ import java.util.function.Consumer;
 public class Conflict<T> implements IConflict<T>, Cmd {
 
     private final CmdFactory cmdFactory;
-
-    private String[] conflictKeys;
-
     private final ConflictAction<T> conflictAction;
-
     private final boolean hasChecked = false;
+    private String[] conflictKeys;
 
     public Conflict(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;

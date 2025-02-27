@@ -26,9 +26,14 @@ import java.util.function.Consumer;
 
 public class Query<T> extends BaseQuery<Query<T>, T> {
 
+    private final Map<XmlScriptType, XmlScript> xmlScriptMap = new HashMap<>();
+    private DbType dbType;
+    private String mybatisParamNamespace;
+
     public Query() {
         super();
     }
+
 
     public Query(Where where) {
         super(where);
@@ -45,7 +50,6 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
         return new Query(where);
     }
 
-
     public <R> Query<R> returnType(Class<R> returnType) {
         return (Query<R>) super.setReturnType(returnType);
     }
@@ -53,10 +57,6 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     public <R> Query<R> returnType(Class<R> returnType, Consumer<R> consumer) {
         return (Query<R>) super.setReturnType(returnType, consumer);
     }
-
-    private final Map<XmlScriptType, XmlScript> xmlScriptMap = new HashMap<>();
-    private DbType dbType;
-    private String mybatisParamNamespace;
 
     public void setDbType(DbType dbType) {
         this.dbType = dbType;

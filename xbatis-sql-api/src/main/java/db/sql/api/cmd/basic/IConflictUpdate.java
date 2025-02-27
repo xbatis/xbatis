@@ -45,6 +45,7 @@ public interface IConflictUpdate<T> {
 
     /**
      * 忽略字段
+     *
      * @param fields
      * @return
      */

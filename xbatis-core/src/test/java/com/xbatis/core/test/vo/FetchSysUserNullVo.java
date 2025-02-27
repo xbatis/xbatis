@@ -20,8 +20,6 @@ import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @ResultEntity(SysUser.class)
 public class FetchSysUserNullVo {
@@ -30,7 +28,7 @@ public class FetchSysUserNullVo {
 
     private String userName;
 
-    @Fetch(source = SysUser.class, property = "role_id", target = SysRole.class, targetProperty = "id",targetSelectProperty = "name",nullFillValue = "NULL")
+    @Fetch(source = SysUser.class, property = "role_id", target = SysRole.class, targetProperty = "id", targetSelectProperty = "name", nullFillValue = "NULL")
     private String roleName;
 
 }

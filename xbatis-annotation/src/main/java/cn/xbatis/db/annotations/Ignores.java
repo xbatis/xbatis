@@ -14,8 +14,6 @@
 
 package cn.xbatis.db.annotations;
 
-import cn.xbatis.db.ColumnNameRule;
-
 import java.lang.annotation.*;
 
 @Documented

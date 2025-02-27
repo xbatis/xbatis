@@ -31,7 +31,7 @@ public class Column extends AbstractDatasetField<Column> {
 
     public Column(IDataset dataset, String name) {
         super(dataset, name);
-        if(SqlInjectionUtils.check(name)){
+        if (SqlInjectionUtils.check(name)) {
             throw new IllegalArgumentException("Column name may be not safe");
         }
     }

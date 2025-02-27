@@ -17,8 +17,8 @@ package cn.xbatis.core;
 
 import cn.xbatis.core.logicDelete.LogicDeleteSwitch;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
-import cn.xbatis.core.sql.XbatisSQLBuilder;
 import cn.xbatis.core.sql.SQLBuilder;
+import cn.xbatis.core.sql.XbatisSQLBuilder;
 import cn.xbatis.core.sql.listener.ForeignKeySQLListener;
 import cn.xbatis.core.sql.listener.LogicDeleteSQLListener;
 import cn.xbatis.core.sql.listener.TenantSQLListener;

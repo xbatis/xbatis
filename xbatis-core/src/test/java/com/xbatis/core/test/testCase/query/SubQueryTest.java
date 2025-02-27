@@ -32,6 +32,7 @@ public class SubQueryTest extends BaseTest {
             SubQuery subQuery = SubQuery.create("xx")
                     .select(SysUser::getId)
                     .from(SysUser.class)
+                    .in(false, SysUser::getId, 23, 234)
                     .eq(SysUser::getId, 2);
 
             QueryChain.of(sysUserMapper)
