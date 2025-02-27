@@ -126,7 +126,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     }
 
     private void setDefault(boolean forCount) {
-        if (autoSelect && Objects.isNull(this.select)) {
+        if (autoSelect && (Objects.isNull(this.select) || this.select.getSelectField().isEmpty())) {
             if (forCount) {
                 this.selectCountAll();
             } else {
