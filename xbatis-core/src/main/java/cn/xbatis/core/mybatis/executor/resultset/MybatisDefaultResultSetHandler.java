@@ -267,7 +267,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         for (FetchInfo fetchInfo : fetchInfos) {
             String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getField().getName();
             Boolean fetchEnable = Objects.isNull(fetchEnables) || !fetchEnables.containsKey(fetchKey) || fetchEnables.get(fetchKey);
-            fetchEnable = fetchEnable == null ? true : fetchEnable;
+            fetchEnable = fetchEnable == null || fetchEnable;
             if (!fetchEnable) {
                 if (fetchInfo.getFieldInfo().getTypeClass().isAssignableFrom(Collections.class)) {
                     try {
@@ -329,6 +329,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
         if (Objects.nonNull(query.$where().getConditionChain())) {
             query.$where().getConditionChain().getConditionBlocks().clear();
+        }
+
+        if (Objects.nonNull(fetchInfo.getOtherConditions()) && !StringPool.EMPTY.equals(fetchInfo.getOtherConditions())) {
+            query.and(q -> Methods.cTpl(fetchInfo.getOtherConditions()));
         }
 
         query.from(fetchInfo.getFetch().target(), table -> {
@@ -432,10 +436,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         if (Objects.nonNull(fetchInfo.getGroupBy()) && !StringPool.EMPTY.equals(fetchInfo.getGroupBy())) {
             query.groupBy(fetchInfo.getGroupBy());
-        }
-
-        if (Objects.nonNull(fetchInfo.getOtherConditions()) && !StringPool.EMPTY.equals(fetchInfo.getOtherConditions())) {
-            query.and(q -> Methods.cTpl(fetchInfo.getOtherConditions()));
         }
 
         List<Object> resultList = new ArrayList<>(conditionList.size());
