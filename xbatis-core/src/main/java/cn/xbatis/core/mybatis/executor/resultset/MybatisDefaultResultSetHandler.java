@@ -331,10 +331,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             query.$where().getConditionChain().getConditionBlocks().clear();
         }
 
-        if (Objects.nonNull(fetchInfo.getOtherConditions()) && !StringPool.EMPTY.equals(fetchInfo.getOtherConditions())) {
-            query.and(q -> Methods.cTpl(fetchInfo.getOtherConditions()));
-        }
-
         query.from(fetchInfo.getFetch().target(), table -> {
             if (queryValueList.size() == 1) {
                 if (fetchInfo.getFetch().limit() > 0) {
@@ -354,6 +350,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             fetchFilters.get(fetchKey).accept(query.$where());
         }
         query.optimizeOptions(OptimizeOptions::disableAll);
+        //增加额外条件
+        if (Objects.nonNull(fetchInfo.getOtherConditions()) && !StringPool.EMPTY.equals(fetchInfo.getOtherConditions())) {
+            query.and(q -> Methods.cTpl(fetchInfo.getOtherConditions()));
+        }
         return basicMapper.list(query);
     }
 
