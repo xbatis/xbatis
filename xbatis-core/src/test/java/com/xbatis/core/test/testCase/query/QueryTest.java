@@ -25,6 +25,7 @@ import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
+import db.sql.api.Getters;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import db.sql.api.impl.tookit.Objects;
@@ -242,7 +243,7 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUser = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId, SysUser::getUserName, SysUser::getRole_id)
+                    .select(Getters.of(SysUser::getId, SysUser::getUserName, SysUser::getRole_id))
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class)
                     .eq(SysUser::getId, 2)
