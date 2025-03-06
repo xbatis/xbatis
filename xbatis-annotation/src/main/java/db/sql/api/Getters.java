@@ -17,7 +17,7 @@ package db.sql.api;
 
 public final class Getters {
     @SafeVarargs
-    public final <T> Getter<T>[] of(Getter<T>... getters) {
+    public static <T> Getter<T>[] of(Getter<T>... getters) {
         return getters;
     }
 }
