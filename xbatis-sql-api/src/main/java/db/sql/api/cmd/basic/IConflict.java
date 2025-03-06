@@ -22,6 +22,7 @@ public interface IConflict<T> {
 
     IConflict<T> conflictKeys(String... conflictKeys);
 
+    @SuppressWarnings("unchecked")
     IConflict<T> conflictKeys(Getter<T>... conflictKeys);
 
     void onConflict(Consumer<IConflictAction> action);

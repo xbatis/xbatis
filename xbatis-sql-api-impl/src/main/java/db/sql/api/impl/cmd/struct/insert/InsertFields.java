@@ -40,7 +40,8 @@ public class InsertFields implements IInsertFields<TableField> {
         return this;
     }
 
-    public InsertFields field(TableField... fields) {
+    @SafeVarargs
+    public final InsertFields field(TableField... fields) {
         if (tableFields == null) {
             this.tableFields = new ArrayList<>(10);
         }

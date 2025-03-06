@@ -18,7 +18,7 @@ import db.sql.api.cmd.basic.IDataset;
 
 public interface IDeleteMethod<SELF extends IDeleteMethod> {
 
-
+    @SuppressWarnings("unchecked")
     SELF delete(IDataset<?, ?>... tables);
 
     SELF delete(Class<?>... entities);

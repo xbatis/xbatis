@@ -25,8 +25,10 @@ import java.util.function.Function;
 
 public interface IGroupByDatasetMultiGetterMethod<SELF extends IGroupByDatasetMultiGetterMethod> {
 
+    @SuppressWarnings("unchecked")
     <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns);
 
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;

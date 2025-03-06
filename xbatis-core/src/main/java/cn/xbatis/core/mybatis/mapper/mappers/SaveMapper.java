@@ -79,7 +79,7 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * 多个保存，非批量行为
      *
      * @param list
-     * @param consumer 保存策略
+     * @param saveStrategy 保存策略
      * @return 影响条数
      */
     default int save(Collection<T> list, Consumer<SaveStrategy<T>> saveStrategy) {

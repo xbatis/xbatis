@@ -965,6 +965,7 @@ public interface FunctionInterface extends Cmd {
      * @param values 匹配值
      * @return Ne
      */
+    @SuppressWarnings("unchecked")
     default In in(Collection<? extends Serializable>... values) {
         return Methods.in(this, values);
     }
@@ -985,6 +986,7 @@ public interface FunctionInterface extends Cmd {
      * @param values 匹配值
      * @return Ne
      */
+    @SuppressWarnings("unchecked")
     default NotIn notIn(Collection<? extends Serializable>... values) {
         return Methods.notIn(this, values);
     }

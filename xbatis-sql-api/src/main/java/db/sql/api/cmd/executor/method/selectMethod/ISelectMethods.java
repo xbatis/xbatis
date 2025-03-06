@@ -37,6 +37,7 @@ public interface ISelectMethods<SELF extends ISelectMethods,
         ISelectDatasetMultiGetterMethod<SELF> {
 
     @Override
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
         for (Getter<T> column : columns) {
             this.select(dataset, column);

@@ -23,6 +23,7 @@ public interface ISelectCmdMethod<SELF extends ISelectCmdMethod, COLUMN extends 
 
     SELF select(COLUMN column);
 
+    @SuppressWarnings("unchecked")
     default SELF select(COLUMN... columns) {
         for (COLUMN column : columns) {
             this.select(column);

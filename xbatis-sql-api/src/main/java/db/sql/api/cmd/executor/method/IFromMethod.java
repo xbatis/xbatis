@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 
 public interface IFromMethod<SELF extends IFromMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> {
 
+    @SuppressWarnings("unchecked")
     SELF from(IDataset<?, ?>... tables);
 
     default SELF from(Class... entities) {

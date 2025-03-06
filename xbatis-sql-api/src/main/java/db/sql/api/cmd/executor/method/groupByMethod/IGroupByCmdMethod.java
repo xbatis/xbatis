@@ -23,6 +23,7 @@ public interface IGroupByCmdMethod<SELF extends IGroupByCmdMethod, COLUMN extend
 
     SELF groupBy(COLUMN column);
 
+    @SuppressWarnings("unchecked")
     default SELF groupBy(COLUMN... columns) {
         for (COLUMN column : columns) {
             this.groupBy(column);

@@ -64,6 +64,7 @@ public class ConflictUpdate<T> implements IConflictUpdate<T>, Cmd {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public IConflictUpdate<T> overwrite(Getter<T>... fields) {
         for (Getter<T> field : fields) {
             TableField tableField = cmdFactory.field(field);
@@ -82,6 +83,7 @@ public class ConflictUpdate<T> implements IConflictUpdate<T>, Cmd {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public IConflictUpdate<T> ignore(Getter<T>... fields) {
         for (Getter<T> field : fields) {
             TableField tableField = cmdFactory.field(field);

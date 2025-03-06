@@ -168,6 +168,7 @@ public interface SaveBasicMapper extends BaseBasicMapper {
      * @param forceFields 指定那些列强制插入，null值将会以NULL的形式插入
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     default <T> int saveBatch(Collection<T> list, Getter<T>... forceFields) {
         return this.saveBatch(list, saveBatchStrategy -> {
             saveBatchStrategy.forceFields(forceFields);

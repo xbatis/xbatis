@@ -19,6 +19,7 @@ import db.sql.api.cmd.basic.ITableField;
 
 public interface IUpdateMethod<SELF extends IUpdateMethod, TABLE, TABLE_FIELD extends ITableField<TABLE_FIELD, ?>, V> extends IUpdateSetMethod<SELF, TABLE_FIELD, V> {
 
+    @SuppressWarnings("unchecked")
     SELF update(TABLE... tables);
 
     SELF update(Class... entities);

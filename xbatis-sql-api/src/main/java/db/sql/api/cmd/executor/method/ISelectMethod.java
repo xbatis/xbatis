@@ -78,10 +78,12 @@ public interface ISelectMethod<SELF extends ISelectMethod,
 
     <T> SELF selectIgnore(Getter<T> column, int storey);
 
+    @SuppressWarnings("unchecked")
     default <T> SELF selectIgnore(Getter<T>... columns) {
         return this.selectIgnore(1, columns);
     }
 
+    @SuppressWarnings("unchecked")
     default <T> SELF selectIgnore(int storey, Getter<T>... columns) {
         for (Getter column : columns) {
             this.selectIgnore(column, storey);

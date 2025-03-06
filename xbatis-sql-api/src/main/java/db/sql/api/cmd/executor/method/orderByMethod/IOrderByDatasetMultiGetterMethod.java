@@ -23,10 +23,12 @@ import db.sql.api.cmd.basic.IOrderByDirection;
 
 public interface IOrderByDatasetMultiGetterMethod<SELF extends IOrderByDatasetMultiGetterMethod> extends IBaseOrderByMethods, IOrderByDatasetMultiGetterFunMethod<SELF> {
 
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
         return this.orderBy(dataset, ascOrderByDirection(), columns);
     }
 
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
@@ -34,10 +36,12 @@ public interface IOrderByDatasetMultiGetterMethod<SELF extends IOrderByDatasetMu
         return this.orderBy(dataset, ascOrderByDirection(), columns);
     }
 
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDesc(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
         return this.orderBy(dataset, descOrderByDirection(), columns);
     }
 
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDesc(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
@@ -45,8 +49,10 @@ public interface IOrderByDatasetMultiGetterMethod<SELF extends IOrderByDatasetMu
         return this.orderBy(dataset, descOrderByDirection(), columns);
     }
 
+    @SuppressWarnings("unchecked")
     <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T>... columns);
 
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;

@@ -22,14 +22,13 @@ public interface IGroupBy<SELF extends IGroupBy, COLUMN> extends Cmd {
 
     SELF groupBy(COLUMN column);
 
-
+    @SuppressWarnings("unchecked")
     default SELF groupBy(COLUMN... columns) {
         for (COLUMN column : columns) {
             this.groupBy(column);
         }
         return (SELF) this;
     }
-
 
     default SELF groupBy(List<COLUMN> columns) {
         for (COLUMN column : columns) {

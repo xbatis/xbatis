@@ -33,6 +33,7 @@ public interface IConflictUpdate<T> {
      * @param fields
      * @return
      */
+    @SuppressWarnings("unchecked")
     IConflictUpdate<T> overwrite(Getter<T>... fields);
 
     /**
@@ -49,6 +50,7 @@ public interface IConflictUpdate<T> {
      * @param fields
      * @return
      */
+    @SuppressWarnings("unchecked")
     IConflictUpdate<T> ignore(Getter<T>... fields);
 
 

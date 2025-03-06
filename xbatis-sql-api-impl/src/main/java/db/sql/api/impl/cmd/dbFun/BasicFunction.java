@@ -17,12 +17,8 @@ package db.sql.api.impl.cmd.dbFun;
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.basic.AbstractField;
-import db.sql.api.impl.cmd.condition.In;
-import db.sql.api.impl.cmd.condition.NotIn;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
-
-import java.io.Serializable;
 
 public abstract class BasicFunction<T extends BasicFunction<T>> extends AbstractField<T> implements Function<T>, FunctionInterface {
 
@@ -46,43 +42,5 @@ public abstract class BasicFunction<T extends BasicFunction<T>> extends Abstract
     @Override
     public boolean contain(Cmd cmd) {
         return CmdUtils.contain(cmd, this.key);
-    }
-
-    /*****************以下为去除警告*******************/
-
-    @Override
-    @SafeVarargs
-    public final ConcatWs concatWs(String split, Serializable... values) {
-        return super.concatWs(split, values);
-    }
-
-    @Override
-    @SafeVarargs
-    public final ConcatWs concatWs(String split, Cmd... values) {
-        return super.concatWs(split, values);
-    }
-
-    @Override
-    @SafeVarargs
-    public final Concat concat(Serializable... values) {
-        return super.concat(values);
-    }
-
-    @Override
-    @SafeVarargs
-    public final Concat concat(Cmd... values) {
-        return super.concat(values);
-    }
-
-    @Override
-    @SafeVarargs
-    public final In in(Serializable... values) {
-        return super.in(values);
-    }
-
-    @Override
-    @SafeVarargs
-    public final NotIn notIn(Serializable... values) {
-        return super.notIn(values);
     }
 }

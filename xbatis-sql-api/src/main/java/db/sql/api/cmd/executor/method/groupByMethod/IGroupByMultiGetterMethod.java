@@ -25,12 +25,15 @@ import java.util.function.Function;
 
 public interface IGroupByMultiGetterMethod<SELF extends IGroupByMultiGetterMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> {
 
+    @SuppressWarnings("unchecked")
     default <T> SELF groupBy(Getter<T>... columns) {
         return this.groupBy(1, columns);
     }
 
+    @SuppressWarnings("unchecked")
     <T> SELF groupBy(int storey, Getter<T>... columns);
 
+    @SuppressWarnings("unchecked")
     default <T> SELF groupBy(boolean when, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
@@ -38,6 +41,7 @@ public interface IGroupByMultiGetterMethod<SELF extends IGroupByMultiGetterMetho
         return this.groupBy(1, columns);
     }
 
+    @SuppressWarnings("unchecked")
     default <T> SELF groupBy(boolean when, int storey, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;

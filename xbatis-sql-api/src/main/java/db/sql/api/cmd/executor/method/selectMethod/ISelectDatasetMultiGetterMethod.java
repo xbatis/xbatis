@@ -25,8 +25,10 @@ import java.util.function.Function;
 
 public interface ISelectDatasetMultiGetterMethod<SELF extends ISelectDatasetMultiGetterMethod> {
 
+    @SuppressWarnings("unchecked")
     <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns);
 
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;

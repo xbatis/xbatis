@@ -38,6 +38,7 @@ public interface IGroupByMethods<SELF extends IGroupByMethods,
         IGroupByDatasetMultiGetterMethod<SELF> {
 
     @Override
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
         for (Getter<T> column : columns) {
             this.groupBy(dataset, column);

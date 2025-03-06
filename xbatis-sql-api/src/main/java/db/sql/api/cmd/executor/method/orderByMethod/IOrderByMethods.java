@@ -85,6 +85,7 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
     SELF orderBy(IOrderByDirection orderByDirection, String columnName, Function<IDatasetField, Cmd> f);
 
     @Override
+    @SuppressWarnings("unchecked")
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T>... columns) {
         for (Getter<T> column : columns) {
             this.orderBy(dataset, orderByDirection, column);

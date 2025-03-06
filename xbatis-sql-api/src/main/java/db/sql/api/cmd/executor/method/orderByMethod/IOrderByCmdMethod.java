@@ -26,6 +26,7 @@ public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extend
         return this.orderBy(ascOrderByDirection(), column);
     }
 
+    @SuppressWarnings("unchecked")
     default SELF orderBy(COLUMN... columns) {
         return this.orderBy(ascOrderByDirection(), columns);
     }
@@ -38,6 +39,7 @@ public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extend
         return this.orderBy(descOrderByDirection(), column);
     }
 
+    @SuppressWarnings("unchecked")
     default SELF orderByDesc(COLUMN... columns) {
         return this.orderBy(descOrderByDirection(), columns);
     }
@@ -48,6 +50,7 @@ public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extend
 
     SELF orderBy(IOrderByDirection orderByDirection, COLUMN column);
 
+    @SuppressWarnings("unchecked")
     default SELF orderBy(IOrderByDirection orderByDirection, COLUMN... columns) {
         for (COLUMN column : columns) {
             this.orderBy(orderByDirection, column);
