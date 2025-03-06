@@ -20,7 +20,6 @@ import cn.xbatis.core.sql.MybatisCmdFactory;
 import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.listener.SQLListener;
-import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractUpdate;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -66,37 +65,10 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
     }
 
     /**************以下为去除警告************/
-
-    @Override
-    @SafeVarargs
-    public final T update(Table... tables) {
-        return super.update(tables);
-    }
-
-    @Override
-    @SafeVarargs
-    public final T update(Class... entities) {
-        return super.update(entities);
-    }
-
-
     @Override
     @SafeVarargs
     public final T from(IDataset<?, ?>... tables) {
         return super.from(tables);
     }
-
-    @Override
-    @SafeVarargs
-    public final T from(Class... entities) {
-        return super.from(entities);
-    }
-
-    @Override
-    @SafeVarargs
-    public final T from(int storey, Class... entities) {
-        return super.from(storey, entities);
-    }
-
     /**************以上为去除警告************/
 }

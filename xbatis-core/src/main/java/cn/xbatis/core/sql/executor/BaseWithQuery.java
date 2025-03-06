@@ -72,8 +72,7 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
     }
 
     @Override
-    @SafeVarargs
-    public final Q select(int storey, Class... entities) {
+    public Q select(int storey, Class... entities) {
         SelectClassUtil.select(this, storey, entities);
         return (Q) this;
     }
@@ -84,19 +83,6 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
     }
 
     /**************以下为去除警告************/
-
-
-    @Override
-    @SafeVarargs
-    public final Q select(Class... entities) {
-        return super.select(entities);
-    }
-
-    @Override
-    @SafeVarargs
-    public final Q select(Cmd... cmds) {
-        return super.select(cmds);
-    }
 
     @Override
     @SafeVarargs

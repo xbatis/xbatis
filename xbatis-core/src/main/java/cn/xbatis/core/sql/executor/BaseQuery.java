@@ -142,24 +142,10 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     }
 
     /**************以下为去除警告************/
-
     @Override
-    @SafeVarargs
-    public final Q select(int storey, Class... entities) {
+    public Q select(int storey, Class... entities) {
         SelectClassUtil.select(this, storey, entities);
         return (Q) this;
-    }
-
-    @Override
-    @SafeVarargs
-    public final Q select(Class... entities) {
-        return super.select(entities);
-    }
-
-    @Override
-    @SafeVarargs
-    public final Q select(Cmd... cmds) {
-        return super.select(cmds);
     }
 
     @Override
@@ -218,26 +204,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q from(Class... entities) {
-        return super.from(entities);
-    }
-
-    @Override
-    @SafeVarargs
-    public final Q from(int storey, Class... entities) {
-        return super.from(storey, entities);
-    }
-
-    @Override
-    @SafeVarargs
     public final <T> Q groupBy(Getter<T>... columns) {
         return super.groupBy(columns);
-    }
-
-    @Override
-    @SafeVarargs
-    public final Q groupBy(Cmd... cmds) {
-        return super.groupBy(cmds);
     }
 
     @Override
@@ -268,12 +236,6 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     @SafeVarargs
     public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q groupBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
         return super.groupBy(when, dataset, columns);
-    }
-
-    @Override
-    @SafeVarargs
-    public final Q orderBy(Cmd... cmds) {
-        return super.orderBy(cmds);
     }
 
     @Override
@@ -352,12 +314,6 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     @SafeVarargs
     public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T>... columns) {
         return super.orderBy(when, dataset, orderByDirection, columns);
-    }
-
-    @Override
-    @SafeVarargs
-    public final Q orderByDesc(Cmd... cmds) {
-        return super.orderByDesc(cmds);
     }
 
     @Override

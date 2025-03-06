@@ -70,26 +70,8 @@ public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete
 
     @Override
     @SafeVarargs
-    public final T delete(Class... entities) {
-        return super.delete(entities);
-    }
-
-    @Override
-    @SafeVarargs
     public final T from(IDataset<?, ?>... tables) {
         return super.from(tables);
-    }
-
-    @Override
-    @SafeVarargs
-    public final T from(Class... entities) {
-        return super.from(entities);
-    }
-
-    @Override
-    @SafeVarargs
-    public final T from(int storey, Class... entities) {
-        return super.from(storey, entities);
     }
 
     /**************以上为去除警告************/

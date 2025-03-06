@@ -62,6 +62,7 @@ public interface Dao<T, ID> {
      * @param selectFields 指定查询的列
      * @return 单个实体
      */
+    @SuppressWarnings("unchecked")
     T getById(ID id, Getter<T>... selectFields);
 
     /**
@@ -79,6 +80,7 @@ public interface Dao<T, ID> {
      * @param forceFields 强制字段，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     int save(T entity, Getter<T>... forceFields);
 
     /**
@@ -123,6 +125,7 @@ public interface Dao<T, ID> {
      * @param forceFields 强制字段，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     int save(Collection<T> list, Getter<T>... forceFields);
 
     /**
@@ -158,6 +161,7 @@ public interface Dao<T, ID> {
      * @param forceFields 强制字段，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     <M extends Model<T>> int save(M model, Getter<M>... forceFields);
 
     /**
@@ -194,6 +198,7 @@ public interface Dao<T, ID> {
      * @param forceFields 强制字段，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields);
 
 
@@ -274,6 +279,7 @@ public interface Dao<T, ID> {
      * @param forceFields 强制字段，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     int update(T entity, Getter<T>... forceFields);
 
     /**
@@ -309,6 +315,7 @@ public interface Dao<T, ID> {
      * @param forceFields 强制修改的字段，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     int update(Collection<T> list, Getter<T>... forceFields);
 
 
@@ -337,6 +344,7 @@ public interface Dao<T, ID> {
      * @param forceFields 强制字段，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     <M extends Model<T>> int update(M model, Getter<M>... forceFields);
 
     /**
@@ -373,6 +381,7 @@ public interface Dao<T, ID> {
      * @param forceFields 强制字段，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     <M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceFields);
 
     /**
@@ -417,6 +426,7 @@ public interface Dao<T, ID> {
      * @param forceFields 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     int saveOrUpdate(T entity, Getter<T>... forceFields);
 
     /**
@@ -452,6 +462,7 @@ public interface Dao<T, ID> {
      * @param forceFields 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     int saveOrUpdate(Collection<T> list, Getter<T>... forceFields);
 
 
@@ -488,8 +499,8 @@ public interface Dao<T, ID> {
      * @param forceFields 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     <M extends Model<T>> int saveOrUpdate(M model, Getter<M>... forceFields);
-
 
     /**
      * 实体类Model保存或修改
@@ -524,6 +535,7 @@ public interface Dao<T, ID> {
      * @param forceFields 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
+    @SuppressWarnings("unchecked")
     <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Getter<M>... forceFields);
 
     /**
@@ -556,6 +568,7 @@ public interface Dao<T, ID> {
      * @param ids 多个ID
      * @return 删除的数量
      */
+    @SuppressWarnings("unchecked")
     int deleteByIds(ID... ids);
 
     /**
@@ -572,6 +585,7 @@ public interface Dao<T, ID> {
      * @param ids 多个ID
      * @return Map结果
      */
+    @SuppressWarnings("unchecked")
     Map<ID, T> map(ID... ids);
 
     /**

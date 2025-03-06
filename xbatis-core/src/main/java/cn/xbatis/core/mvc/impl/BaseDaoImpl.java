@@ -146,7 +146,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
-    public T getById(ID id, Getter<T>... selectFields) {
+    public T getById(ID id, Getter<T>[] selectFields) {
         this.checkIdType();
         return GetMethodUtil.getById(getBasicMapper(), getTableInfo(), (Serializable) id, selectFields);
     }
@@ -168,7 +168,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param selectFields select列
      * @return 单个当前实体
      */
-    protected T get(Consumer<Where> consumer, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final T get(Consumer<Where> consumer, Getter<T>... selectFields) {
         return GetMethodUtil.get(getBasicMapper(), getTableInfo(), consumer, selectFields);
     }
 
@@ -189,7 +190,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param selectFields select列
      * @return 单个当前实体
      */
-    protected T get(Where where, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final T get(Where where, Getter<T>... selectFields) {
         return GetMethodUtil.get(getBasicMapper(), getTableInfo(), where, selectFields);
     }
 
@@ -249,7 +251,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param <ID> ID
      * @return 返回结果列表
      */
-    protected <ID extends Serializable> List<T> listByIds(ID... ids) {
+    @SafeVarargs
+    protected final <ID extends Serializable> List<T> listByIds(ID... ids) {
         this.checkIdType();
         return this.listByIds(ids, (Getter<T>[]) null);
     }
@@ -262,7 +265,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param <ID>         ID
      * @return 返回结果列表
      */
-    protected <ID extends Serializable> List<T> listByIds(ID[] ids, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final <ID extends Serializable> List<T> listByIds(ID[] ids, Getter<T>... selectFields) {
         this.checkIdType();
         return ListMethodUtil.listByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
     }
@@ -287,7 +291,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param <ID>         ID
      * @return 返回结果列表
      */
-    protected <ID extends Serializable> List<T> listByIds(Collection<ID> ids, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final <ID extends Serializable> List<T> listByIds(Collection<ID> ids, Getter<T>... selectFields) {
         this.checkIdType();
         return ListMethodUtil.listByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
     }
@@ -309,7 +314,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param selectFields select指定列
      * @return 返回结果列表
      */
-    protected List<T> list(Consumer<Where> consumer, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final List<T> list(Consumer<Where> consumer, Getter<T>... selectFields) {
         return ListMethodUtil.list(getBasicMapper(), getTableInfo(), null, consumer, selectFields);
     }
 
@@ -332,7 +338,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param selectFields select指定列
      * @return 返回结果列表
      */
-    protected List<T> list(Integer limit, Consumer<Where> consumer, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final List<T> list(Integer limit, Consumer<Where> consumer, Getter<T>... selectFields) {
         return ListMethodUtil.list(getBasicMapper(), getTableInfo(), limit, consumer, selectFields);
     }
 
@@ -353,7 +360,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param selectFields select指定列
      * @return 返回结果列表
      */
-    protected List<T> list(Where where, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final List<T> list(Where where, Getter<T>... selectFields) {
         return ListMethodUtil.list(getBasicMapper(), getTableInfo(), null, where, selectFields);
     }
 
@@ -376,7 +384,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param selectFields select指定列
      * @return 返回结果列表
      */
-    protected List<T> list(Integer limit, Where where, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final List<T> list(Integer limit, Where where, Getter<T>... selectFields) {
         return ListMethodUtil.list(getBasicMapper(), getTableInfo(), limit, where, selectFields);
     }
 
@@ -396,7 +405,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param <ID>
      * @return 返回结果列表
      */
-    protected <ID extends Serializable> Cursor<T> cursorByIds(ID... ids) {
+    @SafeVarargs
+    protected final <ID extends Serializable> Cursor<T> cursorByIds(ID... ids) {
         this.checkIdType();
         return this.cursorByIds(ids, (Getter<T>[]) null);
     }
@@ -409,7 +419,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param <ID>
      * @return 返回结果列表
      */
-    protected <ID extends Serializable> Cursor<T> cursorByIds(ID[] ids, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final <ID extends Serializable> Cursor<T> cursorByIds(ID[] ids, Getter<T>... selectFields) {
         this.checkIdType();
         return CursorMethodUtil.cursorByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
     }
@@ -434,7 +445,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param <ID>
      * @return 返回结果列表
      */
-    protected <ID extends Serializable> Cursor<T> cursorByIds(Collection<ID> ids, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final <ID extends Serializable> Cursor<T> cursorByIds(Collection<ID> ids, Getter<T>... selectFields) {
         this.checkIdType();
         return CursorMethodUtil.cursorByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
     }
@@ -456,7 +468,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param selectFields select指定列
      * @return 返回结果列表
      */
-    protected Cursor<T> cursor(Consumer<Where> consumer, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final Cursor<T> cursor(Consumer<Where> consumer, Getter<T>... selectFields) {
         return CursorMethodUtil.cursor(getBasicMapper(), getTableInfo(), consumer, selectFields);
     }
 
@@ -477,7 +490,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param selectFields select指定列
      * @return 返回结果列表
      */
-    protected Cursor<T> cursor(Where where, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final Cursor<T> cursor(Where where, Getter<T>... selectFields) {
         return CursorMethodUtil.cursor(getBasicMapper(), getTableInfo(), where, selectFields);
     }
 
@@ -509,7 +523,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param selectFields select指定列
      * @return
      */
-    protected <P extends IPager<T>> P paging(P pager, Consumer<Where> consumer, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final <P extends IPager<T>> P paging(P pager, Consumer<Where> consumer, Getter<T>... selectFields) {
         return PagingMethodUtil.paging(getBasicMapper(), getTableInfo(), pager, consumer, selectFields);
     }
 
@@ -524,7 +539,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         return this.paging(pager, where, (Getter<T>[]) null);
     }
 
-    protected <P extends IPager<T>> P paging(P pager, Where where, Getter<T>... selectFields) {
+    @SafeVarargs
+    protected final <P extends IPager<T>> P paging(P pager, Where where, Getter<T>... selectFields) {
         return PagingMethodUtil.paging(getBasicMapper(), getTableInfo(), pager, where, selectFields);
     }
 
@@ -536,7 +552,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    protected <K, ID extends Serializable> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, ID... ids) {
+    @SafeVarargs
+    protected final <K, ID extends Serializable> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, ID... ids) {
         this.checkIdType();
         return MapWithKeyMapperUtil.mapWithKey(getBasicMapper(), getTableInfo(), mapKey, ids);
     }
@@ -568,7 +585,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
-    public Map<ID, T> map(ID... ids) {
+    @SafeVarargs
+    public final Map<ID, T> map(ID... ids) {
         this.checkIdType();
         return (Map<ID, T>) MapWithKeyMapperUtil.map(getBasicMapper(), getTableInfo(), (Serializable[]) ids);
     }
@@ -599,7 +617,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
-    public int save(T entity, Getter<T>... forceFields) {
+    @SafeVarargs
+    public final int save(T entity, Getter<T>... forceFields) {
         return this.save(entity, saveStrategy -> {
             saveStrategy.forceFields(forceFields);
         });
@@ -625,7 +644,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
-    public int saveOrUpdate(T entity, Getter<T>... forceFields) {
+    @SafeVarargs
+    public final int saveOrUpdate(T entity, Getter<T>... forceFields) {
         return this.saveOrUpdate(entity, (saveOrUpdateStrategy) -> {
             saveOrUpdateStrategy.forceFields(forceFields);
         });
@@ -651,7 +671,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
-    public int saveOrUpdate(Collection<T> list, Getter<T>... forceFields) {
+    @SafeVarargs
+    public final int saveOrUpdate(Collection<T> list, Getter<T>... forceFields) {
         return this.saveOrUpdate(list, (saveOrUpdateStrategy) -> {
             saveOrUpdateStrategy.forceFields(forceFields);
         });
@@ -677,7 +698,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
-    public int save(Collection<T> list, Getter<T>... forceFields) {
+    @SafeVarargs
+    public final int save(Collection<T> list, Getter<T>... forceFields) {
         return this.save(list, (saveStrategy) -> {
             saveStrategy.forceFields(forceFields);
         });
