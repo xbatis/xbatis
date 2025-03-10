@@ -261,4 +261,16 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         this.setDefault();
         return mapper.mapWithKey(LambdaUtil.getName(mapKey), this);
     }
+
+    /**
+     * 将结果转成map
+     *
+     * @param mapKey 指定的map的key属性
+     * @param <K>    map的key
+     * @return
+     */
+    public <K> Map<K, T> mapWithKey(String mapKey) {
+        this.setDefault();
+        return mapper.mapWithKey(mapKey, this);
+    }
 }
