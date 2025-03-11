@@ -63,8 +63,8 @@
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
         <xbatis.version>1.8.3</xbatis.version>
-        <xbatis-generator-core.version>1.1.0-M2</xbatis-generator-core.version>
-        <xbatis-datasource-routing.version>1.0.6-M1</xbatis-datasource-routing.version>
+        <xbatis-generator-core.version>1.1.0</xbatis-generator-core.version>
+        <xbatis-datasource-routing.version>1.0.6</xbatis-datasource-routing.version>
         <xbatis-spring-boot-starter.version>1.8.3</xbatis-spring-boot-starter.version>
 
         <!-- mybatis version -->
