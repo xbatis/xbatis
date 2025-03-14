@@ -17,6 +17,7 @@ package cn.xbatis.core.sql.executor;
 import cn.xbatis.core.XbatisConfig;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.util.SelectClassUtil;
+import cn.xbatis.core.sql.util.WhereUtil;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IDataset;
@@ -69,6 +70,19 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
     @Override
     public Q select(int storey, Class... entities) {
         SelectClassUtil.select(this, storey, entities);
+        return (Q) this;
+    }
+
+    /**
+     * 追加非null，非空的字段值的条件
+     *
+     * @param object 对象类上必须有实体类注解或@ConditionTarget
+     * @return Q
+     * @see cn.xbatis.db.annotations.ConditionTarget @ConditionTarget 条件目标注解
+     * @see cn.xbatis.db.annotations.Condition @Condition条件注解
+     */
+    public Q where(Object object) {
+        WhereUtil.where(this.$where(), object);
         return (Q) this;
     }
 

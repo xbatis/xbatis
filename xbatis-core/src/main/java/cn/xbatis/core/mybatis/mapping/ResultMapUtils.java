@@ -95,7 +95,7 @@ public final class ResultMapUtils {
      * @return
      */
     private static List<ResultMapping> getNormalResultMappings(MybatisConfiguration configuration, Class clazz) {
-        List<Field> list = FieldUtil.getResultMappingFields(clazz);
+        List<Field> list = FieldUtil.getFields(clazz);
 
         List<ResultMapping> resultMappings = new ArrayList<>(list.size() * 4);
         list.forEach(field -> {

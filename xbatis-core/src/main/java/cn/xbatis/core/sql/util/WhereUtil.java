@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.sql.util;
 
+import cn.xbatis.core.db.reflect.Conditions;
 import cn.xbatis.core.db.reflect.ModelInfo;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
@@ -45,6 +46,17 @@ public final class WhereUtil {
         ((MybatisCmdFactory) cmdFactory).cacheTableInfo(tableInfo);
         if (consumer != null) {
             consumer.accept(where);
+        }
+        return where;
+    }
+
+    public static Where where(Object object) {
+        return where(create(), object);
+    }
+
+    public static Where where(Where where, Object object) {
+        if (object != null) {
+            Conditions.get(object.getClass()).appendCondition(where, object);
         }
         return where;
     }

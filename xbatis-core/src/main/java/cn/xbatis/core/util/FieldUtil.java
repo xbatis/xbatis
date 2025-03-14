@@ -57,7 +57,7 @@ public final class FieldUtil {
         return field.isAnnotationPresent(Ignore.class);
     }
 
-    public static List<Field> getResultMappingFields(Class<?> clazz) {
+    public static List<Field> getFields(Class<?> clazz) {
         List<Field> fieldList = new ArrayList<>();
         Set<String> fieldNameSet = new HashSet<>();
         Set<String> ignoreFieldNameSet = new HashSet<>();

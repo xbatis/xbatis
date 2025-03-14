@@ -98,7 +98,7 @@ public class ResultInfo {
             throw new NotTableClassException(resultEntity.value());
         }
 
-        List<Field> fieldList = FieldUtil.getResultMappingFields(clazz);
+        List<Field> fieldList = FieldUtil.getFields(clazz);
         for (Field field : fieldList) {
             if (field.isAnnotationPresent(ResultField.class)) {
                 //普通字段
@@ -228,7 +228,7 @@ public class ResultInfo {
             throw new NotTableClassException(nestedResultEntity.target());
         }
 
-        for (Field field : FieldUtil.getResultMappingFields(targetType)) {
+        for (Field field : FieldUtil.getFields(targetType)) {
             if (field.isAnnotationPresent(ResultField.class)) {
                 //普通字段
                 ResultField resultField = field.getAnnotation(ResultField.class);
@@ -412,7 +412,7 @@ public class ResultInfo {
      * @param tableCount  当前表个数
      * @return 当前已存在表的个数
      */
-    private static int parseFetch(ParseResult parseResult, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
+    private static int parseFetch(ParseResult parseResult, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
         Fetch fetch = field.getAnnotation(Fetch.class);
 
         String valueColumn = fetch.column();
@@ -431,10 +431,10 @@ public class ResultInfo {
                 if (clazz.isAnnotationPresent(Table.class)) {
                     fetchTableInfo = Tables.get(clazz);
                 } else if (clazz.isAnnotationPresent(ResultEntity.class)) {
-                    ResultEntity resultEntity = (ResultEntity) clazz.getAnnotation(ResultEntity.class);
+                    ResultEntity resultEntity = clazz.getAnnotation(ResultEntity.class);
                     fetchTableInfo = Tables.get(resultEntity.value());
                 } else if (clazz.isAnnotationPresent(NestedResultEntity.class)) {
-                    NestedResultEntity nestedResultEntity = (NestedResultEntity) clazz.getAnnotation(NestedResultEntity.class);
+                    NestedResultEntity nestedResultEntity = clazz.getAnnotation(NestedResultEntity.class);
                     fetchTableInfo = Tables.get(nestedResultEntity.target());
                 } else {
                     throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the source: " + fetch.source().getName() + " is not a entity");

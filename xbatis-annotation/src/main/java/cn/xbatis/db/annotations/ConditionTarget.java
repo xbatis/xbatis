@@ -12,24 +12,19 @@
  *
  */
 
-package com.xbatis.core.test.DO;
+package cn.xbatis.db.annotations;
 
-import cn.xbatis.db.annotations.Condition;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.FieldNameConstants;
+import java.lang.annotation.*;
 
-import static cn.xbatis.db.annotations.Condition.Type.LIKE;
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface ConditionTarget {
 
-@Data
-@FieldNameConstants
-public class SysUserBase {
-
-    @Condition(value = LIKE)
-    private String userName;
-
-    @NoArgsConstructor
-    public static class Fields {
-
-    }
+    /**
+     * 目标实体类,如果在实体类里 或者类上指定了，则可不写
+     *
+     * @return 实体类
+     */
+    Class<?> value();
 }

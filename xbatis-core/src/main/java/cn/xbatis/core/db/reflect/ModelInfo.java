@@ -91,7 +91,7 @@ public class ModelInfo {
             throw new RuntimeException(MessageFormat.format("unable match model class {0} , the generic class {1} is not a entity", model.getName(), entity.getName()));
         }
 
-        List<ModelFieldInfo> modelFieldInfos = FieldUtil.getResultMappingFields(model).stream().map(field -> new ModelFieldInfo(entity, model, field)).collect(Collectors.toList());
+        List<ModelFieldInfo> modelFieldInfos = FieldUtil.getFields(model).stream().map(field -> new ModelFieldInfo(entity, model, field)).collect(Collectors.toList());
 
         this.modelFieldInfoMap = modelFieldInfos.stream().collect(Collectors.toMap((item) -> item.getField().getName(), account -> account));
 
