@@ -39,7 +39,7 @@ public class Conditions {
             return CACHE.get(clazz);
         }
         if (!clazz.isAnnotationPresent(Table.class) && !clazz.isAnnotationPresent(ConditionTarget.class)) {
-            return null;
+            throw new RuntimeException("class " + clazz.getName() + " is not annotated with @ConditionTarget or @Table");
         }
         return CACHE.computeIfAbsent(clazz, key -> new ConditionInfo(clazz));
     }
