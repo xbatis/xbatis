@@ -107,8 +107,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
      * @see cn.xbatis.db.annotations.Condition @Condition条件注解
      */
     public Q where(Object object) {
-        WhereUtil.where(this.$where(), object);
-        return (Q) this;
+        return WhereUtil.where((Q) this, object);
     }
 
     /**

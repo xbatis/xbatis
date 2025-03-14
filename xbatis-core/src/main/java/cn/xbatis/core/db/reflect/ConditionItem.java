@@ -18,7 +18,7 @@ import cn.xbatis.db.annotations.Condition;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 import lombok.Data;
 
 import java.lang.reflect.Field;
@@ -52,7 +52,7 @@ public class ConditionItem {
         }
     }
 
-    public void appendCondition(Where where, Object target) {
+    public void appendCondition(CmdFactory cmdFactory, ConditionChain conditionChain, Object target) {
         Object value;
         try {
             value = this.field.get(target);
@@ -72,43 +72,43 @@ public class ConditionItem {
         if (value instanceof Object[] && ((Object[]) value).length < 1) {
             return;
         }
-        CmdFactory cmdFactory = where.getConditionFactory().getCmdFactory();
+
         FieldInfo fieldInfo = this.tableFieldInfo.getFieldInfo();
         TableField tableField = cmdFactory.field(fieldInfo.getClazz(), fieldInfo.getField().getName(), this.storey);
         switch (this.type) {
             case EQ: {
-                where.eq(tableField, value);
+                conditionChain.eq(tableField, value);
                 break;
             }
             case NE: {
-                where.ne(tableField, value);
+                conditionChain.ne(tableField, value);
                 break;
             }
             case IN: {
                 if (value instanceof Collection) {
-                    where.in(tableField, (Collection) value);
+                    conditionChain.in(tableField, (Collection) value);
                 } else {
-                    where.in(tableField, (Object[]) value);
+                    conditionChain.in(tableField, (Object[]) value);
                 }
                 break;
             }
             case LT: {
-                where.lt(tableField, value);
+                conditionChain.lt(tableField, value);
                 break;
             }
 
             case LTE: {
-                where.lte(tableField, value);
+                conditionChain.lte(tableField, value);
                 break;
             }
 
             case GT: {
-                where.gt(tableField, value);
+                conditionChain.gt(tableField, value);
                 break;
             }
 
             case GTE: {
-                where.gte(tableField, value);
+                conditionChain.gte(tableField, value);
                 break;
             }
 
@@ -116,7 +116,7 @@ public class ConditionItem {
                 if (!(value instanceof String)) {
                     throw new RuntimeException("Like value must be String");
                 }
-                where.like(LikeMode.valueOf(this.likeMode.name()), tableField, (String) value);
+                conditionChain.like(LikeMode.valueOf(this.likeMode.name()), tableField, (String) value);
                 break;
             }
 
@@ -124,7 +124,7 @@ public class ConditionItem {
                 if (!(value instanceof String)) {
                     throw new RuntimeException("Not like value must be String");
                 }
-                where.notLike(LikeMode.valueOf(this.likeMode.name()), tableField, (String) value);
+                conditionChain.notLike(LikeMode.valueOf(this.likeMode.name()), tableField, (String) value);
                 break;
             }
         }

@@ -82,8 +82,7 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
      * @see cn.xbatis.db.annotations.Condition @Condition条件注解
      */
     public Q where(Object object) {
-        WhereUtil.where(this.$where(), object);
-        return (Q) this;
+        return WhereUtil.where((Q) this, object);
     }
 
     @Override
