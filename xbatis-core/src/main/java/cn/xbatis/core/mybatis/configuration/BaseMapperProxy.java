@@ -197,9 +197,11 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         String statementId = mapperInterface.getName() + "." + method.getName();
         IPager<?> pager = (IPager) args[0];
 
+        Boolean executeCount = pager.get(PagerField.IS_EXECUTE_COUNT);
+        Integer size = pager.get(PagerField.SIZE);
         Integer count = null;
         List list;
-        if (pager.get(PagerField.IS_EXECUTE_COUNT)) {
+        if (executeCount && size > -1) {
             count = sqlSession.selectOne(statementId + "&count", params);
             count = Objects.isNull(count) ? 0 : count;
             if (count == 0) {
@@ -209,6 +211,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             }
         } else {
             list = sqlSession.selectList(statementId + "&list", params);
+        }
+
+        if (executeCount && size < 0) {
+            count = list.size();
         }
         pager.set(PagerField.RESULTS, list);
         pager.set(PagerField.TOTAL, count);

@@ -34,8 +34,8 @@ public class XmlPagingTestCase extends BaseTest {
     public void xmlPaging() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
-            Pager<SysRole> pager = sysRoleMapper.xmlPaging(Pager.of(1), 1, 1);
-            assertEquals(1, pager.getTotal());
+            Pager<SysRole> pager = sysRoleMapper.xmlPaging(Pager.of(1), 1, 2);
+            assertEquals(2, pager.getTotal());
             assertEquals(1, pager.getResults().get(0).getId());
             assertNotNull(pager.getResults().get(0).getCreateTime());
 
@@ -45,6 +45,17 @@ public class XmlPagingTestCase extends BaseTest {
             assertEquals(2, pager.getResults().get(1).getId());
             assertNotNull(pager.getResults().get(1).getCreateTime());
             System.out.println(pager);
+        }
+    }
+
+    @Test
+    public void xmlPagingNoQueryCount() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            Pager<SysRole> pager = sysRoleMapper.xmlPaging(Pager.of(-1), 1, 2);
+            assertEquals(2, pager.getTotal());
+            assertEquals(1, pager.getResults().get(0).getId());
+            assertNotNull(pager.getResults().get(0).getCreateTime());
         }
     }
 
@@ -63,7 +74,7 @@ public class XmlPagingTestCase extends BaseTest {
     public void xmlNoParamsPaging() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
-            Pager<SysRole> pager = sysRoleMapper.xmlPaging(Pager.of(1), 1, 1);
+            Pager<SysRole> pager = sysRoleMapper.xmlPaging(Pager.of(1), 1, 2);
 
             pager = sysRoleMapper.xmlPaging2(Pager.of(2));
             assertEquals(2, pager.getTotal());

@@ -172,7 +172,9 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
 
     @Override
     default <T, P extends IPager<T>> P paging(BaseQuery<? extends BaseQuery, T> query, P pager) {
-        if (pager.get(PagerField.IS_EXECUTE_COUNT)) {
+        Boolean executeCount = pager.get(PagerField.IS_EXECUTE_COUNT);
+        Integer size = pager.get(PagerField.SIZE);
+        if (executeCount && size > -1) {
             Class returnType = query.getReturnType();
             TablePrefixUtil.prefixMapping(query, returnType);
             query.setReturnType(Integer.class);
@@ -188,9 +190,12 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
         }
 
         Integer number = pager.get(PagerField.NUMBER);
-        Integer size = pager.get(PagerField.SIZE);
         query.limit(PageUtil.getOffset(number, size), size);
-        pager.set(PagerField.RESULTS, this.list(query));
+        List<?> list = this.list(query);
+        pager.set(PagerField.RESULTS, list);
+        if (executeCount && size < 0) {
+            pager.set(PagerField.TOTAL, list.size());
+        }
         return pager;
     }
 
