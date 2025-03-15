@@ -58,21 +58,21 @@ public final class WhereUtil {
 
     public static Where where(Where where, Object object) {
         if (object != null) {
-            where(where.getConditionFactory().getCmdFactory(), where.conditionChain(), object);
+            where(where.conditionChain(), object);
         }
         return where;
     }
 
     public static <F extends CmdFactory, Q extends AbstractQuery<Q, F>> Q where(Q query, Object object) {
         if (object != null) {
-            where(query.$where().getConditionFactory().getCmdFactory(), query.$where().conditionChain(), object);
+            where(query.$where().conditionChain(), object);
         }
         return query;
     }
 
-    public static void where(CmdFactory cmdFactory, ConditionChain conditionChain, Object object) {
+    public static void where(ConditionChain conditionChain, Object object) {
         if (object != null) {
-            Conditions.get(object.getClass()).appendCondition(cmdFactory, conditionChain, object);
+            Conditions.get(object.getClass()).appendCondition(conditionChain, object);
         }
     }
 

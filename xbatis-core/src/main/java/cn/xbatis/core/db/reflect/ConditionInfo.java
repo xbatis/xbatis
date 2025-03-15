@@ -17,7 +17,6 @@ package cn.xbatis.core.db.reflect;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.db.annotations.Condition;
 import cn.xbatis.db.annotations.ConditionTarget;
-import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 
 import java.lang.reflect.Field;
@@ -71,10 +70,10 @@ public class ConditionInfo {
         this.conditions = conditions;
     }
 
-    public void appendCondition(CmdFactory cmdFactory, ConditionChain conditionChain, Object target) {
+    public void appendCondition(ConditionChain conditionChain, Object target) {
         if (target == null) {
             return;
         }
-        this.conditions.stream().forEach(i -> i.appendCondition(cmdFactory, conditionChain, target));
+        this.conditions.stream().forEach(i -> i.appendCondition(conditionChain, target));
     }
 }

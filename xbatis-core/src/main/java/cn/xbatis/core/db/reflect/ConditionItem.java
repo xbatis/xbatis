@@ -52,7 +52,7 @@ public class ConditionItem {
         }
     }
 
-    public void appendCondition(CmdFactory cmdFactory, ConditionChain conditionChain, Object target) {
+    public void appendCondition(ConditionChain conditionChain, Object target) {
         Object value;
         try {
             value = this.field.get(target);
@@ -72,7 +72,7 @@ public class ConditionItem {
         if (value instanceof Object[] && ((Object[]) value).length < 1) {
             return;
         }
-
+        CmdFactory cmdFactory = conditionChain.getConditionFactory().getCmdFactory();
         FieldInfo fieldInfo = this.tableFieldInfo.getFieldInfo();
         TableField tableField = cmdFactory.field(fieldInfo.getClazz(), fieldInfo.getField().getName(), this.storey);
         switch (this.type) {
