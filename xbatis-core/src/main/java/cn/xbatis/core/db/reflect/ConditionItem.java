@@ -35,7 +35,7 @@ public class ConditionItem {
 
     private final int storey;
 
-    private final Condition.LikeMode likeMode;
+    private final LikeMode likeMode;
 
     public ConditionItem(Field field, TableFieldInfo tableFieldInfo, Condition annotation) {
         field.setAccessible(true);
@@ -48,7 +48,7 @@ public class ConditionItem {
         } else {
             this.type = annotation.value();
             this.storey = annotation.storey();
-            this.likeMode = annotation.likeMode();
+            this.likeMode = LikeMode.valueOf(annotation.likeMode().name());
         }
     }
 
@@ -116,7 +116,7 @@ public class ConditionItem {
                 if (!(value instanceof String)) {
                     throw new RuntimeException("Like value must be String");
                 }
-                conditionChain.like(LikeMode.valueOf(this.likeMode.name()), tableField, (String) value);
+                conditionChain.like(this.likeMode, tableField, (String) value);
                 break;
             }
 
@@ -124,7 +124,7 @@ public class ConditionItem {
                 if (!(value instanceof String)) {
                     throw new RuntimeException("Not like value must be String");
                 }
-                conditionChain.notLike(LikeMode.valueOf(this.likeMode.name()), tableField, (String) value);
+                conditionChain.notLike(this.likeMode, tableField, (String) value);
                 break;
             }
         }
