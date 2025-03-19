@@ -114,6 +114,7 @@ public final class ResultMapUtils {
                 typeHandler = resultField.typeHandler();
                 if (!resultField.value().isEmpty()) {
                     resultMappings.add(configuration.buildResultMapping(false, fieldInfo, resultField.value(), jdbcType, typeHandler));
+                    resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), jdbcType, typeHandler));
                     resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), jdbcType, typeHandler));
                     return;
                 }
