@@ -20,6 +20,7 @@ import cn.xbatis.core.mybatis.executor.MybatisIdUtil;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.core.util.GenericUtil;
 import cn.xbatis.db.annotations.ResultEntity;
+import cn.xbatis.db.annotations.ResultField;
 import cn.xbatis.db.annotations.Table;
 import db.sql.api.impl.tookit.SqlUtil;
 import db.sql.api.tookit.PropertyNamer;
@@ -105,9 +106,22 @@ public final class ResultMapUtils {
                 cn.xbatis.db.annotations.TypeHandler th = field.getAnnotation(cn.xbatis.db.annotations.TypeHandler.class);
                 typeHandler = th.value();
             }
-            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), JdbcType.UNDEFINED, typeHandler));
-            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, PropertyNamer.camelToUnderscore(field.getName()), JdbcType.UNDEFINED, typeHandler));
-            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), JdbcType.UNDEFINED, typeHandler));
+
+            JdbcType jdbcType = JdbcType.UNDEFINED;
+            if (field.isAnnotationPresent(ResultField.class)) {
+                ResultField resultField = field.getAnnotation(ResultField.class);
+                jdbcType = resultField.jdbcType();
+                typeHandler = resultField.typeHandler();
+                if (!resultField.value().isEmpty()) {
+                    resultMappings.add(configuration.buildResultMapping(false, fieldInfo, resultField.value(), jdbcType, typeHandler));
+                    resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), jdbcType, typeHandler));
+                    return;
+                }
+            }
+
+            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), jdbcType, typeHandler));
+            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, PropertyNamer.camelToUnderscore(field.getName()), jdbcType, typeHandler));
+            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), jdbcType, typeHandler));
         });
 
         return Collections.unmodifiableList(resultMappings);
