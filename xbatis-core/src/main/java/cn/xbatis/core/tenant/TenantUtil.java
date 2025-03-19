@@ -46,6 +46,10 @@ public final class TenantUtil {
             return null;
         }
 
+        if (tenantId instanceof TenantId) {
+            throw new RuntimeException("tenantId has multiple values");
+        }
+
         try {
             modelInfo.getTenantIdFieldInfo().getWriteFieldInvoker().invoke(model, new Object[]{tenantId});
             return tenantId;
@@ -73,6 +77,11 @@ public final class TenantUtil {
         if (Objects.isNull(tenantId)) {
             return;
         }
+
+        if (tenantId instanceof TenantId) {
+            throw new RuntimeException("tenantId has multiple values");
+        }
+
         try {
             tenantId = TypeConvertUtil.convert(tenantId, tableFieldInfo.getFieldInfo().getTypeClass());
             tableFieldInfo.getWriteFieldInvoker().invoke(entity, new Object[]{tenantId});
@@ -90,6 +99,11 @@ public final class TenantUtil {
         if (Objects.isNull(tenantId)) {
             return;
         }
+
+        if (tenantId instanceof TenantId) {
+            throw new RuntimeException("tenantId has multiple values");
+        }
+
         try {
             tenantId = TypeConvertUtil.convert(tenantId, modelFieldInfo.getFieldInfo().getTypeClass());
             modelFieldInfo.getWriteFieldInvoker().invoke(entity, new Object[]{tenantId});
@@ -113,6 +127,10 @@ public final class TenantUtil {
             return null;
         }
 
+        if (tenantId instanceof TenantId) {
+            throw new RuntimeException("tenantId has multiple values");
+        }
+
         try {
             tableInfo.getTenantIdFieldInfo().getWriteFieldInvoker().invoke(entity, new Object[]{
                     tenantId
@@ -130,8 +148,8 @@ public final class TenantUtil {
      * @param conditionChain ConditionChain
      */
     public static void addTenantCondition(MpTable table, ConditionChain conditionChain) {
-        Serializable tenantId = TenantUtil.getTenantId();
-        if (Objects.isNull(tenantId)) {
+        Serializable tid = TenantUtil.getTenantId();
+        if (Objects.isNull(tid)) {
             return;
         }
         TableInfo tableInfo = table.getTableInfo();
@@ -139,8 +157,19 @@ public final class TenantUtil {
             return;
         }
         TableFieldInfo tenantIdFieldInfo = tableInfo.getTenantIdFieldInfo();
+        if (tid instanceof TenantId) {
+            TenantId tenantId = (TenantId) tid;
+            if (tenantId.isMultiValue()) {
+                conditionChain.in(new MpDatasetField(table, tenantIdFieldInfo.getColumnName(),
+                        tenantIdFieldInfo.getFieldInfo(), tenantIdFieldInfo.getTypeHandler(),
+                        tenantIdFieldInfo.getTableFieldAnnotation().jdbcType()), tenantId.getValues());
+                return;
+            }
+            tid = tenantId.getValues()[0];
+        }
+
         conditionChain.eq(new MpDatasetField(table, tenantIdFieldInfo.getColumnName(),
                 tenantIdFieldInfo.getFieldInfo(), tenantIdFieldInfo.getTypeHandler(),
-                tenantIdFieldInfo.getTableFieldAnnotation().jdbcType()), tenantId);
+                tenantIdFieldInfo.getTableFieldAnnotation().jdbcType()), tid);
     }
 }

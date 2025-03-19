@@ -17,6 +17,7 @@ package com.xbatis.core.test.testCase.tenant;
 import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.tenant.TenantContext;
+import cn.xbatis.core.tenant.TenantId;
 import com.xbatis.core.test.DO.TenantTest;
 import com.xbatis.core.test.mapper.TenantTestMapper;
 import com.xbatis.core.test.model.TenantModel;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -181,6 +183,58 @@ public class TenantTestCase extends BaseTest {
 
             cnt = tenantTestMapper.delete(where -> where.eq(TenantTest::getTenantId, 123).or().eq(TenantTest::getName, "abc"));
             assertEquals(cnt, 0);
+        }
+    }
+
+
+    @Test
+    public void query() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            TenantTestMapper tenantTestMapper = session.getMapper(TenantTestMapper.class);
+            TenantTest tenantTest = new TenantTest();
+            tenantTest.setName("我是1");
+            tenantTest.setCreateTime(LocalDateTime.now());
+            tenantTestMapper.save(tenantTest);
+
+
+            TenantContext.registerTenantGetter(() -> {
+                return 2;
+            });
+            tenantTest = new TenantTest();
+            tenantTest.setName("我是2");
+            tenantTest.setCreateTime(LocalDateTime.now());
+            tenantTestMapper.save(tenantTest);
+
+
+            List<TenantTest> list = QueryChain.of(tenantTestMapper).list();
+            assertEquals(list.size(), 1);
+            assertEquals(list.get(0).getName(), "我是2");
+        }
+    }
+
+    @Test
+    public void queryMulti() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            TenantTestMapper tenantTestMapper = session.getMapper(TenantTestMapper.class);
+            TenantTest tenantTest = new TenantTest();
+            tenantTest.setName("我是1");
+            tenantTest.setCreateTime(LocalDateTime.now());
+            tenantTestMapper.save(tenantTest);
+
+
+            TenantContext.registerTenantGetter(() -> {
+                return 2;
+            });
+            tenantTest = new TenantTest();
+            tenantTest.setName("我是2");
+            tenantTest.setCreateTime(LocalDateTime.now());
+            tenantTestMapper.save(tenantTest);
+
+            TenantContext.registerTenantGetter(() -> {
+                return new TenantId(1, 2, 3);
+            });
+            List<?> list = QueryChain.of(tenantTestMapper).list();
+            assertEquals(list.size(), 2);
         }
     }
 }

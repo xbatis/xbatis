@@ -28,6 +28,17 @@ public interface PagingBasicMapper extends BaseBasicMapper {
      * 分页查询
      *
      * @param entityType 实体类
+     * @param pager      分页参数
+     * @return 分页结果
+     */
+    default <T, P extends IPager<T>> P paging(Class<T> entityType, P pager) {
+        return this.paging(entityType, pager, (Where) null, (Getter<T>[]) null);
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param entityType 实体类
      * @param consumer   where consumer
      * @param pager      分页参数
      * @return 分页结果
