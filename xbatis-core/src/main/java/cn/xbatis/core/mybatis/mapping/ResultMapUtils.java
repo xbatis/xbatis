@@ -99,10 +99,15 @@ public final class ResultMapUtils {
 
         List<ResultMapping> resultMappings = new ArrayList<>(list.size() * 4);
         list.forEach(field -> {
+            Class<? extends TypeHandler<?>> typeHandler = UnknownTypeHandler.class;
             FieldInfo fieldInfo = new FieldInfo(clazz, field);
-            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), JdbcType.UNDEFINED, UnknownTypeHandler.class));
-            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, PropertyNamer.camelToUnderscore(field.getName()), JdbcType.UNDEFINED, UnknownTypeHandler.class));
-            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), JdbcType.UNDEFINED, UnknownTypeHandler.class));
+            if (field.isAnnotationPresent(cn.xbatis.db.annotations.TypeHandler.class)) {
+                cn.xbatis.db.annotations.TypeHandler th = field.getAnnotation(cn.xbatis.db.annotations.TypeHandler.class);
+                typeHandler = th.value();
+            }
+            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), JdbcType.UNDEFINED, typeHandler));
+            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, PropertyNamer.camelToUnderscore(field.getName()), JdbcType.UNDEFINED, typeHandler));
+            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), JdbcType.UNDEFINED, typeHandler));
         });
 
         return Collections.unmodifiableList(resultMappings);
