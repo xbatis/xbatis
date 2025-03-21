@@ -83,4 +83,24 @@ public interface MapWithKeyMapper<T> extends BaseMapper<T> {
     default <ID extends Serializable> Map<ID, T> map(Collection<ID> ids) {
         return MapWithKeyMapperUtil.map(getBasicMapper(), getTableInfo(), ids);
     }
+
+
+    /**
+     * 查询所有，结果转map，key为ID
+     *
+     * @return 一个map
+     */
+    default <K> Map<K, T> map() {
+        return MapWithKeyMapperUtil.map(getBasicMapper(), getTableInfo(), (Consumer<Where>) null);
+    }
+
+    /**
+     * 根据where查询结果转map，key为ID
+     *
+     * @param consumer where consumer
+     * @return 一个map
+     */
+    default <K> Map<K, T> map(Consumer<Where> consumer) {
+        return MapWithKeyMapperUtil.map(getBasicMapper(), getTableInfo(), consumer);
+    }
 }

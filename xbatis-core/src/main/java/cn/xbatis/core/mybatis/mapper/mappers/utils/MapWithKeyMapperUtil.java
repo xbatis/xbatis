@@ -82,4 +82,12 @@ public final class MapWithKeyMapperUtil {
         }
         return basicMapper.mapWithKey(tableInfo.getSingleIdFieldInfo(true).getField().getName(), QueryUtil.buildIdsQuery(tableInfo, ids));
     }
+
+    public static <ID, T> Map<ID, T> map(BasicMapper basicMapper, TableInfo tableInfo, Consumer<Where> consumer) {
+        return basicMapper.mapWithKey(tableInfo.getSingleIdFieldInfo(true).getField().getName(),
+                QueryUtil.buildNoOptimizationQuery(tableInfo, WhereUtil.create(tableInfo, consumer), q -> {
+                    QueryUtil.fillQueryDefault(q, tableInfo);
+                })
+        );
+    }
 }

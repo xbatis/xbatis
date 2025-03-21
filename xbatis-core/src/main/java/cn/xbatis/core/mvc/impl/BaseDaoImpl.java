@@ -597,6 +597,27 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         return (Map<ID, T>) MapWithKeyMapperUtil.map(getBasicMapper(), getTableInfo(), (Collection<Serializable>) ids);
     }
 
+    /**
+     * 查询所有，结果转map，key为ID
+     *
+     * @return 一个map
+     */
+    protected Map<ID, T> map() {
+        this.checkIdType();
+        return MapWithKeyMapperUtil.map(getBasicMapper(), getTableInfo(), (Consumer<Where>) null);
+    }
+
+    /**
+     * 根据多个id查询结果转map
+     *
+     * @param consumer where consumer
+     * @return 一个map
+     */
+    protected Map<ID, T> map(Consumer<Where> consumer) {
+        this.checkIdType();
+        return MapWithKeyMapperUtil.map(getBasicMapper(), getTableInfo(), consumer);
+    }
+
     @Override
     public int save(T entity, Consumer<SaveStrategy<T>> saveStrategy) {
         SaveStrategy<T> strategy = new SaveStrategy<>();
