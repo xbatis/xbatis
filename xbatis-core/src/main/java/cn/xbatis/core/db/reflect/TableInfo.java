@@ -131,7 +131,7 @@ public class TableInfo {
 
         List<TableFieldInfo> idFieldInfos = new ArrayList<>(6);
 
-        List<Field> fieldList = FieldUtil.getResultMappingFields(entity);
+        List<Field> fieldList = FieldUtil.getFields(entity);
 
 
         for (Field field : fieldList) {

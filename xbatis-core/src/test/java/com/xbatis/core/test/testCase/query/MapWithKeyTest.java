@@ -80,4 +80,21 @@ public class MapWithKeyTest extends BaseTest {
             assertEquals(map.get(2).getName(), "运维");
         }
     }
+
+    @Test
+    public void mapKeyTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            this.configuration.setMapUnderscoreToCamelCase(true);
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            Map<Integer, SysRole> maps = sysRoleMapper.map();
+            assertEquals(2, maps.size());
+            assertEquals(true, maps.keySet().contains(1));
+            assertEquals(true, maps.keySet().contains(2));
+
+
+            maps = sysRoleMapper.map(where -> where.eq(SysRole::getId, 1));
+            assertEquals(1, maps.size());
+            assertEquals(true, maps.keySet().contains(1));
+        }
+    }
 }

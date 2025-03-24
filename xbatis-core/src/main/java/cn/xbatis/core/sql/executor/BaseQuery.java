@@ -19,6 +19,7 @@ import cn.xbatis.core.mybatis.executor.statement.Fetchable;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.util.SelectClassUtil;
+import cn.xbatis.core.sql.util.WhereUtil;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IDataset;
@@ -95,6 +96,18 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     public Q fetchSize(Integer fetchSize) {
         this.fetchSize = fetchSize;
         return (Q) this;
+    }
+
+    /**
+     * 追加非null，非空的字段值的条件
+     *
+     * @param object 对象类上必须有实体类注解或@ConditionTarget
+     * @return Q
+     * @see cn.xbatis.db.annotations.ConditionTarget @ConditionTarget 条件目标注解
+     * @see cn.xbatis.db.annotations.Condition @Condition条件注解
+     */
+    public Q where(Object object) {
+        return WhereUtil.where((Q) this, object);
     }
 
     /**

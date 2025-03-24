@@ -46,6 +46,15 @@ public class TenantContext {
         if (Objects.isNull(tenantInfoGetter)) {
             return null;
         }
-        return tenantInfoGetter.get();
+        Serializable id = tenantInfoGetter.get();
+        if (id != null && id instanceof TenantId) {
+            TenantId tenantId = (TenantId) id;
+            if (tenantId.getValues() == null || tenantId.getValues().length == 0) {
+                return null;
+            } else if (tenantId.getValues().length == 1) {
+                return tenantId.getValues()[0];
+            }
+        }
+        return id;
     }
 }

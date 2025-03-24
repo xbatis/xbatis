@@ -16,6 +16,7 @@ package cn.xbatis.core.mybatis.mapper.mappers.utils;
 
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
+import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.util.QueryUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.page.IPager;
@@ -41,7 +42,7 @@ public final class PagingMethodUtil {
     }
 
     public static <T, P extends IPager<T>> P paging(BasicMapper basicMapper, TableInfo tableInfo, P pager, Where where, Getter<T>[] selectFields) {
-        return basicMapper.paging(QueryUtil.buildQuery(tableInfo, where, query -> {
+        BaseQuery<?, T> baseQuery = QueryUtil.buildQuery(tableInfo, where, query -> {
             QueryUtil.fillQueryDefault(query, tableInfo, selectFields);
             query.dbAdapt(((q, selector) -> {
                 selector.when(DbType.SQL_SERVER, () -> {
@@ -55,6 +56,7 @@ public final class PagingMethodUtil {
                     }
                 }).otherwise();
             }));
-        }), pager);
+        });
+        return basicMapper.paging(baseQuery, pager);
     }
 }

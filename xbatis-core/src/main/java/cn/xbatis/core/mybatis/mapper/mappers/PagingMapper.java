@@ -26,6 +26,16 @@ public interface PagingMapper<T> extends BaseMapper<T> {
     /**
      * 分页查询
      *
+     * @param pager 分页参数
+     * @return 分页结果
+     */
+    default <P extends IPager<T>> P paging(P pager) {
+        return this.paging(pager, (Where) null, (Getter<T>[]) null);
+    }
+
+    /**
+     * 分页查询
+     *
      * @param consumer where consumer
      * @param pager    分页参数
      * @return 分页结果

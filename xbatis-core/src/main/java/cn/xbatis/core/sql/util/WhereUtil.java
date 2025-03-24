@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.sql.util;
 
+import cn.xbatis.core.db.reflect.Conditions;
 import cn.xbatis.core.db.reflect.ModelInfo;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
@@ -22,6 +23,8 @@ import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.executor.AbstractQuery;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
@@ -47,6 +50,30 @@ public final class WhereUtil {
             consumer.accept(where);
         }
         return where;
+    }
+
+    public static Where where(Object object) {
+        return where(create(), object);
+    }
+
+    public static Where where(Where where, Object object) {
+        if (object != null) {
+            where(where.conditionChain(), object);
+        }
+        return where;
+    }
+
+    public static <F extends CmdFactory, Q extends AbstractQuery<Q, F>> Q where(Q query, Object object) {
+        if (object != null) {
+            where(query.$where().conditionChain(), object);
+        }
+        return query;
+    }
+
+    public static void where(ConditionChain conditionChain, Object object) {
+        if (object != null) {
+            Conditions.get(object.getClass()).appendCondition(conditionChain, object);
+        }
     }
 
     /**

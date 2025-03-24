@@ -54,6 +54,10 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
         this.parent = parent;
     }
 
+    public ConditionFactory getConditionFactory() {
+        return conditionFactory;
+    }
+
     @Override
     public ConditionChain setIgnoreNull(boolean bool) {
         conditionFactory.setIgnoreNull(bool);

@@ -80,7 +80,7 @@ public class ResultMapWrapper {
             if (typeHandler instanceof GenericTypeHandler) {
 
 
-                Optional<Field> fieldOptional = FieldUtil.getResultMappingFields(resultMap.getType())
+                Optional<Field> fieldOptional = FieldUtil.getFields(resultMap.getType())
                         .stream().filter(i -> i.getName().equals(item.getProperty()))
                         .findFirst();
 

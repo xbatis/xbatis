@@ -12,24 +12,33 @@
  *
  */
 
-package com.xbatis.core.test.DO;
+package com.xbatis.core.test.REQ;
 
 import cn.xbatis.db.annotations.Condition;
+import cn.xbatis.db.annotations.ConditionTarget;
+import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.FieldNameConstants;
 
-import static cn.xbatis.db.annotations.Condition.Type.LIKE;
+import static cn.xbatis.db.annotations.Condition.Type.*;
 
 @Data
-@FieldNameConstants
-public class SysUserBase {
+@ConditionTarget(SysUser.class)
+public class QueryREQ {
+
+    private Integer id;
 
     @Condition(value = LIKE)
     private String userName;
 
-    @NoArgsConstructor
-    public static class Fields {
+    @Condition(property = SysUser.Fields.id, value = GT)
+    private Integer gtId;
 
-    }
+    @Condition(property = SysUser.Fields.id, value = GTE)
+    private Integer gteId;
+
+    @Condition(property = SysUser.Fields.id, value = LT)
+    private Integer ltId;
+
+    @Condition(property = SysUser.Fields.id, value = LTE)
+    private Integer lteId;
 }
