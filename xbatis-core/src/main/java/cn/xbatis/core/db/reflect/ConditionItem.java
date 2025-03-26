@@ -127,6 +127,12 @@ public class ConditionItem {
                 conditionChain.notLike(this.likeMode, tableField, (String) value);
                 break;
             }
+
+            case BETWEEN: {
+                Object[] array = (Object[]) value;
+                conditionChain.between(tableField, array[0], array[1]);
+                break;
+            }
         }
     }
 }

@@ -41,4 +41,7 @@ public class QueryREQ {
 
     @Condition(property = SysUser.Fields.id, value = LTE)
     private Integer lteId;
+
+    @Condition(property = SysUser.Fields.id, value = BETWEEN)
+    private Integer[] btIds;
 }

@@ -66,7 +66,8 @@ public @interface Condition {
         GT,
         GTE,
         LIKE,
-        NOT_LIKE
+        NOT_LIKE,
+        BETWEEN
     }
 
     enum LikeMode {

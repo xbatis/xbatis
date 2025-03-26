@@ -125,4 +125,21 @@ public class ConditionObjectTest extends BaseTest {
             assertEquals(1, id);
         }
     }
+
+    @Test
+    public void between() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            QueryREQ queryReq = new QueryREQ();
+            queryReq.setBtIds(new Integer[]{2, 2});
+            Integer id = QueryChain.of(sysUserMapper)
+                    .where(queryReq)
+                    .select(SysUser::getId)
+                    .returnType(Integer.class)
+                    .get();
+
+            assertEquals(2, id);
+        }
+    }
 }
