@@ -15,30 +15,34 @@
 package cn.xbatis.core.db.reflect;
 
 import cn.xbatis.core.util.FieldUtil;
+import cn.xbatis.db.Logic;
 import cn.xbatis.db.annotations.Condition;
+import cn.xbatis.db.annotations.ConditionGroup;
 import cn.xbatis.db.annotations.ConditionTarget;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConditionInfo {
 
-    private final List<ConditionItem> conditions;
+    private final List<ConditionItemGroup> conditionItemGroups;
 
     public ConditionInfo(Class<?> clazz) {
         List<Field> fieldList = FieldUtil.getFields(clazz);
         List<ConditionItem> conditions = new ArrayList<>(fieldList.size());
 
         Class<?> targetTable;
+
+        final Logic logic;
         if (clazz.isAnnotationPresent(ConditionTarget.class)) {
             ConditionTarget conditionTarget = clazz.getAnnotation(ConditionTarget.class);
             targetTable = conditionTarget.value();
+            logic = conditionTarget.logic();
         } else {
             targetTable = clazz;
+            logic = Logic.AND;
         }
 
         Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
@@ -67,13 +71,46 @@ public class ConditionInfo {
             }
             conditions.add(new ConditionItem(field, tableFieldInfo, condition));
         }
-        this.conditions = conditions;
+
+        Map<String, ConditionItem> conditionItemMap = conditions.stream().collect(Collectors.toMap(i -> i.getField().getName(), i -> i));
+
+        ConditionGroup[] conditionGroups = clazz.getAnnotationsByType(ConditionGroup.class);
+        Map<ConditionGroup, ConditionItemGroup> conditionItemGroupMap = new HashMap<>();
+        Set<String> usedConditionFields = new HashSet<>();
+        for (ConditionGroup key : conditionGroups) {
+            ConditionItemGroup group = conditionItemGroupMap.computeIfAbsent(key, i -> {
+                return new ConditionItemGroup(false, logic, key.logic(), new ArrayList<>());
+            });
+
+            for (String field : key.value()) {
+                if (!conditionItemMap.containsKey(field)) {
+                    throw new RuntimeException("class " + clazz + " have no field: " + field);
+                }
+                group.getConditionItems().add(conditionItemMap.get(field));
+                usedConditionFields.add(field);
+            }
+        }
+
+        List<ConditionItemGroup> itemGroups = new ArrayList<>();
+
+        for (ConditionItem i : conditions) {
+            if (usedConditionFields.contains(i.getField().getName())) {
+                continue;
+            }
+            itemGroups.add(new ConditionItemGroup(true, logic, null, i));
+        }
+
+        conditionItemGroupMap.entrySet().stream().forEach(entry -> {
+            itemGroups.add(entry.getValue());
+        });
+
+        this.conditionItemGroups = itemGroups;
     }
 
     public void appendCondition(ConditionChain conditionChain, Object target) {
         if (target == null) {
             return;
         }
-        this.conditions.stream().forEach(i -> i.appendCondition(conditionChain, target));
+        this.conditionItemGroups.stream().forEach(i -> i.appendCondition(conditionChain, target));
     }
 }

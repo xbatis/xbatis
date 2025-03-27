@@ -142,4 +142,22 @@ public class ConditionObjectTest extends BaseTest {
             assertEquals(2, id);
         }
     }
+
+
+    @Test
+    public void gtOrLte() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            QueryREQ queryReq = new QueryREQ();
+            queryReq.setId(1);
+            queryReq.setId1(2);
+            queryReq.setId2(3);
+            Integer count = QueryChain.of(sysUserMapper)
+                    .where(queryReq)
+                    .select(SysUser::getId)
+                    .returnType(Integer.class)
+                    .count();
+            assertEquals(2, count);
+        }
+    }
 }

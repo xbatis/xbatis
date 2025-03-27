@@ -14,15 +14,21 @@
 
 package com.xbatis.core.test.REQ;
 
+import cn.xbatis.db.Logic;
 import cn.xbatis.db.annotations.Condition;
+import cn.xbatis.db.annotations.ConditionGroup;
 import cn.xbatis.db.annotations.ConditionTarget;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import static cn.xbatis.db.annotations.Condition.Type.*;
 
 @Data
-@ConditionTarget(SysUser.class)
+@ConditionTarget(value = SysUser.class)
+@ConditionGroup(value = {QueryREQ.Fields.id, QueryREQ.Fields.id1}, logic = Logic.OR)
+@ConditionGroup(value = {QueryREQ.Fields.id1, QueryREQ.Fields.id2}, logic = Logic.OR)
+@FieldNameConstants
 public class QueryREQ {
 
     private Integer id;
@@ -44,4 +50,10 @@ public class QueryREQ {
 
     @Condition(property = SysUser.Fields.id, value = BETWEEN)
     private Integer[] btIds;
+
+    @Condition(property = SysUser.Fields.id, value = LTE)
+    private Integer id1;
+
+    @Condition(property = SysUser.Fields.id, value = GT)
+    private Integer id2;
 }
