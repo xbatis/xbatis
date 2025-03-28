@@ -24,6 +24,7 @@ import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import com.xbatis.core.test.vo.SysUserHandlerVo;
 import db.sql.api.DbType;
 import db.sql.api.Getters;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
@@ -44,6 +45,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class QueryTest extends BaseTest {
+
+
+    @Test
+    public void queryWithTypeHandler() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUserHandlerVo> list = QueryChain.of(sysUserMapper).returnType(SysUserHandlerVo.class).orderBy(SysUser::getId).list();
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 3);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+            assertEquals(list.get(2).getId(), 3);
+
+            assertEquals(list.get(0).getUserName(), null);
+            assertEquals(list.get(1).getUserName(), null);
+            assertEquals(list.get(2).getUserName(), null);
+        }
+    }
 
     @Test
     public void listByIds() {

@@ -59,6 +59,26 @@ public final class MybatisTypeHandlerUtil {
         throw new RuntimeException(exception);
     }
 
+    public static TypeHandler<?> createTypeHandler(Class<?> type, Class<? extends TypeHandler<?>> typeHandlerClass) {
+        if (typeHandlerClass == UnknownTypeHandler.class) {
+            return null;
+        }
+
+        try {
+            Constructor constructor = typeHandlerClass.getConstructor(Class.class);
+            return (TypeHandler<?>) constructor.newInstance(type);
+        } catch (ReflectiveOperationException e) {
+            //exception = e;
+        }
+
+        try {
+            Constructor constructor = typeHandlerClass.getConstructor();
+            return (TypeHandler<?>) constructor.newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public static TypeHandler<?> getTypeHandler(Configuration cfg, Class<?> type, Class<? extends TypeHandler<?>> typeHandlerClass) {
         TypeHandler<?> typeHandler = cfg.getTypeHandlerRegistry().getMappingTypeHandler(typeHandlerClass);

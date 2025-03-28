@@ -22,7 +22,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface TypeHandler {
 
     Class<? extends org.apache.ibatis.type.TypeHandler<?>> value();

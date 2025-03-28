@@ -53,6 +53,15 @@ public class ResultMapWrapper {
             if (configuration.hasResultMap(resultMapId)) {
                 return configuration.getResultMap(resultMapId);
             }
+
+            if (item.getType().isAnnotationPresent(cn.xbatis.db.annotations.TypeHandler.class)) {
+                cn.xbatis.db.annotations.TypeHandler typeHandler = item.getType().getAnnotation(cn.xbatis.db.annotations.TypeHandler.class);
+                Class<Object> type = (Class<Object>) item.getType();
+                TypeHandler<Object> objectTypeHandler = (TypeHandler<Object>) MybatisTypeHandlerUtil.createTypeHandler(type, typeHandler.value());
+                configuration.getTypeHandlerRegistry().register(type, objectTypeHandler);
+                return item;
+            }
+
             ResultMap newResultMap = ResultMapUtils.getResultMap(configuration, item.getType());
             if (Objects.nonNull(newResultMap)) {
                 return newResultMap;
