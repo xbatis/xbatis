@@ -170,7 +170,7 @@ public class TableInfo {
                 }
                 logicDeleteFieldInfo = tableFieldInfo;
                 LogicDelete logicDeleteAnnotation = field.getAnnotation(LogicDelete.class);
-                if (XbatisConfig.isDefaultValueKeyFormat(logicDeleteAnnotation.beforeValue())) {
+                if (XbatisConfig.isDynamicValueKeyFormat(logicDeleteAnnotation.beforeValue())) {
                     throw new RuntimeException("the @LogicDelete of Entity " + entity.getName() + " has config error,the beforeValue can't be dynamic key");
                 }
             }

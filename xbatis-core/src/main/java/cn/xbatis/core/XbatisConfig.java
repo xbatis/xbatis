@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
 /**
@@ -48,7 +49,7 @@ public final class XbatisConfig {
     private static final String DEFAULT_BATCH_SIZE = "defaultBatchSize";
     private static final String SQL_BUILDER = "SQLBuilder";
     private static final String LOGIC_DELETE_SWITCH = "logicDeleteSwitch";
-    private static final String DEFAULT_VALUE_MANAGER = "defaultValueManager";
+    private static final String DYNAMIC_VALUE_MANAGER = "dynamicValueManager";
     private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
     private static final List<SQLListener> SQL_LISTENER = new ArrayList<>();
     private static volatile DbType DEFAULT_DB_TYPE;
@@ -57,8 +58,9 @@ public final class XbatisConfig {
         SQL_LISTENER.add(new ForeignKeySQLListener());
         SQL_LISTENER.add(new TenantSQLListener());
         SQL_LISTENER.add(new LogicDeleteSQLListener());
-        Map<String, BiFunction<Class<?>, Class<?>, Object>> defaultValueMap = new ConcurrentHashMap<>();
-        defaultValueMap.put("{BLANK}", (source, type) -> {
+        Map<String, BiFunction<Class<?>, Class<?>, Object>> dynamicValueMap = new ConcurrentHashMap<>();
+
+        dynamicValueMap.put("{BLANK}", (source, type) -> {
             if (type == String.class) {
                 return StringPool.EMPTY;
             } else if (type.isArray()) {
@@ -73,7 +75,7 @@ public final class XbatisConfig {
             throw new RuntimeException("Inconsistent types：" + type);
         });
 
-        defaultValueMap.put("{NOW}", (source, type) -> {
+        dynamicValueMap.put("{NOW}", (source, type) -> {
             if (type == LocalDateTime.class) {
                 return LocalDateTime.now();
             } else if (type == LocalDate.class) {
@@ -86,10 +88,36 @@ public final class XbatisConfig {
                 return System.currentTimeMillis();
             } else if (type == Integer.class) {
                 return (int) (System.currentTimeMillis() / 1000);
+            } else if (type == String.class) {
+                return LocalDate.now().toString();
             }
             throw new RuntimeException("Inconsistent types：" + type);
         });
-        CACHE.put(DEFAULT_VALUE_MANAGER, defaultValueMap);
+
+        dynamicValueMap.put("{TODAY}", (source, type) -> {
+            if (type == LocalDate.class) {
+                return LocalDate.now();
+            } else if (type == String.class) {
+                return LocalDate.now().toString();
+            } else if (type == LocalDate[].class) {
+                return new LocalDate[]{LocalDate.now(), LocalDate.now()};
+            } else if (type == LocalDateTime[].class) {
+                return new LocalDateTime[]{LocalDate.now().atStartOfDay(), LocalDate.now().atStartOfDay().plusDays(1).minusNanos(1)};
+            } else if (type == Long[].class) {
+                long time = LocalDate.now().toEpochDay();
+                return new Long[]{time, time + TimeUnit.DAYS.toMillis(1) - 1};
+            } else if (type == String[].class) {
+                String today = LocalDate.now().toString();
+                return new String[]{today, today + "23:59:59"};
+            } else if (type == List.class) {
+                List<LocalDateTime> list = new ArrayList<>();
+                list.add(LocalDate.now().atStartOfDay());
+                list.add(LocalDate.now().atStartOfDay().plusDays(1).minusNanos(1));
+                return list;
+            }
+            throw new RuntimeException("Inconsistent types：" + type);
+        });
+        CACHE.put(DYNAMIC_VALUE_MANAGER, dynamicValueMap);
     }
 
     private XbatisConfig() {
@@ -202,19 +230,43 @@ public final class XbatisConfig {
         CACHE.putIfAbsent(LOGIC_DELETE_SWITCH, bool);
     }
 
-    public static boolean isDefaultValueKeyFormat(String key) {
+    /**
+     * 判断key是否是动态值格式，例如 是不是"{xxx}"
+     *
+     * @param key
+     * @return
+     */
+    public static boolean isDynamicValueKeyFormat(String key) {
         return key.startsWith("{") && key.endsWith("}");
     }
 
-    public static void setDefaultValue(String key, BiFunction<Class<?>, Class<?>, Object> f) {
-        checkDefaultValueKey(key);
-        ((Map<String, BiFunction<Class<?>, Class<?>, Object>>) CACHE.get(DEFAULT_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
+    /**
+     * 设置动态值的函数的方法
+     *
+     * @param key 动态值 需要符合 "{xxx}"的格式
+     * @param f   返回该key的动态值的函数
+     */
+    public static void setDynamicValue(String key, BiFunction<Class<?>, Class<?>, Object> f) {
+        checkDynamicValueKey(key);
+        ((Map<String, BiFunction<Class<?>, Class<?>, Object>>) CACHE.get(DYNAMIC_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
     }
 
-    private static void checkDefaultValueKey(String key) {
-        if (!isDefaultValueKeyFormat(key)) {
+    private static void checkDynamicValueKey(String key) {
+        if (!isDynamicValueKeyFormat(key)) {
             throw new RuntimeException("key must start with '{' and end with '}'");
         }
+    }
+
+    /**
+     * 请用 setDynamicValue 代替
+     * 设置默认值的函数的方法
+     *
+     * @param key 默认值 需要符合 "{xxx}"的格式
+     * @param f   返回该key的默认值的函数
+     */
+    @Deprecated
+    public static void setDefaultValue(String key, BiFunction<Class<?>, Class<?>, Object> f) {
+        setDynamicValue(key, f);
     }
 
     /**
@@ -227,10 +279,26 @@ public final class XbatisConfig {
      * @return 返回指定类型clazz key的默认值
      */
     public static <T> T getDefaultValue(Class<?> clazz, Class<T> type, String key) {
-        if (!isDefaultValueKeyFormat(key)) {
+        if (!isDynamicValueKeyFormat(key)) {
             return TypeConvertUtil.convert(key, type);
         }
-        Map<String, BiFunction<Class<?>, Class<?>, T>> map = (Map<String, BiFunction<Class<?>, Class<?>, T>>) CACHE.get(DEFAULT_VALUE_MANAGER);
+        return getDynamicValue(clazz, type, key);
+    }
+
+    /**
+     * 获取指定key的动态值
+     *
+     * @param clazz 字段所在的class
+     * @param type  动态值的类型
+     * @param key   动态值的key
+     * @param <T>   类型clazz的泛型
+     * @return 返回指定类型clazz key的动态值
+     */
+    public static <T> T getDynamicValue(Class<?> clazz, Class<T> type, String key) {
+        if (!isDynamicValueKeyFormat(key)) {
+            key = "{" + key + "}";
+        }
+        Map<String, BiFunction<Class<?>, Class<?>, T>> map = (Map<String, BiFunction<Class<?>, Class<?>, T>>) CACHE.get(DYNAMIC_VALUE_MANAGER);
         BiFunction<Class<?>, Class<?>, T> f = map.get(key);
         if (f == null) {
             throw new RuntimeException("default value key:  " + key + " not set");
