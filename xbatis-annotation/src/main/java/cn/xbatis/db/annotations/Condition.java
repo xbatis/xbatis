@@ -56,6 +56,26 @@ public @interface Condition {
      */
     LikeMode likeMode() default LikeMode.DEFAULT;
 
+    /**
+     * 将日期转成到这天的最后1秒
+     * 只支持 lte 和 between的第2个参数
+     * 支持类型为LocalDate/Date/String/Long/LocalDateTime
+     *
+     * @return
+     */
+    boolean toEndDayTime() default false;
+
+    /**
+     * 支持基本类型的默认值
+     * 支持动态默认值，也可以自定义默认值；
+     * 例如 官方的默认值 "{NOW}" "{TODAY}"
+     * "{NOW}" 支持单个时间
+     * "{TODAY}" 时间范围（数组类型或者集合类型字段）
+     *
+     * @return
+     */
+    String defaultValue() default "";
+
     enum Type {
         IGNORE,
         EQ,
@@ -76,4 +96,6 @@ public @interface Condition {
         LEFT,
         RIGHT
     }
+
+
 }

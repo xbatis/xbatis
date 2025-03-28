@@ -14,6 +14,8 @@
 
 package cn.xbatis.core.db.reflect;
 
+import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.annotations.Condition;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.CmdFactory;
@@ -22,7 +24,11 @@ import db.sql.api.impl.cmd.struct.ConditionChain;
 import lombok.Data;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 
 @Data
 public class ConditionItem {
@@ -37,10 +43,15 @@ public class ConditionItem {
 
     private final LikeMode likeMode;
 
+    private final Condition annotation;
+
+    private final Object defaultValue;
+
     public ConditionItem(Field field, TableFieldInfo tableFieldInfo, Condition annotation) {
         field.setAccessible(true);
         this.field = field;
         this.tableFieldInfo = tableFieldInfo;
+        this.annotation = annotation;
         if (annotation == null) {
             this.type = Condition.Type.EQ;
             this.storey = 1;
@@ -49,6 +60,60 @@ public class ConditionItem {
             this.type = annotation.value();
             this.storey = annotation.storey();
             this.likeMode = LikeMode.valueOf(annotation.likeMode().name());
+        }
+
+        if (annotation != null) {
+            if (annotation.defaultValue().isEmpty()) {
+                this.defaultValue = null;
+            } else if (!annotation.defaultValue().contains("{")) {
+                this.defaultValue = TypeConvertUtil.convert(annotation.defaultValue(), field.getType());
+            } else {
+                this.defaultValue = null;
+            }
+        } else {
+            this.defaultValue = null;
+        }
+    }
+
+    private Date toEndDayTime(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        return calendar.getTime();
+    }
+
+    private Object toEndDayTime(Object param) {
+        if (param == null) {
+            return null;
+        }
+        if (param instanceof LocalDate) {
+            return ((LocalDate) param).atStartOfDay().plusDays(1).minusNanos(1);
+        } else if (param instanceof Date) {
+            return toEndDayTime((Date) param);
+        } else if (param instanceof Long) {
+            return toEndDayTime(new Date((Long) param));
+        }
+        if (param instanceof LocalDateTime) {
+            return ((LocalDateTime) param).toLocalDate().atStartOfDay().plusDays(1).minusNanos(1);
+        } else if (param instanceof String) {
+            String p = (String) param;
+            if (p.length() == 10) {
+                return p + " 23:59:59";
+            }
+        }
+        return param;
+    }
+
+    private Object getDefaultValue(Object target) {
+        if (this.defaultValue != null) {
+            return this.defaultValue;
+        } else if (annotation != null && annotation.defaultValue().contains("{")) {
+            return XbatisConfig.getDefaultValue(target.getClass(), field.getType(), annotation.defaultValue());
+        } else {
+            return null;
         }
     }
 
@@ -59,19 +124,21 @@ public class ConditionItem {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+
+        if (value == null) {
+            value = getDefaultValue(target);
+        } else if (value instanceof String && ((String) value).isEmpty()) {
+            value = getDefaultValue(target);
+        } else if (value instanceof Collection && ((Collection) value).isEmpty()) {
+            value = getDefaultValue(target);
+        } else if (value instanceof Object[] && ((Object[]) value).length < 1) {
+            value = getDefaultValue(target);
+        }
+
         if (value == null) {
             return;
         }
-        if (value instanceof String && ((String) value).isEmpty()) {
-            return;
-        }
-        if (value instanceof Collection && ((Collection) value).isEmpty()) {
-            return;
-        }
 
-        if (value instanceof Object[] && ((Object[]) value).length < 1) {
-            return;
-        }
         CmdFactory cmdFactory = conditionChain.getConditionFactory().getCmdFactory();
         FieldInfo fieldInfo = this.tableFieldInfo.getFieldInfo();
         TableField tableField = cmdFactory.field(fieldInfo.getClazz(), fieldInfo.getField().getName(), this.storey);
@@ -98,7 +165,7 @@ public class ConditionItem {
             }
 
             case LTE: {
-                conditionChain.lte(tableField, value);
+                conditionChain.lte(tableField, annotation != null && annotation.toEndDayTime() ? toEndDayTime(value) : value);
                 break;
             }
 
@@ -129,8 +196,17 @@ public class ConditionItem {
             }
 
             case BETWEEN: {
-                Object[] array = (Object[]) value;
-                conditionChain.between(tableField, array[0], array[1]);
+                Object[] array;
+                if (value instanceof Object[]) {
+                    array = (Object[]) value;
+                } else if (value instanceof Collection) {
+                    Collection list = (Collection) value;
+                    array = list.toArray();
+                } else {
+                    throw new RuntimeException("Not support type : " + value.getClass());
+                }
+
+                conditionChain.between(tableField, array[0], annotation != null && annotation.toEndDayTime() ? toEndDayTime(array[1]) : array[1]);
                 break;
             }
         }

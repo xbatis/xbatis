@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.db.reflect;
 
+import cn.xbatis.core.sql.ObjectConditionLifeCycle;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.db.Logic;
 import cn.xbatis.db.annotations.Condition;
@@ -110,6 +111,11 @@ public class ConditionInfo {
     public void appendCondition(ConditionChain conditionChain, Object target) {
         if (target == null) {
             return;
+        }
+
+        if (target instanceof ObjectConditionLifeCycle) {
+            ObjectConditionLifeCycle objectConditionLifeCycle = (ObjectConditionLifeCycle) target;
+            objectConditionLifeCycle.beforeBuildCondition();
         }
         this.conditionItemGroups.stream().forEach(i -> i.appendCondition(conditionChain, target));
     }

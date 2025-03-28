@@ -14,13 +14,17 @@
 
 package com.xbatis.core.test.REQ;
 
+import cn.xbatis.core.sql.ObjectConditionLifeCycle;
 import cn.xbatis.db.Logic;
 import cn.xbatis.db.annotations.Condition;
 import cn.xbatis.db.annotations.ConditionGroup;
 import cn.xbatis.db.annotations.ConditionTarget;
+import cn.xbatis.db.annotations.Ignore;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
+
+import java.time.LocalDate;
 
 import static cn.xbatis.db.annotations.Condition.Type.*;
 
@@ -29,7 +33,7 @@ import static cn.xbatis.db.annotations.Condition.Type.*;
 @ConditionGroup(value = {QueryREQ.Fields.id, QueryREQ.Fields.id1}, logic = Logic.OR)
 @ConditionGroup(value = {QueryREQ.Fields.id1, QueryREQ.Fields.id2}, logic = Logic.OR)
 @FieldNameConstants
-public class QueryREQ {
+public class QueryREQ implements ObjectConditionLifeCycle {
 
     private Integer id;
 
@@ -56,4 +60,25 @@ public class QueryREQ {
 
     @Condition(property = SysUser.Fields.id, value = GT)
     private Integer id2;
+
+    @Condition(property = SysUser.Fields.create_time, value = BETWEEN, toEndDayTime = true)
+    private LocalDate[] rangeTimes;
+
+    @Condition(property = SysUser.Fields.id, value = EQ)
+    private Integer defaultId;
+
+    @Ignore
+    private String rangeType;
+
+    @Override
+    public void beforeBuildCondition() {
+        System.out.println("在构建条件前执行");
+//        this.rangeType = "TODAY";
+//        if (StringUtils.isNotBlank(rangeType) && this.rangeTimes == null) {
+//            this.rangeTimes = XbatisConfig.getDynamicValue(this.getClass(), LocalDate[].class, this.rangeType);
+//            XbatisConfig.setDynamicValue("{TODAY}",(clazz,type)->{
+//                return LocalDate.now();
+//            });
+//        }
+    }
 }

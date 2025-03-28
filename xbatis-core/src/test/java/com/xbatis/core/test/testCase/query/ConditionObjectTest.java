@@ -22,6 +22,8 @@ import com.xbatis.core.test.testCase.BaseTest;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -158,6 +160,22 @@ public class ConditionObjectTest extends BaseTest {
                     .returnType(Integer.class)
                     .count();
             assertEquals(2, count);
+        }
+    }
+
+
+    @Test
+    public void betweenDays() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            QueryREQ queryReq = new QueryREQ();
+            queryReq.setRangeTimes(new LocalDate[]{LocalDate.now(), LocalDate.now()});
+            Integer id = QueryChain.of(sysUserMapper)
+                    .where(queryReq)
+                    .select(SysUser::getId)
+                    .returnType(Integer.class)
+                    .get();
+            assertEquals(null, id);
         }
     }
 }
