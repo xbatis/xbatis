@@ -19,6 +19,7 @@ import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
+import com.xbatis.core.test.vo.SysUserNormalVo;
 import com.xbatis.core.test.vo.SysUserVo;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -82,6 +83,27 @@ public class QueryAsTest extends BaseTest {
 
             assertEquals(eqSysUser, sysUser);
             assertEquals(eqSysRole, sysRole);
+        }
+    }
+
+    @Test
+    public void normalVoAsTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUserNormalVo sysUser = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId)
+                    .select(SysUser::getUserName)
+                    .eq(SysUser::getId, 2)
+                    .returnType(SysUserNormalVo.class)
+                    .get();
+            System.out.println(sysUser);
+
+            SysUserNormalVo eqSysUser = new SysUserNormalVo();
+            eqSysUser.setId(2);
+            eqSysUser.setName2("test1");
+
+            assertEquals(eqSysUser, sysUser);
+
         }
     }
 
