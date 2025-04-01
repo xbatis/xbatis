@@ -44,10 +44,7 @@ import org.apache.ibatis.type.TypeHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 public class MybatisConfiguration extends Configuration {
@@ -115,6 +112,28 @@ public class MybatisConfiguration extends Configuration {
         }
     }
 
+    private void clearResultMap() {
+        Iterator<Map.Entry<String, ResultMap>> it = resultMaps.entrySet().iterator();
+        String removeIdPrefix1 = "$";
+        String removeIdPrefix2 = BasicMapper.class.getName() + ".$";
+        String removeIdPrefix3 = XbatisConfig.getSingleMapperClass().getName() + ".$";
+        boolean checkPrefix3 = !removeIdPrefix2.equals(removeIdPrefix3);
+        while (it.hasNext()) {
+            Map.Entry<String, ResultMap> entry = it.next();
+            ResultMap resultMap = entry.getValue();
+            if (resultMap.getType() != Object.class && resultMap.getType() != Integer.class && resultMap.getType() != Map.class) {
+                continue;
+            }
+            if (resultMap.getId().startsWith(removeIdPrefix1) || resultMap.getId().startsWith(removeIdPrefix2)) {
+                it.remove();
+                continue;
+            }
+            if (checkPrefix3 && resultMap.getId().startsWith(removeIdPrefix3)) {
+                it.remove();
+            }
+        }
+    }
+
     @Override
     public <T> void addMapper(Class<T> type) {
 
@@ -122,7 +141,7 @@ public class MybatisConfiguration extends Configuration {
             //添加基础 BasicMapper
             if (!this.hasMapper(BasicMapper.class)) {
                 this.addBasicMapper(BasicMapper.class);
-                resultMaps.clear();
+                this.clearResultMap();
                 if (type == BasicMapper.class) {
                     return;
                 }
@@ -131,6 +150,7 @@ public class MybatisConfiguration extends Configuration {
 
         if (BasicMapper.class.isAssignableFrom(type) && type != BasicMapper.class) {
             this.addBasicMapper(type);
+            this.clearResultMap();
             return;
         } else if (MybatisMapper.class.isAssignableFrom(type)) {
             List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);

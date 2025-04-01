@@ -19,6 +19,7 @@ import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.util.WhereUtil;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.mapper.SysRoleMapper;
+import com.xbatis.core.test.vo.XmlNestedResultMap;
 import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -252,6 +253,15 @@ public class XmlPagingTestCase extends BaseTest {
                 return sqlSession.selectOne(statement);
             });
             assertEquals(2, count);
+        }
+    }
+
+    @Test
+    public void testXmlNestedResultMap() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            List<XmlNestedResultMap> list = sysRoleMapper.selectXmlNestedResultMap();
+            System.out.println(list);
         }
     }
 }

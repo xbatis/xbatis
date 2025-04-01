@@ -20,6 +20,7 @@ import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.db.annotations.Paging;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.vo.JsonTypeTestVo;
+import com.xbatis.core.test.vo.XmlNestedResultMap;
 import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -57,4 +58,6 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
     List<SysRole> selectQueryCustomSql2(@Param("query") Query<?> query, int xx);
 
     List<SysRole> selectQueryCustomSql3(Query<?> query);
+
+    List<XmlNestedResultMap> selectXmlNestedResultMap();
 }

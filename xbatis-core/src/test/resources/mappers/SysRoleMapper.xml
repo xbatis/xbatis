@@ -94,4 +94,15 @@
     <select id="selectQueryCustomSql3">
         select * from ( ${queryScript} ) t
     </select>
+
+    <resultMap id="xmlNestedResultMap" type="com.xbatis.core.test.vo.XmlNestedResultMap" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="sysRoleList" ofType="com.xbatis.core.test.DO.SysRole" >
+            <id column="r_id" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectXmlNestedResultMap" resultMap="xmlNestedResultMap">
+        select t.id  ,t.password  ,t2.id r_id from t_sys_user t left join sys_role t2 on t.role_id=t2.id where t.id=1
+    </select>
 </mapper>
