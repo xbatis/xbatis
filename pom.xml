@@ -93,7 +93,7 @@
         <spring-boot.version>2.7.18</spring-boot.version>
 
         <!-- lombok version -->
-        <lombok.version>1.18.36</lombok.version>
+        <lombok.version>1.18.38</lombok.version>
 
         <!-- 连接池 -->
         <p6spy.version>3.9.1</p6spy.version>
