@@ -90,6 +90,32 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
         return XbatisConfig.getSQLListeners();
     }
 
+    /**
+     * 给表设置别名
+     *
+     * @param entity 实体
+     * @param as     别名
+     * @param <T>    实体类类型
+     * @return 自己
+     */
+    public <T> Q tableAs(Class<T> entity, String as) {
+        return tableAs(entity, 1, as);
+    }
+
+    /**
+     * 给表设置别名
+     *
+     * @param entity 实体
+     * @param storey 层级
+     * @param as     别名
+     * @param <T>    实体类类型
+     * @return 自己
+     */
+    public <T> Q tableAs(Class<T> entity, int storey, String as) {
+        conditionFactory.getCmdFactory().table(entity, storey).as(as);
+        return (Q) this;
+    }
+
     /**************以下为去除警告************/
     @Override
     @SafeVarargs
