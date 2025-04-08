@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.sql.executor;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.util.SelectClassUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
@@ -87,7 +87,7 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
 
     @Override
     public List<SQLListener> getSQLListeners() {
-        return XbatisConfig.getSQLListeners();
+        return XbatisGlobalConfig.getSQLListeners();
     }
 
     /**

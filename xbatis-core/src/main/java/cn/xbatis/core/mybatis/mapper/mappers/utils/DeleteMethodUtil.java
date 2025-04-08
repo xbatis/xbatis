@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper.mappers.utils;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
@@ -103,7 +103,7 @@ public final class DeleteMethodUtil {
      */
     public static int truncate(BasicMapper basicMapper, TableInfo tableInfo) {
         MpTable mpTable = new MpTable(tableInfo);
-        XbatisConfig.getSQLListeners().stream().filter(Objects::nonNull).forEach(listener -> {
+        XbatisGlobalConfig.getSQLListeners().stream().filter(Objects::nonNull).forEach(listener -> {
             listener.onTruncate(mpTable);
         });
         return basicMapper.dbAdapt(selectorCall -> selectorCall.when(DbType.DB2, (dbType) -> {

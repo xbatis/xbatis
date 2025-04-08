@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.sql.executor;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.TableSplitUtil;
@@ -56,7 +56,7 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
 
     @Override
     public List<SQLListener> getSQLListeners() {
-        return XbatisConfig.getSQLListeners();
+        return XbatisGlobalConfig.getSQLListeners();
     }
 
     @Override

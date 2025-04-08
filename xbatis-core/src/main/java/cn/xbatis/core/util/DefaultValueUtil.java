@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.util;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.ModelFieldInfo;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.db.Model;
@@ -65,14 +65,14 @@ public class DefaultValueUtil {
         if (StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
             return null;
         }
-        return XbatisConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().defaultValue());
+        return XbatisGlobalConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().defaultValue());
     }
 
     private static Object getUpdateDefaultValue(TableFieldInfo tableFieldInfo, Class<?> defaultValueType) {
         if (StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
             return null;
         }
-        return XbatisConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
+        return XbatisGlobalConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
     }
 
 }

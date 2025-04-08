@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.sql.executor;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.executor.statement.Fetchable;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
@@ -177,7 +177,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
 
     @Override
     public List<SQLListener> getSQLListeners() {
-        return XbatisConfig.getSQLListeners();
+        return XbatisGlobalConfig.getSQLListeners();
     }
 
     /**************以下为去除警告************/

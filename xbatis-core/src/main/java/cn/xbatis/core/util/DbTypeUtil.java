@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.util;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.Configuration;
 
@@ -29,8 +29,8 @@ public final class DbTypeUtil {
         try {
             return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
         } catch (DbTypeParseException e) {
-            if (XbatisConfig.getDefaultDbType() != null) {
-                return XbatisConfig.getDefaultDbType();
+            if (XbatisGlobalConfig.getDefaultDbType() != null) {
+                return XbatisGlobalConfig.getDefaultDbType();
             }
             throw e;
         }

@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.logicDelete;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
@@ -71,7 +71,7 @@ public final class LogicDeleteUtil {
      * @return 是否需要逻辑删除
      */
     public static boolean isNeedLogicDelete(TableInfo tableInfo) {
-        return XbatisConfig.isLogicDeleteSwitchOpen() && Objects.nonNull(tableInfo.getLogicDeleteFieldInfo());
+        return XbatisGlobalConfig.isLogicDeleteSwitchOpen() && Objects.nonNull(tableInfo.getLogicDeleteFieldInfo());
     }
 
 
@@ -85,7 +85,7 @@ public final class LogicDeleteUtil {
         Object value;
         LogicDelete logicDelete = logicDeleteFieldInfo.getLogicDeleteAnnotation();
         Class type = logicDeleteFieldInfo.getFieldInfo().getTypeClass();
-        value = XbatisConfig.getDefaultValue(logicDeleteFieldInfo.getFieldInfo().getClazz(), type, logicDelete.afterValue());
+        value = XbatisGlobalConfig.getDefaultValue(logicDeleteFieldInfo.getFieldInfo().getClazz(), type, logicDelete.afterValue());
         if (value == null) {
             throw new RuntimeException("Unable to obtain deleted value，please use XbatisConfig.setDefaultValue(\"" + logicDelete.afterValue() + "\") to resolve it");
         }
@@ -163,7 +163,7 @@ public final class LogicDeleteUtil {
      * @param conditionChain ConditionChain
      */
     public static void addLogicDeleteCondition(MpTable table, ConditionChain conditionChain) {
-        if (!XbatisConfig.isLogicDeleteSwitchOpen()) {
+        if (!XbatisGlobalConfig.isLogicDeleteSwitchOpen()) {
             return;
         }
 

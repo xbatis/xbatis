@@ -14,7 +14,7 @@
 
 package com.xbatis.core.test.testCase.delete;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class LogicDeleteTestCase extends BaseTest {
 
     public LogicDeleteTestCase() {
-        XbatisConfig.setLogicDeleteSwitch(true);
+        XbatisGlobalConfig.setLogicDeleteSwitch(true);
     }
 
     @Test

@@ -14,12 +14,13 @@
 
 package cn.xbatis.core.mybatis.configuration;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.function.ThreeFunction;
 import cn.xbatis.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
+import cn.xbatis.core.mybatis.mapper.intercept.MapperMethodInterceptor;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.Where;
 import cn.xbatis.core.util.DbTypeUtil;
@@ -116,6 +117,31 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        List<MapperMethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
+
+        Object result = null;
+        Throwable ex = null;
+        try {
+            interceptors.stream().forEach(i -> {
+                i.before(proxy, method, args);
+            });
+            result = this.doInvoke(proxy, method, args);
+            for (MapperMethodInterceptor i : interceptors) {
+                result = i.after(proxy, method, args, result);
+            }
+        } catch (Throwable e) {
+            ex = e;
+            throw e;
+        } finally {
+            for (MapperMethodInterceptor i : interceptors) {
+                result = i.complete(proxy, method, args, result, ex);
+            }
+        }
+        return result;
+    }
+
+
+    public Object doInvoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.isDefault()) {
             return super.invoke(proxy, method, args);
         }
@@ -145,15 +171,15 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
                 String statement;
                 if (args.length == 4) {
-                    statement = XbatisConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
+                    statement = XbatisGlobalConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
                 } else {
                     if (args[0] instanceof String) {
                         statement = (String) args[0];
                         if (statement.startsWith(".")) {
-                            statement = XbatisConfig.getSingleMapperClass().getName() + statement;
+                            statement = XbatisGlobalConfig.getSingleMapperClass().getName() + statement;
                         }
                     } else {
-                        statement = XbatisConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
+                        statement = XbatisGlobalConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
                     }
                 }
 

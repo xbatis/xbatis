@@ -17,6 +17,7 @@ package com.xbatis.core.test.mapper;
 
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.testCase.mapperMethodInterceptor.MapperLimit;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.cursor.Cursor;
@@ -25,6 +26,7 @@ import org.apache.ibatis.mapping.ResultSetType;
 import java.util.List;
 import java.util.Map;
 
+@MapperLimit
 public interface SysUserMapper extends MybatisMapper<SysUser> {
 
     @Select("select * from big_data limit 1000000")
@@ -37,4 +39,18 @@ public interface SysUserMapper extends MybatisMapper<SysUser> {
     @Options(resultSetType = ResultSetType.FORWARD_ONLY, fetchSize = 1000)
     @Select("select * from big_data limit 1000000")
     Cursor<Map> selectAll3();
+
+
+    @Select("select count(1) from t_sys_user")
+    Integer nativeCount();
+
+
+    default Integer javaCount() {
+        return this.countAll();
+    }
+
+    @MapperLimit
+    default Integer javaLimitAnnotationCount() {
+        return this.countAll();
+    }
 }

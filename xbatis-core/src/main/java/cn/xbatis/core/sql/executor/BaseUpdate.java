@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.sql.executor;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import db.sql.api.Cmd;
@@ -61,7 +61,7 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
 
     @Override
     public List<SQLListener> getSQLListeners() {
-        return XbatisConfig.getSQLListeners();
+        return XbatisGlobalConfig.getSQLListeners();
     }
 
     /**************以下为去除警告************/

@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.mybatis.configuration;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import org.apache.ibatis.session.SqlSession;
@@ -44,15 +44,14 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
 
     private BasicMapper getBasicMapper() {
         if (Objects.isNull(basicMapper)) {
-            basicMapper = sqlSession.getMapper(XbatisConfig.getSingleMapperClass());
+            basicMapper = sqlSession.getMapper(XbatisGlobalConfig.getSingleMapperClass());
         }
         return basicMapper;
     }
 
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object doInvoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.isDefault()) {
-            return super.invoke(proxy, method, args);
+            return super.doInvoke(proxy, method, args);
         }
         switch (method.getName()) {
             case ENTITY_TYPE_METHOD_NAME:
@@ -65,6 +64,6 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
                 return getBasicMapper();
         }
 
-        return super.invoke(proxy, method, args);
+        return super.doInvoke(proxy, method, args);
     }
 }

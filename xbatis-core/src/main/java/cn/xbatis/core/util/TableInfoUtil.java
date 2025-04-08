@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.util;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.Default;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
@@ -110,7 +110,7 @@ public final class TableInfoUtil {
         if (StringPool.EMPTY.equals(tableName)) {
             //未设置表
             tableName = entity.getSimpleName();
-            if (XbatisConfig.isTableUnderline()) {
+            if (XbatisGlobalConfig.isTableUnderline()) {
                 tableName = NamingUtil.camelToUnderline(tableName);
             }
         }
@@ -170,7 +170,7 @@ public final class TableInfoUtil {
             columnName = field.getName();
             switch (table.columnNameRule()) {
                 case IGNORE: {
-                    if (XbatisConfig.isColumnUnderline()) {
+                    if (XbatisGlobalConfig.isColumnUnderline()) {
                         columnName = NamingUtil.camelToUnderline(columnName);
                     }
                     break;

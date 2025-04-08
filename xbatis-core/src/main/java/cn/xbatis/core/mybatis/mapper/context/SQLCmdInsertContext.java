@@ -15,7 +15,7 @@
 package cn.xbatis.core.mybatis.mapper.context;
 
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.provider.MybatisSqlBuilderContext;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import db.sql.api.DbType;
@@ -57,7 +57,7 @@ public class SQLCmdInsertContext<T extends BaseInsert, DATA> extends BaseSQLCmdC
             return sql;
         }
         sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
-        sql = XbatisConfig.getSQLBuilder().buildInsertSQL(getExecution(), sqlBuilderContext).toString();
+        sql = XbatisGlobalConfig.getSQLBuilder().buildInsertSQL(getExecution(), sqlBuilderContext).toString();
         return sql;
     }
 
