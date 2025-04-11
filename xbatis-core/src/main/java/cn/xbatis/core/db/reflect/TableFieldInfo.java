@@ -14,7 +14,6 @@
 
 package cn.xbatis.core.db.reflect;
 
-import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.core.util.TypeConvertUtil;
@@ -86,9 +85,6 @@ public class TableFieldInfo {
         this.logicDelete = field.isAnnotationPresent(LogicDelete.class);
         this.logicDeleteAnnotation = this.logicDelete ? field.getAnnotation(LogicDelete.class) : null;
         this.logicDeleteInitValue = this.logicDelete ? TypeConvertUtil.convert(this.logicDeleteAnnotation.beforeValue(), fieldInfo.getTypeClass()) : null;
-        if (this.logicDelete) {
-            LogicDeleteUtil.getLogicAfterValue(this);
-        }
         this.writeFieldInvoker = new SetFieldInvoker(field);
         typeHandler = MybatisTypeHandlerUtil.createTypeHandler(this.fieldInfo, this.tableFieldAnnotation.typeHandler());
         this.isTableSplitKey = field.isAnnotationPresent(SplitTableKey.class);

@@ -30,6 +30,7 @@ import db.sql.api.impl.cmd.struct.Where;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 /**
@@ -152,6 +153,10 @@ public final class LogicDeleteUtil {
                 .connect(self -> {
                     LogicDeleteUtil.addLogicDeleteUpdateSets(self, tableInfo);
                 });
+        BiConsumer<Class<?>, BaseUpdate<?>> logicDeleteInterceptor = XbatisGlobalConfig.getLogicDeleteInterceptor();
+        if (logicDeleteInterceptor != null) {
+            logicDeleteInterceptor.accept(tableInfo.getType(), update);
+        }
         return mapper.update(update);
     }
 

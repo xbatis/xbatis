@@ -20,6 +20,7 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.intercept.MapperMethodInterceptor;
 import cn.xbatis.core.sql.SQLBuilder;
 import cn.xbatis.core.sql.XbatisSQLBuilder;
+import cn.xbatis.core.sql.executor.BaseUpdate;
 import cn.xbatis.core.sql.listener.ForeignKeySQLListener;
 import cn.xbatis.core.sql.listener.LogicDeleteSQLListener;
 import cn.xbatis.core.sql.listener.TenantSQLListener;
@@ -37,6 +38,7 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 /**
@@ -50,10 +52,12 @@ public final class XbatisGlobalConfig {
     private static final String DEFAULT_BATCH_SIZE = "defaultBatchSize";
     private static final String SQL_BUILDER = "SQLBuilder";
     private static final String LOGIC_DELETE_SWITCH = "logicDeleteSwitch";
+    private static final String LOGIC_DELETE_INTERCEPTOR = "logicDeleteInterceptor";
     private static final String DYNAMIC_VALUE_MANAGER = "dynamicValueManager";
     private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
     private static final List<SQLListener> SQL_LISTENERS = new ArrayList<>();
     private static final List<MapperMethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
+
     private static volatile DbType DEFAULT_DB_TYPE;
 
     static {
@@ -224,7 +228,25 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 设置逻辑删除开关状态（必须在项目启动时设置，否则可能永远false）
+     * 获取逻辑删除 update 拦截器
+     *
+     * @return
+     */
+    public static BiConsumer<Class<?>, BaseUpdate<?>> getLogicDeleteInterceptor() {
+        return (BiConsumer<Class<?>, BaseUpdate<?>>) CACHE.get(LOGIC_DELETE_INTERCEPTOR);
+    }
+
+    /**
+     * 设置逻辑删除 update 拦截器
+     *
+     * @param interceptor
+     */
+    public static void setLogicDeleteInterceptor(BiConsumer<Class<?>, BaseUpdate<?>> interceptor) {
+        CACHE.putIfAbsent(LOGIC_DELETE_INTERCEPTOR, interceptor);
+    }
+
+    /**
+     * 设置逻辑删除开关状态（必须在项目启动时设置，否则可能永远true）
      *
      * @param bool 开关状态
      */
@@ -249,7 +271,9 @@ public final class XbatisGlobalConfig {
      * @param f   返回该key的动态值的函数
      */
     public static void setDynamicValue(String key, BiFunction<Class<?>, Class<?>, Object> f) {
-        checkDynamicValueKey(key);
+        if (!isDynamicValueKeyFormat(key)) {
+            key = "{" + key + "}";
+        }
         ((Map<String, BiFunction<Class<?>, Class<?>, Object>>) CACHE.get(DYNAMIC_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
     }
 
@@ -409,4 +433,6 @@ public final class XbatisGlobalConfig {
     public static List<MapperMethodInterceptor> getMapperMethodInterceptors() {
         return Collections.unmodifiableList(MAPPER_METHOD_INTERCEPTORS);
     }
+
+
 }
