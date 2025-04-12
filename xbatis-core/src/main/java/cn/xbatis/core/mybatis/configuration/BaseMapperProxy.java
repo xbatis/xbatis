@@ -20,7 +20,8 @@ import cn.xbatis.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
-import cn.xbatis.core.mybatis.mapper.intercept.MapperMethodInterceptor;
+import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
+import cn.xbatis.core.mybatis.mapper.intercept.MethodInvocation;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.Where;
 import cn.xbatis.core.util.DbTypeUtil;
@@ -60,6 +61,15 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     protected final Class<T> mapperInterface;
 
     private volatile DbType dbType;
+
+    private static final List<String> IGNORE_INTERCEPT_METHOD_NAMES = new ArrayList<String>() {{
+        add("getTableInfo");
+        add("getBasicMapper");
+        add("getEntityType");
+        add("dbAdapt");
+        add("getCurrentDbType");
+    }};
+    private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
@@ -117,27 +127,13 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        List<MapperMethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
-
-        Object result = null;
-        Throwable ex = null;
-        try {
-            interceptors.stream().forEach(i -> {
-                i.before(proxy, method, args);
+        if (interceptors != null && !interceptors.isEmpty() && !IGNORE_INTERCEPT_METHOD_NAMES.contains(method.getName())) {
+            MethodInvocation methodInvocation = new MethodInvocation(interceptors, proxy, method, args, () -> {
+                return doInvoke(proxy, method, args);
             });
-            result = this.doInvoke(proxy, method, args);
-            for (MapperMethodInterceptor i : interceptors) {
-                result = i.after(proxy, method, args, result);
-            }
-        } catch (Throwable e) {
-            ex = e;
-            throw e;
-        } finally {
-            for (MapperMethodInterceptor i : interceptors) {
-                result = i.complete(proxy, method, args, result, ex);
-            }
+            return interceptors.get(0).around(methodInvocation);
         }
-        return result;
+        return this.doInvoke(proxy, method, args);
     }
 
 

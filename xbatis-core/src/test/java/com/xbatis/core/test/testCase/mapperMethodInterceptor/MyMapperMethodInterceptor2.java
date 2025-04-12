@@ -3,19 +3,19 @@ package com.xbatis.core.test.testCase.mapperMethodInterceptor;
 import cn.xbatis.core.mybatis.mapper.intercept.Invocation;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
 
-public class MyMapperMethodInterceptor implements MethodInterceptor {
+public class MyMapperMethodInterceptor2 implements MethodInterceptor {
 
 
     @Override
-    public Object around(Invocation invocation) throws Throwable {
-        try {
-            System.out.println(invocation.getMethod());
+    public Object around(Invocation invocation) throws Throwable{
+        try{
             if (invocation.getMethod().isAnnotationPresent(MapperLimit.class)) {
-                System.out.println(">>1111>>>>>>>start");
+                System.out.println(">>2222>>>>>>>start");
+                return 123;
             }
             return invocation.proceed();
-        } finally {
-            System.out.println(">>1111>>>>>>>end");
+        }finally {
+            System.out.println(">>2222>>>>>>>end");
         }
     }
 }

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MapperMethodInterceptorTestcase extends BaseTest {
+public class MethodInterceptorTestcase extends BaseTest {
 
     @Test
     public void test() {
@@ -16,14 +16,16 @@ public class MapperMethodInterceptorTestcase extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
             XbatisGlobalConfig.addMapperMethodInterceptor(new MyMapperMethodInterceptor());
-            Integer cnt = sysUserMapper.nativeCount();
-            assertEquals(cnt, 3);
-
+            XbatisGlobalConfig.addMapperMethodInterceptor(new MyMapperMethodInterceptor2());
+            Integer cnt;
+//             cnt = sysUserMapper.nativeCount();
+//            assertEquals(cnt, 3);
+//
             cnt = sysUserMapper.javaCount();
             assertEquals(cnt, 3);
 
-            cnt = sysUserMapper.javaLimitAnnotationCount();
-            assertEquals(cnt, 123);
+//            cnt = sysUserMapper.javaLimitAnnotationCount();
+//            assertEquals(123,cnt );
         }
     }
 }

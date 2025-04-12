@@ -17,7 +17,7 @@ package cn.xbatis.core;
 
 import cn.xbatis.core.logicDelete.LogicDeleteSwitch;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
-import cn.xbatis.core.mybatis.mapper.intercept.MapperMethodInterceptor;
+import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
 import cn.xbatis.core.sql.SQLBuilder;
 import cn.xbatis.core.sql.XbatisSQLBuilder;
 import cn.xbatis.core.sql.executor.BaseUpdate;
@@ -56,7 +56,7 @@ public final class XbatisGlobalConfig {
     private static final String DYNAMIC_VALUE_MANAGER = "dynamicValueManager";
     private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
     private static final List<SQLListener> SQL_LISTENERS = new ArrayList<>();
-    private static final List<MapperMethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
+    private static final List<MethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
 
     private static volatile DbType DEFAULT_DB_TYPE;
 
@@ -405,10 +405,10 @@ public final class XbatisGlobalConfig {
     /**
      * 添加MapperMethodInterceptor
      *
-     * @param mapperMethodInterceptor
+     * @param methodInterceptor
      */
-    public static void addMapperMethodInterceptor(MapperMethodInterceptor mapperMethodInterceptor) {
-        MAPPER_METHOD_INTERCEPTORS.add(mapperMethodInterceptor);
+    public static void addMapperMethodInterceptor(MethodInterceptor methodInterceptor) {
+        MAPPER_METHOD_INTERCEPTORS.add(methodInterceptor);
     }
 
     /**
@@ -416,8 +416,8 @@ public final class XbatisGlobalConfig {
      *
      * @param type
      */
-    public static <T extends MapperMethodInterceptor> void removeMapperMethodInterceptor(Class<T> type) {
-        Iterator<MapperMethodInterceptor> iterator = MAPPER_METHOD_INTERCEPTORS.iterator();
+    public static <T extends MethodInterceptor> void removeMapperMethodInterceptor(Class<T> type) {
+        Iterator<MethodInterceptor> iterator = MAPPER_METHOD_INTERCEPTORS.iterator();
         while (iterator.hasNext()) {
             if (type.isAssignableFrom(iterator.next().getClass())) {
                 iterator.remove();
@@ -430,7 +430,7 @@ public final class XbatisGlobalConfig {
      *
      * @return
      */
-    public static List<MapperMethodInterceptor> getMapperMethodInterceptors() {
+    public static List<MethodInterceptor> getMapperMethodInterceptors() {
         return Collections.unmodifiableList(MAPPER_METHOD_INTERCEPTORS);
     }
 
