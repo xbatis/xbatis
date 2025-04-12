@@ -7,9 +7,10 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 public @interface ConditionGroups {
 
-     /**
-      * 多个分组
-      * @return
-      */
-     ConditionGroup[] value();
+    /**
+     * 多个分组
+     *
+     * @return
+     */
+    ConditionGroup[] value();
 }

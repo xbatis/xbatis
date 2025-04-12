@@ -55,13 +55,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     public final static String CURRENT_DB_TYPE_METHOD_NAME = "getCurrentDbType";
 
     public final static String WITH_SQL_SESSION_METHOD_NAME = "withSqlSession";
-
-    protected final SqlSession sqlSession;
-
-    protected final Class<T> mapperInterface;
-
-    private volatile DbType dbType;
-
     private static final List<String> IGNORE_INTERCEPT_METHOD_NAMES = new ArrayList<String>() {{
         add("getTableInfo");
         add("getBasicMapper");
@@ -69,7 +62,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         add("dbAdapt");
         add("getCurrentDbType");
     }};
+    protected final SqlSession sqlSession;
+    protected final Class<T> mapperInterface;
     private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
+    private volatile DbType dbType;
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);

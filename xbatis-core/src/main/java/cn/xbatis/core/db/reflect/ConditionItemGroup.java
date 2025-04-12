@@ -15,15 +15,9 @@
 package cn.xbatis.core.db.reflect;
 
 import cn.xbatis.db.Logic;
-import cn.xbatis.db.annotations.Condition;
-import db.sql.api.cmd.LikeMode;
-import db.sql.api.impl.cmd.CmdFactory;
-import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 import lombok.Data;
 
-import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,44 +32,44 @@ public class ConditionItemGroup {
 
     private List<ConditionItem> conditionItems;
 
-    public ConditionItemGroup(boolean root,Logic rootLogic, Logic subLogic, ConditionItem conditionItem) {
-         this(root,rootLogic,subLogic,Collections.singletonList(conditionItem));
+    public ConditionItemGroup(boolean root, Logic rootLogic, Logic subLogic, ConditionItem conditionItem) {
+        this(root, rootLogic, subLogic, Collections.singletonList(conditionItem));
     }
 
-    public ConditionItemGroup(boolean root,Logic rootLogic, Logic subLogic,List<ConditionItem> conditionItems) {
+    public ConditionItemGroup(boolean root, Logic rootLogic, Logic subLogic, List<ConditionItem> conditionItems) {
         this.root = root;
         this.rootLogic = rootLogic;
-        this.subLogic=subLogic;
-        this.conditionItems =conditionItems;
+        this.subLogic = subLogic;
+        this.conditionItems = conditionItems;
     }
 
-    private static void appendCondition(ConditionChain conditionChain, Object target,Logic logic,List<ConditionItem> conditionItems) {
-        conditionItems.stream().forEach(i->{
-            if (logic == Logic.AND){
+    private static void appendCondition(ConditionChain conditionChain, Object target, Logic logic, List<ConditionItem> conditionItems) {
+        conditionItems.stream().forEach(i -> {
+            if (logic == Logic.AND) {
                 conditionChain.and();
-            } else{
+            } else {
                 conditionChain.or();
             }
-            i.appendCondition(conditionChain,target);
+            i.appendCondition(conditionChain, target);
         });
     }
 
     public void appendCondition(ConditionChain conditionChain, Object target) {
-        if(root){
-            if (rootLogic == Logic.AND){
+        if (root) {
+            if (rootLogic == Logic.AND) {
                 conditionChain.and();
-            } else{
+            } else {
                 conditionChain.or();
             }
-            appendCondition(conditionChain,target,rootLogic,this.conditionItems);
-        }else {
-            if (rootLogic == Logic.AND){
-                conditionChain.andNested(c->{
-                    appendCondition(c,target,subLogic,this.conditionItems);
+            appendCondition(conditionChain, target, rootLogic, this.conditionItems);
+        } else {
+            if (rootLogic == Logic.AND) {
+                conditionChain.andNested(c -> {
+                    appendCondition(c, target, subLogic, this.conditionItems);
                 });
-            }else{
-                conditionChain.orNested(c->{
-                    appendCondition(c,target,subLogic,this.conditionItems);
+            } else {
+                conditionChain.orNested(c -> {
+                    appendCondition(c, target, subLogic, this.conditionItems);
                 });
             }
         }

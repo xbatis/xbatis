@@ -19,17 +19,17 @@ public class MethodInvocation implements Invocation {
     //已经执行Count
     private int proceedCount;
 
-    public MethodInvocation(List<MethodInterceptor> list, Object target, Method method, Object[] arguments, InvocationCall<Object> callable){
+    public MethodInvocation(List<MethodInterceptor> list, Object target, Method method, Object[] arguments, InvocationCall<Object> callable) {
         this.list = list;
         this.target = target;
-        this.method= method;
+        this.method = method;
         this.arguments = arguments;
         this.callable = callable;
     }
 
     @Override
     public Object proceed() throws Throwable {
-        if(this.proceedCount == list.size() -1){
+        if (this.proceedCount == list.size() - 1) {
             return callable.call();
         }
         return list.get(++this.proceedCount).around(this);
