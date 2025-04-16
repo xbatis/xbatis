@@ -22,6 +22,7 @@ import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInvocation;
+import cn.xbatis.core.mybatis.mapper.mappers.BaseMapper;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.Where;
 import cn.xbatis.core.util.DbTypeUtil;
@@ -55,17 +56,12 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     public final static String CURRENT_DB_TYPE_METHOD_NAME = "getCurrentDbType";
 
     public final static String WITH_SQL_SESSION_METHOD_NAME = "withSqlSession";
-    private static final List<String> IGNORE_INTERCEPT_METHOD_NAMES = new ArrayList<String>() {{
-        add("getTableInfo");
-        add("getBasicMapper");
-        add("getEntityType");
-        add("dbAdapt");
-        add("getCurrentDbType");
-    }};
+
     protected final SqlSession sqlSession;
     protected final Class<T> mapperInterface;
     private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
     private volatile DbType dbType;
+    private boolean methodIntercepting = false;
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
@@ -123,11 +119,21 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (interceptors != null && !interceptors.isEmpty() && !IGNORE_INTERCEPT_METHOD_NAMES.contains(method.getName())) {
-            MethodInvocation methodInvocation = new MethodInvocation(interceptors, proxy, method, args, () -> {
-                return doInvoke(proxy, method, args);
-            });
-            return interceptors.get(0).around(methodInvocation);
+        if (!methodIntercepting) {
+            //只拦截开头的方法
+            methodIntercepting = true;
+            try {
+                //不拦截xbatis自带的方法
+                if (interceptors != null && !interceptors.isEmpty() && !method.getDeclaringClass().getPackage().getName().startsWith(BaseMapper.class.getPackage().getName())) {
+                    MethodInvocation methodInvocation = new MethodInvocation(interceptors, proxy, method, args, () -> {
+                        return doInvoke(proxy, method, args);
+                    });
+                    return interceptors.get(0).around(methodInvocation);
+                }
+                return this.doInvoke(proxy, method, args);
+            } finally {
+                methodIntercepting = false;
+            }
         }
         return this.doInvoke(proxy, method, args);
     }
