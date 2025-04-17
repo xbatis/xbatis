@@ -126,6 +126,7 @@ drop table if exists composite_test;
 CREATE TABLE composite_test
 (
     id BIGINT PRIMARY KEY IDENTITY(1,1),
+    name varchar(100) ,
     version int not null,
     tenant_id int not null,
     deleted TINYINT not NULL default 0,

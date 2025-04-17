@@ -18,16 +18,14 @@ import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
-import db.sql.api.cmd.executor.method.IDeleteMethod;
-import db.sql.api.cmd.executor.method.IFromMethod;
-import db.sql.api.cmd.executor.method.IJoinMethod;
-import db.sql.api.cmd.executor.method.IWhereMethod;
+import db.sql.api.cmd.executor.method.*;
 import db.sql.api.cmd.struct.IFrom;
 import db.sql.api.cmd.struct.IJoin;
 import db.sql.api.cmd.struct.IOn;
 import db.sql.api.cmd.struct.IWhere;
 import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 import db.sql.api.cmd.struct.delete.IDeleteTable;
+import db.sql.api.cmd.struct.query.IReturning;
 
 public interface IDelete<SELF extends IDelete,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
@@ -39,12 +37,15 @@ public interface IDelete<SELF extends IDelete,
         FROM extends IFrom,
         JOIN extends IJoin<JOIN, ON, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         ON extends IOn<ON, JOIN, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
-        WHERE extends IWhere<WHERE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>>
+        WHERE extends IWhere<WHERE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
+        RETURNING extends IReturning<RETURNING>
+        >
 
         extends IDeleteMethod<SELF>,
         IFromMethod<SELF, TABLE, TABLE_FIELD>,
         IJoinMethod<SELF, JOIN, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
+        IReturningMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         IExecutor<SELF, TABLE, TABLE_FIELD> {
 
     DELETE_TABLE $delete(IDataset... tables);
@@ -52,6 +53,8 @@ public interface IDelete<SELF extends IDelete,
     FROM $from(IDataset table);
 
     WHERE $where();
+
+    RETURNING $returning();
 
     @Override
     default SELF delete(IDataset<?, ?>... tables) {

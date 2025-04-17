@@ -70,6 +70,8 @@ public final class SqlConst {
     public static final char[] RIGHT_JOIN = " RIGHT JOIN ".toCharArray();
     public static final char[] ON = " ON ".toCharArray();
     public static final char[] WHERE = " WHERE ".toCharArray();
+
+    public static final char[] RETURNING = " RETURNING ".toCharArray();
     public static final char[] EXISTS = " EXISTS ".toCharArray();
     public static final char[] NOT_EXISTS = " NOT EXISTS ".toCharArray();
     public static final char[] AND = " AND ".toCharArray();

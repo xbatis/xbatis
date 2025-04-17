@@ -25,7 +25,6 @@ import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
 import db.sql.api.cmd.JoinMode;
-import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -59,7 +58,9 @@ public class LogicDeleteTestCase extends BaseTest {
             TL.set(1);
 
             XbatisGlobalConfig.setLogicDeleteInterceptor((entity, update) -> {
-                update.eq(Methods.column("deleted"), 0);
+                //设置操作人
+                update.set(update.$(entity, "name"), "已删除");
+
                 System.out.println(entity);
                 System.out.println(SQLPrinter.sql(update));
             });

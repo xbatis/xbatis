@@ -54,8 +54,21 @@ public class DbRunnerTest extends BaseTest {
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             DbRunner dbRunner = session.getMapper(DbRunner.class);
-            String user_name = dbRunner.execute(String.class, "update t_sys_user set user_name=? where id=1 RETURNING user_name", "xxx");
+            String user_name = dbRunner.executeAndReturning(String.class, "update t_sys_user set user_name=? where id=1 RETURNING user_name", "xxx");
             assertEquals("xxx", user_name);
+        }
+    }
+
+    @Test
+    public void multiParamUpdateAndSelectTest() {
+        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            DbRunner dbRunner = session.getMapper(DbRunner.class);
+            List<String> user_names = dbRunner.executeAndReturningList(String.class, "update t_sys_user set user_name=? where id in (1,2) RETURNING user_name", "xxx");
+            assertEquals("xxx", user_names.get(0));
+            assertEquals("xxx", user_names.get(1));
         }
     }
 

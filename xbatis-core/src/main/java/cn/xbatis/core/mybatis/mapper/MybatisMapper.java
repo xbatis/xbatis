@@ -19,6 +19,8 @@ import cn.xbatis.core.sql.executor.BaseDelete;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.BaseUpdate;
+import cn.xbatis.core.sql.executor.chain.DeleteChain;
+import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.page.IPager;
 import db.sql.api.impl.cmd.executor.SelectorCall;
 import org.apache.ibatis.cursor.Cursor;
@@ -63,8 +65,20 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
      * @param params     例如 abc ,1
      * @return 影响的数量
      */
-    default <T> T execute(Class<T> returnType, String sql, Object... params) {
-        return getBasicMapper().execute(returnType, sql, params);
+    default <T> T executeAndReturning(Class<T> returnType, String sql, Object... params) {
+        return getBasicMapper().executeAndReturning(returnType, sql, params);
+    }
+
+    /**
+     * 执行原生非查询类sql
+     *
+     * @param returnType 返回的类型
+     * @param sql        例如 update xx set name=? where id=? RETURNING name
+     * @param params     例如 abc ,1
+     * @return 影响的数量
+     */
+    default <T> List<T> executeAndReturningList(Class<T> returnType, String sql, Object... params) {
+        return getBasicMapper().executeAndReturningList(returnType, sql, params);
     }
 
     /**
@@ -112,8 +126,28 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
     }
 
     @Override
+    default <R> R updateAndGet(UpdateChain update) {
+        return getBasicMapper().updateAndGet(update);
+    }
+
+    @Override
+    default <R> List<R> updateAndList(UpdateChain update) {
+        return getBasicMapper().updateAndList(update);
+    }
+
+    @Override
     default int delete(BaseDelete<?> delete) {
         return getBasicMapper().delete(delete);
+    }
+
+    @Override
+    default <R> R deleteAndReturning(DeleteChain delete) {
+        return getBasicMapper().deleteAndReturning(delete);
+    }
+
+    @Override
+    default <R> List<R> deleteAndReturningList(DeleteChain delete) {
+        return getBasicMapper().deleteAndReturningList(delete);
     }
 
     @Override

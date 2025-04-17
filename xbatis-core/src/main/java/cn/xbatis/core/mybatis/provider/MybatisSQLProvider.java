@@ -17,6 +17,8 @@ package cn.xbatis.core.mybatis.provider;
 
 import cn.xbatis.core.mybatis.mapper.context.*;
 import cn.xbatis.core.sql.executor.BaseQuery;
+import cn.xbatis.core.sql.executor.chain.DeleteChain;
+import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import db.sql.api.DbType;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 
@@ -25,12 +27,15 @@ import java.util.Objects;
 public class MybatisSQLProvider {
     public static final String SAVE_NAME = "save";
     public static final String UPDATE_NAME = "update";
+    public static final String UPDATE_AND_RETURNING_NAME = "updateAndReturning";
     public static final String DELETE_NAME = "delete";
+    public static final String DELETE_AND_RETURNING_NAME = "deleteAndReturning";
     public static final String QUERY_NAME = "cmdQuery";
     public static final String GET_QUERY_NAME = "getCmdQuery";
     public static final String GET_BY_ID_QUERY_NAME = "getByIdCmdQuery";
     public static final String COUNT_NAME = "cmdCount";
     public static final String QUERY_COUNT_NAME = "countFromQuery";
+
 
     private MybatisSQLProvider() {
 
@@ -50,6 +55,19 @@ public class MybatisSQLProvider {
         return sql;
     }
 
+    public static String updateAndReturning(SQLCmdUpdateContext updateContext, ProviderContext providerContext, DbType dbType) {
+        String sql = update(updateContext, providerContext, dbType);
+        handlerPrefixMapping(updateContext);
+        return sql;
+    }
+
+    public static String deleteAndReturning(SQLCmdDeleteContext deleteContext, ProviderContext providerContext, DbType dbType) {
+        String sql = delete(deleteContext, providerContext, dbType);
+        handlerPrefixMapping(deleteContext);
+        return sql;
+    }
+
+
     public static String delete(SQLCmdDeleteContext deleteContext, ProviderContext providerContext, DbType dbType) {
         deleteContext.init(dbType);
         String sql = deleteContext.sql(dbType);
@@ -67,7 +85,31 @@ public class MybatisSQLProvider {
     private static void handlerPrefixMapping(SQLCmdQueryContext queryContext) {
         BaseQuery query = queryContext.getExecution();
         if (Objects.nonNull(query.getReturnType())) {
-            TablePrefixUtil.prefixMapping(query, query.getReturnType());
+            TablePrefixUtil.prefixMapping(query.$(), query.getReturnType());
+        }
+    }
+
+    /**
+     * 处理前缀映射
+     *
+     * @param updateContext
+     */
+    private static void handlerPrefixMapping(SQLCmdUpdateContext updateContext) {
+        UpdateChain update = (UpdateChain) updateContext.getExecution();
+        if (Objects.nonNull(update.getReturnType())) {
+            TablePrefixUtil.prefixMapping(update.$(), update.getReturnType());
+        }
+    }
+
+    /**
+     * 处理前缀映射
+     *
+     * @param deleteContext
+     */
+    private static void handlerPrefixMapping(SQLCmdDeleteContext deleteContext) {
+        DeleteChain update = (DeleteChain) deleteContext.getExecution();
+        if (Objects.nonNull(update.getReturnType())) {
+            TablePrefixUtil.prefixMapping(update.$(), update.getReturnType());
         }
     }
 

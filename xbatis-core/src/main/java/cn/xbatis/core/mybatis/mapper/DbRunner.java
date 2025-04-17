@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper;
 
+import cn.xbatis.core.mybatis.mapper.context.ExecuteAndSelectPreparedContext;
 import cn.xbatis.core.mybatis.mapper.context.PreparedContext;
 import cn.xbatis.core.mybatis.mapper.context.SelectPreparedContext;
 import cn.xbatis.core.mybatis.provider.PreparedSQLProvider;
@@ -40,19 +41,34 @@ public interface DbRunner {
 
 
     /**
-     * 执行原生非查询类sql,并返回修改的结果
+     * 执行原生非查询类 RETURNING sql,并返回单个修改的结果
      *
      * @param returnType 返回的类型
      * @param sql        例如 update xx set name=? where id=?
      * @param params     例如 abc ,1
      * @return 影响的数量
      */
-    default <T> T execute(Class<T> returnType, String sql, Object... params) {
-        return this.$executeAndSelect(new SelectPreparedContext(returnType, sql, params));
+    default <T> T executeAndReturning(Class<T> returnType, String sql, Object... params) {
+        return this.$executeAndReturning(new ExecuteAndSelectPreparedContext(returnType, sql, params));
+    }
+
+    /**
+     * 执行原生非查询类 RETURNING sql,并返回多个修改的结果
+     *
+     * @param returnType 返回的类型
+     * @param sql        例如 update xx set name=? where id=?
+     * @param params     例如 abc ,1
+     * @return 影响的数量
+     */
+    default <T> List<T> executeAndReturningList(Class<T> returnType, String sql, Object... params) {
+        return this.$executeAndReturningList(new ExecuteAndSelectPreparedContext(returnType, sql, params));
     }
 
     @SelectProvider(value = PreparedSQLProvider.class, method = PreparedSQLProvider.SQL, affectData = true)
-    <T> T $executeAndSelect(SelectPreparedContext preparedContext);
+    <T> T $executeAndReturning(ExecuteAndSelectPreparedContext preparedContext);
+
+    @SelectProvider(value = PreparedSQLProvider.class, method = PreparedSQLProvider.SQL, affectData = true)
+    <T> List<T> $executeAndReturningList(ExecuteAndSelectPreparedContext preparedContext);
 
     /**
      * 执行原生单个查询查询类sql

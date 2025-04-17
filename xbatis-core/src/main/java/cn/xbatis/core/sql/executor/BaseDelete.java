@@ -17,6 +17,7 @@ package cn.xbatis.core.sql.executor;
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
+import cn.xbatis.core.sql.util.ReturningClassUtil;
 import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.listener.SQLListener;
@@ -58,6 +59,12 @@ public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete
     @Override
     public List<SQLListener> getSQLListeners() {
         return XbatisGlobalConfig.getSQLListeners();
+    }
+
+    @Override
+    public T returning(Class entity, int storey) {
+        ReturningClassUtil.returning(this.$(), this.$returning(), entity, storey);
+        return (T) this;
     }
 
     /**************以下为去除警告************/

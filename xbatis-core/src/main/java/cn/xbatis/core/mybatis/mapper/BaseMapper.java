@@ -18,6 +18,8 @@ import cn.xbatis.core.sql.executor.BaseDelete;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.BaseUpdate;
+import cn.xbatis.core.sql.executor.chain.DeleteChain;
+import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.page.IPager;
 import org.apache.ibatis.cursor.Cursor;
 
@@ -59,12 +61,44 @@ public interface BaseMapper {
     int update(BaseUpdate<?> update);
 
     /**
+     * 动态修改 和 returning 一个记录
+     *
+     * @param update 修改update
+     * @return 修改的条数
+     */
+    <R> R updateAndGet(UpdateChain update);
+
+    /**
+     * 动态修改 和 returning 多个记录
+     *
+     * @param update 修改update
+     * @return 修改的条数
+     */
+    <R> List<R> updateAndList(UpdateChain update);
+
+    /**
      * 动态删除
      *
      * @param delete 上下文
      * @return 删除条数
      */
     int delete(BaseDelete<?> delete);
+
+    /**
+     * 动态删除 和 returning 一个记录
+     *
+     * @param delete 上下文
+     * @return 修改的条数
+     */
+    <R> R deleteAndReturning(DeleteChain delete);
+
+    /**
+     * 动态删除 和 returning 多个记录
+     *
+     * @param delete 上下文
+     * @return 修改的条数
+     */
+    <R> List<R> deleteAndReturningList(DeleteChain delete);
 
 
     /**

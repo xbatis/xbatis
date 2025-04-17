@@ -42,6 +42,8 @@ public class SQLCmdSqlSource implements SqlSource {
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.UPDATE_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.update((SQLCmdUpdateContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.DELETE_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.delete((SQLCmdDeleteContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.SAVE_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.save((SQLCmdInsertContext) context, providerContext, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.UPDATE_AND_RETURNING_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.updateAndReturning((SQLCmdUpdateContext) context, providerContext, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.DELETE_AND_RETURNING_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.deleteAndReturning((SQLCmdDeleteContext) context, providerContext, dbType));
     }
 
     private final Configuration configuration;

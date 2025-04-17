@@ -115,6 +115,7 @@ drop table if exists composite_test;
 CREATE TABLE IF NOT EXISTS composite_test
 (
     id BIGINT PRIMARY KEY auto_increment,
+    name String ,
     version int not null,
     tenant_id int not null,
     deleted TINYINT not NULL default 0,

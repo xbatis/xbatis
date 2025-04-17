@@ -99,7 +99,7 @@ public class Select implements ISelect<Select> {
                 sqlBuilder.append(SqlConst.BRACKET_LEFT);
             }
         }
-        CmdUtils.join(this, this, context, sqlBuilder, this.getSelectField(), SqlConst.DELIMITER);
+        sqlBuilder = CmdUtils.join(this, this, context, sqlBuilder, this.getSelectField(), SqlConst.DELIMITER);
         if (distinct) {
             if ((context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS || context.getDbType() == DbType.H2) && parent instanceof Count) {
                 sqlBuilder.append(SqlConst.BRACKET_RIGHT);

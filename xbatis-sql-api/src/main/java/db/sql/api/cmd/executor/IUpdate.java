@@ -20,15 +20,13 @@ import db.sql.api.cmd.UpdateStrategy;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
-import db.sql.api.cmd.executor.method.IFromMethod;
-import db.sql.api.cmd.executor.method.IJoinMethod;
-import db.sql.api.cmd.executor.method.IUpdateMethod;
-import db.sql.api.cmd.executor.method.IWhereMethod;
+import db.sql.api.cmd.executor.method.*;
 import db.sql.api.cmd.struct.IFrom;
 import db.sql.api.cmd.struct.IJoin;
 import db.sql.api.cmd.struct.IOn;
 import db.sql.api.cmd.struct.IWhere;
 import db.sql.api.cmd.struct.conditionChain.IConditionChain;
+import db.sql.api.cmd.struct.query.IReturning;
 import db.sql.api.cmd.struct.update.IUpdateTable;
 
 import java.util.function.Consumer;
@@ -43,21 +41,24 @@ public interface IUpdate<SELF extends IUpdate,
         FROM extends IFrom,
         JOIN extends IJoin<JOIN, ON, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         ON extends IOn<ON, JOIN, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
-        WHERE extends IWhere<WHERE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>
+        WHERE extends IWhere<WHERE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
+        RETURNING extends IReturning<RETURNING>
         >
 
         extends IUpdateMethod<SELF, TABLE, TABLE_FIELD, V>,
         IFromMethod<SELF, TABLE, TABLE_FIELD>,
         IJoinMethod<SELF, JOIN, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
+        IReturningMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         IExecutor<SELF, TABLE, TABLE_FIELD> {
-
 
     UPDATE_TABLE $update(TABLE... tables);
 
     FROM $from(IDataset<?, ?> table);
 
     WHERE $where();
+
+    RETURNING $returning();
 
     @Override
     default SELF update(TABLE... tables) {

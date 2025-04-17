@@ -23,6 +23,8 @@ import cn.xbatis.core.sql.executor.BaseDelete;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.BaseUpdate;
+import cn.xbatis.core.sql.executor.chain.DeleteChain;
+import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.page.IPager;
 import cn.xbatis.page.PageUtil;
 import cn.xbatis.page.PagerField;
@@ -150,8 +152,29 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
     }
 
     @Override
+    default <R> R updateAndGet(UpdateChain update) {
+        return this.$updateAndGet(new SQLCmdUpdateContext(update), new RowBounds(0, 2));
+    }
+
+    @Override
+    default <R> List<R> updateAndList(UpdateChain update) {
+        return this.$updateAndList(new SQLCmdUpdateContext(update));
+    }
+
+    @Override
     default int delete(BaseDelete<?> delete) {
         return this.$delete(new SQLCmdDeleteContext(delete));
+    }
+
+
+    @Override
+    default <R> R deleteAndReturning(DeleteChain delete) {
+        return this.$deleteAndReturning(new SQLCmdDeleteContext(delete), new RowBounds(0, 2));
+    }
+
+    @Override
+    default <R> List<R> deleteAndReturningList(DeleteChain delete) {
+        return this.$deleteAndReturningList(new SQLCmdDeleteContext(delete));
     }
 
     @Override
@@ -176,7 +199,7 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
         Integer size = pager.get(PagerField.SIZE);
         if (executeCount && size > -1) {
             Class returnType = query.getReturnType();
-            TablePrefixUtil.prefixMapping(query, returnType);
+            TablePrefixUtil.prefixMapping(query.$(), returnType);
             query.setReturnType(Integer.class);
             Integer count = this.$countFromQuery(new SQLCmdCountFromQueryContext(query));
             query.setReturnType(returnType);

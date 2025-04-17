@@ -130,6 +130,7 @@ drop table if exists composite_test;
 CREATE TABLE IF NOT EXISTS composite_test
 (
     id BIGINT  generated   always   as   identity   (start   with   1,increment   by   1),
+    name varchar(100) ,
     version int not null,
     tenant_id int not null,
     deleted SMALLINT not NULL default 0,
