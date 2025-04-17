@@ -55,6 +55,42 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
         return getBasicMapper().execute(sql, params);
     }
 
+    /**
+     * 执行原生非查询类sql
+     *
+     * @param returnType 返回的类型
+     * @param sql        例如 update xx set name=? where id=? RETURNING name
+     * @param params     例如 abc ,1
+     * @return 影响的数量
+     */
+    default <T> T execute(Class<T> returnType, String sql, Object... params) {
+        return getBasicMapper().execute(returnType, sql, params);
+    }
+
+    /**
+     * 执行原生单个查询查询类sql
+     *
+     * @param returnType 返回的类型
+     * @param sql        例如 select xx from table where id=?
+     * @param params     例如 1
+     * @return 影响的数量
+     */
+    default <T> T select(Class<T> returnType, String sql, Object... params) {
+        return getBasicMapper().select(returnType, sql, params);
+    }
+
+    /**
+     * 执行原生List查询查询类sql
+     *
+     * @param returnType 返回的类型
+     * @param sql        例如 select xx from table where id=?
+     * @param params     例如 1
+     * @return 影响的数量
+     */
+    default <T> List<T> selectList(Class<T> returnType, String sql, Object... params) {
+        return getBasicMapper().selectList(returnType, sql, params);
+    }
+
     @Override
     default <T2> T2 get(BaseQuery<? extends BaseQuery, T2> query) {
         return getBasicMapper().get(query);

@@ -16,6 +16,7 @@ package cn.xbatis.core.mybatis.executor;
 
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
+import cn.xbatis.core.mybatis.mapper.context.SelectPreparedContext;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchExecutor;
@@ -90,6 +91,10 @@ public class MybatisExecutor implements Executor {
             SQLCmdQueryContext context = (SQLCmdQueryContext) parameterObject;
             cacheKey.updateAll(context.getParameters());
             cacheKey.update(context.getExecution().getReturnType().getName());
+        } else if (parameterObject instanceof SelectPreparedContext) {
+            SelectPreparedContext context = (SelectPreparedContext) parameterObject;
+            cacheKey.updateAll(context.getParameters());
+            cacheKey.update(context.getReturnType().getName());
         }
         return cacheKey;
     }

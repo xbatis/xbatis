@@ -18,6 +18,7 @@ import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import cn.xbatis.core.mybatis.configuration.MybatisMapperProxy;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
+import cn.xbatis.core.mybatis.mapper.context.SelectPreparedContext;
 import cn.xbatis.core.mybatis.mapping.ResultMapWrapper;
 import cn.xbatis.core.mybatis.provider.SQLCmdSqlSource;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -37,6 +38,9 @@ public class DynamicsMappedStatement {
             return createInsertMappedStatement(ms, parameterObject);
         } else if (ms.getSqlCommandType() != SqlCommandType.SELECT) {
             return ms;
+        } else if (parameterObject instanceof SelectPreparedContext) {
+            SelectPreparedContext selectPreparedContext = (SelectPreparedContext) parameterObject;
+            return createQueryMappedStatement(selectPreparedContext.getReturnType(), ms);
         } else if (!(parameterObject instanceof SQLCmdQueryContext)) {
             return ms;
         } else if (ms.getResultMaps().get(0).getType() != Object.class && !ms.getId().endsWith(MybatisMapperProxy.MAP_WITH_KEY_METHOD_NAME)) {
