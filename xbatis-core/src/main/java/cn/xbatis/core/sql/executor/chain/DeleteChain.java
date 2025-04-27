@@ -30,6 +30,7 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
     protected BaseMapper mapper;
 
     protected Class<?> entityType;
+    private Class<?> returnType;
 
     protected DeleteChain() {
 
@@ -145,8 +146,6 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         this.setDefault();
         return mapper.delete(this);
     }
-
-    private Class<?> returnType;
 
     public DeleteChain returnType(Class<?> returnType) {
         this.returnType = returnType;

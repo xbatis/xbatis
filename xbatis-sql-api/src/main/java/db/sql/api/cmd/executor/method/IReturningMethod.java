@@ -16,7 +16,10 @@ package db.sql.api.cmd.executor.method;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.cmd.basic.*;
+import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.ITable;
+import db.sql.api.cmd.basic.ITableField;
+import db.sql.api.cmd.basic.SQLCmdAll;
 
 import java.util.function.Function;
 
@@ -73,15 +76,15 @@ public interface IReturningMethod<SELF extends IReturningMethod,
         return (SELF) this;
     }
 
-    default  <T> SELF returning(Getter<T>... columns){
-        return returning(1,columns);
+    default <T> SELF returning(Getter<T>... columns) {
+        return returning(1, columns);
     }
 
     <T> SELF returning(int storey, Getter<T>... columns);
 
-    default <T> SELF returning(Getter<T> column, Function<TABLE_FIELD,COLUMN> f){
-        return returning(column,1,f);
+    default <T> SELF returning(Getter<T> column, Function<TABLE_FIELD, COLUMN> f) {
+        return returning(column, 1, f);
     }
 
-    <T> SELF returning(Getter<T> column, int storey, Function<TABLE_FIELD,COLUMN> f);
+    <T> SELF returning(Getter<T> column, int storey, Function<TABLE_FIELD, COLUMN> f);
 }

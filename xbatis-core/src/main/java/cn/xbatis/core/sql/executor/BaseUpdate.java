@@ -106,6 +106,7 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
         }
         return (T) this.notExists(this.buildExistsSubQuery(entity, consumer));
     }
+
     /**************以下为去除警告************/
     @Override
     @SafeVarargs

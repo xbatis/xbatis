@@ -30,6 +30,7 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
     protected BaseMapper mapper;
 
     protected Class<?> entityType;
+    private Class<?> returnType;
 
     protected UpdateChain() {
 
@@ -93,8 +94,6 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
 
         return entityType;
     }
-
-    private Class<?> returnType;
 
     private void checkAndSetMapper(BaseMapper mapper) {
         if (Objects.isNull(this.mapper)) {
