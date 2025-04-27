@@ -18,6 +18,7 @@ import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.context.Pager;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.db.annotations.Paging;
+import com.xbatis.core.test.DO.ReqEntity;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.vo.JsonTypeTestVo;
 import com.xbatis.core.test.vo.XmlNestedResultMap;
@@ -26,6 +27,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SysRoleMapper extends MybatisMapper<SysRole> {
     @Paging(optimize = false)
@@ -60,4 +62,6 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
     List<SysRole> selectQueryCustomSql3(Query<?> query);
 
     List<XmlNestedResultMap> selectXmlNestedResultMap();
+
+    List<Map> testSuperMapParams(ReqEntity reqEntity);
 }
