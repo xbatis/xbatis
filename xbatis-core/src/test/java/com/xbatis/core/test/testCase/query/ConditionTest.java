@@ -15,12 +15,14 @@
 package com.xbatis.core.test.testCase.query;
 
 import cn.xbatis.core.sql.executor.chain.QueryChain;
+import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
 import db.sql.api.cmd.LikeMode;
+import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.exception.ConditionValueNullException;
 import db.sql.api.impl.tookit.Objects;
 import org.apache.ibatis.session.SqlSession;
@@ -50,6 +52,11 @@ public class ConditionTest extends BaseTest {
                     .eq(SysUser::getId, null)
                     .empty(SysUser::getUserName)
                     .returnType(Integer.class)
+                    .connect(q -> {
+                        boolean isASC = true;
+                        q.orderBy(isASC ? OrderByDirection.ASC : OrderByDirection.DESC, q.$(SysUser.class, "userName"));
+                    })
+
                     .get();
 
             assertNull(id, "eq");
@@ -650,6 +657,33 @@ public class ConditionTest extends BaseTest {
             } else {
                 assertNull(sysUser);
             }
+        }
+    }
+
+
+    @Test
+    public void exists1() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int count = QueryChain.of(sysUserMapper)
+                    .exists(SysUser::getRole_id, SysRole::getId)
+                    .count();
+
+            assertEquals(count, 2);
+        }
+    }
+
+    @Test
+    public void exists2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int count = QueryChain.of(sysUserMapper)
+                    .exists(SysRole.class, (query, subquery) -> {
+                        subquery.eq(SysRole::getId, query.$(SysUser::getRole_id));
+                    })
+                    .count();
+
+            assertEquals(count, 2);
         }
     }
 }
