@@ -15,6 +15,7 @@
 package db.sql.api.cmd.executor.method.condition;
 
 
+import db.sql.api.Getter;
 import db.sql.api.cmd.executor.IQuery;
 
 public interface IExistsMethod<RV> {
@@ -25,9 +26,37 @@ public interface IExistsMethod<RV> {
 
     RV exists(boolean when, IQuery query);
 
+    default <T1, T2> RV exists(Getter<T1> sourceGetter, Getter<T2> targetGetter) {
+        return this.exists(sourceGetter, 1, targetGetter);
+    }
+
+    default <T1, T2> RV exists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter) {
+        return this.exists(when, sourceGetter, 1, targetGetter);
+    }
+
+    default <T1, T2> RV exists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
+        return this.exists(true, sourceGetter, sourceStorey, targetGetter);
+    }
+
+    <T1, T2> RV exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter);
+
     default RV notExists(IQuery query) {
         return this.notExists(true, query);
     }
 
     RV notExists(boolean when, IQuery query);
+
+    default <T1, T2> RV notExists(Getter<T1> sourceGetter, Getter<T2> targetGetter) {
+        return this.notExists(sourceGetter, 1, targetGetter);
+    }
+
+    default <T1, T2> RV notExists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter) {
+        return this.notExists(when, sourceGetter, 1, targetGetter);
+    }
+
+    default <T1, T2> RV notExists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
+        return this.notExists(true, sourceGetter, sourceStorey, targetGetter);
+    }
+
+    <T1, T2> RV notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter);
 }

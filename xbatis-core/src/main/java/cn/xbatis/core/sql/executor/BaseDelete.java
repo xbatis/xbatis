@@ -26,6 +26,7 @@ import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete<T, MybatisCmdFactory> implements Timeoutable<T> {
 
@@ -65,6 +66,41 @@ public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete
     public T returning(Class entity, int storey) {
         ReturningClassUtil.returning(this.$(), this.$returning(), entity, storey);
         return (T) this;
+    }
+
+    private <T2> SubQuery buildExistsSubQuery(Class<T2> entity, BiConsumer<T, SubQuery> consumer) {
+        SubQuery subQuery = this.$().createSubQuery();
+        consumer.accept((T) this, subQuery);
+        if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
+            subQuery.select1();
+        }
+        if (subQuery.getFrom() == null) {
+            subQuery.from(entity);
+        }
+        return subQuery;
+    }
+
+    public <T2> T exists(Class<T2> entity, BiConsumer<T, SubQuery> consumer) {
+        return this.exists(true, entity, consumer);
+    }
+
+    public <T2> T exists(boolean when, Class<T2> entity, BiConsumer<T, SubQuery> consumer) {
+        if (!when) {
+            return (T) this;
+        }
+        return (T) this.exists(this.buildExistsSubQuery(entity, consumer));
+    }
+
+
+    public <T2> T notExists(Class<T2> entity, BiConsumer<T, SubQuery> consumer) {
+        return this.notExists(true, entity, consumer);
+    }
+
+    public <T2> T notExists(boolean when, Class<T2> entity, BiConsumer<T, SubQuery> consumer) {
+        if (!when) {
+            return (T) this;
+        }
+        return (T) this.notExists(this.buildExistsSubQuery(entity, consumer));
     }
 
     /**************以下为去除警告************/

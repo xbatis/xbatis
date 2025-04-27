@@ -25,6 +25,8 @@ import db.sql.api.impl.cmd.basic.AllField;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.executor.AbstractSubQuery;
+import db.sql.api.impl.cmd.executor.SubQuery;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.util.HashMap;
@@ -141,6 +143,11 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
     @Override
     public <T, R extends Cmd> R create(Getter<T> column, int storey, Function<TableField, R> RF) {
         return RF.apply(this.field(column, storey));
+    }
+
+    @Override
+    public AbstractSubQuery<?, ?> createSubQuery() {
+        return new SubQuery();
     }
 
     protected TableField field(Class<?> clazz, int storey, String filedName) {

@@ -32,6 +32,7 @@ import db.sql.api.impl.tookit.OptimizeOptions;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQuery<Q, MybatisCmdFactory> implements Timeoutable<Q>, Fetchable<Q> {
@@ -178,6 +179,41 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     @Override
     public List<SQLListener> getSQLListeners() {
         return XbatisGlobalConfig.getSQLListeners();
+    }
+
+    private <T2> SubQuery buildExistsSubQuery(Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        SubQuery subQuery = this.$().createSubQuery();
+        consumer.accept((Q) this, subQuery);
+        if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
+            subQuery.select1();
+        }
+        if (subQuery.getFrom() == null) {
+            subQuery.from(entity);
+        }
+        return subQuery;
+    }
+
+    public <T2> Q exists(Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        return this.exists(true, entity, consumer);
+    }
+
+    public <T2> Q exists(boolean when, Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        if (!when) {
+            return (Q) this;
+        }
+        return this.exists(this.buildExistsSubQuery(entity, consumer));
+    }
+
+
+    public <T2> Q notExists(Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        return this.notExists(true, entity, consumer);
+    }
+
+    public <T2> Q notExists(boolean when, Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        if (!when) {
+            return (Q) this;
+        }
+        return this.notExists(this.buildExistsSubQuery(entity, consumer));
     }
 
     /**************以下为去除警告************/

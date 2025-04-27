@@ -20,6 +20,7 @@ import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
+import db.sql.api.cmd.executor.ISubQuery;
 
 import java.util.function.Function;
 
@@ -145,4 +146,11 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      * @return
      */
     <T, R extends Cmd> R create(Getter<T> column, int storey, Function<TABLE_FIELD, R> RF);
+
+    /**
+     * 创建子查询
+     *
+     * @return
+     */
+    ISubQuery createSubQuery();
 }
