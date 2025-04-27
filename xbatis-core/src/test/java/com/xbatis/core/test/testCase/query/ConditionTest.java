@@ -686,4 +686,30 @@ public class ConditionTest extends BaseTest {
             assertEquals(count, 2);
         }
     }
+
+    @Test
+    public void notexists1() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int count = QueryChain.of(sysUserMapper)
+                    .notExists(SysUser::getRole_id, SysRole::getId)
+                    .count();
+
+            assertEquals(count, 1);
+        }
+    }
+
+    @Test
+    public void notexists2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int count = QueryChain.of(sysUserMapper)
+                    .notExists(SysRole.class, (query, subquery) -> {
+                        subquery.eq(SysRole::getId, query.$(SysUser::getRole_id));
+                    })
+                    .count();
+
+            assertEquals(count, 1);
+        }
+    }
 }
