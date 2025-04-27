@@ -66,7 +66,7 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
      *
      * @return 类型
      */
-    Type getDeserializeType() {
+    public Type getDeserializeType() {
         return Objects.isNull(this.genericType) ? this.type : this.genericType;
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
      * @param obj
      * @return
      */
-    abstract String toJson(Object obj);
+    protected abstract String toJson(Object obj);
 
     /**
      * 出库 json 转对象
@@ -84,5 +84,5 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
      * @param json
      * @return 对象
      */
-    abstract Object parseJson(String json);
+    protected abstract Object parseJson(String json);
 }
