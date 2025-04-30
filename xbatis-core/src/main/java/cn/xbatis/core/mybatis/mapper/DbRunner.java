@@ -14,9 +14,14 @@
 
 package cn.xbatis.core.mybatis.mapper;
 
+import cn.xbatis.core.mybatis.mapper.context.ExecuteAndSelectPreparedContext;
 import cn.xbatis.core.mybatis.mapper.context.PreparedContext;
+import cn.xbatis.core.mybatis.mapper.context.SelectPreparedContext;
 import cn.xbatis.core.mybatis.provider.PreparedSQLProvider;
+import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
+
+import java.util.List;
 
 public interface DbRunner {
 
@@ -33,4 +38,65 @@ public interface DbRunner {
 
     @UpdateProvider(value = PreparedSQLProvider.class, method = PreparedSQLProvider.SQL)
     int $execute(PreparedContext preparedContext);
+
+
+    /**
+     * 执行原生非查询类 RETURNING sql,并返回单个修改的结果
+     *
+     * @param returnType 返回的类型
+     * @param sql        例如 update xx set name=? where id=?
+     * @param params     例如 abc ,1
+     * @return 影响的数量
+     */
+    default <T> T executeAndReturning(Class<T> returnType, String sql, Object... params) {
+        return this.$executeAndReturning(new ExecuteAndSelectPreparedContext(returnType, sql, params));
+    }
+
+    /**
+     * 执行原生非查询类 RETURNING sql,并返回多个修改的结果
+     *
+     * @param returnType 返回的类型
+     * @param sql        例如 update xx set name=? where id=?
+     * @param params     例如 abc ,1
+     * @return 影响的数量
+     */
+    default <T> List<T> executeAndReturningList(Class<T> returnType, String sql, Object... params) {
+        return this.$executeAndReturningList(new ExecuteAndSelectPreparedContext(returnType, sql, params));
+    }
+
+    @SelectProvider(value = PreparedSQLProvider.class, method = PreparedSQLProvider.SQL, affectData = true)
+    <T> T $executeAndReturning(ExecuteAndSelectPreparedContext preparedContext);
+
+    @SelectProvider(value = PreparedSQLProvider.class, method = PreparedSQLProvider.SQL, affectData = true)
+    <T> List<T> $executeAndReturningList(ExecuteAndSelectPreparedContext preparedContext);
+
+    /**
+     * 执行原生单个查询查询类sql
+     *
+     * @param returnType 返回的类型
+     * @param sql        例如 select xx from table where id=?
+     * @param params     例如 1
+     * @return 影响的数量
+     */
+    default <T> T select(Class<T> returnType, String sql, Object... params) {
+        return this.$select(new SelectPreparedContext(returnType, sql, params));
+    }
+
+    @SelectProvider(value = PreparedSQLProvider.class, method = PreparedSQLProvider.SQL)
+    <T> T $select(SelectPreparedContext preparedContext);
+
+    /**
+     * 执行原生List查询查询类sql
+     *
+     * @param returnType 返回的类型
+     * @param sql        例如 select xx from table where id=?
+     * @param params     例如 1
+     * @return 影响的数量
+     */
+    default <T> List<T> selectList(Class<T> returnType, String sql, Object... params) {
+        return this.$selectList(new SelectPreparedContext(returnType, sql, params));
+    }
+
+    @SelectProvider(value = PreparedSQLProvider.class, method = PreparedSQLProvider.SQL)
+    <T> List<T> $selectList(SelectPreparedContext preparedContext);
 }

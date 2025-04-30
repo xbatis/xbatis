@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.db.reflect;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.annotations.Condition;
 import db.sql.api.cmd.LikeMode;
@@ -111,7 +111,7 @@ public class ConditionItem {
         if (this.defaultValue != null) {
             return this.defaultValue;
         } else if (annotation != null && annotation.defaultValue().contains("{")) {
-            return XbatisConfig.getDefaultValue(target.getClass(), field.getType(), annotation.defaultValue());
+            return XbatisGlobalConfig.getDefaultValue(target.getClass(), field.getType(), annotation.defaultValue());
         } else {
             return null;
         }

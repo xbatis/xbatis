@@ -14,12 +14,15 @@
 
 package cn.xbatis.core.mybatis.configuration;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.function.ThreeFunction;
 import cn.xbatis.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
+import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
+import cn.xbatis.core.mybatis.mapper.intercept.MethodInvocation;
+import cn.xbatis.core.mybatis.mapper.mappers.BaseMapper;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.Where;
 import cn.xbatis.core.util.DbTypeUtil;
@@ -55,10 +58,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     public final static String WITH_SQL_SESSION_METHOD_NAME = "withSqlSession";
 
     protected final SqlSession sqlSession;
-
     protected final Class<T> mapperInterface;
-
+    private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
     private volatile DbType dbType;
+    private boolean methodIntercepting = false;
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
@@ -116,6 +119,27 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (!methodIntercepting) {
+            //只拦截开头的方法
+            methodIntercepting = true;
+            try {
+                //不拦截xbatis自带的方法
+                if (interceptors != null && !interceptors.isEmpty() && !method.getDeclaringClass().getPackage().getName().startsWith(BaseMapper.class.getPackage().getName())) {
+                    MethodInvocation methodInvocation = new MethodInvocation(interceptors, proxy, method, args, () -> {
+                        return doInvoke(proxy, method, args);
+                    });
+                    return interceptors.get(0).around(methodInvocation);
+                }
+                return this.doInvoke(proxy, method, args);
+            } finally {
+                methodIntercepting = false;
+            }
+        }
+        return this.doInvoke(proxy, method, args);
+    }
+
+
+    public Object doInvoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.isDefault()) {
             return super.invoke(proxy, method, args);
         }
@@ -145,15 +169,15 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
                 String statement;
                 if (args.length == 4) {
-                    statement = XbatisConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
+                    statement = XbatisGlobalConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
                 } else {
                     if (args[0] instanceof String) {
                         statement = (String) args[0];
                         if (statement.startsWith(".")) {
-                            statement = XbatisConfig.getSingleMapperClass().getName() + statement;
+                            statement = XbatisGlobalConfig.getSingleMapperClass().getName() + statement;
                         }
                     } else {
-                        statement = XbatisConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
+                        statement = XbatisGlobalConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
                     }
                 }
 

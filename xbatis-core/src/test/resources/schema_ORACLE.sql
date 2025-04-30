@@ -141,6 +141,7 @@ DROP TABLE  composite_test;
 CREATE TABLE  composite_test
 (
     id NUMBER(20) PRIMARY KEY,
+    name varchar(100) ,
     version int not null,
     tenant_id int not null,
     deleted NUMBER(3)  default 0 not NULL,

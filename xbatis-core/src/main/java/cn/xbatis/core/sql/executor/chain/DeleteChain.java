@@ -19,6 +19,7 @@ import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.sql.executor.BaseDelete;
 import db.sql.api.impl.cmd.struct.Where;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,6 +30,7 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
     protected BaseMapper mapper;
 
     protected Class<?> entityType;
+    private Class<?> returnType;
 
     protected DeleteChain() {
 
@@ -143,5 +145,24 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
     public int execute() {
         this.setDefault();
         return mapper.delete(this);
+    }
+
+    public DeleteChain returnType(Class<?> returnType) {
+        this.returnType = returnType;
+        return this;
+    }
+
+    public <R> R executeAndReturning() {
+        this.setDefault();
+        return mapper.deleteAndReturning(this);
+    }
+
+    public <R> List<R> executeAndReturningList() {
+        this.setDefault();
+        return mapper.deleteAndReturningList(this);
+    }
+
+    public Class<?> getReturnType() {
+        return returnType;
     }
 }

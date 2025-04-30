@@ -21,6 +21,11 @@ import db.sql.api.impl.cmd.CmdFactory;
  */
 public class SubQuery extends AbstractSubQuery<SubQuery, CmdFactory> {
 
+    public SubQuery() {
+        this(null);
+
+    }
+
     public SubQuery(String alias) {
         super(new CmdFactory("st"));
         this.alias = alias;

@@ -17,6 +17,7 @@ package com.xbatis.core.test.testCase;
 import cn.xbatis.core.mybatis.mapper.context.Pager;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.util.WhereUtil;
+import com.xbatis.core.test.DO.ReqEntity;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.vo.XmlNestedResultMap;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -264,4 +266,16 @@ public class XmlPagingTestCase extends BaseTest {
             System.out.println(list);
         }
     }
+
+    @Test
+    public void testXmlReqEntityMap() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            ReqEntity reqEntity = new ReqEntity();
+            reqEntity.getParams().put("type", 1);
+            List<Map> list = sysRoleMapper.testSuperMapParams(reqEntity);
+            System.out.println(list);
+        }
+    }
+
 }

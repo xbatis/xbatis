@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class SysUserTypeHandler extends BaseTypeHandler<SysUserHandlerVo>   {
+public class SysUserTypeHandler extends BaseTypeHandler<SysUserHandlerVo> {
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, SysUserHandlerVo parameter, JdbcType jdbcType) throws SQLException {
 
@@ -18,7 +18,7 @@ public class SysUserTypeHandler extends BaseTypeHandler<SysUserHandlerVo>   {
 
     @Override
     public SysUserHandlerVo getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        SysUserHandlerVo vo=new SysUserHandlerVo();
+        SysUserHandlerVo vo = new SysUserHandlerVo();
         vo.setId(rs.getInt("id"));
         return vo;
     }

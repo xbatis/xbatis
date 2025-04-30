@@ -17,8 +17,10 @@ package cn.xbatis.core;
 
 import cn.xbatis.core.logicDelete.LogicDeleteSwitch;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
+import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
 import cn.xbatis.core.sql.SQLBuilder;
 import cn.xbatis.core.sql.XbatisSQLBuilder;
+import cn.xbatis.core.sql.executor.BaseUpdate;
 import cn.xbatis.core.sql.listener.ForeignKeySQLListener;
 import cn.xbatis.core.sql.listener.LogicDeleteSQLListener;
 import cn.xbatis.core.sql.listener.TenantSQLListener;
@@ -36,12 +38,13 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 /**
  * 全局配置
  */
-public final class XbatisConfig {
+public final class XbatisGlobalConfig {
 
     private static final Map<String, Object> CACHE = new ConcurrentHashMap<>();
     private static final String COLUMN_UNDERLINE = "columnUnderline";
@@ -49,15 +52,18 @@ public final class XbatisConfig {
     private static final String DEFAULT_BATCH_SIZE = "defaultBatchSize";
     private static final String SQL_BUILDER = "SQLBuilder";
     private static final String LOGIC_DELETE_SWITCH = "logicDeleteSwitch";
+    private static final String LOGIC_DELETE_INTERCEPTOR = "logicDeleteInterceptor";
     private static final String DYNAMIC_VALUE_MANAGER = "dynamicValueManager";
     private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
-    private static final List<SQLListener> SQL_LISTENER = new ArrayList<>();
+    private static final List<SQLListener> SQL_LISTENERS = new ArrayList<>();
+    private static final List<MethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
+
     private static volatile DbType DEFAULT_DB_TYPE;
 
     static {
-        SQL_LISTENER.add(new ForeignKeySQLListener());
-        SQL_LISTENER.add(new TenantSQLListener());
-        SQL_LISTENER.add(new LogicDeleteSQLListener());
+        SQL_LISTENERS.add(new ForeignKeySQLListener());
+        SQL_LISTENERS.add(new TenantSQLListener());
+        SQL_LISTENERS.add(new LogicDeleteSQLListener());
         Map<String, BiFunction<Class<?>, Class<?>, Object>> dynamicValueMap = new ConcurrentHashMap<>();
 
         dynamicValueMap.put("{BLANK}", (source, type) -> {
@@ -120,7 +126,7 @@ public final class XbatisConfig {
         CACHE.put(DYNAMIC_VALUE_MANAGER, dynamicValueMap);
     }
 
-    private XbatisConfig() {
+    private XbatisGlobalConfig() {
 
     }
 
@@ -130,7 +136,7 @@ public final class XbatisConfig {
      * @return
      */
     public static DbType getDefaultDbType() {
-        return XbatisConfig.DEFAULT_DB_TYPE;
+        return XbatisGlobalConfig.DEFAULT_DB_TYPE;
     }
 
     /**
@@ -139,7 +145,7 @@ public final class XbatisConfig {
      * @param defaultDbType
      */
     public static void setDefaultDbType(DbType defaultDbType) {
-        XbatisConfig.DEFAULT_DB_TYPE = defaultDbType;
+        XbatisGlobalConfig.DEFAULT_DB_TYPE = defaultDbType;
     }
 
     /**
@@ -222,7 +228,25 @@ public final class XbatisConfig {
     }
 
     /**
-     * 设置逻辑删除开关状态（必须在项目启动时设置，否则可能永远false）
+     * 获取逻辑删除 update 拦截器
+     *
+     * @return
+     */
+    public static BiConsumer<Class<?>, BaseUpdate<?>> getLogicDeleteInterceptor() {
+        return (BiConsumer<Class<?>, BaseUpdate<?>>) CACHE.get(LOGIC_DELETE_INTERCEPTOR);
+    }
+
+    /**
+     * 设置逻辑删除 update 拦截器
+     *
+     * @param interceptor
+     */
+    public static void setLogicDeleteInterceptor(BiConsumer<Class<?>, BaseUpdate<?>> interceptor) {
+        CACHE.putIfAbsent(LOGIC_DELETE_INTERCEPTOR, interceptor);
+    }
+
+    /**
+     * 设置逻辑删除开关状态（必须在项目启动时设置，否则可能永远true）
      *
      * @param bool 开关状态
      */
@@ -247,7 +271,9 @@ public final class XbatisConfig {
      * @param f   返回该key的动态值的函数
      */
     public static void setDynamicValue(String key, BiFunction<Class<?>, Class<?>, Object> f) {
-        checkDynamicValueKey(key);
+        if (!isDynamicValueKeyFormat(key)) {
+            key = "{" + key + "}";
+        }
         ((Map<String, BiFunction<Class<?>, Class<?>, Object>>) CACHE.get(DYNAMIC_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
     }
 
@@ -330,7 +356,7 @@ public final class XbatisConfig {
      * @param sqlListener
      */
     public static void addSQLListener(SQLListener sqlListener) {
-        SQL_LISTENER.add(sqlListener);
+        SQL_LISTENERS.add(sqlListener);
     }
 
     /**
@@ -339,7 +365,7 @@ public final class XbatisConfig {
      * @param type
      */
     public static <T extends SQLListener> void removeSQLListener(Class<T> type) {
-        Iterator<SQLListener> iterator = SQL_LISTENER.iterator();
+        Iterator<SQLListener> iterator = SQL_LISTENERS.iterator();
         while (iterator.hasNext()) {
             if (type.isAssignableFrom(iterator.next().getClass())) {
                 iterator.remove();
@@ -353,7 +379,7 @@ public final class XbatisConfig {
      * @return
      */
     public static List<SQLListener> getSQLListeners() {
-        return Collections.unmodifiableList(SQL_LISTENER);
+        return Collections.unmodifiableList(SQL_LISTENERS);
     }
 
     /**
@@ -375,4 +401,38 @@ public final class XbatisConfig {
     public static IPagingProcessor getPagingProcessor(DbType dbType) {
         return PagingProcessorFactory.getProcessor(dbType);
     }
+
+    /**
+     * 添加MapperMethodInterceptor
+     *
+     * @param methodInterceptor
+     */
+    public static void addMapperMethodInterceptor(MethodInterceptor methodInterceptor) {
+        MAPPER_METHOD_INTERCEPTORS.add(methodInterceptor);
+    }
+
+    /**
+     * 移除MapperMethodInterceptor
+     *
+     * @param type
+     */
+    public static <T extends MethodInterceptor> void removeMapperMethodInterceptor(Class<T> type) {
+        Iterator<MethodInterceptor> iterator = MAPPER_METHOD_INTERCEPTORS.iterator();
+        while (iterator.hasNext()) {
+            if (type.isAssignableFrom(iterator.next().getClass())) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * 获取所有Mapper的方法拦截器
+     *
+     * @return
+     */
+    public static List<MethodInterceptor> getMapperMethodInterceptors() {
+        return Collections.unmodifiableList(MAPPER_METHOD_INTERCEPTORS);
+    }
+
+
 }

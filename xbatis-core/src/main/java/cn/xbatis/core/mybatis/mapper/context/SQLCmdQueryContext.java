@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.provider.MybatisSqlBuilderContext;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import db.sql.api.DbType;
@@ -34,7 +34,7 @@ public class SQLCmdQueryContext extends BaseSQLCmdContext<BaseQuery> {
             return sql;
         }
         sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
-        sql = XbatisConfig.getSQLBuilder().buildQuerySQl(getExecution(), sqlBuilderContext, getExecution().getOptimizeOptions()).toString();
+        sql = XbatisGlobalConfig.getSQLBuilder().buildQuerySQL(getExecution(), sqlBuilderContext, getExecution().getOptimizeOptions()).toString();
         return sql;
     }
 

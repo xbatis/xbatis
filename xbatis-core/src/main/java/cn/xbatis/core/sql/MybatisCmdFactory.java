@@ -15,10 +15,7 @@
 package cn.xbatis.core.sql;
 
 import cn.xbatis.core.db.reflect.*;
-import cn.xbatis.core.sql.executor.MpDatasetField;
-import cn.xbatis.core.sql.executor.MpTable;
-import cn.xbatis.core.sql.executor.MpTableField;
-import cn.xbatis.core.sql.executor.MybatisConditionFactory;
+import cn.xbatis.core.sql.executor.*;
 import cn.xbatis.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IDataset;
@@ -137,5 +134,10 @@ public class MybatisCmdFactory extends CmdFactory {
             return (DATASET_FIELD) mpTable.$(columnName);
         }
         return super.field(dataset, columnName);
+    }
+
+    @Override
+    public SubQuery createSubQuery() {
+        return new SubQuery();
     }
 }

@@ -122,6 +122,7 @@ drop table if exists composite_test;
 CREATE TABLE IF NOT EXISTS composite_test
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name varchar(100) ,
     version int not null,
     tenant_id int not null,
     deleted TINYINTEGER not NULL default 0,

@@ -14,8 +14,9 @@
 
 package cn.xbatis.core.mybatis.executor;
 
-import cn.xbatis.core.mybatis.mapper.context.SQLCmdInsertContext;
-import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
+import cn.xbatis.core.mybatis.mapper.context.*;
+import cn.xbatis.core.sql.executor.chain.DeleteChain;
+import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchExecutor;
@@ -90,6 +91,35 @@ public class MybatisExecutor implements Executor {
             SQLCmdQueryContext context = (SQLCmdQueryContext) parameterObject;
             cacheKey.updateAll(context.getParameters());
             cacheKey.update(context.getExecution().getReturnType().getName());
+        } else if (parameterObject instanceof ExecuteAndSelectPreparedContext) {
+            ExecuteAndSelectPreparedContext context = (ExecuteAndSelectPreparedContext) parameterObject;
+            cacheKey.updateAll(context.getParameters());
+            cacheKey.update(context.getReturnType().getName());
+            cacheKey.update(System.currentTimeMillis());
+        } else if (parameterObject instanceof SelectPreparedContext) {
+            SelectPreparedContext context = (SelectPreparedContext) parameterObject;
+            cacheKey.updateAll(context.getParameters());
+            cacheKey.update(context.getReturnType().getName());
+        } else if (parameterObject instanceof SQLCmdUpdateContext) {
+            SQLCmdUpdateContext context = (SQLCmdUpdateContext) parameterObject;
+            cacheKey.updateAll(context.getParameters());
+            if (context.getExecution() instanceof UpdateChain) {
+                UpdateChain updateChain = (UpdateChain) context.getExecution();
+                if (updateChain.getReturnType() != null) {
+                    cacheKey.update(updateChain.getReturnType().getName());
+                }
+            }
+            cacheKey.update(System.currentTimeMillis());
+        } else if (parameterObject instanceof SQLCmdDeleteContext) {
+            SQLCmdDeleteContext context = (SQLCmdDeleteContext) parameterObject;
+            cacheKey.updateAll(context.getParameters());
+            if (context.getExecution() instanceof DeleteChain) {
+                DeleteChain deleteChain = (DeleteChain) context.getExecution();
+                if (deleteChain.getReturnType() != null) {
+                    cacheKey.update(deleteChain.getReturnType().getName());
+                }
+            }
+            cacheKey.update(System.currentTimeMillis());
         }
         return cacheKey;
     }

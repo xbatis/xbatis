@@ -502,4 +502,16 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         conditionChain().notIn(when, column, storey, values);
         return (SELF) this;
     }
+
+    @Override
+    default <T1, T2> SELF exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
+        conditionChain().exists(when, sourceGetter, sourceStorey, targetGetter);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T1, T2> SELF notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
+        conditionChain().notExists(when, sourceGetter, sourceStorey, targetGetter);
+        return (SELF) this;
+    }
 }

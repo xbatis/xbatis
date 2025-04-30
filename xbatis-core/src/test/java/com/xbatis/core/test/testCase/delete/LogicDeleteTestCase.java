@@ -14,7 +14,7 @@
 
 package com.xbatis.core.test.testCase.delete;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
@@ -25,6 +25,7 @@ import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
 import db.sql.api.cmd.JoinMode;
+import db.sql.api.impl.tookit.SQLPrinter;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -35,14 +36,34 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LogicDeleteTestCase extends BaseTest {
 
+    private ThreadLocal<Integer> TL = new ThreadLocal<>();
+
     public LogicDeleteTestCase() {
-        XbatisConfig.setLogicDeleteSwitch(true);
+        XbatisGlobalConfig.setLogicDeleteSwitch(true);
+        XbatisGlobalConfig.setDynamicValue("LOGIC_DELETE_VALUE", (clazz, type) -> {
+            Integer value = TL.get();
+            if (value == null) {
+                throw new RuntimeException("LOGIC_DELETE_VALUE NOT SET");
+            }
+            return value;
+        });
+        TL.set(1);
     }
 
     @Test
     public void deleteIdTest() {
+        TL.remove();
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+            TL.set(1);
+
+            XbatisGlobalConfig.setLogicDeleteInterceptor((entity, update) -> {
+                //设置操作人
+                update.set(update.$(entity, "name"), "已删除");
+
+                System.out.println(entity);
+                System.out.println(SQLPrinter.sql(update));
+            });
             logicDeleteTestMapper.deleteById(1);
             List<LogicDeleteTest> list = QueryChain.of(logicDeleteTestMapper).list();
             assertEquals(list.size(), 2);

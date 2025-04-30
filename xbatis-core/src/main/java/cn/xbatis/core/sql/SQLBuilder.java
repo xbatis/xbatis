@@ -31,7 +31,7 @@ public interface SQLBuilder {
      * @param optimizeOptions 优化配置
      * @return sql
      */
-    StringBuilder buildQuerySQl(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions);
+    StringBuilder buildQuerySQL(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions);
 
 
     /**
@@ -42,7 +42,7 @@ public interface SQLBuilder {
      * @param optimizeOptions 优化配置
      * @return sql
      */
-    StringBuilder buildCountQuerySQl(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions);
+    StringBuilder buildCountQuerySQL(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions);
 
     /**
      * 从query 中 获取 count 查询 sql

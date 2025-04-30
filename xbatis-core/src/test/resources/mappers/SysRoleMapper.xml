@@ -105,4 +105,8 @@
     <select id="selectXmlNestedResultMap" resultMap="xmlNestedResultMap">
         select t.id  ,t.password  ,t2.id r_id from t_sys_user t left join sys_role t2 on t.role_id=t2.id where t.id=1
     </select>
+
+    <select id="testSuperMapParams" resultType="Map">
+        select t.id from t_sys_user t where <if test="params.type == 1"> id=#{params.type} </if>
+    </select>
 </mapper>

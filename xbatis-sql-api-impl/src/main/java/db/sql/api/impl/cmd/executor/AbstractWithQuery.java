@@ -25,6 +25,7 @@ import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.basic.WithQueryDataset;
 import db.sql.api.impl.cmd.condition.Exists;
 import db.sql.api.impl.cmd.condition.In;
+import db.sql.api.impl.cmd.condition.NotExists;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
 import db.sql.api.impl.tookit.SqlConst;
@@ -87,7 +88,7 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (parent instanceof In || parent instanceof Exists || parent instanceof With) {
+        if (parent instanceof In || parent instanceof Exists || parent instanceof NotExists || parent instanceof With) {
             return super.sql(module, parent, context, sqlBuilder);
         }
         return sqlBuilder.append(SqlConst.BLANK).append(this.getAlias());

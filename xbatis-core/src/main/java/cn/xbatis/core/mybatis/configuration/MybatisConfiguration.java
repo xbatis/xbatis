@@ -15,7 +15,7 @@
 package cn.xbatis.core.mybatis.configuration;
 
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.FieldInfo;
 import cn.xbatis.core.exception.NotTableClassException;
 import cn.xbatis.core.mybatis.executor.*;
@@ -49,6 +49,11 @@ import java.util.*;
 
 public class MybatisConfiguration extends Configuration {
 
+    /**
+     * 是否打印banner
+     */
+    private boolean banner = true;
+
     public MybatisConfiguration() {
         super();
         this.init();
@@ -65,6 +70,9 @@ public class MybatisConfiguration extends Configuration {
     }
 
     public void printBanner() {
+        if (!banner) {
+            return;
+        }
         try (BufferedReader reader = new BufferedReader(Resources.getResourceAsReader("xbatis.banner"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -116,7 +124,7 @@ public class MybatisConfiguration extends Configuration {
         Iterator<Map.Entry<String, ResultMap>> it = resultMaps.entrySet().iterator();
         String removeIdPrefix1 = "$";
         String removeIdPrefix2 = BasicMapper.class.getName() + ".$";
-        String removeIdPrefix3 = XbatisConfig.getSingleMapperClass().getName() + ".$";
+        String removeIdPrefix3 = XbatisGlobalConfig.getSingleMapperClass().getName() + ".$";
         boolean checkPrefix3 = !removeIdPrefix2.equals(removeIdPrefix3);
         while (it.hasNext()) {
             Map.Entry<String, ResultMap> entry = it.next();
@@ -137,7 +145,7 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public <T> void addMapper(Class<T> type) {
 
-        if (XbatisConfig.getSingleMapperClass() == BasicMapper.class) {
+        if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class) {
             //添加基础 BasicMapper
             if (!this.hasMapper(BasicMapper.class)) {
                 this.addBasicMapper(BasicMapper.class);
@@ -210,6 +218,14 @@ public class MybatisConfiguration extends Configuration {
             executor = new CachingExecutor(executor);
         }
         return (Executor) this.interceptorChain.pluginAll(executor);
+    }
+
+    public boolean isBanner() {
+        return banner;
+    }
+
+    public void setBanner(boolean banner) {
+        this.banner = banner;
     }
 }
 

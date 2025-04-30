@@ -19,6 +19,7 @@ import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.sql.executor.BaseUpdate;
 import db.sql.api.impl.cmd.struct.Where;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,6 +30,7 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
     protected BaseMapper mapper;
 
     protected Class<?> entityType;
+    private Class<?> returnType;
 
     protected UpdateChain() {
 
@@ -93,13 +95,6 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
         return entityType;
     }
 
-    private void setDefault() {
-        if (Objects.isNull(this.getUpdateTable())) {
-            //自动设置实体类
-            this.update(getEntityType());
-        }
-    }
-
     private void checkAndSetMapper(BaseMapper mapper) {
         if (Objects.isNull(this.mapper)) {
             this.mapper = mapper;
@@ -142,5 +137,36 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
     public int execute() {
         this.setDefault();
         return mapper.update(this);
+    }
+
+    private void setDefault() {
+        if (Objects.isNull(this.getUpdateTable())) {
+            //自动设置实体类
+            this.update(getEntityType());
+        }
+        if (Objects.nonNull(this.getReturning())) {
+            if (this.returnType == null) {
+                this.returnType(this.entityType);
+            }
+        }
+    }
+
+    public UpdateChain returnType(Class<?> returnType) {
+        this.returnType = returnType;
+        return this;
+    }
+
+    public <R> R executeAndReturning() {
+        this.setDefault();
+        return mapper.updateAndGet(this);
+    }
+
+    public <R> List<R> executeAndReturningList() {
+        this.setDefault();
+        return mapper.updateAndList(this);
+    }
+
+    public Class<?> getReturnType() {
+        return returnType;
     }
 }

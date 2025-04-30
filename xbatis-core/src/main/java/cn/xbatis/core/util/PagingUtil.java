@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.util;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.MappedStatementUtil;
 import cn.xbatis.core.mybatis.provider.PagingCountSqlSource;
 import cn.xbatis.core.mybatis.provider.PagingListSqlSource;
@@ -128,11 +128,11 @@ public final class PagingUtil {
         }
         int offset = PageUtil.getOffset(number, size);
 
-        if (dbType == DbType.ORACLE && XbatisConfig.getPagingProcessor(dbType) instanceof OracleRowNumPagingProcessor) {
+        if (dbType == DbType.ORACLE && XbatisGlobalConfig.getPagingProcessor(dbType) instanceof OracleRowNumPagingProcessor) {
             return getOracleRowNumLimitedSQL(size, offset, sql);
         }
 
-        if (dbType == DbType.SQL_SERVER && XbatisConfig.getPagingProcessor(dbType) instanceof SQLServerRowNumberOverPagingProcessor) {
+        if (dbType == DbType.SQL_SERVER && XbatisGlobalConfig.getPagingProcessor(dbType) instanceof SQLServerRowNumberOverPagingProcessor) {
             return getSQLServerRowNumLimitedSQL(size, offset, sql);
         }
 

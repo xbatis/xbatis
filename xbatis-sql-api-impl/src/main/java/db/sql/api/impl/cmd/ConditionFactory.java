@@ -24,6 +24,7 @@ import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.exception.ConditionArrayValueEmptyException;
 import db.sql.api.impl.exception.ConditionValueNullException;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -685,6 +686,20 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         return Methods.exists(query);
     }
 
+    @Override
+    public <T1, T2> ICondition exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
+        if (!when) {
+            return null;
+        }
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
+
+        return Methods.exists(cmdFactory.createSubQuery()
+                .select1()
+                .from(lambdaFieldInfo.getType())
+                .eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey))
+        );
+    }
+
 
     @Override
     public ICondition notExists(boolean when, IQuery query) {
@@ -693,6 +708,19 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         }
         Objects.requireNonNull(query);
         return Methods.notExists(query);
+    }
+
+    @Override
+    public <T1, T2> ICondition notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
+        if (!when) {
+            return null;
+        }
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
+        return Methods.notExists(cmdFactory.createSubQuery()
+                .select1()
+                .from(lambdaFieldInfo.getType())
+                .eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey))
+        );
     }
 
     @Override

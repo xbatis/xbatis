@@ -5,7 +5,7 @@ docker pull container-registry.oracle.com/mysql/community-server
 ```
 
 ```
-docker run --name mysql --env=MYSQL_ROOT_HOST=% --env=MYSQL_ROOT_PASSWORD=123456 -p 3306:3306 -d container-registry.oracle.com/mysql/community-server
+docker run --name mysql2 --env=MYSQL_ROOT_HOST=% --env=MYSQL_ROOT_PASSWORD=123456 -p 3307:3306 -d container-registry.oracle.com/mysql/community-server --lower_case_table_names=1
 ```
 
 # mariadb

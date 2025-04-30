@@ -33,6 +33,8 @@ import java.time.LocalDateTime;
 @FieldNameConstants
 public class CompositeTest extends BaseEntity {
 
+    private String name;
+
     @Version
     private Integer version;
 

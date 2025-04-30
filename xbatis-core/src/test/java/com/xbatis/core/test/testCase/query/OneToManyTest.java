@@ -37,6 +37,8 @@ public class OneToManyTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             List<OneToManyVo> list = QueryChain.of(sysRoleMapper)
+                    .tableAs(SysUser.class, "aaa")
+                    .tableAs(SysRole.class, "bbb")
                     .select(SysUser.class)
                     .select(SysUser::getUserName, c -> c.as(OneToManyVo::getAsName))
                     .select(SysRole.class)

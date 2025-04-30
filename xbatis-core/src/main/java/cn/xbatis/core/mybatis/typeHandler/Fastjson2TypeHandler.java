@@ -30,12 +30,12 @@ public class Fastjson2TypeHandler extends AbstractJsonTypeHandler {
     }
 
     @Override
-    String toJson(Object obj) {
+    public String toJson(Object obj) {
         return JSON.toJSONString(obj, Feature.WriteMapNullValue, Feature.WriteNullListAsEmpty, Feature.WriteNullStringAsEmpty);
     }
 
     @Override
-    Object parseJson(String json) {
+    public Object parseJson(String json) {
         return JSON.parseObject(json, this.getDeserializeType());
     }
 }

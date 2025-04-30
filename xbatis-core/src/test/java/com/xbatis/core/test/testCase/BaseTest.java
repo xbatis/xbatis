@@ -14,7 +14,7 @@
 
 package com.xbatis.core.test.testCase;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import cn.xbatis.core.mybatis.configuration.MybatisDatabaseIdProvider;
 import cn.xbatis.core.mybatis.mapper.DbRunner;
@@ -72,8 +72,8 @@ public class BaseTest {
 
     @BeforeEach
     public void init() {
-        XbatisConfig.setPagingProcessor(DbType.ORACLE, new OracleRowNumPagingProcessor());
-        XbatisConfig.setPagingProcessor(DbType.SQL_SERVER, new SQLServerRowNumberOverPagingProcessor());
+        XbatisGlobalConfig.setPagingProcessor(DbType.ORACLE, new OracleRowNumPagingProcessor());
+        XbatisGlobalConfig.setPagingProcessor(DbType.SQL_SERVER, new SQLServerRowNumberOverPagingProcessor());
         dataSource = TestDataSource.getDataSource();
 
         // 1 创建 事务管理工厂

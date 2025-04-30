@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.sql.executor;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.util.SelectClassUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
@@ -29,6 +29,7 @@ import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSubQuery<Q, MybatisCmdFactory> {
 
@@ -87,7 +88,67 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
 
     @Override
     public List<SQLListener> getSQLListeners() {
-        return XbatisConfig.getSQLListeners();
+        return XbatisGlobalConfig.getSQLListeners();
+    }
+
+    /**
+     * 给表设置别名
+     *
+     * @param entity 实体
+     * @param as     别名
+     * @param <T>    实体类类型
+     * @return 自己
+     */
+    public <T> Q tableAs(Class<T> entity, String as) {
+        return tableAs(entity, 1, as);
+    }
+
+    /**
+     * 给表设置别名
+     *
+     * @param entity 实体
+     * @param storey 层级
+     * @param as     别名
+     * @param <T>    实体类类型
+     * @return 自己
+     */
+    public <T> Q tableAs(Class<T> entity, int storey, String as) {
+        conditionFactory.getCmdFactory().table(entity, storey).as(as);
+        return (Q) this;
+    }
+
+    private <T2> SubQuery buildExistsSubQuery(Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        SubQuery subQuery = this.$().createSubQuery();
+        consumer.accept((Q) this, subQuery);
+        if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
+            subQuery.select1();
+        }
+        if (subQuery.getFrom() == null) {
+            subQuery.from(entity);
+        }
+        return subQuery;
+    }
+
+    public <T2> Q exists(Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        return this.exists(true, entity, consumer);
+    }
+
+    public <T2> Q exists(boolean when, Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        if (!when) {
+            return (Q) this;
+        }
+        return this.exists(this.buildExistsSubQuery(entity, consumer));
+    }
+
+    public <T2> Q notExists(Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        return this.notExists(true, entity, consumer);
+    }
+
+    public <T2> Q notExists(boolean when, Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
+        if (!when) {
+            return (Q) this;
+        }
+        return this.notExists(this.buildExistsSubQuery(entity, consumer));
     }
 
     /**************以下为去除警告************/

@@ -572,8 +572,26 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
+    public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
+        ICondition condition = conditionFactory.exists(when, sourceGetter, sourceStorey, targetGetter);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
     public ConditionChain notExists(boolean when, IQuery query) {
         ICondition condition = conditionFactory.notExists(when, query);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T1, T2> ConditionChain notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
+        ICondition condition = conditionFactory.notExists(when, sourceGetter, sourceStorey, targetGetter);
         if (condition != null) {
             this.appendCondition(this.connector, condition);
         }

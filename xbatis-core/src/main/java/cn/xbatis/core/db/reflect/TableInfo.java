@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.db.reflect;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.core.util.StringPool;
@@ -170,7 +170,7 @@ public class TableInfo {
                 }
                 logicDeleteFieldInfo = tableFieldInfo;
                 LogicDelete logicDeleteAnnotation = field.getAnnotation(LogicDelete.class);
-                if (XbatisConfig.isDynamicValueKeyFormat(logicDeleteAnnotation.beforeValue())) {
+                if (XbatisGlobalConfig.isDynamicValueKeyFormat(logicDeleteAnnotation.beforeValue())) {
                     throw new RuntimeException("the @LogicDelete of Entity " + entity.getName() + " has config error,the beforeValue can't be dynamic key");
                 }
             }

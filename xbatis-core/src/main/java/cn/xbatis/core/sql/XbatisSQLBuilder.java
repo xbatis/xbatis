@@ -33,7 +33,7 @@ public class XbatisSQLBuilder implements SQLBuilder {
      * @return
      */
     @Override
-    public StringBuilder buildQuerySQl(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
+    public StringBuilder buildQuerySQL(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
         return SQLOptimizeUtils.getOptimizedSql(query, context, optimizeOptions);
     }
 
@@ -46,7 +46,7 @@ public class XbatisSQLBuilder implements SQLBuilder {
      * @return
      */
     @Override
-    public StringBuilder buildCountQuerySQl(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
+    public StringBuilder buildCountQuerySQL(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
         return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOptions);
     }
 

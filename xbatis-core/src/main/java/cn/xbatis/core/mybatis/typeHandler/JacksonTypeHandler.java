@@ -14,8 +14,7 @@
 
 package cn.xbatis.core.mybatis.typeHandler;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -48,22 +47,22 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler {
     }
 
     @Override
-    String toJson(Object obj) {
+    protected String toJson(Object obj) {
         try {
             return getObjectMapper().writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    Object parseJson(String json) {
+    protected Object parseJson(String json) {
         ObjectMapper objectMapper = getObjectMapper();
         TypeFactory typeFactory = objectMapper.getTypeFactory();
         JavaType javaType = typeFactory.constructType(this.getDeserializeType());
         try {
             return objectMapper.readValue(json, javaType);
-        } catch (JacksonException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

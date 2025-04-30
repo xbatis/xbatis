@@ -17,8 +17,8 @@ package cn.xbatis.core.mybatis.provider;
 
 import cn.xbatis.core.db.reflect.ResultInfos;
 import cn.xbatis.db.annotations.ResultEntity;
+import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.Table;
-import db.sql.api.impl.cmd.executor.AbstractQuery;
 
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +28,7 @@ public final class TablePrefixUtil {
     private TablePrefixUtil() {
     }
 
-    public static void prefixMapping(AbstractQuery query, Class returnType) {
+    public static void prefixMapping(CmdFactory cmdFactory, Class returnType) {
         if (Objects.isNull(returnType)) {
             return;
         }
@@ -43,14 +43,14 @@ public final class TablePrefixUtil {
                 entry.getValue().forEach((storey, prefix) -> {
                     if (storey == -1) {
                         for (int i = 0; i < 5; i++) {
-                            Table table = query.$().cacheTable(entityType, storey);
+                            Table table = cmdFactory.cacheTable(entityType, storey);
                             if (Objects.nonNull(table) && Objects.isNull(table.getPrefix())) {
                                 table.setPrefix(prefix);
                                 break;
                             }
                         }
                     } else {
-                        Table table = query.$().cacheTable(entityType, storey);
+                        Table table = cmdFactory.cacheTable(entityType, storey);
                         if (Objects.nonNull(table) && Objects.isNull(table.getPrefix())) {
                             table.setPrefix(prefix);
                         }

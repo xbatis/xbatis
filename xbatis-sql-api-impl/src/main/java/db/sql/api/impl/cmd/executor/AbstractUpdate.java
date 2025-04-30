@@ -31,6 +31,7 @@ import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.*;
+import db.sql.api.impl.cmd.struct.query.Returning;
 import db.sql.api.impl.cmd.struct.update.UpdateSets;
 import db.sql.api.impl.cmd.struct.update.UpdateTable;
 
@@ -54,7 +55,8 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         From,
         Join,
         On,
-        Where
+        Where,
+        Returning
         > {
 
     protected final ConditionFactory conditionFactory;
@@ -64,6 +66,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     protected UpdateSets updateSets;
     protected Where where;
     protected Joins joins;
+    protected Returning returning;
 
     public AbstractUpdate(CMD_FACTORY $) {
         this.$ = $;
@@ -114,6 +117,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         cmdSorts.put(From.class, i += 10);
         cmdSorts.put(Joins.class, i += 10);
         cmdSorts.put(Where.class, i += 10);
+        cmdSorts.put(Returning.class, i += 10);
     }
 
     @Override
@@ -235,6 +239,36 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         return this.join(mode, this.$.table(mainTable, mainTableStorey), secondTable, consumer);
     }
 
+
+    @Override
+    public SELF returning(Cmd column) {
+        $returning().returning(column);
+        return (SELF) this;
+    }
+
+    @Override
+    public <T> SELF returning(int storey, Getter<T>... columns) {
+        $returning().returning($.fields(storey, columns));
+        return (SELF) this;
+    }
+
+    @Override
+    public <T> SELF returning(Getter<T> column, int storey, Function<TableField, Cmd> f) {
+        if (f != null) {
+            $returning().returning(f.apply($.field(column, storey)));
+        } else {
+            $returning().returning($.field(column, storey));
+        }
+        return (SELF) this;
+    }
+
+    @Override
+    public <T> SELF returningIgnore(Getter<T> column, int storey) {
+        $returning().returningIgnore($.field(column, storey));
+        return (SELF) this;
+    }
+
+
     @Override
     public Where $where() {
         if (where == null) {
@@ -242,6 +276,20 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
             this.append(where);
         }
         return where;
+    }
+
+    public Returning $returning() {
+        if (returning == null) {
+            returning = new Returning();
+            this.append(returning);
+        }
+        return returning;
+    }
+
+    @Override
+    public SELF returning(Class entity, int storey) {
+        this.returning($().allField($().table(entity, storey)));
+        return (SELF) this;
     }
 
     @Override
@@ -304,10 +352,9 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         return from;
     }
 
-    private On apply(Join joinTable) {
-        return new On(this.conditionFactory, joinTable);
+    public Returning getReturning() {
+        return returning;
     }
-
 
     @Override
     public StringBuilder sql(Cmd mould, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {

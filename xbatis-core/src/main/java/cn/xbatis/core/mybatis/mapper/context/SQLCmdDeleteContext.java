@@ -15,7 +15,7 @@
 package cn.xbatis.core.mybatis.mapper.context;
 
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.provider.MybatisSqlBuilderContext;
 import cn.xbatis.core.sql.executor.BaseDelete;
 import db.sql.api.DbType;
@@ -35,7 +35,7 @@ public class SQLCmdDeleteContext extends BaseSQLCmdContext<BaseDelete> {
             return sql;
         }
         sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
-        sql = XbatisConfig.getSQLBuilder().buildDeleteSQL(getExecution(), sqlBuilderContext).toString();
+        sql = XbatisGlobalConfig.getSQLBuilder().buildDeleteSQL(getExecution(), sqlBuilderContext).toString();
         return sql;
     }
 }

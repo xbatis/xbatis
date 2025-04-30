@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.mybatis;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.ExecutorType;
@@ -43,7 +43,7 @@ public final class MybatisBatchUtil {
      * @return 影响的条数
      */
     public static <M extends MybatisMapper<T>, T> int batchSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list) {
-        return batchSave(sqlSessionFactory, mapperType, list, XbatisConfig.getDefaultBatchSize());
+        return batchSave(sqlSessionFactory, mapperType, list, XbatisGlobalConfig.getDefaultBatchSize());
     }
 
     /**
@@ -73,7 +73,7 @@ public final class MybatisBatchUtil {
      * @return 影响的条数
      */
     public static <M extends MybatisMapper<T>, T> int batchUpdate(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list) {
-        return batchUpdate(sqlSessionFactory, mapperType, list, XbatisConfig.getDefaultBatchSize());
+        return batchUpdate(sqlSessionFactory, mapperType, list, XbatisGlobalConfig.getDefaultBatchSize());
     }
 
     /**

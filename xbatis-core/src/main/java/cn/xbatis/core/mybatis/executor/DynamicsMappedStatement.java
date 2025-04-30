@@ -16,10 +16,11 @@ package cn.xbatis.core.mybatis.executor;
 
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import cn.xbatis.core.mybatis.configuration.MybatisMapperProxy;
-import cn.xbatis.core.mybatis.mapper.context.SQLCmdInsertContext;
-import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
+import cn.xbatis.core.mybatis.mapper.context.*;
 import cn.xbatis.core.mybatis.mapping.ResultMapWrapper;
 import cn.xbatis.core.mybatis.provider.SQLCmdSqlSource;
+import cn.xbatis.core.sql.executor.chain.DeleteChain;
+import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
@@ -36,6 +37,27 @@ public class DynamicsMappedStatement {
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             return createInsertMappedStatement(ms, parameterObject);
         } else if (ms.getSqlCommandType() != SqlCommandType.SELECT) {
+            return ms;
+        } else if (parameterObject instanceof SelectPreparedContext) {
+            SelectPreparedContext selectPreparedContext = (SelectPreparedContext) parameterObject;
+            return createQueryMappedStatement(selectPreparedContext.getReturnType(), ms);
+        } else if (parameterObject instanceof SQLCmdUpdateContext && ms.getSqlCommandType() == SqlCommandType.SELECT) {
+            SQLCmdUpdateContext context = (SQLCmdUpdateContext) parameterObject;
+            if (context.getExecution() instanceof UpdateChain) {
+                UpdateChain updateChain = (UpdateChain) context.getExecution();
+                if (updateChain.getReturnType() != null) {
+                    return createQueryMappedStatement(updateChain.getReturnType(), ms);
+                }
+            }
+            return ms;
+        } else if (parameterObject instanceof SQLCmdDeleteContext && ms.getSqlCommandType() == SqlCommandType.SELECT) {
+            SQLCmdDeleteContext context = (SQLCmdDeleteContext) parameterObject;
+            if (context.getExecution() instanceof DeleteChain) {
+                DeleteChain deleteChain = (DeleteChain) context.getExecution();
+                if (deleteChain.getReturnType() != null) {
+                    return createQueryMappedStatement(deleteChain.getReturnType(), ms);
+                }
+            }
             return ms;
         } else if (!(parameterObject instanceof SQLCmdQueryContext)) {
             return ms;

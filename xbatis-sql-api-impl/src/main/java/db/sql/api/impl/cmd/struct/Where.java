@@ -108,4 +108,30 @@ public class Where implements IWhere<Where, TableField, Cmd, Object, ConditionCh
     public boolean contain(Cmd cmd) {
         return CmdUtils.contain(cmd, this.conditionChain) || CmdUtils.contain(cmd, this.extConditionChain);
     }
+
+    /**
+     * 给表设置别名
+     *
+     * @param entity 实体
+     * @param as     别名
+     * @param <T>    实体类类型
+     * @return 自己
+     */
+    public <T> Where tableAs(Class<T> entity, String as) {
+        return tableAs(entity, 1, as);
+    }
+
+    /**
+     * 给表设置别名
+     *
+     * @param entity 实体
+     * @param storey 层级
+     * @param as     别名
+     * @param <T>    实体类类型
+     * @return 自己
+     */
+    public <T> Where tableAs(Class<T> entity, int storey, String as) {
+        conditionFactory.getCmdFactory().table(entity, storey).as(as);
+        return this;
+    }
 }

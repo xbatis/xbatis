@@ -27,6 +27,7 @@ import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.delete.DeleteTable;
+import db.sql.api.impl.cmd.struct.query.Returning;
 
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +43,7 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
         Object,
         ConditionChain,
         DeleteTable,
-        From, Join, On, Where> {
+        From, Join, On, Where, Returning> {
 
     protected final ConditionFactory conditionFactory;
     protected final CMD_FACTORY $;
@@ -50,6 +51,7 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
     protected From from;
     protected Where where;
     protected Joins joins;
+    protected Returning returning;
 
     public AbstractDelete(CMD_FACTORY $) {
         this.$ = $;
@@ -98,6 +100,7 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
         cmdSorts.put(From.class, i += 10);
         cmdSorts.put(Joins.class, i += 10);
         cmdSorts.put(Where.class, i += 10);
+        cmdSorts.put(Returning.class, i += 10);
     }
 
     @Override
@@ -167,6 +170,48 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
     @Override
     public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, IDataset<?, ?> secondTable, Consumer<On> consumer) {
         return this.join(mode, this.$.table(mainTable, mainTableStorey), secondTable, consumer);
+    }
+
+    public Returning $returning() {
+        if (returning == null) {
+            returning = new Returning();
+            this.append(returning);
+        }
+        return returning;
+    }
+
+    @Override
+    public SELF returning(Cmd column) {
+        $returning().returning(column);
+        return (SELF) this;
+    }
+
+    @Override
+    public <T> SELF returning(int storey, Getter<T>... columns) {
+        $returning().returning($.fields(storey, columns));
+        return (SELF) this;
+    }
+
+    @Override
+    public <T> SELF returning(Getter<T> column, int storey, Function<TableField, Cmd> f) {
+        if (f != null) {
+            $returning().returning(f.apply($.field(column, storey)));
+        } else {
+            $returning().returning($.field(column, storey));
+        }
+        return (SELF) this;
+    }
+
+    @Override
+    public <T> SELF returningIgnore(Getter<T> column, int storey) {
+        $returning().returningIgnore($.field(column, storey));
+        return (SELF) this;
+    }
+
+    @Override
+    public SELF returning(Class entity, int storey) {
+        this.returning($().allField($().table(entity, storey)));
+        return (SELF) this;
     }
 
     @Override

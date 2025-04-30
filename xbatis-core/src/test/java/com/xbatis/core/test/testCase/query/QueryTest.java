@@ -726,7 +726,11 @@ public class QueryTest extends BaseTest {
     public void queryConfigTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            List<SysUser> list = QueryChain.of(sysUserMapper).timeout(1).fetchSize(1).fetchDirection(ResultSet.FETCH_FORWARD).list();
+            List<SysUser> list = QueryChain.of(sysUserMapper)
+                    .timeout(1)
+                    .fetchSize(1)
+                    .fetchDirection(ResultSet.FETCH_FORWARD)
+                    .list();
             list.stream().forEach(System.out::println);
             assertEquals(list.size(), 3);
         }

@@ -141,4 +141,46 @@ public interface ProviderMapper {
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
     <K, V> Map<K, V> $mapWithKey(MapKeySQLCmdQueryContext queryContext);
+
+
+    /**
+     * 动态查询 返回单个
+     *
+     * @param updateContext 上下文
+     * @return 返回修改结果
+     * @see MybatisSQLProvider#updateAndReturning (SQLCmdQueryContext, ProviderContext, DbType)
+     */
+    @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.UPDATE_AND_RETURNING_NAME, affectData = true)
+    <R> R $updateAndGet(SQLCmdUpdateContext updateContext, RowBounds rowBounds);
+
+    /**
+     * 动态查询 返回修改后多个记录
+     *
+     * @param updateContext 上下文
+     * @return 返回修改结果
+     * @see MybatisSQLProvider#updateAndReturning (SQLCmdQueryContext, ProviderContext, DbType)
+     */
+    @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.UPDATE_AND_RETURNING_NAME, affectData = true)
+    <R> List<R> $updateAndList(SQLCmdUpdateContext updateContext);
+
+
+    /**
+     * 动态删除 返回单个删除记录
+     *
+     * @param deleteContext 上下文
+     * @return 返回修改结果
+     * @see MybatisSQLProvider#deleteAndReturning (SQLCmdQueryContext, ProviderContext, DbType)
+     */
+    @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.DELETE_AND_RETURNING_NAME, affectData = true)
+    <R> R $deleteAndReturning(SQLCmdDeleteContext deleteContext, RowBounds rowBounds);
+
+    /**
+     * 动态删除 返回多个删除记录
+     *
+     * @param deleteContext 上下文
+     * @return 返回修改结果
+     * @see MybatisSQLProvider#deleteAndReturning (SQLCmdQueryContext, ProviderContext, DbType)
+     */
+    @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.DELETE_AND_RETURNING_NAME, affectData = true)
+    <R> List<R> $deleteAndReturningList(SQLCmdDeleteContext deleteContext);
 }

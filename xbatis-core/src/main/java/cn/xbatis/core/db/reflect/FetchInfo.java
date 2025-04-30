@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.db.reflect;
 
-import cn.xbatis.core.XbatisConfig;
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.annotations.Fetch;
 import lombok.Data;
@@ -105,7 +105,7 @@ public class FetchInfo {
             } else if (this.nullFillValue != null) {
                 value = this.nullFillValue;
             } else {
-                value = XbatisConfig.getDefaultValue(this.getFieldInfo().getClazz(), this.getFieldInfo().getTypeClass(), this.fetch.nullFillValue());
+                value = XbatisGlobalConfig.getDefaultValue(this.getFieldInfo().getClazz(), this.getFieldInfo().getTypeClass(), this.fetch.nullFillValue());
             }
         }
         try {
