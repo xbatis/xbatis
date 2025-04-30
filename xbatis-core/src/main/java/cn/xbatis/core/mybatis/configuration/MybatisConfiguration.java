@@ -49,6 +49,11 @@ import java.util.*;
 
 public class MybatisConfiguration extends Configuration {
 
+    /**
+     * 是否打印banner
+     */
+    private boolean banner = true;
+
     public MybatisConfiguration() {
         super();
         this.init();
@@ -65,6 +70,9 @@ public class MybatisConfiguration extends Configuration {
     }
 
     public void printBanner() {
+        if (!banner) {
+            return;
+        }
         try (BufferedReader reader = new BufferedReader(Resources.getResourceAsReader("xbatis.banner"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -210,6 +218,14 @@ public class MybatisConfiguration extends Configuration {
             executor = new CachingExecutor(executor);
         }
         return (Executor) this.interceptorChain.pluginAll(executor);
+    }
+
+    public boolean getBanner() {
+        return this.banner;
+    }
+
+    public void setBanner(boolean banner) {
+        this.banner = banner;
     }
 }
 
