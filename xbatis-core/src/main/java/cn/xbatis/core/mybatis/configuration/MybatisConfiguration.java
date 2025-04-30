@@ -220,8 +220,8 @@ public class MybatisConfiguration extends Configuration {
         return (Executor) this.interceptorChain.pluginAll(executor);
     }
 
-    public boolean getBanner() {
-        return this.banner;
+    public boolean isBanner() {
+        return banner;
     }
 
     public void setBanner(boolean banner) {
