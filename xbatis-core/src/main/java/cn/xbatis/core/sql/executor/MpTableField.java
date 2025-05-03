@@ -19,6 +19,7 @@ import cn.xbatis.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
 import db.sql.api.Cmd;
+import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.basic.TableField;
 
@@ -41,6 +42,8 @@ public class MpTableField extends TableField {
     public Object paramWrap(Object param) {
         if (Objects.isNull(param)) {
             return null;
+        } else if (param instanceof CmdConvert) {
+            return ((CmdConvert) param).convert();
         }
         if (Objects.isNull(tableFieldInfo.getTypeHandler())) {
             return param;
@@ -55,6 +58,8 @@ public class MpTableField extends TableField {
     public Object likeParamWrap(LikeMode likeMode, Object param, boolean isNotLike) {
         if (Objects.isNull(param) || param instanceof Cmd) {
             return param;
+        } else if (param instanceof CmdConvert) {
+            return ((CmdConvert) param).convert();
         }
         if (!tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
             return param;

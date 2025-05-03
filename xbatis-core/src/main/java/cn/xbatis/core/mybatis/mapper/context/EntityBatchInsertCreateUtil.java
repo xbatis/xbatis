@@ -31,7 +31,6 @@ import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.TableField;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
-import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 
@@ -175,8 +174,7 @@ public class EntityBatchInsertCreateUtil {
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {
-                    MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                    values.add(Methods.cmd(mybatisParameter));
+                    values.add(CmdParamUtil.build(tableField, value));
                 }
             }
             insert.values(values);

@@ -30,10 +30,8 @@ import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.IdAutoType;
-import cn.xbatis.db.annotations.TableField;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
-import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 
 import java.util.ArrayList;
@@ -117,9 +115,7 @@ public class EntityInsertCreateUtil {
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {
-                    TableField tableField = tableFieldInfo.getTableFieldAnnotation();
-                    MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                    values.add(Methods.cmd(mybatisParameter));
+                    values.add(CmdParamUtil.build(tableFieldInfo.getTableFieldAnnotation(), value));
                 }
             }
         }

@@ -26,7 +26,6 @@ import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.Model;
-import cn.xbatis.db.annotations.TableField;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
@@ -119,9 +118,7 @@ public class ModelUpdateCmdCreateUtil {
             }
 
             if (Objects.nonNull(value)) {
-                TableField tableField = modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation();
-                MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(mybatisParameter));
+                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation(), value));
             }
         }
 
