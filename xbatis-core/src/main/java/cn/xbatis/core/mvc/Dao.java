@@ -56,6 +56,15 @@ public interface Dao<T, ID> {
     T getById(ID id);
 
     /**
+     * 根据ID查询，指定目标类型
+     *
+     * @param targetType 目标类
+     * @param id         ID
+     * @return 单个目标类型
+     */
+    <T2> T2 getById(Class<T2> targetType, ID id);
+
+    /**
      * 根据ID查询
      *
      * @param id           ID

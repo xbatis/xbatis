@@ -19,6 +19,7 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.util.QueryUtil;
+import cn.xbatis.core.sql.util.SelectClassUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
@@ -32,6 +33,16 @@ public final class GetMethodUtil {
     public static <T> T getById(BasicMapper basicMapper, TableInfo tableInfo, Serializable id, Getter<T>[] selectFields) {
         Where where = WhereUtil.create(tableInfo, w -> WhereUtil.appendIdWhere(w, tableInfo, id));
         BaseQuery<?, T> query = QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> QueryUtil.fillQueryDefault(q, tableInfo, selectFields));
+        return basicMapper.$getById(new SQLCmdQueryContext(query), new RowBounds(0, 1));
+    }
+
+    public static <T> T getById(BasicMapper basicMapper, TableInfo tableInfo, Class<T> targetType, Serializable id) {
+        Where where = WhereUtil.create(tableInfo, w -> WhereUtil.appendIdWhere(w, tableInfo, id));
+        BaseQuery<?, T> query = QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> {
+            SelectClassUtil.select(q, targetType);
+            QueryUtil.fillQueryDefault(q, tableInfo);
+            q.setReturnType(targetType);
+        });
         return basicMapper.$getById(new SQLCmdQueryContext(query), new RowBounds(0, 1));
     }
 

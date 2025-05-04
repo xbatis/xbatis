@@ -48,6 +48,18 @@ public interface GetBasicMapper extends BaseBasicMapper {
     }
 
     /**
+     * 根据ID查询，指定目标类型
+     *
+     * @param entityType 实体类
+     * @param targetType 目标类
+     * @param id         ID
+     * @return 单个目标类型
+     */
+    default <T, T2, ID extends Serializable> T2 getById(Class<T> entityType, Class<T2> targetType, ID id) {
+        return GetMethodUtil.getById(getBasicMapper(), Tables.get(entityType), targetType, id);
+    }
+
+    /**
      * 单个查询
      *
      * @param entityType 实体类

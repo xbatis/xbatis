@@ -45,6 +45,17 @@ public interface GetMapper<T> extends BaseMapper<T> {
     }
 
     /**
+     * 根据ID查询，指定目标类型
+     *
+     * @param targetType 目标类
+     * @param id         ID
+     * @return 单个目标类型
+     */
+    default <T, ID extends Serializable> T getById(Class<T> targetType, ID id) {
+        return GetMethodUtil.getById(getBasicMapper(), getTableInfo(), targetType, id);
+    }
+
+    /**
      * 单个查询
      *
      * @param consumer where consumer
