@@ -28,6 +28,7 @@ import db.sql.api.impl.tookit.Objects;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -710,6 +711,50 @@ public class ConditionTest extends BaseTest {
                     .count();
 
             assertEquals(count, 1);
+        }
+    }
+
+    @Test
+    public void ignoreIn() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<Integer> list = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId)
+                    .from(SysUser.class)
+                    .forSearch()
+                    .in(SysUser::getId, (Integer[]) null)
+                    .in(SysUser::getId, (List<Integer>) null)
+                    .in(SysUser::getId, new Integer[]{})
+                    .in(SysUser::getId, new ArrayList<>())
+                    .returnType(Integer.class)
+                    .list();
+
+            assertEquals(3, list.size());
+            assertEquals(Integer.valueOf(1), list.get(0));
+            assertEquals(Integer.valueOf(2), list.get(1));
+            assertEquals(Integer.valueOf(3), list.get(2));
+        }
+    }
+
+    @Test
+    public void ignoreNotIn() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<Integer> list = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId)
+                    .from(SysUser.class)
+                    .forSearch()
+                    .notIn(SysUser::getId, (Integer[]) null)
+                    .notIn(SysUser::getId, (List<Integer>) null)
+                    .notIn(SysUser::getId, new Integer[]{})
+                    .notIn(SysUser::getId, new ArrayList<>())
+                    .returnType(Integer.class)
+                    .list();
+
+            assertEquals(3, list.size());
+            assertEquals(Integer.valueOf(1), list.get(0));
+            assertEquals(Integer.valueOf(2), list.get(1));
+            assertEquals(Integer.valueOf(3), list.get(2));
         }
     }
 }

@@ -21,6 +21,7 @@ import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.vo.SysUserNormalVo;
 import com.xbatis.core.test.vo.SysUserVo;
+import com.xbatis.core.test.vo.SysUserVo2;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -113,7 +114,10 @@ public class QueryAsTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserVo2 sysUser = sysUserMapper.getById(SysUserVo2.class, 1);
             System.out.println(sysUser);
-            assertEquals(sysUserMapper.getClass(), SysUserMapper.class);
+            SysUserVo2 eqsysUser = new SysUserVo2();
+            eqsysUser.setId(1);
+            eqsysUser.setUserName("admin");
+            assertEquals(eqsysUser, sysUser);
         }
     }
 

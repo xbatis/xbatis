@@ -115,7 +115,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
                 objectList.add(nv);
             }
 
-            if (objectList.isEmpty()) {
+            if (!isIgnoreNull() && objectList.isEmpty()) {
                 throw new ConditionArrayValueEmptyException("array can't be empty");
             }
             int length = objectList.size();
@@ -152,7 +152,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
                 }
                 objectList.add(nv);
             }
-            if (objectList.isEmpty()) {
+            if (!isIgnoreNull() && objectList.isEmpty()) {
                 throw new ConditionArrayValueEmptyException("collection can't be empty");
             }
             return collection;
@@ -628,7 +628,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     @SafeVarargs
     public final ICondition in(Cmd column, Serializable... values) {
         values = (Serializable[]) checkAndGetValidValue(values);
-        if (Objects.isNull(values)) {
+        if (Objects.isNull(values) || values.length == 0) {
             return null;
         }
         return Methods.in(column, (Object[]) values);
@@ -637,7 +637,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     @Override
     public ICondition in(Cmd column, Collection<? extends Serializable> values) {
         values = (Collection<Serializable>) checkAndGetValidValue(values);
-        if (Objects.isNull(values)) {
+        if (Objects.isNull(values) || values.isEmpty()) {
             return null;
         }
         return Methods.in(column, values);
@@ -659,7 +659,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
         values = (Serializable[]) checkAndGetValidValue(values);
-        if (Objects.isNull(values)) {
+        if (Objects.isNull(values) || values.length == 0) {
             return null;
         }
         return Methods.in(createTableField(column, storey), (Object[]) values);
@@ -671,7 +671,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
         values = (Collection<Serializable>) checkAndGetValidValue(values);
-        if (Objects.isNull(values)) {
+        if (Objects.isNull(values) || values.isEmpty()) {
             return null;
         }
         return Methods.in(createTableField(column, storey), values);
@@ -733,7 +733,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     @SafeVarargs
     public final ICondition notIn(Cmd column, Serializable... values) {
         values = (Serializable[]) checkAndGetValidValue(values);
-        if (Objects.isNull(values)) {
+        if (Objects.isNull(values) || values.length == 0) {
             return null;
         }
         return Methods.notIn(column, (Object[]) values);
@@ -742,7 +742,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     @Override
     public ICondition notIn(Cmd column, Collection<? extends Serializable> values) {
         values = (Collection<Serializable>) checkAndGetValidValue(values);
-        if (Objects.isNull(values)) {
+        if (Objects.isNull(values) || values.isEmpty()) {
             return null;
         }
         return Methods.notIn(column, values);
@@ -764,7 +764,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
         Object[] newValues = (Serializable[]) checkAndGetValidValue(values);
-        if (Objects.isNull(newValues)) {
+        if (Objects.isNull(newValues) || newValues.length == 0) {
             return null;
         }
         return Methods.notIn(createTableField(column, storey), newValues);
@@ -776,7 +776,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
         values = (Collection<? extends Serializable>) checkAndGetValidValue(values);
-        if (Objects.isNull(values)) {
+        if (Objects.isNull(values) || values.isEmpty()) {
             return null;
         }
         return Methods.notIn(createTableField(column, storey), values);
