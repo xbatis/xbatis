@@ -679,8 +679,10 @@ public class ConditionTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             int count = QueryChain.of(sysUserMapper)
+                    .forSearch()
                     .exists(SysRole.class, (query, subquery) -> {
                         subquery.eq(SysRole::getId, query.$(SysUser::getRole_id));
+                        subquery.in(SysRole::getId,new Integer[]{});
                     })
                     .count();
 

@@ -183,6 +183,9 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
 
     private <T2> SubQuery buildExistsSubQuery(Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
         SubQuery subQuery = this.$().createSubQuery();
+        subQuery.ignoreNullValueInCondition(this.conditionFactory.isIgnoreNull());
+        subQuery.ignoreEmptyInCondition(this.conditionFactory.isIgnoreEmpty());
+        subQuery.trimStringInCondition(this.conditionFactory.isStringTrim());
         consumer.accept((Q) this, subQuery);
         if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
             subQuery.select1();
@@ -190,11 +193,6 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
         if (subQuery.getFrom() == null) {
             subQuery.from(entity);
         }
-
-        subQuery.ignoreNullValueInCondition(this.conditionFactory.isIgnoreNull());
-        subQuery.ignoreEmptyInCondition(this.conditionFactory.isIgnoreEmpty());
-        subQuery.trimStringInCondition(this.conditionFactory.isStringTrim());
-
         return subQuery;
     }
 
