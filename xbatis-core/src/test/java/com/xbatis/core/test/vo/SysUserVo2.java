@@ -14,8 +14,8 @@
 
 package com.xbatis.core.test.vo;
 
-import cn.xbatis.db.annotations.*;
-import com.xbatis.core.test.DO.SysRole;
+import cn.xbatis.db.annotations.ResultEntity;
+import cn.xbatis.db.annotations.ResultEntityField;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 

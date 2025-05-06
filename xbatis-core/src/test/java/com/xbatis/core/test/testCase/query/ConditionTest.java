@@ -682,7 +682,7 @@ public class ConditionTest extends BaseTest {
                     .forSearch()
                     .exists(SysRole.class, (query, subquery) -> {
                         subquery.eq(SysRole::getId, query.$(SysUser::getRole_id));
-                        subquery.in(SysRole::getId,new Integer[]{});
+                        subquery.in(SysRole::getId, new Integer[]{});
                     })
                     .count();
 
