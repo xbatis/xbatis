@@ -107,4 +107,14 @@ public class QueryAsTest extends BaseTest {
         }
     }
 
+    @Test
+    public void voAsTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUserVo2 sysUser = sysUserMapper.getById(SysUserVo2.class, 1);
+            System.out.println(sysUser);
+            assertEquals(sysUserMapper.getClass(), SysUserMapper.class);
+        }
+    }
+
 }
