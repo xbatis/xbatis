@@ -190,6 +190,11 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
         if (subQuery.getFrom() == null) {
             subQuery.from(entity);
         }
+
+        subQuery.ignoreNullValueInCondition(this.conditionFactory.isIgnoreNull());
+        subQuery.ignoreEmptyInCondition(this.conditionFactory.isIgnoreEmpty());
+        subQuery.trimStringInCondition(this.conditionFactory.isStringTrim());
+
         return subQuery;
     }
 
