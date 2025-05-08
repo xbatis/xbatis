@@ -492,7 +492,8 @@ public class ResultInfo {
             Optional<Field> eqFieldOptional = Optional.empty();
             for (ResultFieldInfo item : resultInfo.getResultFieldInfos()) {
                 if (item instanceof ResultTableFieldInfo) {
-                    if (((ResultTableFieldInfo) item).getTableFieldInfo().getField() == fetchTargetFieldInfo.getField()) {
+                    ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
+                    if (!resultTableFieldInfo.getField().isAnnotationPresent(Fetch.class) && resultTableFieldInfo.getTableFieldInfo().getField() == fetchTargetFieldInfo.getField()) {
                         Field itemField = item.getField();
                         eqFieldOptional = Optional.of(itemField);
                         break;
