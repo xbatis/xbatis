@@ -278,4 +278,14 @@ public class XmlPagingTestCase extends BaseTest {
         }
     }
 
+    @Test
+    public void testselectAll2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+
+            List<Map> list = sysRoleMapper.selectAll2();
+            System.out.println(list);
+        }
+    }
+
 }

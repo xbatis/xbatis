@@ -64,4 +64,6 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
     List<XmlNestedResultMap> selectXmlNestedResultMap();
 
     List<Map> testSuperMapParams(ReqEntity reqEntity);
+
+    List<Map> selectAll2();
 }

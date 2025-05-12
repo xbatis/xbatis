@@ -15,5 +15,10 @@
 package cn.xbatis.core.mybatis.executor;
 
 public interface PreparedParameterContext {
+
+    default String getName() {
+        return "xbatis.context";
+    }
+
     Object[] getParameters();
 }

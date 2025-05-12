@@ -109,4 +109,8 @@
     <select id="testSuperMapParams" resultType="Map">
         select t.id from t_sys_user t where <if test="params.type == 1"> id=#{params.type} </if>
     </select>
+
+    <select id="selectAll2" resultType="Map" >
+        select t.id from t_sys_user t
+    </select>
 </mapper>

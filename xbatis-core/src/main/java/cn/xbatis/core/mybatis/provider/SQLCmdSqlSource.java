@@ -20,6 +20,7 @@ import cn.xbatis.core.util.DbTypeUtil;
 import db.sql.api.DbType;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
 
@@ -67,7 +68,9 @@ public class SQLCmdSqlSource implements SqlSource {
             throw new RuntimeException("Unadapted: Unknown SQL method: " + methodName);
         }
         String sql = sqlGenerator.apply(parameterObject, this.providerContext, getDbType());
-        return new BoundSql(this.configuration, sql, Collections.emptyList(), parameterObject);
+        return new BoundSql(this.configuration, sql, Collections.singletonList(new ParameterMapping
+                .Builder(configuration, "name", Object.class)
+                .build()), parameterObject);
     }
 
     public DbType getDbType() {

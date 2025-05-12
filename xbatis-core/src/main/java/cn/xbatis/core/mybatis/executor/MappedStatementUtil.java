@@ -16,6 +16,8 @@ package cn.xbatis.core.mybatis.executor;
 
 import cn.xbatis.core.mybatis.mapping.ResultMapWrapper;
 import cn.xbatis.core.mybatis.provider.MybatisSQLProvider;
+import cn.xbatis.core.mybatis.provider.PreparedSQLProvider;
+import cn.xbatis.core.mybatis.provider.PreparedSQLSqlSource;
 import cn.xbatis.core.mybatis.provider.SQLCmdSqlSource;
 import cn.xbatis.core.util.PagingUtil;
 import org.apache.ibatis.builder.annotation.ProviderContext;
@@ -38,6 +40,10 @@ public final class MappedStatementUtil {
                 Method providerMethod = (Method) sqlSourceMetaObject.getValue("providerMethod");
                 ProviderContext providerContext = (ProviderContext) sqlSourceMetaObject.getValue("providerContext");
                 SQLCmdSqlSource sqlSource = new SQLCmdSqlSource(ms.getConfiguration(), providerMethod, providerContext);
+                MetaObject msMetaObject = ms.getConfiguration().newMetaObject(ms);
+                msMetaObject.setValue("sqlSource", sqlSource);
+            } else if (PreparedSQLProvider.class.isAssignableFrom(providerType)) {
+                PreparedSQLSqlSource sqlSource = new PreparedSQLSqlSource(ms.getConfiguration());
                 MetaObject msMetaObject = ms.getConfiguration().newMetaObject(ms);
                 msMetaObject.setValue("sqlSource", sqlSource);
             }
