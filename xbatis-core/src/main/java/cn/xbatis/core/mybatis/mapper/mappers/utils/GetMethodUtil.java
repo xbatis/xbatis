@@ -30,6 +30,14 @@ import java.util.function.Consumer;
 
 public final class GetMethodUtil {
 
+
+    public static <T, V> V getVOById(BasicMapper basicMapper, TableInfo tableInfo, Class<V> returnType, Serializable id) {
+        Where where = WhereUtil.create(tableInfo, w -> WhereUtil.appendIdWhere(w, tableInfo, id));
+        BaseQuery<?, T> query = QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> QueryUtil.fillQueryDefault(q, tableInfo, null));
+        query.setReturnType(returnType);
+        return basicMapper.$getById(new SQLCmdQueryContext(query), new RowBounds(0, 1));
+    }
+
     public static <T> T getById(BasicMapper basicMapper, TableInfo tableInfo, Serializable id, Getter<T>[] selectFields) {
         Where where = WhereUtil.create(tableInfo, w -> WhereUtil.appendIdWhere(w, tableInfo, id));
         BaseQuery<?, T> query = QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> QueryUtil.fillQueryDefault(q, tableInfo, selectFields));

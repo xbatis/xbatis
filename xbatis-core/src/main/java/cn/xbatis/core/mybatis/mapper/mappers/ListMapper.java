@@ -39,12 +39,35 @@ public interface ListMapper<T> extends BaseMapper<T> {
     /**
      * 列表查询,返回类型，当前实体类
      *
+     * @param ids  指定ID
+     * @param <ID> ID
+     * @return 返回结果列表
+     */
+    default <ID extends Serializable> List<T> getByIds(ID... ids) {
+        return this.listByIds(ids, (Getter<T>[]) null);
+    }
+
+    /**
+     * 列表查询,返回类型，当前实体类
+     *
      * @param ids          指定ID
      * @param selectFields select指定列
      * @param <ID>         ID
      * @return 返回结果列表
      */
     default <ID extends Serializable> List<T> listByIds(ID[] ids, Getter<T>... selectFields) {
+        return ListMethodUtil.listByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
+    }
+
+    /**
+     * 列表查询,返回类型，当前实体类
+     *
+     * @param ids          指定ID
+     * @param selectFields select指定列
+     * @param <ID>         ID
+     * @return 返回结果列表
+     */
+    default <ID extends Serializable> List<T> getByIds(ID[] ids, Getter<T>... selectFields) {
         return ListMethodUtil.listByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
     }
 
@@ -62,12 +85,35 @@ public interface ListMapper<T> extends BaseMapper<T> {
     /**
      * 列表查询,返回类型，当前实体类
      *
+     * @param ids  指定ID
+     * @param <ID> ID
+     * @return 返回结果列表
+     */
+    default <ID extends Serializable> List<T> getByIds(Collection<ID> ids) {
+        return this.listByIds(ids, (Getter<T>[]) null);
+    }
+
+    /**
+     * 列表查询,返回类型，当前实体类
+     *
      * @param ids          指定ID
      * @param selectFields select指定列
      * @param <ID>         ID
      * @return 返回结果列表
      */
     default <ID extends Serializable> List<T> listByIds(Collection<ID> ids, Getter<T>... selectFields) {
+        return ListMethodUtil.listByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
+    }
+
+    /**
+     * 列表查询,返回类型，当前实体类
+     *
+     * @param ids          指定ID
+     * @param selectFields select指定列
+     * @param <ID>         ID
+     * @return 返回结果列表
+     */
+    default <ID extends Serializable> List<T> getByIds(Collection<ID> ids, Getter<T>... selectFields) {
         return ListMethodUtil.listByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
     }
 

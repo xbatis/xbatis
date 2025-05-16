@@ -749,4 +749,14 @@ public class QueryTest extends BaseTest {
             assertEquals(list.size(), 3);
         }
     }
+
+    @Test
+    public void listByIdsNullTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer[] ids = null;
+            assertEquals(sysUserMapper.getByIds(ids), Collections.emptyList());
+            assertEquals(sysUserMapper.getByIds(Collections.emptyList()), Collections.emptyList());
+        }
+    }
 }
