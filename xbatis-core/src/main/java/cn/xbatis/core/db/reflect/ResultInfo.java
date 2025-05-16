@@ -115,13 +115,13 @@ public class ResultInfo {
 
             if (field.isAnnotationPresent(PutValue.class)) {
                 //PutValue
-                tableCount = parsePutValue(parseResult, parseResult.resultFieldInfos, clazz, field, tableCount);
+                tableCount = parsePutValue(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
                 continue;
             }
 
             if (field.isAnnotationPresent(PutEnumValue.class)) {
                 //PutEnumValue
-                tableCount = parsePutEnumValue(parseResult, parseResult.resultFieldInfos, clazz, field, tableCount);
+                tableCount = parsePutEnumValue(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
                 continue;
             }
 
@@ -288,6 +288,18 @@ public class ResultInfo {
                 nestedResultInfo.getNestedResultInfos().add(newNestedResultInfo);
 
                 tableCount = parseNestedResultEntity(parseResult, newNestedResultInfo, field, newNestedResultEntity, tableCount);
+                continue;
+            }
+
+            if (field.isAnnotationPresent(PutValue.class)) {
+                //PutValue
+                tableCount = parsePutValue(parseResult, tableInfo, parseResult.resultFieldInfos, targetType, field, tableCount);
+                continue;
+            }
+
+            if (field.isAnnotationPresent(PutEnumValue.class)) {
+                //PutEnumValue
+                tableCount = parsePutEnumValue(parseResult, tableInfo, parseResult.resultFieldInfos, targetType, field, tableCount);
                 continue;
             }
 
@@ -516,14 +528,22 @@ public class ResultInfo {
      * 解析内嵌字段
      *
      * @param parseResult 解析结果
+     * @param currentTableInfo 当前对应TableInfo
      * @param field       字段
      * @param tableCount  当前表个数
      * @return 当前已存在表的个数
      */
-    private static int parsePutValue(ParseResult parseResult, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
+    private static int parsePutValue(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
         PutValue putValue = field.getAnnotation(PutValue.class);
-        if (!putValue.source().isAnnotationPresent(Table.class)) {
-            throw new RuntimeException(clazz.getName() + "->" + field.getName() + " @PutValue config error,the source: " + putValue.source().getName() + " is not a entity");
+
+        TableInfo fetchTableInfo;
+        if (putValue.source() == Void.class) {
+            fetchTableInfo = currentTableInfo;
+        } else {
+            if (!putValue.source().isAnnotationPresent(Table.class)) {
+                throw new RuntimeException(clazz.getName() + "->" + field.getName() + " @PutValue config error,the source: " + putValue.source().getName() + " is not a entity");
+            }
+            fetchTableInfo = Tables.get(putValue.source());
         }
 
         String[] properties = putValue.property().split(",");
@@ -531,16 +551,16 @@ public class ResultInfo {
         Class<?>[] valueTypes = new Class[properties.length];
         TypeHandler<?>[] valuesTypeHandler = new TypeHandler[properties.length];
         for (int i = 0; i < properties.length; i++) {
-            TableInfo fetchTableInfo = Tables.get(putValue.source());
+
             TableFieldInfo fetchFieldInfo = fetchTableInfo.getFieldInfo(putValue.property());
 
             if (Objects.isNull(fetchFieldInfo)) {
                 throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + putValue.property() + " is not a entity field");
             }
             //创建前缀
-            tableCount = createPrefix(putValue.source(), putValue.storey(), parseResult.tablePrefixes, tableCount);
+            tableCount = createPrefix(fetchTableInfo.getType(), putValue.storey(), parseResult.tablePrefixes, tableCount);
             //获取前缀
-            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, putValue.source(), putValue.storey());
+            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), putValue.storey());
 
             resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, putValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
 
@@ -557,31 +577,33 @@ public class ResultInfo {
      * 解析内嵌字段
      *
      * @param parseResult 解析结果
+     *                    @param currentTableInfo 当前对应TableInfo
      * @param field       字段
      * @param tableCount  当前表个数
      * @return 当前已存在表的个数
      */
-    private static int parsePutEnumValue(ParseResult parseResult, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
+    private static int parsePutEnumValue(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
         PutEnumValue putEnumValue = field.getAnnotation(PutEnumValue.class);
-        if (!putEnumValue.source().isAnnotationPresent(Table.class)) {
-            throw new RuntimeException(clazz.getName() + "->" + field.getName() + " @PutEnumValue config error,the source: " + putEnumValue.source().getName() + " is not a entity");
+
+        TableInfo fetchTableInfo;
+        if (putEnumValue.source() == Void.class) {
+            fetchTableInfo = currentTableInfo;
+        } else {
+            if (!putEnumValue.source().isAnnotationPresent(Table.class)) {
+                throw new RuntimeException(clazz.getName() + "->" + field.getName() + " @PutEnumValue config error,the source: " + putEnumValue.source().getName() + " is not a entity");
+            }
+            fetchTableInfo = Tables.get(putEnumValue.source());
         }
 
-        if (!putEnumValue.target().isEnum()) {
-            throw new RuntimeException(clazz.getName() + "->" + field.getName() + " @PutEnumValue config error,the target: " + putEnumValue.target().getName() + " is not a enum");
-        }
-
-
-        TableInfo fetchTableInfo = Tables.get(putEnumValue.source());
         TableFieldInfo fetchFieldInfo = fetchTableInfo.getFieldInfo(putEnumValue.property());
 
         if (Objects.isNull(fetchFieldInfo)) {
             throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + putEnumValue.property() + " is not a entity field");
         }
         //创建前缀
-        tableCount = createPrefix(putEnumValue.source(), putEnumValue.storey(), parseResult.tablePrefixes, tableCount);
+        tableCount = createPrefix(fetchTableInfo.getType(), putEnumValue.storey(), parseResult.tablePrefixes, tableCount);
         //获取前缀
-        String tablePrefix = getTablePrefix(parseResult.tablePrefixes, putEnumValue.source(), putEnumValue.storey());
+        String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), putEnumValue.storey());
 
         resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, putEnumValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
 
@@ -603,7 +625,7 @@ public class ResultInfo {
      * @return
      */
     private static int createPrefix(Class entity, int storey, Map<Class, Map<Integer, String>> entityPrefixMap, int tableCount) {
-        if (Objects.nonNull(entity)) {
+        if (Objects.nonNull(entity) && entity != Void.class) {
             tableCount++;
             String prefix;
             if (tableCount == 1) {

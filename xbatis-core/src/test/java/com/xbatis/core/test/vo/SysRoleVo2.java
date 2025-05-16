@@ -15,8 +15,11 @@
 package com.xbatis.core.test.vo;
 
 import cn.xbatis.db.annotations.Fetch;
-import cn.xbatis.db.annotations.ResultEntity;
+import cn.xbatis.db.annotations.PutEnumValue;
+import cn.xbatis.db.annotations.PutValue;
 import com.xbatis.core.test.DO.SysRole;
+import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.GetPutValueFactory;
 import lombok.Data;
 
 @Data
@@ -28,4 +31,16 @@ public class SysRoleVo2 {
 
     @Fetch(property = "id", targetProperty = "id", target = SysRole.class)
     private SysRole sysRole;
+
+    @PutEnumValue(source = SysUser.class, property = "id", target = PutValueEnum.class)
+    private String idName;
+
+    @PutValue(source = SysUser.class, property = "id", factory = GetPutValueFactory.class, method = "getPutValue1")
+    private String idName2;
+
+    @PutEnumValue(property = "id", target = PutValueEnum.class)
+    private String idName3;
+
+    @PutValue(property = "id", factory = GetPutValueFactory.class, method = "getPutValue1")
+    private String idName4;
 }

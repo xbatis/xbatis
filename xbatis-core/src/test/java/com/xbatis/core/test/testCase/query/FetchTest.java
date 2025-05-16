@@ -376,6 +376,12 @@ public class FetchTest extends BaseTest {
                     .list();
             System.out.println(list);
             assertEquals(1, list.size());
+
+            assertEquals("测试ENUM2", list.get(0).getSysRole().getIdName());
+            assertEquals("测试ENUM2", list.get(0).getSysRole().getIdName2());
+
+            assertEquals("测试ENUM1", list.get(0).getSysRole().getIdName3());
+            assertEquals("测试ENUM1", list.get(0).getSysRole().getIdName4());
             assertEquals("测试", list.get(0).getSysRole().getSysRole().getName());
         }
     }
