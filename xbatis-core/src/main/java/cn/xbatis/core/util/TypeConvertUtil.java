@@ -18,6 +18,8 @@ import cn.xbatis.core.mybatis.typeHandler.EnumSupport;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 默认值转换
@@ -42,6 +44,11 @@ public final class TypeConvertUtil {
         if (value.getClass() == targetType) {
             return (T) value;
         }
+
+        if (targetType.isAssignableFrom(value.getClass())) {
+            return (T) value;
+        }
+
         if (value instanceof String && value.equals("")) {
             return null;
         }
@@ -95,5 +102,9 @@ public final class TypeConvertUtil {
         }
 
         return (T) newValue;
+    }
+
+    public static void main(String[] args) {
+        List list = TypeConvertUtil.convert(new ArrayList<>(), List.class);
     }
 }
