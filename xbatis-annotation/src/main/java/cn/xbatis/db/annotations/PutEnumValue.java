@@ -26,7 +26,7 @@ public @interface PutEnumValue {
      *
      * @return
      */
-    Class source() default Void.class;
+    Class source();
 
     /**
      * 对应entity的属性

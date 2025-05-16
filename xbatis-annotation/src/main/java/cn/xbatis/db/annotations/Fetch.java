@@ -42,7 +42,7 @@ public @interface Fetch {
      *
      * @return
      */
-    Class source() default Void.class;
+    Class source();
 
     /**
      * 存储层级

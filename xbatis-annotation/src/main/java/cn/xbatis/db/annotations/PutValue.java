@@ -29,7 +29,7 @@ public @interface PutValue {
      *
      * @return
      */
-    Class source() default Void.class;
+    Class source();
 
     /**
      * 对应entity的属性，多个逗号分隔
