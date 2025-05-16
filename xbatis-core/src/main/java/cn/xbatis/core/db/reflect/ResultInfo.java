@@ -109,7 +109,7 @@ public class ResultInfo {
 
             if (field.isAnnotationPresent(Fetch.class)) {
                 //Fetch
-                tableCount = parseFetch(parseResult, parseResult.resultFieldInfos, clazz, field, tableCount);
+                tableCount = parseFetch(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
                 continue;
             }
 
@@ -241,7 +241,7 @@ public class ResultInfo {
                 FieldInfo fieldInfo = new FieldInfo(targetType, sourceField);
                 Class fetchType = fieldInfo.getFinalClass();
 
-                tableCount = parseFetch(parseResult, nestedResultInfo.getResultFieldInfos(), fetchType, field, tableCount);
+                tableCount = parseFetch(parseResult, tableInfo, nestedResultInfo.getResultFieldInfos(), fetchType, field, tableCount);
                 continue;
             }
 
@@ -408,18 +408,18 @@ public class ResultInfo {
      * 解析内嵌字段
      *
      * @param parseResult 解析结果
+     * @param currentTableInfo 当前对应TableInfo
      * @param field       字段
      * @param tableCount  当前表个数
      * @return 当前已存在表的个数
      */
-    private static int parseFetch(ParseResult parseResult, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
+    private static int parseFetch(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
         Fetch fetch = field.getAnnotation(Fetch.class);
 
         String valueColumn = fetch.column();
         TypeHandler<?> valueTypeHandler = null;
         if (StringPool.EMPTY.equals(valueColumn)) {
             TableFieldInfo fetchFieldInfo;
-
             TableInfo fetchTableInfo;
             if (fetch.source() != Void.class) {
                 if (!fetch.source().isAnnotationPresent(Table.class)) {
@@ -428,17 +428,8 @@ public class ResultInfo {
                 fetchTableInfo = Tables.get(fetch.source());
                 fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
             } else {
-                if (clazz.isAnnotationPresent(Table.class)) {
-                    fetchTableInfo = Tables.get(clazz);
-                } else if (clazz.isAnnotationPresent(ResultEntity.class)) {
-                    ResultEntity resultEntity = clazz.getAnnotation(ResultEntity.class);
-                    fetchTableInfo = Tables.get(resultEntity.value());
-                } else if (clazz.isAnnotationPresent(NestedResultEntity.class)) {
-                    NestedResultEntity nestedResultEntity = clazz.getAnnotation(NestedResultEntity.class);
-                    fetchTableInfo = Tables.get(nestedResultEntity.target());
-                } else {
-                    throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the source: " + fetch.source().getName() + " is not a entity");
-                }
+                //如果没有设置Fetch source 字段，则当前作用域的TableInfo
+                fetchTableInfo = currentTableInfo;
                 fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
             }
 

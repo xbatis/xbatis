@@ -363,4 +363,20 @@ public class FetchTest extends BaseTest {
             assertEquals("NULL", list.get(0).getRoleName());
         }
     }
+
+    @Test
+    public void fetchNested() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<FetchSysUserVo2> list = QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .innerJoin(SysUser::getRole_id, SysRole::getId)
+                    .returnType(FetchSysUserVo2.class)
+                    .eq(SysUser::getId, 2)
+                    .list();
+            System.out.println(list);
+            assertEquals(1, list.size());
+            assertEquals("测试", list.get(0).getSysRole().getSysRole().getName());
+        }
+    }
 }

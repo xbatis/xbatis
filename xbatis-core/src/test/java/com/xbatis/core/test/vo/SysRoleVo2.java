@@ -17,24 +17,15 @@ package com.xbatis.core.test.vo;
 import cn.xbatis.db.annotations.Fetch;
 import cn.xbatis.db.annotations.ResultEntity;
 import com.xbatis.core.test.DO.SysRole;
-import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
-@ResultEntity(SysUser.class)
-public class FetchSysUserVo {
+public class SysRoleVo2 {
 
     private Integer id;
 
-    private String userName;
+    private String name;
 
-    private String password;
-
-    @Fetch(property = "role_id", target = SysRole.class, targetProperty = "id")
-    private SysRoleVo sysRole;
-
-    private LocalDateTime create_time;
-
+    @Fetch(property = "id", targetProperty = "id", target = SysRole.class)
+    private SysRole sysRole;
 }

@@ -15,6 +15,7 @@
 package com.xbatis.core.test.vo;
 
 import cn.xbatis.db.annotations.Fetch;
+import cn.xbatis.db.annotations.NestedResultEntity;
 import cn.xbatis.db.annotations.ResultEntity;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
 
 @Data
 @ResultEntity(SysUser.class)
-public class FetchSysUserVo {
+public class FetchSysUserVo2 {
 
     private Integer id;
 
@@ -32,8 +33,8 @@ public class FetchSysUserVo {
 
     private String password;
 
-    @Fetch(property = "role_id", target = SysRole.class, targetProperty = "id")
-    private SysRoleVo sysRole;
+    @NestedResultEntity(target = SysRole.class)
+    private SysRoleVo2 sysRole;
 
     private LocalDateTime create_time;
 
