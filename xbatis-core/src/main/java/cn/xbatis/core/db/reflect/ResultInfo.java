@@ -419,10 +419,10 @@ public class ResultInfo {
     /**
      * 解析内嵌字段
      *
-     * @param parseResult 解析结果
+     * @param parseResult      解析结果
      * @param currentTableInfo 当前对应TableInfo
-     * @param field       字段
-     * @param tableCount  当前表个数
+     * @param field            字段
+     * @param tableCount       当前表个数
      * @return 当前已存在表的个数
      */
     private static int parseFetch(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
@@ -527,10 +527,10 @@ public class ResultInfo {
     /**
      * 解析内嵌字段
      *
-     * @param parseResult 解析结果
+     * @param parseResult      解析结果
      * @param currentTableInfo 当前对应TableInfo
-     * @param field       字段
-     * @param tableCount  当前表个数
+     * @param field            字段
+     * @param tableCount       当前表个数
      * @return 当前已存在表的个数
      */
     private static int parsePutValue(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
@@ -576,10 +576,10 @@ public class ResultInfo {
     /**
      * 解析内嵌字段
      *
-     * @param parseResult 解析结果
-     *                    @param currentTableInfo 当前对应TableInfo
-     * @param field       字段
-     * @param tableCount  当前表个数
+     * @param parseResult      解析结果
+     * @param currentTableInfo 当前对应TableInfo
+     * @param field            字段
+     * @param tableCount       当前表个数
      * @return 当前已存在表的个数
      */
     private static int parsePutEnumValue(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {

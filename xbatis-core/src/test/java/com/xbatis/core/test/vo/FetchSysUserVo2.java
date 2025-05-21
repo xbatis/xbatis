@@ -14,7 +14,6 @@
 
 package com.xbatis.core.test.vo;
 
-import cn.xbatis.db.annotations.Fetch;
 import cn.xbatis.db.annotations.NestedResultEntity;
 import cn.xbatis.db.annotations.ResultEntity;
 import com.xbatis.core.test.DO.SysRole;
