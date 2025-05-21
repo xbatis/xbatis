@@ -240,4 +240,24 @@ public class JoinTest extends BaseTest {
             assertEquals(2, list.size(), "joinSelf");
         }
     }
+
+    @Test
+    public void joinSubQuery2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            SubQuery subQuery = SubQuery.create("sub")
+                    .select(SysRole.class)
+                    .from(SysRole.class)
+                    .eq(SysRole::getId, 1);
+
+            List<SysUser> list = QueryChain.of(sysUserMapper)
+                    .from(subQuery)
+                    .join(JoinMode.INNER, subQuery, SysUser.class, on -> on.eq(SysUser::getRole_id, subQuery.$outerField(SysRole::getId)))
+                    .eq(subQuery.$outerField(SysRole::getId), 1)
+                    .orderBy(subQuery, SysRole::getId)
+                    .list();
+            assertEquals(2, list.size(), "from subquery and join entity");
+        }
+    }
 }

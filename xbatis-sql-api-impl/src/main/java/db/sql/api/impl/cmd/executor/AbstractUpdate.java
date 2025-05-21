@@ -325,6 +325,11 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         return (SELF) this;
     }
 
+    @Override
+    public SELF join(JoinMode mode, IDataset<?, ?> mainTable, Class<?> secondTable, Consumer<On> consumer) {
+        $join(mode, mainTable, this.$(secondTable), consumer);
+        return (SELF) this;
+    }
 
     @Override
     public SELF join(JoinMode mode, IDataset<?, ?> mainTable, IDataset<?, ?> secondTable, Consumer<On> consumer) {

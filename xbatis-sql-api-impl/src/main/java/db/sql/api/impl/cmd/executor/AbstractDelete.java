@@ -236,10 +236,17 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
     }
 
     @Override
+    public SELF join(JoinMode mode, IDataset<?, ?> mainTable, Class<?> secondTable, Consumer<On> consumer) {
+        $join(mode, mainTable, this.$(secondTable), consumer);
+        return (SELF) this;
+    }
+
+    @Override
     public SELF join(JoinMode mode, IDataset<?, ?> mainTable, IDataset<?, ?> secondTable, Consumer<On> consumer) {
         $join(mode, mainTable, secondTable, consumer);
         return (SELF) this;
     }
+
 
     public DeleteTable getDeleteTable() {
         return deleteTable;

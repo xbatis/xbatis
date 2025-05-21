@@ -43,6 +43,26 @@ public interface IJoinMethod<SELF extends IJoinMethod, JOIN, ON extends IOn> {
         return this.join(JoinMode.RIGHT, mainTable, secondTable, consumer);
     }
 
+
+    // DATASET class join
+    default SELF join(IDataset<?, ?> mainTable, Class<?> secondTable, Consumer<ON> consumer) {
+        return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
+    }
+
+    default SELF innerJoin(IDataset<?, ?> mainTable, Class<?> secondTable, Consumer<ON> consumer) {
+        return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
+    }
+
+    default SELF leftJoin(IDataset<?, ?> mainTable, Class<?> secondTable, Consumer<ON> consumer) {
+        return this.join(JoinMode.LEFT, mainTable, secondTable, consumer);
+    }
+
+    default SELF rightJoin(IDataset<?, ?> mainTable, Class<?> secondTable, Consumer<ON> consumer) {
+        return this.join(JoinMode.RIGHT, mainTable, secondTable, consumer);
+    }
+
+    SELF join(JoinMode mode, IDataset<?, ?> mainTable, Class<?> secondTable, Consumer<ON> consumer);
+
     SELF join(JoinMode mode, IDataset<?, ?> mainTable, IDataset<?, ?> secondTable, Consumer<ON> consumer);
 
     //class JOIN
