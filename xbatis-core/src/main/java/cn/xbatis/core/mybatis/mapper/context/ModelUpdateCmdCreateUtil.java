@@ -32,12 +32,13 @@ import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 public class ModelUpdateCmdCreateUtil {
 
-    public static <M extends Model<T>, T> Update create(ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy) {
+    public static <M extends Model<T>, T> Update create(ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
         Where where = updateStrategy.getWhere();
         if (where == null) {
             where = WhereUtil.create(modelInfo.getTableInfo());
@@ -103,7 +104,7 @@ public class ModelUpdateCmdCreateUtil {
 
             if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
                 //读取回填 修改默认值
-                value = DefaultValueUtil.getAndSetUpdateDefaultValue(model, modelFieldInfo);
+                value = DefaultValueUtil.getAndSetUpdateDefaultValue(model, modelFieldInfo, defaultValueContext);
             }
 
             if (!isForceUpdate && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().update()) {

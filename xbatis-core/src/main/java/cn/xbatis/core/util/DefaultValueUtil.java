@@ -20,13 +20,15 @@ import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.db.Model;
 import db.sql.api.impl.tookit.Objects;
 
+import java.util.Map;
+
 /**
  * 默认值 util
  */
 public class DefaultValueUtil {
 
-    public static Object getAndSetDefaultValue(Object entity, TableFieldInfo tableFieldInfo) {
-        Object value = getDefaultValue(tableFieldInfo, tableFieldInfo.getFieldInfo().getTypeClass());
+    public static Object getAndSetDefaultValue(Object entity, TableFieldInfo tableFieldInfo, Map<String, Object> context) {
+        Object value = getDefaultValue(tableFieldInfo, tableFieldInfo.getFieldInfo().getTypeClass(), context);
         if (Objects.nonNull(value)) {
             //默认值回写
             TableInfoUtil.setValue(tableFieldInfo, entity, value);
@@ -34,8 +36,8 @@ public class DefaultValueUtil {
         return value;
     }
 
-    public static Object getAndSetUpdateDefaultValue(Object entity, TableFieldInfo tableFieldInfo) {
-        Object value = getUpdateDefaultValue(tableFieldInfo, tableFieldInfo.getFieldInfo().getTypeClass());
+    public static Object getAndSetUpdateDefaultValue(Object entity, TableFieldInfo tableFieldInfo, Map<String, Object> context) {
+        Object value = getUpdateDefaultValue(tableFieldInfo, tableFieldInfo.getFieldInfo().getTypeClass(), context);
         if (Objects.nonNull(value)) {
             //默认值回写
             TableInfoUtil.setValue(tableFieldInfo, entity, value);
@@ -43,8 +45,8 @@ public class DefaultValueUtil {
         return value;
     }
 
-    public static <M extends Model<T>, T> Object getAndSetDefaultValue(M model, ModelFieldInfo modelFieldInfo) {
-        Object value = getDefaultValue(modelFieldInfo.getTableFieldInfo(), modelFieldInfo.getFieldInfo().getTypeClass());
+    public static <M extends Model<T>, T> Object getAndSetDefaultValue(M model, ModelFieldInfo modelFieldInfo, Map<String, Object> context) {
+        Object value = getDefaultValue(modelFieldInfo.getTableFieldInfo(), modelFieldInfo.getFieldInfo().getTypeClass(), context);
         if (Objects.nonNull(value)) {
             //默认值回写
             ModelInfoUtil.setValue(modelFieldInfo, model, value);
@@ -52,8 +54,8 @@ public class DefaultValueUtil {
         return value;
     }
 
-    public static <M extends Model<T>, T> Object getAndSetUpdateDefaultValue(M model, ModelFieldInfo modelFieldInfo) {
-        Object value = getUpdateDefaultValue(modelFieldInfo.getTableFieldInfo(), modelFieldInfo.getFieldInfo().getTypeClass());
+    public static <M extends Model<T>, T> Object getAndSetUpdateDefaultValue(M model, ModelFieldInfo modelFieldInfo, Map<String, Object> context) {
+        Object value = getUpdateDefaultValue(modelFieldInfo.getTableFieldInfo(), modelFieldInfo.getFieldInfo().getTypeClass(), context);
         if (Objects.nonNull(value)) {
             //默认值回写
             ModelInfoUtil.setValue(modelFieldInfo, model, value);
@@ -61,18 +63,18 @@ public class DefaultValueUtil {
         return value;
     }
 
-    private static Object getDefaultValue(TableFieldInfo tableFieldInfo, Class<?> defaultValueType) {
+    private static Object getDefaultValue(TableFieldInfo tableFieldInfo, Class<?> defaultValueType, Map<String, Object> context) {
         if (StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
             return null;
         }
-        return XbatisGlobalConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().defaultValue());
+        return XbatisGlobalConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().defaultValue(), context);
     }
 
-    private static Object getUpdateDefaultValue(TableFieldInfo tableFieldInfo, Class<?> defaultValueType) {
+    private static Object getUpdateDefaultValue(TableFieldInfo tableFieldInfo, Class<?> defaultValueType, Map<String, Object> context) {
         if (StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
             return null;
         }
-        return XbatisGlobalConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
+        return XbatisGlobalConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().updateDefaultValue(), context);
     }
 
 }

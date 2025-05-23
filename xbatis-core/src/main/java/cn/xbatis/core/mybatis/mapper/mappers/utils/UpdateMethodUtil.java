@@ -21,6 +21,8 @@ import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -39,7 +41,11 @@ public final class UpdateMethodUtil {
     }
 
     public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, UpdateStrategy<T> updateStrategy) {
-        return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy));
+        return update(basicMapper, tableInfo, entity, updateStrategy, new HashMap<>());
+    }
+
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
+        return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));
     }
 
     public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
@@ -78,8 +84,9 @@ public final class UpdateMethodUtil {
         }
 
         int cnt = 0;
+        Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
-            cnt += update(basicMapper, tableInfo, entity, updateStrategy);
+            cnt += update(basicMapper, tableInfo, entity, updateStrategy, defaultValueContext);
         }
         return cnt;
     }

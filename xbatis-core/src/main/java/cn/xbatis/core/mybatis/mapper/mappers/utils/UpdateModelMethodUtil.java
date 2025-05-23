@@ -22,6 +22,8 @@ import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.db.Model;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -38,7 +40,11 @@ public final class UpdateModelMethodUtil {
     }
 
     public static <M extends Model> int update(BasicMapper basicMapper, ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy) {
-        return basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy));
+        return update(basicMapper, modelInfo, model, updateStrategy, new HashMap<>());
+    }
+
+    public static <M extends Model> int update(BasicMapper basicMapper, ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
+        return basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy, defaultValueContext));
     }
 
     public static <M extends Model> int updateList(BasicMapper basicMapper, Collection<M> list, UpdateStrategy<M> updateStrategy) {
@@ -47,8 +53,9 @@ public final class UpdateModelMethodUtil {
         }
         ModelInfo modelInfo = Models.get(list.stream().findFirst().get().getClass());
         int cnt = 0;
+        Map<String, Object> defaultValueContext = new HashMap<>();
         for (M model : list) {
-            cnt += update(basicMapper, modelInfo, model, updateStrategy);
+            cnt += update(basicMapper, modelInfo, model, updateStrategy, defaultValueContext);
         }
         return cnt;
     }

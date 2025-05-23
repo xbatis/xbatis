@@ -38,11 +38,12 @@ import db.sql.api.impl.cmd.basic.NULL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class ModelInsertCreateUtil {
 
-    public static <M extends Model<T>, T> BaseInsert<?> create(BaseInsert<?> insert, ModelInfo modelInfo, M insertData, SaveStrategy<T> saveStrategy, DbType dbType) {
+    public static <M extends Model<T>, T> BaseInsert<?> create(BaseInsert<?> insert, ModelInfo modelInfo, M insertData, SaveStrategy<T> saveStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
         insert = insert == null ? new Insert() : insert;
         TableInfo tableInfo = modelInfo.getTableInfo();
 
@@ -53,6 +54,7 @@ public class ModelInsertCreateUtil {
         //设置租户ID
         TenantUtil.setTenantId(insertData);
         List<Object> values = new ArrayList<>();
+
         for (int i = 0; i < modelInfo.getFieldSize(); i++) {
             ModelFieldInfo modelFieldInfo = modelInfo.getModelFieldInfos().get(i);
             boolean isNeedInsert = false;
@@ -83,12 +85,12 @@ public class ModelInsertCreateUtil {
                     ModelInfoUtil.setValue(modelFieldInfo, insertData, value);
                 } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
                     //读取回填 @TableField里的默认值
-                    value = DefaultValueUtil.getAndSetDefaultValue(insertData, modelFieldInfo);
+                    value = DefaultValueUtil.getAndSetDefaultValue(insertData, modelFieldInfo, defaultValueContext);
                     isNeedInsert = Objects.nonNull(value);
                 }
             } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
                 //读取回填 默认值
-                value = DefaultValueUtil.getAndSetDefaultValue(insertData, modelFieldInfo);
+                value = DefaultValueUtil.getAndSetDefaultValue(insertData, modelFieldInfo, defaultValueContext);
                 isNeedInsert = Objects.nonNull(value);
             } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
                 isNeedInsert = true;

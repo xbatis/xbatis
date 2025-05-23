@@ -25,6 +25,8 @@ import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public final class SaveMethodUtil {
@@ -34,7 +36,11 @@ public final class SaveMethodUtil {
     }
 
     public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity, SaveStrategy<T> strategy) {
-        return basicMapper.$saveEntity(new EntityInsertContext(new Insert(), tableInfo, entity, strategy));
+        return basicMapper.$saveEntity(new EntityInsertContext(new Insert(), tableInfo, entity, strategy, new HashMap<>()));
+    }
+
+    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity, SaveStrategy<T> strategy, Map<String, Object> defaultValueContext) {
+        return basicMapper.$saveEntity(new EntityInsertContext(new Insert(), tableInfo, entity, strategy, defaultValueContext));
     }
 
     public static <T> int saveList(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, SaveStrategy strategy) {
@@ -42,8 +48,9 @@ public final class SaveMethodUtil {
             return 0;
         }
         int cnt = 0;
+        Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
-            cnt += save(basicMapper, tableInfo, entity, strategy);
+            cnt += save(basicMapper, tableInfo, entity, strategy, defaultValueContext);
         }
         return cnt;
     }
@@ -84,6 +91,6 @@ public final class SaveMethodUtil {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        return basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, list, saveBatchStrategy));
+        return basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, list, saveBatchStrategy, new HashMap<>()));
     }
 }

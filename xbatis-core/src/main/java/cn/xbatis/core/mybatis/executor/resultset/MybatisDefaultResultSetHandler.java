@@ -68,6 +68,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     private Map<Class, List<PutValueInfo>> putValueInfoMap;
     private Map<String, Object> putValueSessionCache;
     private Map<Class, List<CreatedEventInfo>> createdEventInfos;
+    private Map<String, Object> defaultValueContext = new HashMap<>();
 
 
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
@@ -470,7 +471,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (fetchInfo.isMultiple()) {
             matchValues = Objects.isNull(matchValues) ? new ArrayList<>() : matchValues;
             if (matchValues.isEmpty()) {
-                fetchInfo.setValue(rowValue, matchValues);
+                fetchInfo.setValue(rowValue, matchValues, defaultValueContext);
                 return;
             }
             if (fetchInfo.isUseResultFetchKeyValue() && matchValues.get(0) instanceof FetchKeyValue) {
@@ -478,10 +479,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         .stream().map(m -> TypeConvertUtil.convert(m.getValue(), fetchInfo.getFieldInfo().getFinalClass()))
                         .collect(Collectors.toList());
             }
-            fetchInfo.setValue(rowValue, matchValues);
+            fetchInfo.setValue(rowValue, matchValues, defaultValueContext);
         } else {
             if (Objects.isNull(matchValues) || matchValues.isEmpty()) {
-                fetchInfo.setValue(rowValue, null);
+                fetchInfo.setValue(rowValue, null, defaultValueContext);
                 return;
             } else if (matchValues.size() > 1 && !fetchInfo.getFetch().multiValueErrorIgnore()) {
                 throw new TooManyResultsException("fetch action found more than 1 record");
@@ -495,7 +496,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             } else {
                 value = matchValues.get(0);
             }
-            fetchInfo.setValue(rowValue, value);
+            fetchInfo.setValue(rowValue, value, defaultValueContext);
         }
     }
 }

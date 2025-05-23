@@ -17,9 +17,11 @@ package cn.xbatis.core.mybatis.mapper.context;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 
+import java.util.Map;
+
 public class EntityUpdateContext<T> extends SQLCmdUpdateContext {
 
-    public EntityUpdateContext(TableInfo tableInfo, T t, UpdateStrategy<T> updateStrategy) {
-        super(EntityUpdateCmdCreateUtil.create(tableInfo, t, updateStrategy));
+    public EntityUpdateContext(TableInfo tableInfo, T t, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
+        super(EntityUpdateCmdCreateUtil.create(tableInfo, t, updateStrategy, defaultValueContext));
     }
 }

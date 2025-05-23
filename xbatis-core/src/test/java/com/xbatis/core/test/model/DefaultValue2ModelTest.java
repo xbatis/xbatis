@@ -12,18 +12,34 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.context;
+package com.xbatis.core.test.model;
 
-
-import cn.xbatis.core.db.reflect.ModelInfo;
-import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.db.Model;
+import com.xbatis.core.test.DO.DefaultValue2Test;
+import com.xbatis.core.test.DO.TestEnum;
+import lombok.Data;
 
-import java.util.Map;
+import java.time.LocalDateTime;
 
-public class ModelUpdateContext<M extends Model> extends SQLCmdUpdateContext {
 
-    public ModelUpdateContext(ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
-        super(ModelUpdateCmdCreateUtil.create(modelInfo, model, updateStrategy, defaultValueContext));
-    }
+@Data
+
+public class DefaultValue2ModelTest implements Model<DefaultValue2Test> {
+
+    private Integer id;
+
+
+    private String value1;
+
+
+    private Integer value2;
+
+
+    private Integer value4;
+
+
+    private LocalDateTime createTime;
+
+
+    private TestEnum value3;
 }

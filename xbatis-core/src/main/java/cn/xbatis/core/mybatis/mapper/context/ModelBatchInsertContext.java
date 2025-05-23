@@ -23,6 +23,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContext<BaseInsert, M[]> implements SetIdMethod {
@@ -35,20 +36,23 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
 
     private final BaseInsert<?> insert;
 
-    public ModelBatchInsertContext(BaseInsert<?> insert, ModelInfo modelInfo, Collection<M> list, SaveBatchStrategy<M> saveBatchStrategy) {
+    private final Map<String, Object> defaultValueContext;
+
+    public ModelBatchInsertContext(BaseInsert<?> insert, ModelInfo modelInfo, Collection<M> list, SaveBatchStrategy<M> saveBatchStrategy, Map<String, Object> defaultValueContext) {
         super((M[]) list.toArray(new Model[0]));
         this.insert = insert;
         this.modelInfo = modelInfo;
         this.saveBatchStrategy = saveBatchStrategy;
         this.entityType = modelInfo.getEntityType();
         this.idHasValue = IdUtil.isIdExists(this.getInsertData()[0], modelInfo.getIdFieldInfo());
+        this.defaultValueContext = defaultValueContext;
     }
 
     @Override
     public void init(DbType dbType) {
         super.init(dbType);
         if (Objects.isNull(this.execution)) {
-            this.execution = ModelBatchInsertCreateUtil.create(insert, this.modelInfo, this.getInsertData(), saveBatchStrategy, dbType, useBatchExecutor);
+            this.execution = ModelBatchInsertCreateUtil.create(insert, this.modelInfo, this.getInsertData(), saveBatchStrategy, dbType, useBatchExecutor, defaultValueContext);
         }
     }
 

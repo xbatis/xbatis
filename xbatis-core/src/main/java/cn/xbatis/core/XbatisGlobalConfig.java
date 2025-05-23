@@ -58,6 +58,8 @@ public final class XbatisGlobalConfig {
     private static final List<SQLListener> SQL_LISTENERS = new ArrayList<>();
     private static final List<MethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
 
+    private static final Object NULL = new Object();
+
     private static volatile DbType DEFAULT_DB_TYPE;
 
     static {
@@ -277,7 +279,7 @@ public final class XbatisGlobalConfig {
         ((Map<String, BiFunction<Class<?>, Class<?>, Object>>) CACHE.get(DYNAMIC_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
     }
 
-    private static void checkDynamicValueKey(String key) {
+    public static void checkDynamicValueKey(String key) {
         if (!isDynamicValueKeyFormat(key)) {
             throw new RuntimeException("key must start with '{' and end with '}'");
         }
@@ -312,6 +314,23 @@ public final class XbatisGlobalConfig {
     }
 
     /**
+     * 获取默认值
+     *
+     * @param clazz   字段所在的class
+     * @param type    默认值的类型
+     * @param key     默认值的key，key必须以{}包裹，例如:{NOW}
+     * @param context 上下文 用于缓存动态值（非动态的不缓存）
+     * @param <T>     类型clazz的泛型
+     * @return 返回指定类型clazz key的默认值
+     */
+    public static <T> T getDefaultValue(Class<?> clazz, Class<T> type, String key, Map<String, Object> context) {
+        if (!isDynamicValueKeyFormat(key)) {
+            return TypeConvertUtil.convert(key, type);
+        }
+        return getDynamicValue(clazz, type, key, context);
+    }
+
+    /**
      * 获取指定key的动态值
      *
      * @param clazz 字段所在的class
@@ -330,6 +349,37 @@ public final class XbatisGlobalConfig {
             throw new RuntimeException("default value key:  " + key + " not set");
         }
         return f.apply(clazz, type);
+    }
+
+    /**
+     * 获取指定key的动态值
+     *
+     * @param clazz 字段所在的class
+     * @param type  动态值的类型
+     * @param key   动态值的key
+     * @param <T>   类型clazz的泛型
+     * @return 返回指定类型clazz key的动态值
+     */
+    public static <T> T getDynamicValue(Class<?> clazz, Class<T> type, String key, Map<String, Object> context) {
+        if (context == null) {
+            return getDynamicValue(clazz, type, key);
+        }
+        if (!isDynamicValueKeyFormat(key)) {
+            key = "{" + key + "}";
+        }
+
+        Object obj = context.get(key);
+        if (obj == null) {
+            obj = getDynamicValue(clazz, type, key);
+            if (obj == null) {
+                obj = NULL;
+            }
+            context.put(key, obj);
+        }
+        if (obj == null || obj == NULL) {
+            return null;
+        }
+        return (T) obj;
     }
 
     /**

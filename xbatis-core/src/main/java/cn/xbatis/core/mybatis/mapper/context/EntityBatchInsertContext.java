@@ -22,6 +22,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T[]> implements SetIdMethod {
@@ -34,13 +35,16 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert,
 
     private final BaseInsert<?> insert;
 
-    public EntityBatchInsertContext(BaseInsert<?> insert, TableInfo tableInfo, Collection<T> list, SaveBatchStrategy<T> saveBatchStrategy) {
+    private final Map<String, Object> defaultValueContext;
+
+    public EntityBatchInsertContext(BaseInsert<?> insert, TableInfo tableInfo, Collection<T> list, SaveBatchStrategy<T> saveBatchStrategy, Map<String, Object> defaultValueContext) {
         super(list.toArray((T[]) new Object[0]));
         this.insert = insert;
         this.tableInfo = tableInfo;
         this.saveBatchStrategy = saveBatchStrategy;
         this.entityType = tableInfo.getType();
         this.idHasValue = IdUtil.isIdExists(this.getInsertData()[0], tableInfo.getIdFieldInfo());
+        this.defaultValueContext = defaultValueContext;
     }
 
 
@@ -48,7 +52,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert,
     public void init(DbType dbType) {
         super.init(dbType);
         if (Objects.isNull(this.execution)) {
-            this.execution = EntityBatchInsertCreateUtil.create(insert, this.tableInfo, this.getInsertData(), saveBatchStrategy, dbType, useBatchExecutor);
+            this.execution = EntityBatchInsertCreateUtil.create(insert, this.tableInfo, this.getInsertData(), saveBatchStrategy, dbType, useBatchExecutor, defaultValueContext);
         }
     }
 

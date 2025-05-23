@@ -66,7 +66,7 @@ public class EntityBatchInsertCreateUtil {
     }
 
 
-    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T[] insertData, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, boolean useBatchExecutor) {
+    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T[] insertData, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, boolean useBatchExecutor, Map<String, Object> defaultValueContext) {
 
         insert = insert == null ? new Insert() : insert;
 
@@ -124,6 +124,7 @@ public class EntityBatchInsertCreateUtil {
         int fieldSize = saveFieldInfoSet.size();
 
         boolean containId = false;
+
         for (Object t : insertData) {
             List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {
@@ -153,11 +154,11 @@ public class EntityBatchInsertCreateUtil {
                             TableInfoUtil.setValue(tableFieldInfo, t, value);
                         } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
                             //读取回填 @TableField里的默认值
-                            value = DefaultValueUtil.getAndSetDefaultValue(t, tableFieldInfo);
+                            value = DefaultValueUtil.getAndSetDefaultValue(t, tableFieldInfo, defaultValueContext);
                         }
                     } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
                         //读取回填 默认值
-                        value = DefaultValueUtil.getAndSetDefaultValue(t, tableFieldInfo);
+                        value = DefaultValueUtil.getAndSetDefaultValue(t, tableFieldInfo, defaultValueContext);
                     } else if (tableFieldInfo.isVersion()) {
                         //乐观锁设置 默认值1
                         value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());

@@ -62,7 +62,7 @@ public class ModelBatchInsertCreateUtil {
     }
 
 
-    public static <T extends Model> BaseInsert<?> create(BaseInsert<?> insert, ModelInfo modelInfo, T[] insertData, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, boolean useBatchExecutor) {
+    public static <T extends Model> BaseInsert<?> create(BaseInsert<?> insert, ModelInfo modelInfo, T[] insertData, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, boolean useBatchExecutor, Map<String, Object> defaultValueContext) {
 
         insert = insert == null ? new Insert() : insert;
 
@@ -122,6 +122,7 @@ public class ModelBatchInsertCreateUtil {
 
         int fieldSize = saveFieldInfoSet.size();
         boolean containId = false;
+
         for (Model t : insertData) {
             List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {
@@ -154,11 +155,11 @@ public class ModelBatchInsertCreateUtil {
                             ModelInfoUtil.setValue(modelFieldInfo, t, value);
                         } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
                             //读取回填 @TableField里的默认值
-                            value = DefaultValueUtil.getAndSetDefaultValue(t, modelFieldInfo);
+                            value = DefaultValueUtil.getAndSetDefaultValue(t, modelFieldInfo, defaultValueContext);
                         }
                     } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
                         //读取回填 默认值
-                        value = DefaultValueUtil.getAndSetDefaultValue(t, modelFieldInfo);
+                        value = DefaultValueUtil.getAndSetDefaultValue(t, modelFieldInfo, defaultValueContext);
                     } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
                         //乐观锁设置 默认值1
                         value = TypeConvertUtil.convert(Integer.valueOf(1), modelFieldInfo.getField().getType());

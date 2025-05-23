@@ -26,12 +26,18 @@ import cn.xbatis.core.sql.executor.Insert;
 import cn.xbatis.db.Model;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public final class SaveModelMethodUtil {
 
     public static <M extends Model> int save(BasicMapper basicMapper, M model, SaveStrategy<M> saveStrategy) {
-        return basicMapper.$saveModel(new ModelInsertContext(new Insert(), model, saveStrategy));
+        return save(basicMapper, model, saveStrategy, new HashMap<>());
+    }
+
+    public static <M extends Model> int save(BasicMapper basicMapper, M model, SaveStrategy<M> saveStrategy, Map<String, Object> defaultValueContext) {
+        return basicMapper.$saveModel(new ModelInsertContext(new Insert(), model, saveStrategy, defaultValueContext));
     }
 
     public static <M extends Model> int saveList(BasicMapper basicMapper, Collection<M> list, SaveStrategy<M> saveStrategy) {
@@ -39,8 +45,9 @@ public final class SaveModelMethodUtil {
             return 0;
         }
         int cnt = 0;
+        Map<String, Object> defaultValueContext = new HashMap<>();
         for (M model : list) {
-            cnt += save(basicMapper, model, saveStrategy);
+            cnt += save(basicMapper, model, saveStrategy, defaultValueContext);
         }
         return cnt;
     }
@@ -66,6 +73,6 @@ public final class SaveModelMethodUtil {
         }
         M first = list.stream().findFirst().get();
         ModelInfo modelInfo = Models.get(first.getClass());
-        return basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, list, saveBatchStrategy));
+        return basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, list, saveBatchStrategy, new HashMap<>()));
     }
 }

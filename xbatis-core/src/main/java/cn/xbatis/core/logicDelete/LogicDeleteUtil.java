@@ -29,6 +29,7 @@ import db.sql.api.impl.cmd.struct.Where;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -79,14 +80,15 @@ public final class LogicDeleteUtil {
     /**
      * 获取删除后的值
      *
-     * @param logicDeleteFieldInfo
+     * @param logicDeleteFieldInfo 逻辑上删除字段
+     * @param defaultValueContext 动态默认值上下文
      * @return
      */
-    public static Object getLogicAfterValue(TableFieldInfo logicDeleteFieldInfo) {
+    public static Object getLogicAfterValue(TableFieldInfo logicDeleteFieldInfo, Map<String, Object> defaultValueContext) {
         Object value;
         LogicDelete logicDelete = logicDeleteFieldInfo.getLogicDeleteAnnotation();
         Class type = logicDeleteFieldInfo.getFieldInfo().getTypeClass();
-        value = XbatisGlobalConfig.getDefaultValue(logicDeleteFieldInfo.getFieldInfo().getClazz(), type, logicDelete.afterValue());
+        value = XbatisGlobalConfig.getDefaultValue(logicDeleteFieldInfo.getFieldInfo().getClazz(), type, logicDelete.afterValue(), defaultValueContext);
         if (value == null) {
             throw new RuntimeException("Unable to obtain deleted value，please use XbatisConfig.setDefaultValue(\"" + logicDelete.afterValue() + "\") to resolve it");
         }
@@ -126,10 +128,10 @@ public final class LogicDeleteUtil {
      * @param baseUpdate
      * @param tableInfo
      */
-    public static void addLogicDeleteUpdateSets(BaseUpdate baseUpdate, TableInfo tableInfo) {
+    public static void addLogicDeleteUpdateSets(BaseUpdate baseUpdate, TableInfo tableInfo, Map<String, Object> defaultValueContext) {
         Class entityType = tableInfo.getType();
         TableField logicDeleteTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteFieldInfo().getField().getName(), 1);
-        baseUpdate.set(logicDeleteTableField, getLogicAfterValue(tableInfo.getLogicDeleteFieldInfo()));
+        baseUpdate.set(logicDeleteTableField, getLogicAfterValue(tableInfo.getLogicDeleteFieldInfo(), defaultValueContext));
 
         String deleteTimeFieldName = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteAnnotation().deleteTimeField();
         if (!StringPool.EMPTY.equals(deleteTimeFieldName)) {
@@ -145,13 +147,14 @@ public final class LogicDeleteUtil {
      * @param mapper
      * @param tableInfo
      * @param where
+     * @param defaultValueContext
      * @return
      */
-    public static int logicDelete(BasicMapper mapper, TableInfo tableInfo, Where where) {
+    public static int logicDelete(BasicMapper mapper, TableInfo tableInfo, Where where, Map<String, Object> defaultValueContext) {
         Update update = new Update(where);
         update.update(update.$().table(tableInfo.getType()))
                 .connect(self -> {
-                    LogicDeleteUtil.addLogicDeleteUpdateSets(self, tableInfo);
+                    LogicDeleteUtil.addLogicDeleteUpdateSets(self, tableInfo, defaultValueContext);
                 });
         BiConsumer<Class<?>, BaseUpdate<?>> logicDeleteInterceptor = XbatisGlobalConfig.getLogicDeleteInterceptor();
         if (logicDeleteInterceptor != null) {

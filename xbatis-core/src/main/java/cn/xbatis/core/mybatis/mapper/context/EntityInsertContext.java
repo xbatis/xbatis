@@ -21,6 +21,7 @@ import db.sql.api.DbType;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T> implements SetIdMethod {
@@ -34,13 +35,16 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T> i
 
     private final boolean idHasValue;
 
-    public EntityInsertContext(BaseInsert<?> insert, TableInfo tableInfo, T entity, SaveStrategy strategy) {
+    private final Map<String, Object> defaultValueContext;
+
+    public EntityInsertContext(BaseInsert<?> insert, TableInfo tableInfo, T entity, SaveStrategy strategy, Map<String, Object> defaultValueContext) {
         this.insert = insert;
         this.entity = entity;
         this.strategy = strategy;
         this.entityType = entity.getClass();
         this.tableInfo = tableInfo;
         this.idHasValue = IdUtil.isIdExists(entity, tableInfo.getIdFieldInfo());
+        this.defaultValueContext = defaultValueContext;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T> i
     }
 
     private BaseInsert createCmd(DbType dbType) {
-        return EntityInsertCreateUtil.create(insert, tableInfo, entity, strategy, dbType);
+        return EntityInsertCreateUtil.create(insert, tableInfo, entity, strategy, dbType, defaultValueContext);
     }
 
     @Override

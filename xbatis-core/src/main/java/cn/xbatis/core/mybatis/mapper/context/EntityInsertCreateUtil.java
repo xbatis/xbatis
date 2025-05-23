@@ -36,11 +36,12 @@ import db.sql.api.impl.cmd.basic.NULL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class EntityInsertCreateUtil {
 
-    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T insertData, SaveStrategy<T> saveStrategy, DbType dbType) {
+    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T insertData, SaveStrategy<T> saveStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
 
         insert = insert == null ? new Insert() : insert;
 
@@ -50,7 +51,6 @@ public class EntityInsertCreateUtil {
 
         //设置租户ID
         TenantUtil.setTenantId(tableInfo, insertData);
-
         List<Object> values = new ArrayList<>();
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {
             TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
@@ -87,12 +87,12 @@ public class EntityInsertCreateUtil {
                     TableInfoUtil.setValue(tableFieldInfo, insertData, value);
                 } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
                     //读取回填 @TableField里的默认值
-                    value = DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo);
+                    value = DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo, defaultValueContext);
                     isNeedInsert = Objects.nonNull(value);
                 }
             } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
                 //读取回填 默认值
-                value = DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo);
+                value = DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo, defaultValueContext);
                 isNeedInsert = Objects.nonNull(value);
             } else if (tableFieldInfo.isVersion()) {
                 isNeedInsert = true;

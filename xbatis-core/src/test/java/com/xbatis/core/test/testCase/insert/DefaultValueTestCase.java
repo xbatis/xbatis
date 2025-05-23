@@ -14,14 +14,17 @@
 
 package com.xbatis.core.test.testCase.insert;
 
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.MybatisBatchUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.chain.InsertChain;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
+import com.xbatis.core.test.DO.DefaultValue2Test;
 import com.xbatis.core.test.DO.DefaultValueTest;
 import com.xbatis.core.test.DO.TestEnum;
 import com.xbatis.core.test.mapper.DefaultValueTestMapper;
+import com.xbatis.core.test.model.DefaultValue2ModelTest;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
@@ -467,5 +470,165 @@ public class DefaultValueTestCase extends BaseTest {
 
         });
         System.out.println(list);
+    }
+
+    @Test
+    public void deaultValueCheckSameTest() {
+        XbatisGlobalConfig.setDynamicValue("NOW2", (clazz, type) -> {
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return new Integer((int) (System.currentTimeMillis() / 1000));
+        });
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            DefaultValue2Test defaultValue2Test = new DefaultValue2Test();
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            mapper.getBasicMapper().save(defaultValue2Test);
+            assertEquals(defaultValue2Test.getValue2(), defaultValue2Test.getValue4());
+            assertNotNull(defaultValue2Test.getValue2());
+
+            defaultValue2Test.setValue2(null);
+            defaultValue2Test.setValue4(null);
+            mapper.getBasicMapper().update(defaultValue2Test);
+            assertEquals(defaultValue2Test.getValue2(), defaultValue2Test.getValue4());
+            assertNotNull(defaultValue2Test.getValue2());
+
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+
+
+            List<DefaultValue2Test> list = new ArrayList<>();
+            list.add(new DefaultValue2Test());
+            list.add(new DefaultValue2Test());
+
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            mapper.getBasicMapper().save(list);
+
+            Integer time = list.get(0).getValue2();
+
+            for (DefaultValue2Test ss : list) {
+                assertEquals(ss.getValue2(), ss.getValue4());
+                assertEquals(ss.getValue2(), time);
+                assertNotNull(ss.getValue2());
+
+                ss.setValue2(null);
+                ss.setValue4(null);
+            }
+
+            mapper.getBasicMapper().update(list);
+            time = list.get(0).getValue2();
+            for (DefaultValue2Test ss : list) {
+                assertEquals(ss.getValue2(), ss.getValue4());
+                assertEquals(ss.getValue2(), time);
+                assertNotNull(ss.getValue2());
+            }
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+
+
+            List<DefaultValue2Test> list = new ArrayList<>();
+            list.add(new DefaultValue2Test());
+            list.add(new DefaultValue2Test());
+
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            mapper.getBasicMapper().saveBatch(list);
+
+            Integer time = list.get(0).getValue2();
+
+            for (DefaultValue2Test ss : list) {
+                assertEquals(ss.getValue2(), ss.getValue4());
+                assertEquals(ss.getValue2(), time);
+                assertNotNull(ss.getValue2());
+
+                ss.setValue2(null);
+                ss.setValue4(null);
+            }
+        }
+
+    }
+
+
+    @Test
+    public void deaultValueCheckSameTest2() {
+        XbatisGlobalConfig.setDynamicValue("NOW2", (clazz, type) -> {
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return new Integer((int) (System.currentTimeMillis() / 1000));
+        });
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            DefaultValue2ModelTest defaultValue2Test = new DefaultValue2ModelTest();
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            mapper.getBasicMapper().save(defaultValue2Test);
+            assertEquals(defaultValue2Test.getValue2(), defaultValue2Test.getValue4());
+            assertNotNull(defaultValue2Test.getValue2());
+
+            defaultValue2Test.setValue2(null);
+            defaultValue2Test.setValue4(null);
+            mapper.getBasicMapper().update(defaultValue2Test);
+            assertEquals(defaultValue2Test.getValue2(), defaultValue2Test.getValue4());
+            assertNotNull(defaultValue2Test.getValue2());
+
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+
+
+            List<DefaultValue2ModelTest> list = new ArrayList<>();
+            list.add(new DefaultValue2ModelTest());
+            list.add(new DefaultValue2ModelTest());
+
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            mapper.getBasicMapper().saveModel(list);
+
+            Integer time = list.get(0).getValue2();
+
+            for (DefaultValue2ModelTest ss : list) {
+                assertEquals(ss.getValue2(), ss.getValue4());
+                assertEquals(ss.getValue2(), time);
+                assertNotNull(ss.getValue2());
+
+                ss.setValue2(null);
+                ss.setValue4(null);
+            }
+
+            mapper.getBasicMapper().updateModel(list);
+            time = list.get(0).getValue2();
+            for (DefaultValue2ModelTest ss : list) {
+                assertEquals(ss.getValue2(), ss.getValue4());
+                assertEquals(ss.getValue2(), time);
+                assertNotNull(ss.getValue2());
+            }
+        }
+
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+
+
+            List<DefaultValue2ModelTest> list = new ArrayList<>();
+            list.add(new DefaultValue2ModelTest());
+            list.add(new DefaultValue2ModelTest());
+
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            mapper.getBasicMapper().saveModelBatch(list);
+
+            Integer time = list.get(0).getValue2();
+
+            for (DefaultValue2ModelTest ss : list) {
+                assertEquals(ss.getValue2(), ss.getValue4());
+                assertEquals(ss.getValue2(), time);
+                assertNotNull(ss.getValue2());
+
+                ss.setValue2(null);
+                ss.setValue4(null);
+            }
+        }
+
     }
 }

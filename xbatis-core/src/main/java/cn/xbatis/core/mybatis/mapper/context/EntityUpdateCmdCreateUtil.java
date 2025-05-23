@@ -32,12 +32,13 @@ import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 public class EntityUpdateCmdCreateUtil {
 
-    public static Update create(TableInfo tableInfo, Object entity, UpdateStrategy<?> updateStrategy) {
+    public static Update create(TableInfo tableInfo, Object entity, UpdateStrategy<?> updateStrategy, Map<String, Object> defaultValueContext) {
         Where where = updateStrategy.getWhere();
         if (where == null) {
             where = WhereUtil.create(tableInfo);
@@ -53,7 +54,6 @@ public class EntityUpdateCmdCreateUtil {
         MybatisCmdFactory $ = update.$();
         Table table = $.table(entity.getClass());
         boolean hasIdCondition = false;
-
 
         Set<String> forceFields = LambdaUtil.getFieldNames(updateStrategy.getForceFields());
         for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
@@ -102,7 +102,7 @@ public class EntityUpdateCmdCreateUtil {
 
             if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
                 //读取回填 修改默认值
-                value = DefaultValueUtil.getAndSetUpdateDefaultValue(entity, tableFieldInfo);
+                value = DefaultValueUtil.getAndSetUpdateDefaultValue(entity, tableFieldInfo, defaultValueContext);
             }
 
 

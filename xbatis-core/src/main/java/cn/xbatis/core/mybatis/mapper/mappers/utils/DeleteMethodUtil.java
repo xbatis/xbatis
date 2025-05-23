@@ -27,6 +27,8 @@ import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -45,6 +47,10 @@ public final class DeleteMethodUtil {
     }
 
     public static <E> int delete(BasicMapper basicMapper, TableInfo tableInfo, E entity) {
+        return delete(basicMapper, tableInfo, entity, new HashMap<>());
+    }
+
+    public static <E> int delete(BasicMapper basicMapper, TableInfo tableInfo, E entity, Map<String, Object> defaultValueContext) {
         if (Objects.isNull(entity)) {
             return 0;
         }
@@ -58,7 +64,7 @@ public final class DeleteMethodUtil {
         return delete(basicMapper, tableInfo, WhereUtil.create(tableInfo, w -> {
             WhereUtil.appendIdWhereWithEntity(w, tableInfo, entity);
             WhereUtil.appendVersionWhere(w, tableInfo, entity);
-        }));
+        }), defaultValueContext);
     }
 
     public static <E> int delete(BasicMapper basicMapper, TableInfo tableInfo, Collection<E> list) {
@@ -66,8 +72,10 @@ public final class DeleteMethodUtil {
             return 0;
         }
         int cnt = 0;
+
+        Map<String, Object> defaultValueContext = new HashMap<>();
         for (E entity : list) {
-            cnt += delete(basicMapper, tableInfo, entity);
+            cnt += delete(basicMapper, tableInfo, entity, defaultValueContext);
         }
         return cnt;
     }
@@ -77,12 +85,16 @@ public final class DeleteMethodUtil {
     }
 
     public static int delete(BasicMapper basicMapper, TableInfo tableInfo, Where where) {
+        return delete(basicMapper, tableInfo, where, new HashMap<>());
+    }
+
+    public static int delete(BasicMapper basicMapper, TableInfo tableInfo, Where where, Map<String, Object> defaultValueContext) {
         if (!where.hasContent()) {
             throw new RuntimeException("delete has no where condition content ");
         }
         if (LogicDeleteUtil.isNeedLogicDelete(tableInfo)) {
             //逻辑删除处理
-            return LogicDeleteUtil.logicDelete(basicMapper, tableInfo, where);
+            return LogicDeleteUtil.logicDelete(basicMapper, tableInfo, where, defaultValueContext);
         }
         Delete delete = new Delete(where);
         delete.delete(tableInfo.getType());

@@ -25,6 +25,7 @@ import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 @Data
@@ -98,14 +99,14 @@ public class FetchInfo {
         }
     }
 
-    public void setValue(Object object, Object value) {
+    public void setValue(Object object, Object value, Map<String, Object> defaultValueContext) {
         if (value == null) {
             if (this.fetch.nullFillValue().isEmpty()) {
                 return;
             } else if (this.nullFillValue != null) {
                 value = this.nullFillValue;
             } else {
-                value = XbatisGlobalConfig.getDefaultValue(this.getFieldInfo().getClazz(), this.getFieldInfo().getTypeClass(), this.fetch.nullFillValue());
+                value = XbatisGlobalConfig.getDefaultValue(this.getFieldInfo().getClazz(), this.getFieldInfo().getTypeClass(), this.fetch.nullFillValue(), defaultValueContext);
             }
         }
         try {
