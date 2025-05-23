@@ -25,6 +25,7 @@ import com.xbatis.core.test.vo.OneToManyVo;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -84,6 +85,37 @@ public class OneToManyTest extends BaseTest {
             assertEquals("xxxx123", list.get(0).getSysUserList().get(0).getPwd());
             assertEquals("null-phone", list.get(0).getSysUserList().get(1).getPwd());
             assertEquals("xxxx123", list.get(0).getSysUserList().get(0).getKkName());
+        }
+    }
+
+
+    @Test
+    public void oneToManyTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            OneToManyVo vo = QueryChain.of(sysRoleMapper)
+                    .tableAs(SysUser.class, "aaa")
+                    .tableAs(SysRole.class, "bbb")
+                    .select(SysUser.class)
+                    .select(SysUser::getUserName, c -> c.as(OneToManyVo::getAsName))
+                    .select(SysRole.class)
+                    .from(SysRole.class)
+                    .join(SysRole.class, SysUser.class, on -> on.eq(SysUser::getRole_id, SysRole::getId))
+                    .limit(-1)
+                    .orderBy(SysUser::getId)
+                    .returnType(OneToManyVo.class)
+                    .get();
+
+
+            System.out.println(ResultInfos.get(OneToManyVo.class).getTablePrefixes());
+            List<OneToManyVo> list = Collections.singletonList(vo);
+            System.out.println(list);
+            assertEquals(OneToManyVo.class, list.get(0).getClass(), "oneToManyTest");
+            assertEquals(Integer.valueOf(1), list.size(), "oneToManyTest");
+            assertEquals(Integer.valueOf(2), list.get(0).getSysUserList().size(), "oneToManyTest");
+            assertEquals(SysUser.class, list.get(0).getSysUserList().get(0).getClass(), "oneToManyTest");
+
+            assertEquals(list.get(0).getAsName(), "test1");
         }
     }
 }

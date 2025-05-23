@@ -60,7 +60,7 @@ public final class ListMethodUtil {
     public static <T> List<T> list(BasicMapper basicMapper, TableInfo tableInfo, Integer limit, Where where, Getter<T>[] selectFields) {
         return basicMapper.list(QueryUtil.buildNoOptimizationQuery(tableInfo, where, query -> {
             QueryUtil.fillQueryDefault(query, tableInfo, selectFields);
-            if (Objects.nonNull(limit)) {
+            if (Objects.nonNull(limit) && limit >= 0) {
                 query.limit(limit);
                 query.dbAdapt(((q, selector) -> {
                     selector.when(DbType.SQL_SERVER, () -> {

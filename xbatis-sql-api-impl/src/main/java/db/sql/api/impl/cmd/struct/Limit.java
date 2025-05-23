@@ -33,6 +33,9 @@ public class Limit implements ILimit<Limit> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (limit < 0) {
+            return sqlBuilder;
+        }
         if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQL_SERVER) {
             return sqlBuilder.append(" OFFSET ").append(this.offset).append(" ROWS FETCH NEXT ").append(this.limit).append(" ROWS ONLY");
         }

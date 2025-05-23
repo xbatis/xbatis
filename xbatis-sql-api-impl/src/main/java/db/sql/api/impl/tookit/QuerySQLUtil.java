@@ -39,6 +39,9 @@ public class QuerySQLUtil {
             if (cmd instanceof ILimit) {
                 findLimit = true;
                 limit = (Limit) cmd;
+                if (limit == null || limit.getLimit() < 0) {
+                    findLimit = false;
+                }
                 continue;
             }
             if (findLimit) {
