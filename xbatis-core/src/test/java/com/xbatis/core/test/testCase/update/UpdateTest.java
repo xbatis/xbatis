@@ -24,9 +24,8 @@ import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.model.SysUserModel;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
-import db.sql.api.Cmd;
 import db.sql.api.DbType;
-import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.Getter;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -37,7 +36,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -306,7 +304,7 @@ public class UpdateTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser old = sysUserMapper.getById(1);
             int cnt = UpdateChain.of(sysUserMapper)
-                    .set(SysUser::getRole_id, (Function<TableField, Cmd>) c -> c.plus(1))
+                    .set(SysUser::getRole_id, c -> c.plus(1))
                     .eq(SysUser::getId, 1)
                     .execute();
             assertEquals(cnt, 1);
@@ -568,7 +566,7 @@ public class UpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             int cnt = UpdateChain.of(sysUserMapper)
-                    .set(SysUser::getRole_id, SysRole::getId)
+                    .set(SysUser::getRole_id, (Getter<SysRole>) SysRole::getId)
                     .join(SysUser.class, SysRole.class)
                     .eq(SysUser::getId, 2)
                     .execute();

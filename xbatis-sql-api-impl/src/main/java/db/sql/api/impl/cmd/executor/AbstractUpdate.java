@@ -172,9 +172,14 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         return this.set(predicate.test(value), field, value);
     }
 
-    public <T, T2> SELF set(Getter<T> target, Getter<T2> source) {
-        return this.set($.field(target), $.field(source));
+    @Override
+    public <T> SELF set(Getter<T> field, Object value) {
+        if (value instanceof Getter) {
+            return this.set($.field(field), $.field((Getter) value));
+        }
+        return IUpdate.super.set(field, value);
     }
+
 
     @Override
     public <T> SELF set(Getter<T> field, Object value, UpdateStrategy updateStrategy) {

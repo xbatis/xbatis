@@ -25,6 +25,7 @@ import com.xbatis.core.test.testCase.TestDataSource;
 import com.xbatis.core.test.testCase.dao.BaseDaoTest;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.Getter;
 import db.sql.api.impl.cmd.basic.TableField;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -363,7 +364,7 @@ public class UpdateTest extends BaseDaoTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             int cnt = UpdateChain.of(sysUserMapper)
-                    .set(SysUser::getRole_id, SysRole::getId)
+                    .set(SysUser::getRole_id, (Getter<SysRole>) SysRole::getId)
                     .join(SysUser.class, SysRole.class)
                     .eq(SysUser::getId, 2)
                     .execute();

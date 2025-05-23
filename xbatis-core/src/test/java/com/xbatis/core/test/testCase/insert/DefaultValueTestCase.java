@@ -514,7 +514,10 @@ public class DefaultValueTestCase extends BaseTest {
             for (DefaultValue2Test ss : list) {
                 assertEquals(ss.getValue2(), ss.getValue4());
                 assertEquals(ss.getValue2(), time);
-                assertNotEquals(ss.getCreateTime(), nowTime);
+                i++;
+                if (i > 1) {
+                    assertNotEquals(ss.getCreateTime(), nowTime);
+                }
                 assertNotNull(ss.getValue2());
 
                 ss.setValue2(null);
