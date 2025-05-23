@@ -30,15 +30,21 @@ import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class SaveOrUpdateModelMethodUtil {
 
     public static <M extends Model<T>, T> int saveOrUpdate(BasicMapper basicMapper, M model, SaveOrUpdateStrategy saveOrUpdateStrategy) {
-        return saveOrUpdate(basicMapper, Models.get(model.getClass()), model, saveOrUpdateStrategy);
+        return saveOrUpdate(basicMapper, model, saveOrUpdateStrategy, new HashMap<>());
     }
 
-    public static <M extends Model<T>, T> int saveOrUpdate(BasicMapper basicMapper, ModelInfo modelInfo, M model, SaveOrUpdateStrategy saveOrUpdateStrategy) {
+    public static <M extends Model<T>, T> int saveOrUpdate(BasicMapper basicMapper, M model, SaveOrUpdateStrategy saveOrUpdateStrategy, Map<String, Object> defaultValueContext) {
+        return saveOrUpdate(basicMapper, Models.get(model.getClass()), model, saveOrUpdateStrategy, defaultValueContext);
+    }
+
+    public static <M extends Model<T>, T> int saveOrUpdate(BasicMapper basicMapper, ModelInfo modelInfo, M model, SaveOrUpdateStrategy saveOrUpdateStrategy, Map<String, Object> defaultValueContext) {
         boolean checkById = true;
         if (saveOrUpdateStrategy.getOn() != null) {
             checkById = false;
@@ -60,7 +66,7 @@ public class SaveOrUpdateModelMethodUtil {
                 SaveStrategy<M> saveStrategy = new SaveStrategy<>()
                         .allFieldSave(saveOrUpdateStrategy.isAllField())
                         .forceFields(saveOrUpdateStrategy.getForceFields());
-                return SaveModelMethodUtil.save(basicMapper, model, saveStrategy);
+                return SaveModelMethodUtil.save(basicMapper, model, saveStrategy, defaultValueContext);
             }
             //使用主键查询
             WhereUtil.appendIdWhereWithModel(checkWhere, modelInfo, model);
@@ -80,7 +86,6 @@ public class SaveOrUpdateModelMethodUtil {
             query.from(table).returnType(modelInfo.getEntityType());
         }
 
-
         for (String c : modelInfo.getTableInfo().getIdColumnNames()) {
             query.select(table.$(c));
         }
@@ -90,7 +95,7 @@ public class SaveOrUpdateModelMethodUtil {
             SaveStrategy<M> saveStrategy = new SaveStrategy<>()
                     .allFieldSave(saveOrUpdateStrategy.isAllField())
                     .forceFields(saveOrUpdateStrategy.getForceFields());
-            return SaveModelMethodUtil.save(basicMapper, model, saveStrategy);
+            return SaveModelMethodUtil.save(basicMapper, model, saveStrategy, defaultValueContext);
         } else {
             UpdateStrategy<M> updateStrategy = new UpdateStrategy<>();
             if (modelInfo.getIdFieldInfos().isEmpty()) {
@@ -102,7 +107,7 @@ public class SaveOrUpdateModelMethodUtil {
             }
             updateStrategy.allFieldUpdate(saveOrUpdateStrategy.isAllField());
             updateStrategy.forceFields(saveOrUpdateStrategy.getForceFields());
-            return UpdateModelMethodUtil.update(basicMapper, model, updateStrategy);
+            return UpdateModelMethodUtil.update(basicMapper, model, updateStrategy, defaultValueContext);
         }
     }
 
@@ -113,8 +118,10 @@ public class SaveOrUpdateModelMethodUtil {
         M first = list.stream().findFirst().get();
         ModelInfo modelInfo = Models.get(first.getClass());
         int cnt = 0;
+        Map<String, Object> defaultValueContext = new HashMap<>();
         for (M model : list) {
-            cnt += saveOrUpdate(basicMapper, modelInfo, model, saveOrUpdateStrategy);
+            cnt += saveOrUpdate(basicMapper, modelInfo, model, saveOrUpdateStrategy, defaultValueContext);
+            DefaultValueContextUtil.removeNonSameLevelData(defaultValueContext);
         }
         return cnt;
     }

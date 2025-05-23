@@ -36,7 +36,11 @@ public final class UpdateModelMethodUtil {
     }
 
     public static <M extends Model> int update(BasicMapper basicMapper, M model, UpdateStrategy<M> updateStrategy) {
-        return update(basicMapper, Models.get(model.getClass()), model, updateStrategy);
+        return update(basicMapper, model, updateStrategy, new HashMap<>());
+    }
+
+    public static <M extends Model> int update(BasicMapper basicMapper, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
+        return update(basicMapper, Models.get(model.getClass()), model, updateStrategy, defaultValueContext);
     }
 
     public static <M extends Model> int update(BasicMapper basicMapper, ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy) {
@@ -56,6 +60,7 @@ public final class UpdateModelMethodUtil {
         Map<String, Object> defaultValueContext = new HashMap<>();
         for (M model : list) {
             cnt += update(basicMapper, modelInfo, model, updateStrategy, defaultValueContext);
+            DefaultValueContextUtil.removeNonSameLevelData(defaultValueContext);
         }
         return cnt;
     }

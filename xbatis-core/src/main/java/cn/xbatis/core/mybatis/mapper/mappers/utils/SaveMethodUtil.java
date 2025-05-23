@@ -51,6 +51,7 @@ public final class SaveMethodUtil {
         Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
             cnt += save(basicMapper, tableInfo, entity, strategy, defaultValueContext);
+            DefaultValueContextUtil.removeNonSameLevelData(defaultValueContext);
         }
         return cnt;
     }
@@ -92,5 +93,12 @@ public final class SaveMethodUtil {
             return 0;
         }
         return basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, list, saveBatchStrategy, new HashMap<>()));
+    }
+
+    public static <E> int saveBatch(BasicMapper basicMapper, BaseInsert<?> insert, TableInfo tableInfo, Collection<E> list, SaveBatchStrategy<E> saveBatchStrategy, Map<String, Object> defaultValueContext) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        return basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, list, saveBatchStrategy, defaultValueContext));
     }
 }

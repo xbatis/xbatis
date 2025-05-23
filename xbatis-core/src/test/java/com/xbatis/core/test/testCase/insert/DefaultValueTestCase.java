@@ -508,10 +508,13 @@ public class DefaultValueTestCase extends BaseTest {
             mapper.getBasicMapper().save(list);
 
             Integer time = list.get(0).getValue2();
+            LocalDateTime nowTime = list.get(0).getCreateTime();
 
+            int i = 0;
             for (DefaultValue2Test ss : list) {
                 assertEquals(ss.getValue2(), ss.getValue4());
                 assertEquals(ss.getValue2(), time);
+                assertNotEquals(ss.getCreateTime(), nowTime);
                 assertNotNull(ss.getValue2());
 
                 ss.setValue2(null);
@@ -520,9 +523,15 @@ public class DefaultValueTestCase extends BaseTest {
 
             mapper.getBasicMapper().update(list);
             time = list.get(0).getValue2();
+            nowTime = list.get(0).getCreateTime();
+            i = 0;
             for (DefaultValue2Test ss : list) {
                 assertEquals(ss.getValue2(), ss.getValue4());
                 assertEquals(ss.getValue2(), time);
+                i++;
+                if (i > 1) {
+                    assertNotEquals(ss.getCreateTime(), nowTime);
+                }
                 assertNotNull(ss.getValue2());
             }
         }
@@ -538,10 +547,12 @@ public class DefaultValueTestCase extends BaseTest {
             mapper.getBasicMapper().saveBatch(list);
 
             Integer time = list.get(0).getValue2();
+            LocalDateTime nowTime = list.get(0).getCreateTime();
 
             for (DefaultValue2Test ss : list) {
                 assertEquals(ss.getValue2(), ss.getValue4());
                 assertEquals(ss.getValue2(), time);
+                assertEquals(ss.getCreateTime(), nowTime);
                 assertNotNull(ss.getValue2());
 
                 ss.setValue2(null);
@@ -588,10 +599,17 @@ public class DefaultValueTestCase extends BaseTest {
             mapper.getBasicMapper().saveModel(list);
 
             Integer time = list.get(0).getValue2();
+            LocalDateTime nowTime = list.get(0).getCreateTime();
 
+            int i = 0;
             for (DefaultValue2ModelTest ss : list) {
                 assertEquals(ss.getValue2(), ss.getValue4());
                 assertEquals(ss.getValue2(), time);
+                i++;
+                if (i > 1) {
+                    assertNotEquals(ss.getCreateTime(), nowTime);
+                }
+
                 assertNotNull(ss.getValue2());
 
                 ss.setValue2(null);
@@ -600,9 +618,16 @@ public class DefaultValueTestCase extends BaseTest {
 
             mapper.getBasicMapper().updateModel(list);
             time = list.get(0).getValue2();
+            nowTime = list.get(0).getCreateTime();
+            i = 0;
             for (DefaultValue2ModelTest ss : list) {
                 assertEquals(ss.getValue2(), ss.getValue4());
                 assertEquals(ss.getValue2(), time);
+                i++;
+                if (i > 1) {
+                    assertNotEquals(ss.getCreateTime(), nowTime);
+                }
+
                 assertNotNull(ss.getValue2());
             }
         }
@@ -619,12 +644,12 @@ public class DefaultValueTestCase extends BaseTest {
             mapper.getBasicMapper().saveModelBatch(list);
 
             Integer time = list.get(0).getValue2();
-
+            LocalDateTime nowTime = list.get(0).getCreateTime();
             for (DefaultValue2ModelTest ss : list) {
                 assertEquals(ss.getValue2(), ss.getValue4());
                 assertEquals(ss.getValue2(), time);
                 assertNotNull(ss.getValue2());
-
+                assertEquals(ss.getCreateTime(), nowTime);
                 ss.setValue2(null);
                 ss.setValue4(null);
             }

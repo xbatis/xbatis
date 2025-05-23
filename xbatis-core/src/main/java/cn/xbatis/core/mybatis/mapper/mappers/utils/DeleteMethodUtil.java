@@ -76,6 +76,7 @@ public final class DeleteMethodUtil {
         Map<String, Object> defaultValueContext = new HashMap<>();
         for (E entity : list) {
             cnt += delete(basicMapper, tableInfo, entity, defaultValueContext);
+            DefaultValueContextUtil.removeNonSameLevelData(defaultValueContext);
         }
         return cnt;
     }

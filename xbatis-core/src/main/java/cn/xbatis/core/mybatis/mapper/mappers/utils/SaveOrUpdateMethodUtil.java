@@ -27,11 +27,17 @@ import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class SaveOrUpdateMethodUtil {
 
     public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, SaveOrUpdateStrategy saveOrUpdateStrategy) {
+        return saveOrUpdate(basicMapper, tableInfo, entity, saveOrUpdateStrategy, new HashMap<>());
+    }
+
+    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, SaveOrUpdateStrategy saveOrUpdateStrategy, Map<String, Object> defaultValueContext) {
         Class<?> entityType = entity.getClass();
 
         boolean checkById = true;
@@ -54,7 +60,7 @@ public class SaveOrUpdateMethodUtil {
                 SaveStrategy<T> saveStrategy = new SaveStrategy<>()
                         .allFieldSave(saveOrUpdateStrategy.isAllField())
                         .forceFields(saveOrUpdateStrategy.getForceFields());
-                return SaveMethodUtil.save(basicMapper, tableInfo, entity, saveStrategy);
+                return SaveMethodUtil.save(basicMapper, tableInfo, entity, saveStrategy, defaultValueContext);
             }
             //使用主键查询
             WhereUtil.appendIdWhereWithEntity(checkWhere, tableInfo, entity);
@@ -83,7 +89,7 @@ public class SaveOrUpdateMethodUtil {
             SaveStrategy<T> saveStrategy = new SaveStrategy<>()
                     .allFieldSave(saveOrUpdateStrategy.isAllField())
                     .forceFields(saveOrUpdateStrategy.getForceFields());
-            return SaveMethodUtil.save(basicMapper, tableInfo, entity, saveStrategy);
+            return SaveMethodUtil.save(basicMapper, tableInfo, entity, saveStrategy, defaultValueContext);
         } else {
             UpdateStrategy<T> updateStrategy = new UpdateStrategy<>();
             if (tableInfo.getIdFieldInfos().isEmpty()) {
@@ -96,7 +102,7 @@ public class SaveOrUpdateMethodUtil {
             updateStrategy
                     .allFieldUpdate(saveOrUpdateStrategy.isAllField())
                     .forceFields(saveOrUpdateStrategy.getForceFields());
-            return UpdateMethodUtil.update(basicMapper, tableInfo, entity, updateStrategy);
+            return UpdateMethodUtil.update(basicMapper, tableInfo, entity, updateStrategy, defaultValueContext);
         }
     }
 
@@ -105,8 +111,10 @@ public class SaveOrUpdateMethodUtil {
             return 0;
         }
         int cnt = 0;
+        Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
-            cnt += saveOrUpdate(basicMapper, tableInfo, entity, saveOrUpdateStrategy);
+            cnt += saveOrUpdate(basicMapper, tableInfo, entity, saveOrUpdateStrategy, defaultValueContext);
+            DefaultValueContextUtil.removeNonSameLevelData(defaultValueContext);
         }
         return cnt;
     }

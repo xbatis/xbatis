@@ -48,6 +48,7 @@ public final class SaveModelMethodUtil {
         Map<String, Object> defaultValueContext = new HashMap<>();
         for (M model : list) {
             cnt += save(basicMapper, model, saveStrategy, defaultValueContext);
+            DefaultValueContextUtil.removeNonSameLevelData(defaultValueContext);
         }
         return cnt;
     }
@@ -74,5 +75,14 @@ public final class SaveModelMethodUtil {
         M first = list.stream().findFirst().get();
         ModelInfo modelInfo = Models.get(first.getClass());
         return basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, list, saveBatchStrategy, new HashMap<>()));
+    }
+
+    public static <M extends Model> int saveBatch(BasicMapper basicMapper, BaseInsert<?> insert, Collection<M> list, SaveBatchStrategy<M> saveBatchStrategy, Map<String, Object> defaultValueContext) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        M first = list.stream().findFirst().get();
+        ModelInfo modelInfo = Models.get(first.getClass());
+        return basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, list, saveBatchStrategy, defaultValueContext));
     }
 }

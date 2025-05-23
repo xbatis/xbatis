@@ -14,7 +14,6 @@
 
 package cn.xbatis.core.mvc.impl;
 
-import cn.xbatis.core.db.reflect.Models;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.db.reflect.Tables;
 import cn.xbatis.core.mvc.Dao;
@@ -861,7 +860,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     public <M extends Model<T>> int saveOrUpdate(M model, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
         SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
         saveOrUpdateStrategy.accept(strategy);
-        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), Models.get(model.getClass()), model, strategy);
+        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), model, strategy);
     }
 
     @Override

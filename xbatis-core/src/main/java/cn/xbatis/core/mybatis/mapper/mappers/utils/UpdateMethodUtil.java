@@ -87,6 +87,7 @@ public final class UpdateMethodUtil {
         Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
             cnt += update(basicMapper, tableInfo, entity, updateStrategy, defaultValueContext);
+            DefaultValueContextUtil.removeNonSameLevelData(defaultValueContext);
         }
         return cnt;
     }
