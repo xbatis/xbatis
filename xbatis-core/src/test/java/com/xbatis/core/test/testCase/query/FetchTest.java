@@ -53,7 +53,7 @@ public class FetchTest extends BaseTest {
             System.out.println(map);
 
             System.out.println(longAdder.sum());
-            assertEquals(longAdder.sum(), 1);
+            assertEquals(1, longAdder.sum());
             assertEquals(map.get(1).getCnts(), 2);
             assertEquals(map.get(1).getCnts2(), 2);
             assertEquals(map.get(1).getCnts3(), 2);

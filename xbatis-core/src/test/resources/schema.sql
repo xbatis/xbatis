@@ -56,6 +56,16 @@ CREATE TABLE IF NOT EXISTS t_sys_user
     create_time DATETIME NOT NULL DEFAULT NOW()
 );
 
+drop table if exists sys_role_middle;
+
+CREATE TABLE IF NOT EXISTS sys_role_middle
+(
+    user_id INTEGER not null,
+    role_id INTEGER not null
+);
+
+INSERT INTO sys_role_middle VALUES(1,1),(1,2),(2,2),(2,3);
+
 drop table if exists sys_role;
 
 CREATE TABLE IF NOT EXISTS sys_role
@@ -155,7 +165,7 @@ drop table if exists composite_test;
 CREATE TABLE IF NOT EXISTS composite_test
 (
     id BIGINT PRIMARY KEY auto_increment,
-     name varchar ,
+     name varchar(20) ,
     version int not null,
     tenant_id int not null,
     deleted TINYINT not NULL default 0,

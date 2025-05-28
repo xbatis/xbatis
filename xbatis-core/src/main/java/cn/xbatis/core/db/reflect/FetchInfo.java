@@ -15,8 +15,11 @@
 package cn.xbatis.core.db.reflect;
 
 import cn.xbatis.core.XbatisGlobalConfig;
+import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.annotations.Fetch;
+import cn.xbatis.db.annotations.ResultEntity;
+import cn.xbatis.db.annotations.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
@@ -27,12 +30,11 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Data
 @EqualsAndHashCode
 public class FetchInfo {
-
-    private final Field field;
 
     private final FieldInfo fieldInfo;
 
@@ -42,17 +44,21 @@ public class FetchInfo {
 
     private final TypeHandler<?> valueTypeHandler;
 
-    private final String targetMatchColumn;
+    private final TableInfo middleTableInfo;
 
-    private final String targetSelectColumn;
+    private final TableFieldInfo middleSourceTableFieldInfo;
 
-    private final String orderBy;
+    private final TableFieldInfo middleTargetTableFieldInfo;
 
-    private final String groupBy;
+    private final TableInfo targetTableInfo;
+
+    private final TableFieldInfo targetTableFieldInfo;
+
+    private final String targetSelect;
+
+    private final String targetOrderBy;
 
     private final String otherConditions;
-
-    private final GetFieldInvoker eqGetFieldInvoker;
 
     private final SetFieldInvoker writeFieldInvoker;
 
@@ -60,43 +66,169 @@ public class FetchInfo {
 
     private final Class<?> returnType;
 
-    private final boolean isUseIn;
+    private final boolean singleFetch;
 
-    private final boolean isUseResultFetchKeyValue;
+    private final boolean group;
+
+    private final boolean sourceTargetMatchFieldInReturnType;
+
+    private final Field sourceTargetMatchField;
+
+    private final GetFieldInvoker sourceTargetMatchFieldGetter;
 
     private final Object nullFillValue;
 
-    public FetchInfo(Class clazz, Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy, String groupBy, String otherConditions) {
-        this.field = field;
-        this.fieldInfo = new FieldInfo(clazz, field);
+    public FetchInfo(Class clazz, FieldInfo fieldInfo, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler) {
+
+        this.fieldInfo = fieldInfo;
         this.fetch = fetch;
-        this.writeFieldInvoker = new SetFieldInvoker(field);
+        this.writeFieldInvoker = new SetFieldInvoker(fieldInfo.getField());
         this.valueColumn = valueColumn;
         this.valueTypeHandler = valueTypeHandler;
-        this.eqGetFieldInvoker = Objects.isNull(targetMatchField) ? null : new GetFieldInvoker(targetMatchField);
-        this.targetMatchColumn = targetMatchColumn;
-        this.targetSelectColumn = targetSelectColumn;
+
+        Object[] objs;
+        objs = parseMiddle(clazz, fieldInfo.getField(), fetch);
+        this.middleTableInfo = (TableInfo) objs[0];
+        this.middleSourceTableFieldInfo = (TableFieldInfo) objs[1];
+        this.middleTargetTableFieldInfo = (TableFieldInfo) objs[2];
+
+        objs = parseTarget(clazz, fieldInfo.getField(), fetch);
+        this.targetTableInfo = (TableInfo) objs[0];
+        this.targetTableFieldInfo = (TableFieldInfo) objs[1];
+
+        this.targetSelect = parseDynamicColumn(clazz, fetch, fieldInfo.getField(), targetTableInfo, "@Fetch", "targetSelectProperty", fetch.targetSelectProperty());
+
+        this.targetOrderBy = parseOrderByColumn(clazz, fetch, fieldInfo.getField(), targetTableInfo, "@Fetch", "orderBy", fetch.orderBy());
+
+        String otherConditions = parseDynamicColumn(clazz, fetch, fieldInfo.getField(), targetTableInfo, "@Fetch", "otherConditions", fetch.otherConditions());
+
         this.multiple = Collection.class.isAssignableFrom(this.fieldInfo.getTypeClass());
         this.returnType = returnType;
-        this.orderBy = orderBy;
-        this.groupBy = groupBy;
+
         this.otherConditions = otherConditions;
+        this.singleFetch = fetch.limit() >= 1;
 
-        boolean isUseIn = true;
+        //如果自定义了select 且 里面有函数（根据括号判断）
+        this.group = this.targetSelect != null && this.targetSelect.contains("(");
 
-        if (fetch.limit() >= 1) {
-            isUseIn = false;
-        } else if (!fetch.forceUseIn() && Objects.isNull(this.eqGetFieldInvoker) && this.targetSelectColumn != null && this.targetSelectColumn.contains("(")) {
-            isUseIn = false;
-        }
+        //检测 source 在不在 target 返回类里
+        objs = parseSourceTargetMatchField(fetch, clazz, returnType, fieldInfo, targetTableInfo, targetTableFieldInfo);
+        this.sourceTargetMatchFieldInReturnType = (Boolean) objs[0];
+        this.sourceTargetMatchField = (Field) objs[1];
+        this.sourceTargetMatchFieldGetter = this.sourceTargetMatchField != null ? new GetFieldInvoker(this.sourceTargetMatchField) : null;
 
-        this.isUseIn = isUseIn;
-        this.isUseResultFetchKeyValue = this.isUseIn && Objects.isNull(this.eqGetFieldInvoker) && this.returnType.getPackage().getName().contains("java.lang");
+
+
         if (fetch.nullFillValue().isEmpty() || fetch.nullFillValue().contains("{")) {
             nullFillValue = null;
         } else {
             nullFillValue = TypeConvertUtil.convert(fetch.nullFillValue(), this.fieldInfo.getTypeClass());
         }
+    }
+
+    private static RuntimeException buildException(Class clazz, Field field, String annotationName, String annotationPropertyName, String message) {
+        return new RuntimeException(clazz.getName() + "." + field.getName() + " " + annotationName + "  config error,the " + annotationPropertyName + ":" + message);
+    }
+
+    /**
+     * 解析中间表
+     *
+     * @param clazz
+     * @param field
+     * @param fetch
+     * @return
+     */
+    private static Object[] parseMiddle(Class clazz, Field field, Fetch fetch) {
+        if (fetch.middle() != Void.class) {
+            if (StringPool.EMPTY.equals(fetch.middleSourceProperty())) {
+                throw buildException(clazz, field, "@Fetch", "middleSourceProperty", "can't be empty");
+            }
+
+            if (StringPool.EMPTY.equals(fetch.middleTargetProperty())) {
+                throw buildException(clazz, field, "@Fetch", "middleTargetProperty", "can't be empty");
+            }
+        }
+
+        if (!StringPool.EMPTY.equals(fetch.middleSourceProperty()) || !StringPool.EMPTY.equals(fetch.middleTargetProperty())) {
+            if (fetch.middle() == Void.class) {
+                throw buildException(clazz, field, "@Fetch", "middle", "need set");
+            }
+        }
+
+        if (fetch.middle() != Void.class && !fetch.middle().isAnnotationPresent(Table.class)) {
+            throw buildException(clazz, field, "@Fetch", "middle", fetch.middle().getName() + " is not a entity");
+        }
+
+        TableInfo middleTableInfo = null;
+        TableFieldInfo middleSourceTableFieldInfo = null;
+        TableFieldInfo middleTargetTableFieldInfo = null;
+
+        if (fetch.middle() != Void.class) {
+            middleTableInfo = Tables.get(fetch.middle());
+            middleSourceTableFieldInfo = middleTableInfo.getFieldInfo(fetch.middleSourceProperty());
+            if (Objects.isNull(middleSourceTableFieldInfo)) {
+                throw buildException(clazz, field, "@Fetch", "middleSourceProperty", fetch.middleSourceProperty() + " is not a entity field");
+            }
+
+            middleTargetTableFieldInfo = middleTableInfo.getFieldInfo(fetch.middleTargetProperty());
+            if (Objects.isNull(middleTargetTableFieldInfo)) {
+                throw buildException(clazz, field, "@Fetch", "middleTargetProperty", fetch.middleTargetProperty() + " is not a entity field");
+            }
+        }
+        return new Object[]{middleTableInfo, middleSourceTableFieldInfo, middleTargetTableFieldInfo};
+    }
+
+    private static Object[] parseTarget(Class clazz, Field field, Fetch fetch) {
+        if (StringPool.EMPTY.equals(fetch.targetProperty())) {
+            throw buildException(clazz, field, "@Fetch", "targetProperty", "can't be empty");
+        }
+
+        if (!fetch.target().isAnnotationPresent(Table.class)) {
+            throw buildException(clazz, field, "@Fetch", "target", fetch.target().getName() + " is not a entity");
+        }
+
+        TableInfo targetTableInfo = Tables.get(fetch.target());
+        TableFieldInfo targetTableFieldInfo = targetTableInfo.getFieldInfo(fetch.targetProperty());
+
+        if (Objects.isNull(targetTableFieldInfo)) {
+            throw buildException(clazz, field, "@Fetch", "targetProperty", fetch.targetProperty() + " is not a entity field");
+        }
+        return new Object[]{targetTableInfo, targetTableFieldInfo};
+    }
+
+    private static Object[] parseSourceTargetMatchField(Fetch fetch, Class clazz, Class returnType, FieldInfo fieldInfo, TableInfo targetTableInfo, TableFieldInfo targetTableFieldInfo) {
+        boolean sourceTargetMatchFieldInReturnType = false;
+        Field sourceTargetMatchField = null;
+        if (fetch.middle() != Void.class) {
+            //有中间表 肯定不在
+            return new Object[]{false, null};
+        }
+
+        if (returnType.isAnnotationPresent(ResultEntity.class)) {
+            ResultInfo resultInfo = ResultInfos.get(returnType);
+            Optional<Field> eqFieldOptional = Optional.empty();
+            for (ResultFieldInfo item : resultInfo.getResultFieldInfos()) {
+                if (item instanceof ResultTableFieldInfo) {
+                    ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
+                    if (!resultTableFieldInfo.getField().isAnnotationPresent(Fetch.class) && resultTableFieldInfo.getTableFieldInfo().getField() == targetTableFieldInfo.getField()) {
+                        Field itemField = item.getField();
+                        eqFieldOptional = Optional.of(itemField);
+                        break;
+                    }
+                }
+            }
+            if (eqFieldOptional.isPresent()) {
+                sourceTargetMatchField = eqFieldOptional.get();
+            }
+        } else if (returnType.isAnnotationPresent(Table.class)) {
+            if (returnType != targetTableInfo.getType()) {
+                throw new RuntimeException(clazz.getName() + "->" + fieldInfo.getField().getName() + " fetch config error,the type can't be" + returnType.getName());
+            }
+            sourceTargetMatchField = targetTableFieldInfo.getField();
+        }
+        sourceTargetMatchFieldInReturnType = sourceTargetMatchField != null;
+
+        return new Object[]{sourceTargetMatchFieldInReturnType, sourceTargetMatchField};
     }
 
     public void setValue(Object object, Object value, Map<String, Object> defaultValueContext) {
@@ -114,5 +246,104 @@ public class FetchInfo {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String parseOrderByColumn(Class clazz, Fetch fetch, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue) {
+        String value = annotationValue.trim();
+        if (value.isEmpty()) {
+            return null;
+        }
+        if (value.startsWith("[") && value.endsWith("]")) {
+            return parseDynamicColumn(clazz, fetch, field, targetTableInfo, annotationName, annotationPropertyName, value);
+        }
+
+        StringBuilder orderByJoin = new StringBuilder();
+        String[] strs = value.split(",");
+        for (int i = 0; i < strs.length; i++) {
+            String str = strs[i];
+            String[] ss = str.trim().split(" ");
+            if (ss.length > 2) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+            }
+            if (StringPool.EMPTY.equals(ss[0])) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+            }
+            TableFieldInfo orderByTableFieldInfo = targetTableInfo.getFieldInfo(ss[0]);
+            if (Objects.isNull(orderByTableFieldInfo)) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, " the field:" + ss[0] + " is not entity field");
+            }
+            if (i != 0) {
+                orderByJoin.append(",");
+            }
+            if (fetch.middle() != Void.class) {
+                orderByJoin.append("target.");
+            } else {
+                orderByJoin.append("t.");
+            }
+            orderByJoin.append(orderByTableFieldInfo.getColumnName()).append(" ").append(ss[1]);
+        }
+        return orderByJoin.toString();
+    }
+
+    private static String parseDynamicColumn(Class clazz, Fetch fetch, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue) {
+        String value = annotationValue.trim();
+        if (value.isEmpty()) {
+            return null;
+        }
+        if (value.startsWith("[") && value.endsWith("]")) {
+            StringBuilder builder = new StringBuilder();
+            int startIndex = 1;
+            while (true) {
+                int start = value.indexOf("{", startIndex);
+                if (start == -1) {
+                    if (builder.length() == 0 && value.length() <= 2) {
+                        throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+                    } else {
+                        builder.append(value, startIndex, value.length() - 1);
+                        return builder.toString();
+                    }
+                }
+                int end = value.indexOf("}", start);
+                if (end == -1) {
+                    throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+                }
+                String property = value.substring(start + 1, end);
+                TableFieldInfo targetSelectTargetFieldInfo = targetTableInfo.getFieldInfo(property);
+                if (Objects.isNull(targetSelectTargetFieldInfo)) {
+                    throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
+                }
+                builder.append(value, startIndex, start);
+                if (fetch.middle() != Void.class) {
+                    builder.append("target.");
+                } else {
+                    builder.append("t.");
+                }
+                builder.append(targetSelectTargetFieldInfo.getColumnName());
+                startIndex = end + 1;
+            }
+        }
+
+        StringBuilder columns = new StringBuilder();
+        String[] strs = value.split(",");
+        for (int i = 0; i < strs.length; i++) {
+            String property = strs[i].trim();
+            if (StringPool.EMPTY.equals(property)) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+            }
+            TableFieldInfo tableFieldInfo = targetTableInfo.getFieldInfo(property);
+            if (Objects.isNull(tableFieldInfo)) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, " the field:" + property + " is not entity field");
+            }
+            if (i != 0) {
+                columns.append(",");
+            }
+            if (fetch.middle() != Void.class) {
+                columns.append("target.");
+            } else {
+                columns.append("t.");
+            }
+            columns.append(tableFieldInfo.getColumnName());
+        }
+        return columns.toString();
     }
 }

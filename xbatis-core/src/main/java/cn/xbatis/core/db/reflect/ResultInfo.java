@@ -333,88 +333,6 @@ public class ResultInfo {
         return new RuntimeException(clazz.getName() + "." + field.getName() + " " + annotationName + "  config error,the " + annotationPropertyName + ":" + message);
     }
 
-    private static String parseOrderByColumn(Class clazz, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue) {
-        String value = annotationValue.trim();
-        if (value.isEmpty()) {
-            return null;
-        }
-        if (value.startsWith("[") && value.endsWith("]")) {
-            return parseDynamicColumn(clazz, field, targetTableInfo, annotationName, annotationPropertyName, value);
-        }
-
-        StringBuilder orderByJoin = new StringBuilder();
-        String[] strs = value.split(",");
-        for (int i = 0; i < strs.length; i++) {
-            String str = strs[i];
-            String[] ss = str.trim().split(" ");
-            if (ss.length > 2) {
-                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
-            }
-            if (StringPool.EMPTY.equals(ss[0])) {
-                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
-            }
-            TableFieldInfo orderByTableFieldInfo = targetTableInfo.getFieldInfo(ss[0]);
-            if (Objects.isNull(orderByTableFieldInfo)) {
-                throw buildException(clazz, field, annotationName, annotationPropertyName, " the field:" + ss[0] + " is not entity field");
-            }
-            if (i != 0) {
-                orderByJoin.append(",");
-            }
-            orderByJoin.append(orderByTableFieldInfo.getColumnName()).append(" ").append(ss[1]);
-        }
-        return orderByJoin.toString();
-    }
-
-    private static String parseDynamicColumn(Class clazz, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue) {
-        String value = annotationValue.trim();
-        if (value.isEmpty()) {
-            return null;
-        }
-        if (value.startsWith("[") && value.endsWith("]")) {
-            StringBuilder builder = new StringBuilder();
-            int startIndex = 1;
-            while (true) {
-                int start = value.indexOf("{", startIndex);
-                if (start == -1) {
-                    if (builder.length() == 0 && value.length() <= 2) {
-                        throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
-                    } else {
-                        builder.append(value, startIndex, value.length() - 1);
-                        return builder.toString();
-                    }
-                }
-                int end = value.indexOf("}", start);
-                if (end == -1) {
-                    throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
-                }
-                String property = value.substring(start + 1, end);
-                TableFieldInfo targetSelectTargetFieldInfo = targetTableInfo.getFieldInfo(property);
-                if (Objects.isNull(targetSelectTargetFieldInfo)) {
-                    throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
-                }
-                builder.append(value, startIndex, start).append(targetSelectTargetFieldInfo.getColumnName());
-                startIndex = end + 1;
-            }
-        }
-
-        StringBuilder columns = new StringBuilder();
-        String[] strs = value.split(",");
-        for (int i = 0; i < strs.length; i++) {
-            String property = strs[i].trim();
-            if (StringPool.EMPTY.equals(property)) {
-                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
-            }
-            TableFieldInfo tableFieldInfo = targetTableInfo.getFieldInfo(property);
-            if (Objects.isNull(tableFieldInfo)) {
-                throw buildException(clazz, field, annotationName, annotationPropertyName, " the field:" + property + " is not entity field");
-            }
-            if (i != 0) {
-                columns.append(",");
-            }
-            columns.append(tableFieldInfo.getColumnName());
-        }
-        return columns.toString();
-    }
 
     /**
      * 解析内嵌字段
@@ -457,61 +375,11 @@ public class ResultInfo {
 
             resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, fetch.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
             valueColumn = tablePrefix + fetchFieldInfo.getColumnName();
-
         }
-
-        if (StringPool.EMPTY.equals(fetch.targetProperty())) {
-            throw buildException(clazz, field, "@Fetch", "targetProperty", "can't be empty");
-        }
-
-        if (!fetch.target().isAnnotationPresent(Table.class)) {
-            throw buildException(clazz, field, "@Fetch", "target", fetch.target().getName() + " is not a entity");
-        }
-
-        TableInfo fetchTargetTableInfo = Tables.get(fetch.target());
-        TableFieldInfo fetchTargetFieldInfo = fetchTargetTableInfo.getFieldInfo(fetch.targetProperty());
-
-        if (Objects.isNull(fetchTargetFieldInfo)) {
-            throw buildException(clazz, field, "@Fetch", "targetProperty", fetch.targetProperty() + " is not a entity field");
-        }
-
-        String targetSelectColumn = parseDynamicColumn(clazz, field, fetchTargetTableInfo, "@Fetch", "targetSelectProperty", fetch.targetSelectProperty());
-
-        String orderBy = parseOrderByColumn(clazz, field, fetchTargetTableInfo, "@Fetch", "orderBy", fetch.orderBy());
-
-        String groupBy = parseDynamicColumn(clazz, field, fetchTargetTableInfo, "@Fetch", "groupBy", fetch.groupBy());
-
-        String otherConditions = parseDynamicColumn(clazz, field, fetchTargetTableInfo, "@Fetch", "otherConditions", fetch.otherConditions());
-
-        String targetMatchColumn = fetchTargetFieldInfo.getColumnName();
 
         FieldInfo fieldInfo = new FieldInfo(clazz, field);
 
         Class returnType = fieldInfo.getFinalClass();
-
-        Field targetMatchField = null;
-        if (returnType.isAnnotationPresent(ResultEntity.class)) {
-            ResultInfo resultInfo = ResultInfos.get(returnType);
-            Optional<Field> eqFieldOptional = Optional.empty();
-            for (ResultFieldInfo item : resultInfo.getResultFieldInfos()) {
-                if (item instanceof ResultTableFieldInfo) {
-                    ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
-                    if (!resultTableFieldInfo.getField().isAnnotationPresent(Fetch.class) && resultTableFieldInfo.getTableFieldInfo().getField() == fetchTargetFieldInfo.getField()) {
-                        Field itemField = item.getField();
-                        eqFieldOptional = Optional.of(itemField);
-                        break;
-                    }
-                }
-            }
-            if (eqFieldOptional.isPresent()) {
-                targetMatchField = eqFieldOptional.get();
-            }
-        } else if (returnType.isAnnotationPresent(Table.class)) {
-            if (returnType != fetchTargetTableInfo.getType()) {
-                throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the type can't be" + returnType.getName());
-            }
-            targetMatchField = fetchTargetFieldInfo.getField();
-        }
 
         if (!returnType.isAnnotationPresent(Table.class)) {
             if (returnType.isAnnotationPresent(CreatedEvent.class)) {
@@ -519,7 +387,7 @@ public class ResultInfo {
             }
         }
 
-        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy, groupBy, otherConditions));
+        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, fieldInfo, fetch, returnType, valueColumn, valueTypeHandler));
         return tableCount;
     }
 

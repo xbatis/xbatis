@@ -53,6 +53,27 @@ public @interface Fetch {
     int storey() default 1;
 
     /**
+     * 中间实体类（中间表）
+     *
+     * @return
+     */
+    Class middle() default Void.class;
+
+    /**
+     * 中间实体类源属性（中间表与源表的列）
+     *
+     * @return
+     */
+    String middleSourceProperty() default "";
+
+    /**
+     * 中间实体类目标属性（中间表与目标表的列）
+     *
+     * @return
+     */
+    String middleTargetProperty() default "";
+
+    /**
      * 目标，相当于表
      *
      * @return
@@ -84,14 +105,6 @@ public @interface Fetch {
     String orderBy() default "";
 
     /**
-     * 用于查询group by 例如 "xx,xx2"; 其中 xx xx2 均为 实体类属性，不是列，多个逗号分割
-     * 可以动态 例如:[{id} desc,{createTime}]等
-     *
-     * @return
-     */
-    String groupBy() default "";
-
-    /**
      * 1 对 1 多条时，发现多条不报错
      *
      * @return
@@ -104,13 +117,6 @@ public @interface Fetch {
      * @return
      */
     int limit() default 0;
-
-    /**
-     * 强制使用in 查询，减少查询次数
-     *
-     * @return
-     */
-    boolean forceUseIn() default false;
 
     /**
      * 当值为null时，填充的值

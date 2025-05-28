@@ -14,6 +14,22 @@ CREATE TABLE t_sys_user
     create_time TIMESTAMP DEFAULT SYSDATE NOT NULL
 );
 
+DROP TABLE sys_role_middle;
+
+CREATE TABLE sys_role_middle
+(
+    user_id INTEGER not null,
+    role_id INTEGER not null
+);
+
+insert all
+       into sys_role_middle values(1,1)
+       into sys_role_middle values(1,2)
+       into sys_role_middle values(2,2)
+       into sys_role_middle values(2,3)
+select * from dual;
+
+
 DROP SEQUENCE sys_role_seq;
 
 CREATE SEQUENCE sys_role_seq;

@@ -25,7 +25,15 @@ CREATE TABLE t_sys_user
     create_time DATETIME NOT NULL DEFAULT  GETDATE()
 );
 
+drop table if exists sys_role_middle;
 
+CREATE TABLE sys_role_middle
+(
+    user_id INTEGER not null,
+    role_id INTEGER not null
+);
+
+INSERT INTO sys_role_middle VALUES(1,1),(1,2),(2,2),(2,3);
 
 drop table if exists sys_role;
 

@@ -21,6 +21,7 @@ import com.xbatis.core.test.DO.ReqEntity;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.vo.XmlNestedResultMap;
+import db.sql.api.DbType;
 import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -147,7 +148,7 @@ public class XmlPagingTestCase extends BaseTest {
                     .select(Methods.value(1))
                     .from(SysRole.class)
                     .in(SysRole::getId, 1, 2)
-                    .orderBy(SysRole::getCreateTime);
+                    .orderBy(SysRole::getId, SysRole::getCreateTime);
 
             List<SysRole> list = sysRoleMapper.selectQueryCustomSql(query);
             assertEquals(2, list.size());
@@ -166,7 +167,7 @@ public class XmlPagingTestCase extends BaseTest {
                     .select(Methods.value(1))
                     .from(SysRole.class)
                     .in(SysRole::getId, 1, 2)
-                    .orderBy(SysRole::getCreateTime);
+                    .orderBy(SysRole::getId, SysRole::getCreateTime);
 
             List<SysRole> list = sysRoleMapper.selectQueryCustomSql2(query, 1);
             assertEquals(2, list.size());
@@ -180,11 +181,14 @@ public class XmlPagingTestCase extends BaseTest {
     public void selectQueryCustomSql3() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
-            Query query = Query.create()
+            Query<?> query = Query.create()
                     .select(SysRole.class)
                     .from(SysRole.class)
-                    .in(SysRole::getId, 1, 2)
-                    .orderBy(SysRole::getCreateTime);
+                    .in(SysRole::getId, 1, 2);
+
+            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER) {
+                query.orderBy(SysRole::getId, SysRole::getCreateTime);
+            }
 
             List<SysRole> list = sysRoleMapper.selectQueryCustomSql3(query);
             assertEquals(2, list.size());
