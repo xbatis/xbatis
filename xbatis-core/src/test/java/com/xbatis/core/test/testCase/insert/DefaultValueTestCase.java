@@ -516,7 +516,7 @@ public class DefaultValueTestCase extends BaseTest {
                 assertEquals(ss.getValue2(), time);
                 i++;
                 if (i > 1) {
-                    assertNotEquals(ss.getCreateTime(), nowTime);
+                    assertTrue(ss.getCreateTime() != nowTime);
                 }
                 assertNotNull(ss.getValue2());
 
@@ -610,7 +610,7 @@ public class DefaultValueTestCase extends BaseTest {
                 assertEquals(ss.getValue2(), time);
                 i++;
                 if (i > 1) {
-                    assertNotEquals(ss.getCreateTime(), nowTime);
+                    assertTrue(ss.getCreateTime() != nowTime);
                 }
 
                 assertNotNull(ss.getValue2());

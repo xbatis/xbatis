@@ -50,8 +50,6 @@ public class FetchInfo {
 
     private final TableFieldInfo middleTargetTableFieldInfo;
 
-    private final String middleOrderBy;
-
     private final TableInfo targetTableInfo;
 
     private final TableFieldInfo targetTableFieldInfo;
@@ -98,17 +96,11 @@ public class FetchInfo {
         this.targetTableInfo = (TableInfo) objs[0];
         this.targetTableFieldInfo = (TableFieldInfo) objs[1];
 
-        if (this.middleTableInfo == null) {
-            this.middleOrderBy = null;
-        } else {
-            this.middleOrderBy = parseOrderByColumn(clazz, fieldInfo.getField(), middleTableInfo, "@Fetch", "middleOrderBy", fetch.middleOrderBy(), "middle");
-        }
+        this.targetSelect = parseDynamicColumn(clazz, fieldInfo.getField(), middleTableInfo, targetTableInfo, "@Fetch", "targetSelectProperty", fetch.targetSelectProperty());
 
-        this.targetSelect = parseDynamicColumn(clazz, fieldInfo.getField(), targetTableInfo, "@Fetch", "targetSelectProperty", fetch.targetSelectProperty(), middleTableInfo != null ? "target" : "t");
+        this.targetOrderBy = parseOrderByColumn(clazz, fieldInfo.getField(), middleTableInfo, targetTableInfo, "@Fetch", "orderBy", fetch.orderBy());
 
-        this.targetOrderBy = parseOrderByColumn(clazz, fieldInfo.getField(), targetTableInfo, "@Fetch", "orderBy", fetch.orderBy(), middleTableInfo != null ? "target" : "t");
-
-        String otherConditions = parseDynamicColumn(clazz, fieldInfo.getField(), targetTableInfo, "@Fetch", "otherConditions", fetch.otherConditions(), middleTableInfo != null ? "target" : "t");
+        String otherConditions = parseDynamicColumn(clazz, fieldInfo.getField(), middleTableInfo, targetTableInfo, "@Fetch", "otherConditions", fetch.otherConditions());
 
         this.multiple = Collection.class.isAssignableFrom(this.fieldInfo.getTypeClass());
         this.returnType = returnType;
@@ -256,13 +248,13 @@ public class FetchInfo {
         }
     }
 
-    private static String parseOrderByColumn(Class clazz, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue, String tableAlias) {
+    private static String parseOrderByColumn(Class clazz, Field field, TableInfo middleTableInfo, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue) {
         String value = annotationValue.trim();
         if (value.isEmpty()) {
             return null;
         }
         if (value.startsWith("[") && value.endsWith("]")) {
-            return parseDynamicColumn(clazz, field, targetTableInfo, annotationName, annotationPropertyName, value, tableAlias);
+            return parseDynamicColumn(clazz, field, middleTableInfo, targetTableInfo, annotationName, annotationPropertyName, value);
         }
 
         StringBuilder orderByJoin = new StringBuilder();
@@ -273,23 +265,40 @@ public class FetchInfo {
             if (ss.length > 2) {
                 throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
             }
-            if (StringPool.EMPTY.equals(ss[0])) {
+
+            String[] arr = ss[0].split("\\.");
+            String property = arr[arr.length - 1];
+            if (StringPool.EMPTY.equals(property)) {
                 throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
             }
-            TableFieldInfo orderByTableFieldInfo = targetTableInfo.getFieldInfo(ss[0]);
-            if (Objects.isNull(orderByTableFieldInfo)) {
-                throw buildException(clazz, field, annotationName, annotationPropertyName, " the field:" + ss[0] + " is not entity field");
+
+            TableInfo tableInfo;
+            String tableAliasName;
+            if (arr.length == 2) {
+                if (!arr[0].equals("middle") && !arr[0].equals("target")) {
+                    throw buildException(clazz, field, annotationName, annotationPropertyName, "format error, table alias just can be middle or target");
+                }
+                tableInfo = arr[0].equals("middle") ? middleTableInfo : targetTableInfo;
+                tableAliasName = arr[0];
+            } else {
+                tableInfo = targetTableInfo;
+                tableAliasName = middleTableInfo != null ? "target" : "t";
+            }
+
+            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
+            if (Objects.isNull(tableFieldInfo)) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, " the field:" + property + " is not entity field");
             }
             if (i != 0) {
                 orderByJoin.append(",");
             }
-            orderByJoin.append(tableAlias).append(".");
-            orderByJoin.append(orderByTableFieldInfo.getColumnName()).append(" ").append(ss[1]);
+            orderByJoin.append(tableAliasName).append(".");
+            orderByJoin.append(tableFieldInfo.getColumnName()).append(" ").append(ss[1]);
         }
         return orderByJoin.toString();
     }
 
-    private static String parseDynamicColumn(Class clazz, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue, String tableAlias) {
+    private static String parseDynamicColumn(Class clazz, Field field, TableInfo middleTableInfo, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue) {
         String value = annotationValue.trim();
         if (value.isEmpty()) {
             return null;
@@ -312,13 +321,32 @@ public class FetchInfo {
                     throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
                 }
                 String property = value.substring(start + 1, end);
-                TableFieldInfo targetSelectTargetFieldInfo = targetTableInfo.getFieldInfo(property);
-                if (Objects.isNull(targetSelectTargetFieldInfo)) {
+
+                String[] arr = property.split("\\.");
+                if (arr.length > 2) {
+                    throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+                }
+                TableInfo tableInfo;
+                String tableAliasName;
+                if (arr.length == 2) {
+                    if (!arr[0].equals("middle") && !arr[0].equals("target")) {
+                        throw buildException(clazz, field, annotationName, annotationPropertyName, "format error, table alias just can be middle or target");
+                    }
+                    tableInfo = arr[0].equals("middle") ? middleTableInfo : targetTableInfo;
+                    tableAliasName = arr[0];
+                } else {
+                    tableInfo = targetTableInfo;
+                    tableAliasName = middleTableInfo != null ? "target" : "t";
+                }
+
+                property = arr[arr.length - 1];
+                TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
+                if (Objects.isNull(tableFieldInfo)) {
                     throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
                 }
                 builder.append(value, startIndex, start);
-                builder.append(tableAlias).append(".");
-                builder.append(targetSelectTargetFieldInfo.getColumnName());
+                builder.append(tableAliasName).append(".");
+                builder.append(tableFieldInfo.getColumnName());
                 startIndex = end + 1;
             }
         }
@@ -330,14 +358,30 @@ public class FetchInfo {
             if (StringPool.EMPTY.equals(property)) {
                 throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
             }
-            TableFieldInfo tableFieldInfo = targetTableInfo.getFieldInfo(property);
+            String[] arr = property.split("\\.");
+            property = arr[arr.length - 1];
+
+            TableInfo tableInfo;
+            String tableAliasName;
+            if (arr.length == 2) {
+                if (!arr[0].equals("middle") && !arr[0].equals("target")) {
+                    throw buildException(clazz, field, annotationName, annotationPropertyName, "format error, table alias just can be middle or target");
+                }
+                tableInfo = arr[0].equals("middle") ? middleTableInfo : targetTableInfo;
+                tableAliasName = arr[0];
+            } else {
+                tableInfo = targetTableInfo;
+                tableAliasName = middleTableInfo != null ? "target" : "t";
+            }
+
+            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
             if (Objects.isNull(tableFieldInfo)) {
                 throw buildException(clazz, field, annotationName, annotationPropertyName, " the field:" + property + " is not entity field");
             }
             if (i != 0) {
                 columns.append(",");
             }
-            columns.append(tableAlias).append(".");
+            columns.append(tableAliasName).append(".");
             columns.append(tableFieldInfo.getColumnName());
         }
         return columns.toString();
