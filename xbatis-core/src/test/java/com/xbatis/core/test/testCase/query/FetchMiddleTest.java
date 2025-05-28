@@ -16,13 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FetchMiddleTest extends BaseTest {
 
     @Test
-    public void onRowEvent() {
+    public void fetchMiddleTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
 
             List<SysUserMiddleFetchVO> list = QueryChain.of(sysUserMapper)
-                    .returnType(SysUserMiddleFetchVO.class)
+                    .returnType(SysUserMiddleFetchVO.class, i -> {
+                        System.out.println(i.getSysRoleList().size());
+                    })
                     .list();
 
             System.out.println(list);

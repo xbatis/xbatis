@@ -67,8 +67,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     private Map<String, Object> defaultValueContext = new HashMap<>();
     private final String FETCH_MATCH_COLUMN = "m$v";
     private Boolean hasFetchMatchColumn;
-    private Object value;
-
+    private final List<Object> rowValues = new ArrayList<>();
 
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
@@ -97,6 +96,36 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 this.onRowEvent = baseQuery.getOnRowEvent();
                 this.returnType = baseQuery.getReturnType();
             }
+        }
+    }
+
+    private void clearObjects() {
+        singleFetchCache.clear();
+        createdEventContextMap.clear();
+        defaultValueContext.clear();
+        if (putValueSessionCache != null) {
+            putValueSessionCache.clear();
+        }
+        rowValues.clear();
+
+        singleFetchCache.entrySet().stream().forEach(i -> {
+            if (i.getValue() == null) {
+                return;
+            }
+            i.getValue().entrySet().stream().forEach(i2 -> {
+                if (i2.getValue() != null) {
+                    i2.getValue().clear();
+                }
+            });
+            i.getValue().clear();
+        });
+        if (needFetchValuesMap != null) {
+            needFetchValuesMap.entrySet().stream().forEach(i -> {
+                if (i.getValue() != null) {
+                    i.getValue().clear();
+                }
+            });
+            needFetchValuesMap.clear();
         }
     }
 
@@ -229,11 +258,23 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, columnPrefix);
-        rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
+        List<FetchInfo> fetchInfos = getFetchInfo(returnType);
+        boolean hasFetch = false;
+        if (!Objects.isNull(fetchInfos) && !fetchInfos.isEmpty()) {
+            hasFetch = true;
+            rowValue = this.loadFetchValue(resultMap.getType(), fetchInfos, rowValue, rsw.getResultSet());
+        }
+
         this.putEnumValue(rowValue, rsw.getResultSet());
         this.putValue(rowValue, rsw.getResultSet());
-        this.onRowEvent(rowValue);
-        this.onCreatedEvent(rowValue);
+
+        if (!hasFetch) {
+            // 有Fetch 需要延后执行
+            this.onCreatedEvent(rowValue);
+            this.onRowEvent(rowValue);
+        } else {
+            rowValues.add(rowValue);
+        }
 
         if (rowValue != null) {
             if (hasFetchMatchColumn == null) {
@@ -254,11 +295,24 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix, Object partialObject) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, combinedKey, columnPrefix, partialObject);
-        rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
+
+        List<FetchInfo> fetchInfos = getFetchInfo(resultMap.getType());
+        boolean hasFetch = false;
+        if (!Objects.isNull(fetchInfos) && !fetchInfos.isEmpty()) {
+            hasFetch = true;
+            rowValue = this.loadFetchValue(resultMap.getType(), fetchInfos, rowValue, rsw.getResultSet());
+        }
+
+
         this.putEnumValue(rowValue, rsw.getResultSet());
         this.putValue(rowValue, rsw.getResultSet());
-        this.onRowEvent(rowValue);
-        this.onCreatedEvent(rowValue);
+
+        if (!hasFetch) {
+            this.onCreatedEvent(rowValue);
+            this.onRowEvent(rowValue);
+        } else {
+            rowValues.add(rowValue);
+        }
         return rowValue;
     }
 
@@ -266,18 +320,22 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     public void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
         super.handleRowValues(rsw, resultMap, resultHandler, rowBounds, parentMapping);
         this.handleFetch();
+        for (Object obj : rowValues) {
+            this.onCreatedEvent(obj);
+            this.onRowEvent(obj);
+        }
+
+        this.clearObjects();
     }
 
-    public Object loadFetchValue(Class<?> resultType, Object rowValue, ResultSet resultSet) {
+    private List<FetchInfo> getFetchInfo(Class<?> resultType) {
         if (Objects.isNull(fetchInfosMap) || fetchInfosMap.isEmpty()) {
-            return rowValue;
+            return null;
         }
+        return fetchInfosMap.get(resultType);
+    }
 
-        List<FetchInfo> fetchInfos = fetchInfosMap.get(resultType);
-        if (Objects.isNull(fetchInfos) || fetchInfos.isEmpty()) {
-            return rowValue;
-        }
-
+    public Object loadFetchValue(Class<?> resultType, List<FetchInfo> fetchInfos, Object rowValue, ResultSet resultSet) {
         for (FetchInfo fetchInfo : fetchInfos) {
             String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getFieldInfo().getField().getName();
             Boolean fetchEnable = Objects.isNull(fetchEnables) || !fetchEnables.containsKey(fetchKey) || fetchEnables.get(fetchKey);
