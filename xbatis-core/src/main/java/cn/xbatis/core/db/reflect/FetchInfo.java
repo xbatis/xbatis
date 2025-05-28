@@ -50,6 +50,8 @@ public class FetchInfo {
 
     private final TableFieldInfo middleTargetTableFieldInfo;
 
+    private final String middleOrderBy;
+
     private final TableInfo targetTableInfo;
 
     private final TableFieldInfo targetTableFieldInfo;
@@ -96,11 +98,17 @@ public class FetchInfo {
         this.targetTableInfo = (TableInfo) objs[0];
         this.targetTableFieldInfo = (TableFieldInfo) objs[1];
 
-        this.targetSelect = parseDynamicColumn(clazz, fetch, fieldInfo.getField(), targetTableInfo, "@Fetch", "targetSelectProperty", fetch.targetSelectProperty());
+        if (this.middleTableInfo == null) {
+            this.middleOrderBy = null;
+        } else {
+            this.middleOrderBy = parseOrderByColumn(clazz, fieldInfo.getField(), middleTableInfo, "@Fetch", "middleOrderBy", fetch.middleOrderBy(), "middle");
+        }
 
-        this.targetOrderBy = parseOrderByColumn(clazz, fetch, fieldInfo.getField(), targetTableInfo, "@Fetch", "orderBy", fetch.orderBy());
+        this.targetSelect = parseDynamicColumn(clazz, fieldInfo.getField(), targetTableInfo, "@Fetch", "targetSelectProperty", fetch.targetSelectProperty(), middleTableInfo != null ? "target" : "t");
 
-        String otherConditions = parseDynamicColumn(clazz, fetch, fieldInfo.getField(), targetTableInfo, "@Fetch", "otherConditions", fetch.otherConditions());
+        this.targetOrderBy = parseOrderByColumn(clazz, fieldInfo.getField(), targetTableInfo, "@Fetch", "orderBy", fetch.orderBy(), middleTableInfo != null ? "target" : "t");
+
+        String otherConditions = parseDynamicColumn(clazz, fieldInfo.getField(), targetTableInfo, "@Fetch", "otherConditions", fetch.otherConditions(), middleTableInfo != null ? "target" : "t");
 
         this.multiple = Collection.class.isAssignableFrom(this.fieldInfo.getTypeClass());
         this.returnType = returnType;
@@ -248,13 +256,13 @@ public class FetchInfo {
         }
     }
 
-    private static String parseOrderByColumn(Class clazz, Fetch fetch, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue) {
+    private static String parseOrderByColumn(Class clazz, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue, String tableAlias) {
         String value = annotationValue.trim();
         if (value.isEmpty()) {
             return null;
         }
         if (value.startsWith("[") && value.endsWith("]")) {
-            return parseDynamicColumn(clazz, fetch, field, targetTableInfo, annotationName, annotationPropertyName, value);
+            return parseDynamicColumn(clazz, field, targetTableInfo, annotationName, annotationPropertyName, value, tableAlias);
         }
 
         StringBuilder orderByJoin = new StringBuilder();
@@ -275,17 +283,13 @@ public class FetchInfo {
             if (i != 0) {
                 orderByJoin.append(",");
             }
-            if (fetch.middle() != Void.class) {
-                orderByJoin.append("target.");
-            } else {
-                orderByJoin.append("t.");
-            }
+            orderByJoin.append(tableAlias).append(".");
             orderByJoin.append(orderByTableFieldInfo.getColumnName()).append(" ").append(ss[1]);
         }
         return orderByJoin.toString();
     }
 
-    private static String parseDynamicColumn(Class clazz, Fetch fetch, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue) {
+    private static String parseDynamicColumn(Class clazz, Field field, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue, String tableAlias) {
         String value = annotationValue.trim();
         if (value.isEmpty()) {
             return null;
@@ -313,11 +317,7 @@ public class FetchInfo {
                     throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
                 }
                 builder.append(value, startIndex, start);
-                if (fetch.middle() != Void.class) {
-                    builder.append("target.");
-                } else {
-                    builder.append("t.");
-                }
+                builder.append(tableAlias).append(".");
                 builder.append(targetSelectTargetFieldInfo.getColumnName());
                 startIndex = end + 1;
             }
@@ -337,11 +337,7 @@ public class FetchInfo {
             if (i != 0) {
                 columns.append(",");
             }
-            if (fetch.middle() != Void.class) {
-                columns.append("target.");
-            } else {
-                columns.append("t.");
-            }
+            columns.append(tableAlias).append(".");
             columns.append(tableFieldInfo.getColumnName());
         }
         return columns.toString();

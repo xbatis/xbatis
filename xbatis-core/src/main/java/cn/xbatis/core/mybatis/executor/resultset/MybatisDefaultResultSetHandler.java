@@ -457,6 +457,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         }
 
+        if (Objects.nonNull(fetchInfo.getMiddleOrderBy()) && !StringPool.EMPTY.equals(fetchInfo.getMiddleOrderBy())) {
+            query.orderBy(OrderByDirection.NONE, fetchInfo.getMiddleOrderBy());
+        }
+
         if (Objects.nonNull(fetchInfo.getTargetOrderBy()) && !StringPool.EMPTY.equals(fetchInfo.getTargetOrderBy())) {
             query.orderBy(OrderByDirection.NONE, fetchInfo.getTargetOrderBy());
         }

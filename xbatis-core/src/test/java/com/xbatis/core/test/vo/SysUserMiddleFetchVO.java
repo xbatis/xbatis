@@ -19,7 +19,9 @@ public class SysUserMiddleFetchVO {
     @Fetch(property = "id", middle = SysUserRoleMiddle.class
             , middleSourceProperty = SysUserRoleMiddle.Fields.userId
             , middleTargetProperty = SysUserRoleMiddle.Fields.roleId
+            , middleOrderBy = SysUserRoleMiddle.Fields.roleId + " asc"
             , target = SysRole.class, targetProperty = SysRole.Fields.id
+            , orderBy = SysRole.Fields.id + " asc"
     )
     private List<SysRole> sysRoleList;
 

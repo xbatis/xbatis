@@ -74,6 +74,14 @@ public @interface Fetch {
     String middleTargetProperty() default "";
 
     /**
+     * 用于中间表排序 例如 "xx desc,xx2 desc"; 其中 xx xx2 均为 实体类属性，不是列，多个逗号分割
+     * 可以动态 例如:[{id} desc,{createTime} asc]等
+     *
+     * @return
+     */
+    String middleOrderBy() default "";
+
+    /**
      * 目标，相当于表
      *
      * @return
