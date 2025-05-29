@@ -260,4 +260,24 @@ public class JoinTest extends BaseTest {
             assertEquals(2, list.size(), "from subquery and join entity");
         }
     }
+
+
+    @Test
+    public void joinSelf2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            List<SysUser> list = QueryChain.of(sysUserMapper)
+                    .select(SysUser.class, 2)
+                    .select(SysUser.class, 1)
+                    .select(SysRole.class)
+                    .leftJoin(SysUser.class, 1, SysUser.class, 2, on -> on.eq(SysUser::getId, 2, 2))
+                    .leftJoin(SysUser::getRole_id, SysRole::getId)
+                    .eq(SysUser::getId, 1)
+                    .list();
+            System.out.println(list);
+
+
+        }
+    }
 }

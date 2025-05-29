@@ -63,6 +63,14 @@ public class MybatisCmdFactory extends CmdFactory {
 
     @Override
     public MpTable table(Class entity, int storey) {
+        if (storey > 1) {
+            //如果前面那个表没设置 则 从1 到 storey 初始化 以保证顺序
+            if (this.cacheTable(entity, storey - 1) == null) {
+                for (int i = 1; i < storey; i++) {
+                    this.table(entity, i);
+                }
+            }
+        }
         return (MpTable) MapUtil.computeIfAbsent(this.tableCache, storey + entity.getName(), key -> {
             TableInfo tableInfo = getTableInfo(entity);
             return new MpTable(tableInfo, tableAs(storey, ++tableNums));

@@ -65,7 +65,16 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
 
     @Override
     public Table table(Class<?> entity, int storey) {
-        return tableCache.computeIfAbsent(entity.getName(), key -> {
+        if (storey > 1) {
+            //如果前面那个表没设置 则 从1 到 storey 初始化 以保证顺序
+            if (this.cacheTable(entity, storey - 1) == null) {
+                for (int i = 1; i < storey; i++) {
+                    this.table(entity, i);
+                }
+            }
+        }
+
+        return tableCache.computeIfAbsent(storey + entity.getName(), key -> {
             Table table = new Table(entity.getSimpleName());
             table.as(tableAs(storey, ++tableNums));
             return table;
