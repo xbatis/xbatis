@@ -26,6 +26,7 @@ import com.xbatis.core.test.vo.SysUserJoinSelfVo;
 import db.sql.api.DbType;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
+import db.sql.api.impl.tookit.SQLPrinter;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -267,17 +268,15 @@ public class JoinTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
-            List<SysUser> list = QueryChain.of(sysUserMapper)
+            QueryChain queryChain = QueryChain.of(sysUserMapper)
                     .select(SysUser.class, 2)
-                    .select(SysUser.class, 1)
-                    .select(SysRole.class)
-                    .leftJoin(SysUser.class, 1, SysUser.class, 2, on -> on.eq(SysUser::getId, 2, 2))
-                    .leftJoin(SysUser::getRole_id, SysRole::getId)
-                    .eq(SysUser::getId, 1)
-                    .list();
+                    .leftJoin(SysUser::getId, 1, SysUser::getRole_id, 2)
+                    .eq(SysUser::getId, 1);
+
+            List<SysUser> list = queryChain.list();
             System.out.println(list);
 
-
+            check("joinSelf2 sql", SQLPrinter.sql(queryChain).toLowerCase().trim(), "SELECT t2.id , t2.password , t2.role_id , t2.create_time , t2.user_name FROM t_sys_user t LEFT JOIN t_sys_user t2 ON t.id = t2.role_id WHERE t.id =1".toLowerCase());
         }
     }
 }
