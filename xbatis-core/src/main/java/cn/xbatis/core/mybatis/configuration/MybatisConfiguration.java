@@ -70,6 +70,7 @@ public class MybatisConfiguration extends Configuration {
     }
 
     public void printBanner() {
+        XbatisGlobalConfig.onInit();
         if (!banner) {
             return;
         }

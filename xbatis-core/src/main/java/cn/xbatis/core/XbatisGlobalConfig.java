@@ -66,9 +66,18 @@ public final class XbatisGlobalConfig {
         SQL_LISTENERS.add(new ForeignKeySQLListener());
         SQL_LISTENERS.add(new TenantSQLListener());
         SQL_LISTENERS.add(new LogicDeleteSQLListener());
-        Map<String, BiFunction<Class<?>, Class<?>, Object>> dynamicValueMap = new ConcurrentHashMap<>();
+        CACHE.put(DYNAMIC_VALUE_MANAGER, new ConcurrentHashMap<>());
+    }
 
-        dynamicValueMap.put("{BLANK}", (source, type) -> {
+    private XbatisGlobalConfig() {
+
+    }
+
+    /**
+     * 初始化时触发
+     */
+    public static void onInit() {
+        setDynamicValue("{BLANK}", (source, type) -> {
             if (type == String.class) {
                 return StringPool.EMPTY;
             } else if (type.isArray()) {
@@ -83,7 +92,7 @@ public final class XbatisGlobalConfig {
             throw new RuntimeException("Inconsistent types：" + type);
         });
 
-        dynamicValueMap.put("{NOW}", (source, type) -> {
+        setDynamicValue("{NOW}", (source, type) -> {
             if (type == LocalDateTime.class) {
                 return LocalDateTime.now();
             } else if (type == LocalDate.class) {
@@ -102,7 +111,7 @@ public final class XbatisGlobalConfig {
             throw new RuntimeException("Inconsistent types：" + type);
         });
 
-        dynamicValueMap.put("{TODAY}", (source, type) -> {
+        setDynamicValue("{TODAY}", (source, type) -> {
             if (type == LocalDate.class) {
                 return LocalDate.now();
             } else if (type == String.class) {
@@ -125,11 +134,6 @@ public final class XbatisGlobalConfig {
             }
             throw new RuntimeException("Inconsistent types：" + type);
         });
-        CACHE.put(DYNAMIC_VALUE_MANAGER, dynamicValueMap);
-    }
-
-    private XbatisGlobalConfig() {
-
     }
 
     /**
