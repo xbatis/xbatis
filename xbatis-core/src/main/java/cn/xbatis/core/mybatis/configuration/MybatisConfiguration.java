@@ -57,7 +57,7 @@ public class MybatisConfiguration extends Configuration {
     /**
      * 是否初始化
      */
-    private boolean inited;
+    private boolean initialized;
 
     public MybatisConfiguration() {
         super();
@@ -75,6 +75,10 @@ public class MybatisConfiguration extends Configuration {
     }
 
     public void onInit() {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
         XbatisGlobalConfig.onInit();
         this.printBanner();
     }
@@ -154,8 +158,7 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public <T> void addMapper(Class<T> type) {
-        if (!inited) {
-            inited = true;
+        if (!initialized) {
             this.onInit();
         }
         if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class) {
