@@ -83,7 +83,7 @@ public class MybatisConfiguration extends Configuration {
         this.printBanner();
     }
 
-    public void printBanner() {
+    private void printBanner() {
         if (!banner) {
             return;
         }
