@@ -25,7 +25,7 @@
 
     <url>https://gitee.com/xbatis</url>
     <artifactId>xbatis-core</artifactId>
-
+    <name>xbatis-core</name>
     <dependencies>
         <dependency>
             <groupId>cn.xbatis</groupId>

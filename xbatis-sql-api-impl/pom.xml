@@ -25,7 +25,7 @@
 
     <url>https://gitee.com/xbatis</url>
     <artifactId>xbatis-sql-api-impl</artifactId>
-
+    <name>xbatis-sql-api-impl</name>
     <dependencies>
         <dependency>
             <groupId>cn.xbatis</groupId>

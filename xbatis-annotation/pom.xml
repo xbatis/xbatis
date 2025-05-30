@@ -25,6 +25,7 @@
 
     <url>https://gitee.com/xbatis</url>
     <artifactId>xbatis-annotation</artifactId>
+    <name>xbatis-annotation</name>
     <dependencies>
         <dependency>
             <groupId>org.mybatis</groupId>
