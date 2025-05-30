@@ -56,21 +56,25 @@ public class MybatisConfiguration extends Configuration {
 
     public MybatisConfiguration() {
         super();
-        this.init();
+        this.initSetting();
     }
 
     public MybatisConfiguration(Environment environment) {
         super(environment);
-        this.init();
+        this.initSetting();
     }
 
-    private void init() {
+    private void initSetting() {
         this.setDefaultScriptingLanguage(MybatisLanguageDriver.class);
         this.setDefaultEnumTypeHandler(EnumTypeHandler.class);
     }
 
-    public void printBanner() {
+    public void onInit() {
         XbatisGlobalConfig.onInit();
+        this.printBanner();
+    }
+
+    public void printBanner() {
         if (!banner) {
             return;
         }
