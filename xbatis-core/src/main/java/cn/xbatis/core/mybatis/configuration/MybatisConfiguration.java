@@ -54,6 +54,11 @@ public class MybatisConfiguration extends Configuration {
      */
     private boolean banner = true;
 
+    /**
+     * 是否初始化
+     */
+    private boolean inited;
+
     public MybatisConfiguration() {
         super();
         this.initSetting();
@@ -149,7 +154,10 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public <T> void addMapper(Class<T> type) {
-
+        if (!inited) {
+            inited = true;
+            this.onInit();
+        }
         if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class) {
             //添加基础 BasicMapper
             if (!this.hasMapper(BasicMapper.class)) {
