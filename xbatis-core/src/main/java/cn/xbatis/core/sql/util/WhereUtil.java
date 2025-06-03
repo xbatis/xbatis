@@ -23,7 +23,9 @@ import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.executor.AbstractDelete;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
+import db.sql.api.impl.cmd.executor.AbstractUpdate;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -64,6 +66,20 @@ public final class WhereUtil {
     }
 
     public static <F extends CmdFactory, Q extends AbstractQuery<Q, F>> Q where(Q query, Object object) {
+        if (object != null) {
+            where(query.$where().conditionChain(), object);
+        }
+        return query;
+    }
+
+    public static <F extends CmdFactory, Q extends AbstractUpdate<Q, F>> Q where(Q query, Object object) {
+        if (object != null) {
+            where(query.$where().conditionChain(), object);
+        }
+        return query;
+    }
+
+    public static <F extends CmdFactory, Q extends AbstractDelete<Q, F>> Q where(Q query, Object object) {
         if (object != null) {
             where(query.$where().conditionChain(), object);
         }
