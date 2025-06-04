@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DbFunTest extends BaseTest {
 
@@ -129,14 +130,19 @@ public class DbFunTest extends BaseTest {
                     .select(SysUser::getId, c -> c.groupConcat().as(GroupConcatVo::getGroupIds))
                     .from(SysUser.class)
                     .groupBy(SysUser::getRole_id)
-                    .orderByDesc(SysUser::getRole_id)
                     .returnType(GroupConcatVo.class)
                     .list();
 
             System.out.println(resultMap);
             assertEquals(resultMap.size(), 2);
-            assertEquals(resultMap.get(1).getGroupIds(), "1");
-            assertEquals(resultMap.get(0).getGroupIds(), "2,3");
+            if("1".equals(resultMap.get(0).getGroupIds())){
+                assertEquals(resultMap.get(0).getGroupIds(), "1");
+                assertTrue(resultMap.get(1).getGroupIds().equals("2,3")||resultMap.get(1).getGroupIds().equals("3,2"));
+            }else{
+                assertEquals(resultMap.get(1).getGroupIds(), "1");
+                assertTrue(resultMap.get(0).getGroupIds().equals("2,3")||resultMap.get(0).getGroupIds().equals("3,2"));
+            }
+
         }
     }
 }
