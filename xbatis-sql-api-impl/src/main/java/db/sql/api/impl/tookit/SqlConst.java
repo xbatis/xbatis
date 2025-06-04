@@ -203,6 +203,8 @@ public final class SqlConst {
 
     public static final char[] ST_CONTAINS = " ST_Contains".toCharArray();
 
+    public static final char[] ROWNUM = " ROWNUM ".toCharArray();
+
     public static String FORCE_INDEX(DbType dbType, String indexName) {
         switch (dbType) {
             case SQL_SERVER: {

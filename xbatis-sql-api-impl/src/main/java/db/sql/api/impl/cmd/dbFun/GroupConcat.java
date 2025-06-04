@@ -34,16 +34,23 @@ public class GroupConcat extends BasicFunction<GroupConcat> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2 || context.getDbType() == DbType.DM) {
+        if (context.getDbType() == DbType.ORACLE) {
             sqlBuilder.append("LISTAGG");
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.DELIMITER);
             this.split.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
-            sqlBuilder.append(" WITHIN GROUP( ");
+            sqlBuilder.append(" WITHIN GROUP(");
             sqlBuilder.append(SqlConst.ORDER_BY);
+            sqlBuilder.append(SqlConst.ROWNUM);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+        } else if (context.getDbType() == DbType.DB2 || context.getDbType() == DbType.DM) {
+            sqlBuilder.append("LISTAGG");
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.DELIMITER);
+            this.split.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         } else if (context.getDbType() == DbType.SQL_SERVER) {
             sqlBuilder.append("STRING_AGG");
@@ -52,10 +59,6 @@ public class GroupConcat extends BasicFunction<GroupConcat> {
             sqlBuilder.append(SqlConst.DELIMITER);
             this.split.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
-            sqlBuilder.append(" WITHIN GROUP( ");
-            sqlBuilder.append(SqlConst.ORDER_BY);
-            this.key.sql(module, this, context, sqlBuilder);
-            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append("STRING_AGG");
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
@@ -63,8 +66,6 @@ public class GroupConcat extends BasicFunction<GroupConcat> {
             sqlBuilder.append("::TEXT ");
             sqlBuilder.append(SqlConst.DELIMITER);
             this.split.sql(module, this, context, sqlBuilder);
-            sqlBuilder.append(SqlConst.ORDER_BY);
-            this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         } else if (context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(GROUP_CONCAT);
@@ -76,8 +77,6 @@ public class GroupConcat extends BasicFunction<GroupConcat> {
         } else {
             sqlBuilder.append(GROUP_CONCAT);
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.key.sql(module, this, context, sqlBuilder);
-            sqlBuilder.append(SqlConst.ORDER_BY);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(" SEPARATOR ");
             this.split.sql(module, this, context, sqlBuilder);
