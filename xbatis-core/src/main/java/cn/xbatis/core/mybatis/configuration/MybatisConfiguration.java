@@ -49,6 +49,8 @@ import java.util.*;
 
 public class MybatisConfiguration extends Configuration {
 
+    private static boolean PRINTED_BANNER = false;
+
     /**
      * 是否打印banner
      */
@@ -87,6 +89,10 @@ public class MybatisConfiguration extends Configuration {
         if (!banner) {
             return;
         }
+        if (PRINTED_BANNER) {
+            return;
+        }
+        PRINTED_BANNER = true;
         try (BufferedReader reader = new BufferedReader(Resources.getResourceAsReader("xbatis.banner"))) {
             String line;
             while ((line = reader.readLine()) != null) {
