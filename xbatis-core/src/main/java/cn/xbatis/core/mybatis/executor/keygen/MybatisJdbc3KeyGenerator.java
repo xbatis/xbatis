@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.mybatis.executor.keygen;
 
-import cn.xbatis.core.mybatis.mapper.context.SQLCmdInsertContext;
+import cn.xbatis.core.mybatis.mapper.context.BaseSQLCmdContext;
 import cn.xbatis.core.mybatis.mapper.context.SetIdMethod;
 import db.sql.api.DbType;
 import org.apache.ibatis.executor.Executor;
@@ -22,6 +22,7 @@ import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -47,7 +48,7 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
                 return;
             }
             final Configuration configuration = ms.getConfiguration();
-            SQLCmdInsertContext insertContext = (SQLCmdInsertContext) parameter;
+            BaseSQLCmdContext insertContext = (BaseSQLCmdContext) parameter;
             if (setIdMethod.getInsertSize() > 1) {
                 if (insertContext.getDbType() == DbType.SQL_SERVER && insertContext.sql(insertContext.getDbType()).contains("OUTPUT INSERTED")) {
                     try (ResultSet rs = stmt.getResultSet()) {
@@ -100,7 +101,12 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
             if (!rs.next()) {
                 return;
             }
-            genIds.add(setIdMethod.getIdTypeHandler(configuration).getResult(rs, 1));
+            TypeHandler<?> typeHandler = setIdMethod.getIdTypeHandler(configuration);
+            if (typeHandler == null) {
+                genIds.add(rs.getObject(1));
+            } else {
+                genIds.add(typeHandler.getResult(rs, 1));
+            }
         }
 
         if (genIds.size() == insertSize) {

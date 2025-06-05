@@ -41,7 +41,7 @@ public class MybatisSQLProvider {
 
     }
 
-    public static String save(SQLCmdInsertContext insertContext, ProviderContext providerContext, DbType dbType) {
+    public static String save(BaseSQLCmdContext insertContext, ProviderContext providerContext, DbType dbType) {
         insertContext.init(dbType);
         return insertContext.sql(dbType);
     }
