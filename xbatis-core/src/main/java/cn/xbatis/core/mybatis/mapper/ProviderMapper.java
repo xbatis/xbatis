@@ -52,7 +52,7 @@ public interface ProviderMapper {
     /**
      * @param insertContext 上下文
      * @return 影响条数
-     * @see MybatisSQLProvider#save(SQLCmdInsertContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
+     * @see MybatisSQLProvider#save(BaseSQLCmdContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $save(SQLCmdInsertContext insertContext);
@@ -61,7 +61,7 @@ public interface ProviderMapper {
     /**
      * @param insertContext 上下文
      * @return 影响条数
-     * @see MybatisSQLProvider#save(SQLCmdInsertContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
+     * @see MybatisSQLProvider#save(BaseSQLCmdContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $saveEntity(EntityInsertContext insertContext);
@@ -70,10 +70,11 @@ public interface ProviderMapper {
     /**
      * @param insertContext 上下文
      * @return 影响条数
-     * @see MybatisSQLProvider#save(SQLCmdInsertContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
+     * @see MybatisSQLProvider#save(BaseSQLCmdContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $saveModel(ModelInsertContext insertContext);
+    
 
     /**
      * @param updateContext 上下文
