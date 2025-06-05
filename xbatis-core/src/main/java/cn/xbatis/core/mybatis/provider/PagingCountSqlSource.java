@@ -28,7 +28,6 @@ public class PagingCountSqlSource implements SqlSource {
     private final Configuration configuration;
     private final SqlSource sqlSource;
     private final boolean optimize;
-    private DbType dbType;
 
     public PagingCountSqlSource(Configuration configuration, SqlSource sqlSource, boolean optimize) {
         this.configuration = configuration;
@@ -45,9 +44,6 @@ public class PagingCountSqlSource implements SqlSource {
 
 
     public DbType getDbType() {
-        if (Objects.isNull(dbType)) {
-            this.dbType = DbTypeUtil.getDbType(configuration);
-        }
-        return dbType;
+        return DbTypeUtil.getDbType(configuration);
     }
 }

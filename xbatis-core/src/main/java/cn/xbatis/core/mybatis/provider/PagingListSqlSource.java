@@ -29,7 +29,6 @@ public class PagingListSqlSource implements SqlSource {
 
     private final Configuration configuration;
     private final SqlSource sqlSource;
-    private DbType dbType;
 
     public PagingListSqlSource(Configuration configuration, SqlSource sqlSource) {
         this.configuration = configuration;
@@ -55,9 +54,6 @@ public class PagingListSqlSource implements SqlSource {
     }
 
     public DbType getDbType() {
-        if (Objects.isNull(dbType)) {
-            this.dbType = DbTypeUtil.getDbType(configuration);
-        }
-        return dbType;
+        return DbTypeUtil.getDbType(configuration);
     }
 }

@@ -51,8 +51,6 @@ public class SQLCmdSqlSource implements SqlSource {
     private final Method providerMethod;
     private final ProviderContext providerContext;
 
-    private DbType dbType;
-
     public SQLCmdSqlSource(Configuration configuration, Method providerMethod, ProviderContext providerContext) {
         this.configuration = configuration;
         this.providerMethod = providerMethod;
@@ -74,10 +72,7 @@ public class SQLCmdSqlSource implements SqlSource {
     }
 
     public DbType getDbType() {
-        if (Objects.isNull(dbType)) {
-            this.dbType = DbTypeUtil.getDbType(configuration);
-        }
-        return dbType;
+        return DbTypeUtil.getDbType(configuration);
     }
 
 }
