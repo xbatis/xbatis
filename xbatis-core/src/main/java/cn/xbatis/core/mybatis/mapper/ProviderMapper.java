@@ -74,7 +74,7 @@ public interface ProviderMapper {
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $saveModel(ModelInsertContext insertContext);
-    
+
 
     /**
      * @param updateContext 上下文
