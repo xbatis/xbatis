@@ -73,7 +73,7 @@ public final class TypeConvertUtil {
         Object newValue;
         if (targetType == String.class) {
             newValue = value.toString();
-        } else if (targetType == Boolean.class) {
+        } else if (targetType == Boolean.class || targetType == boolean.class) {
             String v = value.toString().trim();
             if (v.equals("1")) {
                 return (T) Boolean.TRUE;
@@ -85,12 +85,14 @@ public final class TypeConvertUtil {
                 return (T) Boolean.FALSE;
             }
             throw new RuntimeException("value : " + value + " can't convert to a boolean");
-        } else if (targetType == Byte.class) {
+        } else if (targetType == Byte.class || targetType == byte.class) {
             newValue = Byte.valueOf(value.toString());
-        } else if (targetType == Integer.class) {
+        } else if (targetType == Integer.class || targetType == int.class) {
             newValue = Integer.valueOf(value.toString());
-        } else if (targetType == Long.class) {
+        } else if (targetType == Long.class || targetType == long.class) {
             newValue = Long.valueOf(value.toString());
+        } else if (targetType == Double.class || targetType == double.class) {
+            newValue = Double.valueOf(value.toString());
         } else if (targetType == BigDecimal.class) {
             newValue = new BigDecimal(value.toString());
         } else if (targetType == BigInteger.class) {
