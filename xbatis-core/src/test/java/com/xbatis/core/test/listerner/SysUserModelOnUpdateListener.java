@@ -12,16 +12,15 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.context;
+package com.xbatis.core.test.listerner;
 
-import cn.xbatis.core.db.reflect.TableInfo;
-import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
+import cn.xbatis.listener.OnUpdateListener;
 
-import java.util.Map;
+public class SysUserModelOnUpdateListener implements OnUpdateListener<SysUserModelOnInsert> {
 
-public class EntityUpdateContext<T> extends SQLCmdUpdateContext {
-
-    public EntityUpdateContext(TableInfo tableInfo, T t, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
-        super(EntityUpdateCreateUtil.create(tableInfo, t, updateStrategy, defaultValueContext));
+    @Override
+    public void onUpdate(SysUserModelOnInsert sysUser) {
+        sysUser.setUserName("onUpdateModel");
+        System.out.println(sysUser.toString());
     }
 }

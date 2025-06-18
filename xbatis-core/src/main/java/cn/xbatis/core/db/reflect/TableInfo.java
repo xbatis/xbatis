@@ -96,6 +96,16 @@ public class TableInfo {
      */
     private final boolean hasIgnoreField;
 
+    /**
+     * 插入时，需要提前处理的字段
+     */
+    private final List<TableFieldInfo> insertDoBeforeTableFieldInfos;
+
+    /**
+     * 更新时，需要提前处理的字段
+     */
+    private final List<TableFieldInfo> updateDoBeforeTableFieldInfos;
+
     public TableInfo(Class<?> entity) {
         this.type = entity;
 
@@ -206,6 +216,9 @@ public class TableInfo {
                 throw new RuntimeException("Entity " + entity.getName() + " has multi @TableSplitKey");
             }
         }
+
+        this.insertDoBeforeTableFieldInfos = Collections.unmodifiableList(this.tableFieldInfos.stream().filter(TableInfoUtil::isInsertDoBeforeTableField).collect(Collectors.toList()));
+        this.updateDoBeforeTableFieldInfos = Collections.unmodifiableList(this.tableFieldInfos.stream().filter(TableInfoUtil::isUpdateDoBeforeTableField).collect(Collectors.toList()));
     }
 
     /**
@@ -317,5 +330,13 @@ public class TableInfo {
 
     public TableSplitter getTableSplitter() {
         return tableSplitter;
+    }
+
+    public List<TableFieldInfo> getInsertDoBeforeTableFieldInfos() {
+        return insertDoBeforeTableFieldInfos;
+    }
+
+    public List<TableFieldInfo> getUpdateDoBeforeTableFieldInfos() {
+        return updateDoBeforeTableFieldInfos;
     }
 }

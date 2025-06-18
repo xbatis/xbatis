@@ -12,16 +12,9 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.context;
+package cn.xbatis.listener;
 
-import cn.xbatis.core.db.reflect.TableInfo;
-import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
+public interface OnInsertListener<T> {
 
-import java.util.Map;
-
-public class EntityUpdateContext<T> extends SQLCmdUpdateContext {
-
-    public EntityUpdateContext(TableInfo tableInfo, T t, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
-        super(EntityUpdateCreateUtil.create(tableInfo, t, updateStrategy, defaultValueContext));
-    }
+    void onInsert(T t);
 }

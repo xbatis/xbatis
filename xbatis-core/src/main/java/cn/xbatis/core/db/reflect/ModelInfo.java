@@ -17,6 +17,7 @@ package cn.xbatis.core.db.reflect;
 import cn.xbatis.core.exception.NotTableClassException;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.core.util.GenericUtil;
+import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.db.annotations.Table;
 import db.sql.api.impl.tookit.Objects;
 
@@ -80,6 +81,16 @@ public class ModelInfo {
 
     private final ModelFieldInfo idFieldInfo;
 
+    /**
+     * 插入时，需要提前处理的字段
+     */
+    private final List<ModelFieldInfo> insertDoBeforeModelFieldInfos;
+
+    /**
+     * 更新时，需要提前处理的字段
+     */
+    private final List<ModelFieldInfo> updateDoBeforeModelFieldInfos;
+
     public ModelInfo(Class<?> model) {
         this.type = model;
         Class<?> entity = GenericUtil.getGenericInterfaceClass(model).stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst().orElseThrow(() -> new RuntimeException(MessageFormat.format("class {0} have no generic type", model.getName())));
@@ -103,6 +114,9 @@ public class ModelInfo {
 
         this.modelFieldInfos = Collections.unmodifiableList(modelFieldInfos);
         this.fieldSize = this.modelFieldInfos.size();
+
+        this.insertDoBeforeModelFieldInfos = Collections.unmodifiableList(modelFieldInfos.stream().filter(ModelInfoUtil::isInsertDoBeforeTableField).collect(Collectors.toList()));
+        this.updateDoBeforeModelFieldInfos = Collections.unmodifiableList(modelFieldInfos.stream().filter(ModelInfoUtil::isUpdateDoBeforeTableField).collect(Collectors.toList()));
     }
 
     public Class<?> getType() {
@@ -160,5 +174,13 @@ public class ModelInfo {
 
     public ModelFieldInfo getIdFieldInfo() {
         return idFieldInfo;
+    }
+
+    public List<ModelFieldInfo> getInsertDoBeforeModelFieldInfos() {
+        return insertDoBeforeModelFieldInfos;
+    }
+
+    public List<ModelFieldInfo> getUpdateDoBeforeModelFieldInfos() {
+        return updateDoBeforeModelFieldInfos;
     }
 }

@@ -12,16 +12,34 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.context;
+package com.xbatis.core.test.listerner;
 
-import cn.xbatis.core.db.reflect.TableInfo;
-import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
+import cn.xbatis.db.Model;
+import cn.xbatis.listener.annotations.OnInsert;
+import cn.xbatis.listener.annotations.OnUpdate;
+import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
-import java.util.Map;
+import java.time.LocalDateTime;
 
-public class EntityUpdateContext<T> extends SQLCmdUpdateContext {
 
-    public EntityUpdateContext(TableInfo tableInfo, T t, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
-        super(EntityUpdateCreateUtil.create(tableInfo, t, updateStrategy, defaultValueContext));
-    }
+@Data
+@FieldNameConstants
+@OnInsert(SysUserModelOnInsertListener.class)
+@OnUpdate(SysUserModelOnUpdateListener.class)
+public class SysUserModelOnInsert implements Model<SysUserOnInsert> {
+
+
+    private Integer id;
+
+    private String userName;
+
+    private String password;
+
+
+    private Integer role_id;
+
+
+    private LocalDateTime createTime;
+
 }

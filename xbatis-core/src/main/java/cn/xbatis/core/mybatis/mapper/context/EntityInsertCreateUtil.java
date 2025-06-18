@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
+import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableIds;
 import cn.xbatis.core.db.reflect.TableInfo;
@@ -41,65 +42,99 @@ import java.util.Objects;
 
 public class EntityInsertCreateUtil {
 
-    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T insertData, SaveStrategy<T> saveStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
+    public static void initInsertValue(TableInfo tableInfo, TableFieldInfo tableFieldInfo, Object insertData, DbType dbType, Map<String, Object> defaultValueContext) {
+        if (tableFieldInfo.isTableId()) {
+            Object value = tableFieldInfo.getValue(insertData);
+            if (value != null && IdUtil.isIdExists(insertData, tableFieldInfo)) {
+                return;
+            }
+            if (!IdUtil.isIdValueExists(value)) {
+                TableId tableId = TableIds.get(insertData.getClass(), dbType);
+                if (tableId.value() == IdAutoType.GENERATOR) {
+                    IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
+                    Object id = identifierGenerator.nextId(tableInfo.getType());
+                    IdUtil.setId(insertData, tableFieldInfo, id);
+                }
+            }
+            return;
+        }
 
+        if (tableFieldInfo.isLogicDelete()) {
+            Object value = tableFieldInfo.getValue(insertData);
+            if (value != null) {
+                return;
+            }
+
+            //逻辑删除字段
+            //设置删除初始值
+            value = tableFieldInfo.getLogicDeleteInitValue();
+            if (value != null) {
+                //逻辑删除初始值回写
+                TableInfoUtil.setValue(tableFieldInfo, insertData, value);
+            } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
+                //读取回填 @TableField里的默认值
+                DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo, defaultValueContext);
+            }
+            return;
+        }
+
+        if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
+            Object value = tableFieldInfo.getValue(insertData);
+            if (value != null) {
+                return;
+            }
+
+            //读取回填 默认值
+            DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo, defaultValueContext);
+            return;
+        }
+
+        if (tableFieldInfo.isVersion()) {
+            Object value = tableFieldInfo.getValue(insertData);
+            if (value != null) {
+                return;
+            }
+            //乐观锁设置 默认值1
+            value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
+            //乐观锁回写
+            TableInfoUtil.setValue(tableFieldInfo, insertData, value);
+            return;
+        }
+
+        throw new RuntimeException("未处理");
+    }
+
+    private static <T> void doBefore(TableInfo tableInfo, T insertData, SaveStrategy<T> saveStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
+        //设置租户ID
+        TenantUtil.setTenantId(tableInfo, insertData);
+
+        for (TableFieldInfo tableFieldInfo : tableInfo.getInsertDoBeforeTableFieldInfos()) {
+            initInsertValue(tableInfo, tableFieldInfo, insertData, dbType, defaultValueContext);
+        }
+
+        //插入动作通知
+        OnListenerUtil.notifyInsert(insertData);
+    }
+
+    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T insertData, SaveStrategy<T> saveStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
+        doBefore(tableInfo, insertData, saveStrategy, dbType, defaultValueContext);
         insert = insert == null ? new Insert() : insert;
 
         insert.$().cacheTableInfo(tableInfo);
         MpTable table = (MpTable) insert.$().table(tableInfo.getType());
         insert.insert(table);
 
-        //设置租户ID
-        TenantUtil.setTenantId(tableInfo, insertData);
         List<Object> values = new ArrayList<>();
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {
             TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
-
             if (!tableFieldInfo.getTableFieldAnnotation().insert()) {
                 continue;
             }
 
             boolean isNeedInsert = false;
             Object value = tableFieldInfo.getValue(insertData);
-            if (tableFieldInfo.isTableId()) {
-                if (!IdUtil.isIdValueExists(value)) {
-                    TableId tableId = TableIds.get(insertData.getClass(), dbType);
-                    if (tableId.value() == IdAutoType.GENERATOR) {
-                        isNeedInsert = true;
-                        IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
-                        Object id = identifierGenerator.nextId(tableInfo.getType());
-                        if (IdUtil.setId(insertData, tableFieldInfo, id)) {
-                            value = id;
-                        }
-                    }
-                } else {
-                    isNeedInsert = true;
-                }
-            } else if (Objects.nonNull(value)) {
+            if (Objects.nonNull(value)) {
                 isNeedInsert = true;
-            } else if (tableFieldInfo.isLogicDelete()) {
-                //逻辑删除字段
-                //设置删除初始值
-                value = tableFieldInfo.getLogicDeleteInitValue();
-                if (value != null) {
-                    isNeedInsert = true;
-                    //逻辑删除初始值回写
-                    TableInfoUtil.setValue(tableFieldInfo, insertData, value);
-                } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
-                    //读取回填 @TableField里的默认值
-                    value = DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo, defaultValueContext);
-                    isNeedInsert = Objects.nonNull(value);
-                }
-            } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
-                //读取回填 默认值
-                value = DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo, defaultValueContext);
-                isNeedInsert = Objects.nonNull(value);
-            } else if (tableFieldInfo.isVersion()) {
-                isNeedInsert = true;
-                //乐观锁设置 默认值1
-                value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
-                //乐观锁回写
-                TableInfoUtil.setValue(tableFieldInfo, insertData, value);
             }
 
             // 看是否是强制字段
@@ -119,6 +154,7 @@ public class EntityInsertCreateUtil {
                 }
             }
         }
+
         insert.values(values);
 
         if (saveStrategy.getConflictAction() != null) {

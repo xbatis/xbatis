@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
+import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
@@ -36,7 +37,46 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class EntityUpdateCmdCreateUtil {
+public class EntityUpdateCreateUtil {
+
+    public static void initUpdateValue(TableInfo tableInfo, TableFieldInfo tableFieldInfo, Object insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
+        if (tableFieldInfo.isTenantId()) {
+            boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
+            Object value = tableFieldInfo.getValue(insertData);
+            if (isForceUpdate) {
+                if (Objects.isNull(value)) {
+                    value = TenantUtil.getTenantId();
+                    if (Objects.isNull(value)) {
+                        //虽然强制 但是租户ID没值 不修改
+                        return;
+                    }
+                    //租户ID 回填
+                    TenantUtil.setTenantId(tableFieldInfo, insertData, value);
+                }
+            }
+            return;
+        }
+
+        if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
+            Object value = tableFieldInfo.getValue(insertData);
+            if (value != null) {
+                return;
+            }
+            //读取回填 修改默认值
+            DefaultValueUtil.getAndSetUpdateDefaultValue(insertData, tableFieldInfo, defaultValueContext);
+            return;
+        }
+
+        throw new RuntimeException("未处理");
+    }
+
+    private static void doBefore(TableInfo tableInfo, Object insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
+        for (TableFieldInfo tableFieldInfo : tableInfo.getUpdateDoBeforeTableFieldInfos()) {
+            initUpdateValue(tableInfo, tableFieldInfo, insertData, forceFields, defaultValueContext);
+        }
+        //更新动作通知
+        OnListenerUtil.notifyUpdate(insertData);
+    }
 
     public static Update create(TableInfo tableInfo, Object entity, UpdateStrategy<?> updateStrategy, Map<String, Object> defaultValueContext) {
         Where where = updateStrategy.getWhere();
@@ -54,8 +94,9 @@ public class EntityUpdateCmdCreateUtil {
         MybatisCmdFactory $ = update.$();
         Table table = $.table(entity.getClass());
         boolean hasIdCondition = false;
-
         Set<String> forceFields = LambdaUtil.getFieldNames(updateStrategy.getForceFields());
+        doBefore(tableInfo, entity, forceFields, defaultValueContext);
+
         for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
             Object value = tableFieldInfo.getValue(entity);
             boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
@@ -70,17 +111,7 @@ public class EntityUpdateCmdCreateUtil {
                 }
                 continue;
             } else if (tableFieldInfo.isTenantId()) {
-                if (isForceUpdate) {
-                    if (Objects.isNull(value)) {
-                        value = TenantUtil.getTenantId();
-                        if (Objects.isNull(value)) {
-                            //虽然强制 但是租户ID没值 不修改
-                            continue;
-                        }
-                        //租户ID 回填
-                        TenantUtil.setTenantId(tableFieldInfo, entity, value);
-                    }
-                } else {
+                if (!isForceUpdate || Objects.isNull(value)) {
                     //租户ID不修改
                     continue;
                 }
@@ -99,12 +130,6 @@ public class EntityUpdateCmdCreateUtil {
                 TableInfoUtil.setValue(tableFieldInfo, entity, version);
                 continue;
             }
-
-            if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
-                //读取回填 修改默认值
-                value = DefaultValueUtil.getAndSetUpdateDefaultValue(entity, tableFieldInfo, defaultValueContext);
-            }
-
 
             if (!isForceUpdate && !tableFieldInfo.getTableFieldAnnotation().update()) {
                 continue;

@@ -24,6 +24,6 @@ import java.util.Map;
 public class ModelUpdateContext<M extends Model> extends SQLCmdUpdateContext {
 
     public ModelUpdateContext(ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
-        super(ModelUpdateCmdCreateUtil.create(modelInfo, model, updateStrategy, defaultValueContext));
+        super(ModelUpdateCreateUtil.create(modelInfo, model, updateStrategy, defaultValueContext));
     }
 }

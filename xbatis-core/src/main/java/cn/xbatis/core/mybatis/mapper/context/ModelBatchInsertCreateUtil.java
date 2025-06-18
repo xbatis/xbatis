@@ -14,17 +14,12 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
-import cn.xbatis.core.db.reflect.ModelFieldInfo;
-import cn.xbatis.core.db.reflect.ModelInfo;
-import cn.xbatis.core.db.reflect.TableIds;
-import cn.xbatis.core.db.reflect.TableInfo;
-import cn.xbatis.core.incrementer.IdentifierGenerator;
-import cn.xbatis.core.incrementer.IdentifierGeneratorFactory;
+import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
 import cn.xbatis.core.tenant.TenantUtil;
-import cn.xbatis.core.util.*;
+import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.Model;
 import cn.xbatis.db.annotations.TableField;
@@ -59,6 +54,22 @@ public class ModelBatchInsertCreateUtil {
             saveFieldSet.add(modelFieldInfo.getField().getName());
         }
         return saveFieldSet;
+    }
+
+
+    private static <M extends Model<T>, T> void doBefore(ModelInfo modelInfo, List<ModelFieldInfo> saveFieldInfoSet, M insertData, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
+        //设置租户ID
+        TenantUtil.setTenantId(insertData);
+
+        for (ModelFieldInfo modelFieldInfo : modelInfo.getInsertDoBeforeModelFieldInfos()) {
+            if (!saveFieldInfoSet.contains(modelFieldInfo)) {
+                continue;
+            }
+            ModelInsertCreateUtil.initInsertValue(modelInfo, modelFieldInfo, insertData, dbType, defaultValueContext);
+        }
+
+        //插入动作通知
+        OnListenerUtil.notifyInsert(insertData);
     }
 
 
@@ -125,48 +136,10 @@ public class ModelBatchInsertCreateUtil {
 
         for (Model t : insertData) {
             List<Object> values = new ArrayList<>();
+            doBefore(modelInfo, saveFieldInfoSet, t, saveBatchStrategy, dbType, defaultValueContext);
             for (int i = 0; i < fieldSize; i++) {
                 ModelFieldInfo modelFieldInfo = saveFieldInfoSet.get(i);
                 Object value = modelFieldInfo.getValue(t);
-                boolean hasValue = (!modelFieldInfo.getTableFieldInfo().isTableId() && Objects.nonNull(value))
-                        || (modelFieldInfo.getTableFieldInfo().isTableId() && IdUtil.isIdValueExists(value));
-                if (!hasValue) {
-                    if (modelFieldInfo.getTableFieldInfo().isTableId()) {
-                        for (ModelFieldInfo idFieldInfo : modelInfo.getIdFieldInfos()) {
-                            TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getTableFieldInfo().getField(), dbType);
-                            if (tableId.value() == IdAutoType.GENERATOR) {
-                                IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
-                                Object id = identifierGenerator.nextId(modelInfo.getTableInfo().getType());
-                                if (IdUtil.setId(t, modelFieldInfo, id)) {
-                                    value = id;
-                                }
-                            } else {
-                                throw new RuntimeException(modelFieldInfo.getField().getName() + " has no value");
-                            }
-                        }
-                    } else if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
-                        value = TenantUtil.setTenantId(t);
-                    } else if (modelFieldInfo.getTableFieldInfo().isLogicDelete()) {
-                        //逻辑删除字段
-                        //设置删除初始值
-                        value = modelFieldInfo.getTableFieldInfo().getLogicDeleteInitValue();
-                        if (value != null) {
-                            //逻辑删除初始值回写
-                            ModelInfoUtil.setValue(modelFieldInfo, t, value);
-                        } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
-                            //读取回填 @TableField里的默认值
-                            value = DefaultValueUtil.getAndSetDefaultValue(t, modelFieldInfo, defaultValueContext);
-                        }
-                    } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
-                        //读取回填 默认值
-                        value = DefaultValueUtil.getAndSetDefaultValue(t, modelFieldInfo, defaultValueContext);
-                    } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
-                        //乐观锁设置 默认值1
-                        value = TypeConvertUtil.convert(Integer.valueOf(1), modelFieldInfo.getField().getType());
-                        //乐观锁回写
-                        ModelInfoUtil.setValue(modelFieldInfo, t, value);
-                    }
-                }
 
                 if (modelFieldInfo.getTableFieldInfo().isTableId()) {
                     containId = true;

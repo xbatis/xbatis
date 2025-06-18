@@ -204,4 +204,45 @@ public final class TableInfoUtil {
         }
         return tableFieldInfo.getColumnName();
     }
+
+    public static boolean isInsertDoBeforeTableField(TableFieldInfo tableFieldInfo) {
+        if (!tableFieldInfo.getTableFieldAnnotation().insert()) {
+            return false;
+        }
+        return isCommonInsertDoBeforeTableField(tableFieldInfo);
+    }
+
+    static boolean isCommonInsertDoBeforeTableField(TableFieldInfo tableFieldInfo) {
+        if (tableFieldInfo.isTableId()) {
+            return true;
+        }
+        if (tableFieldInfo.isLogicDelete()) {
+            return true;
+        }
+        if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
+            return true;
+        }
+        if (tableFieldInfo.isVersion()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isUpdateDoBeforeTableField(TableFieldInfo tableFieldInfo) {
+        if (!tableFieldInfo.getTableFieldAnnotation().update()) {
+            return false;
+        }
+        return isCommonUpdateDoBeforeTableField(tableFieldInfo);
+    }
+
+    static boolean isCommonUpdateDoBeforeTableField(TableFieldInfo tableFieldInfo) {
+        if (tableFieldInfo.isTenantId()) {
+            return true;
+        }
+        if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
+            return true;
+        }
+        return false;
+    }
 }

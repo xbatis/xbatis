@@ -12,16 +12,16 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.context;
+package cn.xbatis.listener.annotations;
 
-import cn.xbatis.core.db.reflect.TableInfo;
-import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
+import cn.xbatis.listener.OnUpdateListener;
 
-import java.util.Map;
+import java.lang.annotation.*;
 
-public class EntityUpdateContext<T> extends SQLCmdUpdateContext {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface OnUpdate {
 
-    public EntityUpdateContext(TableInfo tableInfo, T t, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
-        super(EntityUpdateCreateUtil.create(tableInfo, t, updateStrategy, defaultValueContext));
-    }
+    Class<? extends OnUpdateListener<?>> value();
 }

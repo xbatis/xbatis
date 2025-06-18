@@ -12,16 +12,28 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.context;
+package cn.xbatis.core.db.reflect;
 
-import cn.xbatis.core.db.reflect.TableInfo;
-import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
+import cn.xbatis.listener.OnUpdateListener;
+import cn.xbatis.listener.annotations.OnUpdate;
 
-import java.util.Map;
+public class OnUpdateListeners {
+    private OnUpdateListeners() {
 
-public class EntityUpdateContext<T> extends SQLCmdUpdateContext {
+    }
 
-    public EntityUpdateContext(TableInfo tableInfo, T t, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
-        super(EntityUpdateCreateUtil.create(tableInfo, t, updateStrategy, defaultValueContext));
+    /**
+     * 获取实体类、Model类的的OnUpdate监听器
+     *
+     * @param clazz
+     * @return
+     */
+
+    public static <T> OnUpdateListener<T> get(Class<T> clazz) {
+        if (!clazz.isAnnotationPresent(OnUpdate.class)) {
+            return null;
+        }
+        OnUpdate annotation = clazz.getAnnotation(OnUpdate.class);
+        return OnListenerUtil.getListener(annotation.value());
     }
 }

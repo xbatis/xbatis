@@ -16,6 +16,7 @@ package cn.xbatis.core.mybatis.mapper.context;
 
 import cn.xbatis.core.db.reflect.ModelFieldInfo;
 import cn.xbatis.core.db.reflect.ModelInfo;
+import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.executor.Update;
@@ -36,7 +37,46 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class ModelUpdateCmdCreateUtil {
+public class ModelUpdateCreateUtil {
+    public static <M extends Model<T>, T> void initUpdateValue(ModelInfo modelInfo, ModelFieldInfo modelFieldInfo, M insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
+        if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
+            boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName());
+            if (isForceUpdate) {
+                Object value = modelFieldInfo.getValue(insertData);
+                if (Objects.isNull(value)) {
+                    value = TenantUtil.getTenantId();
+                    if (Objects.isNull(value)) {
+                        //虽然强制 但是租户ID没值 不修改
+                        return;
+                    }
+                    //租户ID 回填
+                    TenantUtil.setTenantId(modelFieldInfo, insertData, value);
+                }
+            }
+            return;
+        }
+
+        if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
+            Object value = modelFieldInfo.getValue(insertData);
+            if (value != null) {
+                return;
+            }
+            //读取回填 修改默认值
+            DefaultValueUtil.getAndSetUpdateDefaultValue(insertData, modelFieldInfo, defaultValueContext);
+            return;
+        }
+        throw new RuntimeException("未处理");
+    }
+
+    private static <M extends Model<T>, T> void doBefore(ModelInfo modelInfo, M insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
+        for (ModelFieldInfo modelFieldInfo : modelInfo.getUpdateDoBeforeModelFieldInfos()) {
+            initUpdateValue(modelInfo, modelFieldInfo, insertData, forceFields, defaultValueContext);
+        }
+
+        //更新动作通知
+        OnListenerUtil.notifyUpdate(insertData);
+    }
+
 
     public static <M extends Model<T>, T> Update create(ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
         Where where = updateStrategy.getWhere();
@@ -57,6 +97,7 @@ public class ModelUpdateCmdCreateUtil {
         boolean hasIdCondition = false;
 
         Set<String> forceFields = LambdaUtil.getFieldNames(updateStrategy.getForceFields());
+        doBefore(modelInfo, model, forceFields, defaultValueContext);
 
         for (ModelFieldInfo modelFieldInfo : modelInfo.getModelFieldInfos()) {
             boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName());
@@ -72,17 +113,7 @@ public class ModelUpdateCmdCreateUtil {
                 }
                 continue;
             } else if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
-                if (isForceUpdate) {
-                    if (Objects.isNull(value)) {
-                        value = TenantUtil.getTenantId();
-                        if (Objects.isNull(value)) {
-                            //虽然强制 但是租户ID没值 不修改
-                            continue;
-                        }
-                        //租户ID 回填
-                        TenantUtil.setTenantId(modelFieldInfo, model, value);
-                    }
-                } else {
+                if (!isForceUpdate || Objects.isNull(value)) {
                     //租户ID不修改
                     continue;
                 }
@@ -100,11 +131,6 @@ public class ModelUpdateCmdCreateUtil {
                 //乐观锁回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, version);
                 continue;
-            }
-
-            if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
-                //读取回填 修改默认值
-                value = DefaultValueUtil.getAndSetUpdateDefaultValue(model, modelFieldInfo, defaultValueContext);
             }
 
             if (!isForceUpdate && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().update()) {

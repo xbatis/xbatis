@@ -83,4 +83,12 @@ public final class ModelInfoUtil {
         }
         return id;
     }
+
+    public static boolean isInsertDoBeforeTableField(ModelFieldInfo modelFieldInfo) {
+        return TableInfoUtil.isCommonInsertDoBeforeTableField(modelFieldInfo.getTableFieldInfo());
+    }
+
+    public static boolean isUpdateDoBeforeTableField(ModelFieldInfo modelFieldInfo) {
+        return TableInfoUtil.isCommonUpdateDoBeforeTableField(modelFieldInfo.getTableFieldInfo());
+    }
 }
