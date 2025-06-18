@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.db.reflect;
 
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.listener.OnInsertListener;
 import cn.xbatis.listener.OnUpdateListener;
 
@@ -57,6 +58,10 @@ public class OnListenerUtil {
         if (listener != null) {
             listener.onInsert(object);
         }
+        listener = XbatisGlobalConfig.getGlobalOnInsertListener();
+        if (listener != null) {
+            listener.onInsert(object);
+        }
     }
 
     /**
@@ -69,6 +74,10 @@ public class OnListenerUtil {
             return;
         }
         OnUpdateListener listener = OnUpdateListeners.get(object.getClass());
+        if (listener != null) {
+            listener.onUpdate(object);
+        }
+        listener = XbatisGlobalConfig.getGlobalOnUpdateListener();
         if (listener != null) {
             listener.onUpdate(object);
         }

@@ -26,6 +26,8 @@ import cn.xbatis.core.sql.listener.LogicDeleteSQLListener;
 import cn.xbatis.core.sql.listener.TenantSQLListener;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TypeConvertUtil;
+import cn.xbatis.listener.OnInsertListener;
+import cn.xbatis.listener.OnUpdateListener;
 import db.sql.api.DbType;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.paging.IPagingProcessor;
@@ -55,6 +57,8 @@ public final class XbatisGlobalConfig {
     private static final String LOGIC_DELETE_INTERCEPTOR = "logicDeleteInterceptor";
     private static final String DYNAMIC_VALUE_MANAGER = "dynamicValueManager";
     private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
+    private static final String GLOBAL_ON_INSERT_LISTENER = "globalOnInsertListener";
+    private static final String GLOBAL_ON_UPDATE_LISTENER = "globalOnUpdateListener";
     private static final List<SQLListener> SQL_LISTENERS = new ArrayList<>();
     private static final List<MethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
 
@@ -488,5 +492,47 @@ public final class XbatisGlobalConfig {
         return Collections.unmodifiableList(MAPPER_METHOD_INTERCEPTORS);
     }
 
+    /**
+     * 获取全局OnInsertListener
+     *
+     * @return
+     */
+    public static OnInsertListener getGlobalOnInsertListener() {
+        Object listener = CACHE.computeIfAbsent(GLOBAL_ON_INSERT_LISTENER, k -> NULL);
+        if (listener == NULL) {
+            return null;
+        }
+        return (OnInsertListener) listener;
+    }
 
+    /**
+     * 设置全局OnInsertListener
+     *
+     * @param listener
+     */
+    public static void setGlobalOnInsertListener(OnInsertListener<?> listener) {
+        CACHE.putIfAbsent(GLOBAL_ON_INSERT_LISTENER, listener);
+    }
+
+    /**
+     * 获取全局OnUpdateListener
+     *
+     * @return
+     */
+    public static OnUpdateListener<?> getGlobalOnUpdateListener() {
+        Object listener = CACHE.computeIfAbsent(GLOBAL_ON_UPDATE_LISTENER, k -> NULL);
+        if (listener == NULL) {
+            return null;
+        }
+        return (OnUpdateListener) listener;
+    }
+
+    /**
+     * 设置全局OnUpdateListener
+     *
+     * @param listener
+     */
+    public static void setGlobalOnUpdateListener(OnUpdateListener<?> listener) {
+        CACHE.putIfAbsent(GLOBAL_ON_UPDATE_LISTENER, listener);
+    }
 }
