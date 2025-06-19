@@ -52,6 +52,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private final Map<FetchInfo, Map<Object, List<Object>>> singleFetchCache = new HashMap<>();
     private final Map<Method, Map> createdEventContextMap = new HashMap<>();
+    private final String FETCH_MATCH_COLUMN = "m$v";
+    private final List<Object> rowValues = new ArrayList<>();
     private BasicMapper basicMapper;
     private Map<FetchInfo, List<FetchObject>> needFetchValuesMap;
     //Fetch 信息
@@ -65,9 +67,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     private Map<String, Object> putValueSessionCache;
     private Map<Class, List<CreatedEventInfo>> createdEventInfos;
     private Map<String, Object> defaultValueContext = new HashMap<>();
-    private final String FETCH_MATCH_COLUMN = "m$v";
     private Boolean hasFetchMatchColumn;
-    private final List<Object> rowValues = new ArrayList<>();
 
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);

@@ -23,7 +23,6 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class PagingListSqlSource implements SqlSource {
 

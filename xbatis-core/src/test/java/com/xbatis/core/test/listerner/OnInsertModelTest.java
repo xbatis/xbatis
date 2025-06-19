@@ -14,6 +14,7 @@
 
 package com.xbatis.core.test.listerner;
 
+import cn.xbatis.core.XbatisGlobalConfig;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import org.apache.ibatis.session.SqlSession;
@@ -28,6 +29,10 @@ public class OnInsertModelTest extends BaseTest {
 
     @Test
     public void onInsertTest() {
+        XbatisGlobalConfig.setGlobalOnInsertListener(o ->
+                System.out.println("onInsertTest2")
+        );
+
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserModelOnInsert sysUserOnInsert = new SysUserModelOnInsert();

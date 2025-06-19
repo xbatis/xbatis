@@ -118,7 +118,6 @@ public class FetchInfo {
         this.sourceTargetMatchFieldGetter = this.sourceTargetMatchField != null ? new GetFieldInvoker(this.sourceTargetMatchField) : null;
 
 
-
         if (fetch.nullFillValue().isEmpty() || fetch.nullFillValue().contains("{")) {
             nullFillValue = null;
         } else {
@@ -229,23 +228,6 @@ public class FetchInfo {
         sourceTargetMatchFieldInReturnType = sourceTargetMatchField != null;
 
         return new Object[]{sourceTargetMatchFieldInReturnType, sourceTargetMatchField};
-    }
-
-    public void setValue(Object object, Object value, Map<String, Object> defaultValueContext) {
-        if (value == null) {
-            if (this.fetch.nullFillValue().isEmpty()) {
-                return;
-            } else if (this.nullFillValue != null) {
-                value = this.nullFillValue;
-            } else {
-                value = XbatisGlobalConfig.getDefaultValue(this.getFieldInfo().getClazz(), this.getFieldInfo().getTypeClass(), this.fetch.nullFillValue(), defaultValueContext);
-            }
-        }
-        try {
-            writeFieldInvoker.invoke(object, new Object[]{value});
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static String parseOrderByColumn(Class clazz, Field field, TableInfo middleTableInfo, TableInfo targetTableInfo, String annotationName, String annotationPropertyName, String annotationValue) {
@@ -385,5 +367,22 @@ public class FetchInfo {
             columns.append(tableFieldInfo.getColumnName());
         }
         return columns.toString();
+    }
+
+    public void setValue(Object object, Object value, Map<String, Object> defaultValueContext) {
+        if (value == null) {
+            if (this.fetch.nullFillValue().isEmpty()) {
+                return;
+            } else if (this.nullFillValue != null) {
+                value = this.nullFillValue;
+            } else {
+                value = XbatisGlobalConfig.getDefaultValue(this.getFieldInfo().getClazz(), this.getFieldInfo().getTypeClass(), this.fetch.nullFillValue(), defaultValueContext);
+            }
+        }
+        try {
+            writeFieldInvoker.invoke(object, new Object[]{value});
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
