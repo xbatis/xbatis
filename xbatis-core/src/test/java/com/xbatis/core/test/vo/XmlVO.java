@@ -12,15 +12,19 @@
  *
  */
 
-package com.xbatis.core.test.mapper;
+package com.xbatis.core.test.vo;
 
-import cn.xbatis.core.mybatis.mapper.MybatisMapper;
-import com.xbatis.core.test.DO.IdTest2;
-import com.xbatis.core.test.vo.XmlVO;
-import org.apache.ibatis.annotations.Select;
+import lombok.Data;
 
-public interface IdTest2Mapper extends MybatisMapper<IdTest2> {
+import java.util.ArrayList;
+import java.util.List;
 
-    @Select("select 1 from sys_role where id=0")
-    public XmlVO select();
+@Data
+public class XmlVO {
+
+    private Integer id;
+
+    private List<System> ids;
+
+    private List<ArrayList<String>> ids2;
 }

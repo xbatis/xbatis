@@ -22,10 +22,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class FieldUtil {
 
@@ -65,9 +62,7 @@ public final class FieldUtil {
         while (parseClass != null) {
             Ignores ignores = parseClass.getAnnotation(Ignores.class);
             if (ignores != null) {
-                for (String ignoreFieldName : ignores.value()) {
-                    fieldNameSet.add(ignoreFieldName);
-                }
+                Collections.addAll(fieldNameSet, ignores.value());
             }
 
             Field[] fields = parseClass.getDeclaredFields();
@@ -109,12 +104,24 @@ public final class FieldUtil {
      * @return
      */
     public static Class<?> getFieldFinalType(Class clazz, Field field) {
-        Type type = TypeParameterResolver.resolveFieldType(field, clazz);
+        return getFieldFinalType(TypeParameterResolver.resolveFieldType(field, clazz), clazz, field);
+    }
+
+    private static Class<?> getFieldFinalType(Type type, Class clazz, Field field) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
-            return (Class<?>) parameterizedType.getActualTypeArguments()[0];
+            Type t = parameterizedType.getActualTypeArguments()[0];
+            if (t instanceof Class<?>) {
+                return (Class<?>) t;
+            } else if (t instanceof ParameterizedType) {
+                parameterizedType = (ParameterizedType) t;
+                if (parameterizedType.getRawType() instanceof Class) {
+                    return (Class<?>) parameterizedType.getRawType();
+                }
+            }
+            return Object.class;
         }
-        return (Class<?>) type;
+        return field.getType();
     }
 
 }
