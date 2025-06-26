@@ -148,6 +148,9 @@ public class MybatisConfiguration extends Configuration {
         boolean checkPrefix3 = !removeIdPrefix2.equals(removeIdPrefix3);
         while (it.hasNext()) {
             Map.Entry<String, ResultMap> entry = it.next();
+            if (!(entry instanceof ResultMap)) {
+                continue;
+            }
             ResultMap resultMap = entry.getValue();
             if (resultMap.getType() != Object.class && resultMap.getType() != Integer.class && resultMap.getType() != Map.class) {
                 continue;
