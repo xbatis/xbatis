@@ -151,11 +151,10 @@ public final class PagingUtil {
     }
 
     private static String getOracleRowNumLimitedSQL(Integer size, int offset, String sql) {
-        return new StringBuilder().append("SELECT *  FROM ( SELECT IT.*,ROWNUM R$N FROM (")
-                .append(sql).append(") IT WHERE ROWNUM <= ")
-                .append(size + offset)
-                .append(") NT WHERE NT.R$N  >").append(offset)
-                .toString();
+        return "SELECT *  FROM ( SELECT IT.*,ROWNUM R$N FROM (" +
+                sql + ") IT WHERE ROWNUM <= " +
+                (size + offset) +
+                ") NT WHERE NT.R$N  >" + offset;
     }
 
     private static String getSQLServerRowNumLimitedSQL(Integer size, int offset, String sql) {
@@ -182,7 +181,7 @@ public final class PagingUtil {
             optimize = true;
         }
         if (optimize) {
-            String upperCaseSql = sql.toUpperCase().replaceAll("  ", " ");
+            String upperCaseSql = sql.toUpperCase();
             //移除最外层的order by
             int orderByIndex = upperCaseSql.lastIndexOf("ORDER BY");
             if (orderByIndex > 0) {
