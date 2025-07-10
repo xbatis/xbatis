@@ -18,7 +18,6 @@ import cn.xbatis.db.Logic;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 import lombok.Data;
 
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -30,27 +29,37 @@ public class ConditionItemGroup {
 
     private final Logic subLogic;
 
-    private List<ConditionItem> conditionItems;
+    //里面可能是ConditionItem 或这 ConditionsItem
+    private List<Object> conditionItems;
 
-    public ConditionItemGroup(boolean root, Logic rootLogic, Logic subLogic, ConditionItem conditionItem) {
-        this(root, rootLogic, subLogic, Collections.singletonList(conditionItem));
-    }
-
-    public ConditionItemGroup(boolean root, Logic rootLogic, Logic subLogic, List<ConditionItem> conditionItems) {
+    public ConditionItemGroup(boolean root, Logic rootLogic, Logic subLogic, List<Object> conditionItems) {
         this.root = root;
         this.rootLogic = rootLogic;
         this.subLogic = subLogic;
         this.conditionItems = conditionItems;
     }
 
-    private static void appendCondition(ConditionChain conditionChain, Object target, Logic logic, List<ConditionItem> conditionItems) {
+    private static void appendCondition(ConditionChain conditionChain, Object target, Logic logic, List<?> conditionItems) {
         conditionItems.stream().forEach(i -> {
-            if (logic == Logic.AND) {
-                conditionChain.and();
+            if (i instanceof ConditionItem) {
+                ((ConditionItem) i).appendCondition(conditionChain, target);
+                if (logic == Logic.AND) {
+                    conditionChain.and();
+                } else {
+                    conditionChain.or();
+                }
             } else {
-                conditionChain.or();
+                ConditionsItem conditionsItem = (ConditionsItem) i;
+                if (logic == Logic.AND) {
+                    conditionChain.andNested(c -> {
+                        appendCondition(c, target, conditionsItem.getAnnotation().logic(), conditionsItem.getConditionItemList());
+                    });
+                } else {
+                    conditionChain.orNested(c -> {
+                        appendCondition(c, target, conditionsItem.getAnnotation().logic(), conditionsItem.getConditionItemList());
+                    });
+                }
             }
-            i.appendCondition(conditionChain, target);
         });
     }
 

@@ -32,7 +32,7 @@ public class ConditionInfo {
 
     public ConditionInfo(Class<?> clazz) {
         List<Field> fieldList = FieldUtil.getFields(clazz);
-        List<ConditionItem> conditions = new ArrayList<>(fieldList.size());
+        List<Object> conditionList = new ArrayList<>(fieldList.size());
 
         Class<?> targetTable;
 
@@ -48,32 +48,36 @@ public class ConditionInfo {
 
         Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
         for (Field field : fieldList) {
-            Condition condition = field.getAnnotation(Condition.class);
-            if (condition != null && condition.value() == Condition.Type.IGNORE) {
-                continue;
-            }
-
-            TableInfo tableInfo;
-            if (condition == null) {
-                tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(targetTable));
-            } else if (condition.target() == Void.class) {
-                tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(targetTable));
+            cn.xbatis.db.annotations.Conditions conditions = field.getAnnotation(cn.xbatis.db.annotations.Conditions.class);
+            if (conditions != null) {
+                List<ConditionItem> subList = new ArrayList<>();
+                for (Condition condition : conditions.value()) {
+                    ConditionItem conditionItem = this.parseConditionAnnotation(field, condition, targetTable, tableInfoMap);
+                    if (conditionItem != null) {
+                        subList.add(conditionItem);
+                    }
+                }
+                if (subList.isEmpty()) {
+                    continue;
+                }
+                ConditionsItem conditionsItem = new ConditionsItem(field, conditions, subList);
+                conditionList.add(conditionsItem);
             } else {
-                tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(condition.target()));
+                Condition condition = field.getAnnotation(Condition.class);
+                ConditionItem conditionItem = this.parseConditionAnnotation(field, condition, targetTable, tableInfoMap);
+                if (conditionItem != null) {
+                    conditionList.add(conditionItem);
+                }
             }
-
-            String property = field.getName();
-            if (condition != null && !condition.property().isEmpty()) {
-                property = condition.property();
-            }
-            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
-            if (tableFieldInfo == null) {
-                throw new RuntimeException("can not find entity property " + property + " in entity class " + tableInfo.getType());
-            }
-            conditions.add(new ConditionItem(field, tableFieldInfo, condition));
         }
 
-        Map<String, ConditionItem> conditionItemMap = conditions.stream().collect(Collectors.toMap(i -> i.getField().getName(), i -> i));
+        Map<String, Object> conditionItemMap = conditionList.stream().collect(Collectors.toMap(i -> {
+            if (i instanceof ConditionItem) {
+                return ((ConditionItem) i).getField().getName();
+            } else {
+                return ((ConditionsItem) i).getField().getName();
+            }
+        }, i -> i));
 
         ConditionGroup[] conditionGroups = clazz.getAnnotationsByType(ConditionGroup.class);
         Map<ConditionGroup, ConditionItemGroup> conditionItemGroupMap = new HashMap<>();
@@ -94,11 +98,17 @@ public class ConditionInfo {
 
         List<ConditionItemGroup> itemGroups = new ArrayList<>();
 
-        for (ConditionItem i : conditions) {
-            if (usedConditionFields.contains(i.getField().getName())) {
+        for (Object i : conditionList) {
+            String fieldName;
+            if (i instanceof ConditionItem) {
+                fieldName = ((ConditionItem) i).getField().getName();
+            } else {
+                fieldName = ((ConditionsItem) i).getField().getName();
+            }
+            if (usedConditionFields.contains(fieldName)) {
                 continue;
             }
-            itemGroups.add(new ConditionItemGroup(true, logic, null, i));
+            itemGroups.add(new ConditionItemGroup(true, logic, null, Collections.singletonList(i)));
         }
 
         conditionItemGroupMap.entrySet().stream().forEach(entry -> {
@@ -106,6 +116,31 @@ public class ConditionInfo {
         });
 
         this.conditionItemGroups = itemGroups;
+    }
+
+    private ConditionItem parseConditionAnnotation(Field field, Condition condition, Class<?> targetTable, Map<Class<?>, TableInfo> tableInfoMap) {
+        if (condition != null && condition.value() == Condition.Type.IGNORE) {
+            return null;
+        }
+
+        TableInfo tableInfo;
+        if (condition == null) {
+            tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(targetTable));
+        } else if (condition.target() == Void.class) {
+            tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(targetTable));
+        } else {
+            tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(condition.target()));
+        }
+
+        String property = field.getName();
+        if (condition != null && !condition.property().isEmpty()) {
+            property = condition.property();
+        }
+        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
+        if (tableFieldInfo == null) {
+            throw new RuntimeException("can not find entity property " + property + " in entity class " + tableInfo.getType());
+        }
+        return new ConditionItem(field, tableFieldInfo, condition);
     }
 
     public void appendCondition(ConditionChain conditionChain, Object target) {

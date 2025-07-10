@@ -19,6 +19,7 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
+@Repeatable(Conditions.class)
 public @interface Condition {
 
     /**
@@ -96,6 +97,4 @@ public @interface Condition {
         LEFT,
         RIGHT
     }
-
-
 }

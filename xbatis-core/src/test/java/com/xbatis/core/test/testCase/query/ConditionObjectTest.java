@@ -16,6 +16,8 @@ package com.xbatis.core.test.testCase.query;
 
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.REQ.KeywordLikeREQ;
+import com.xbatis.core.test.REQ.KeywordLikeREQ2;
 import com.xbatis.core.test.REQ.QueryREQ;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
@@ -23,6 +25,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -176,6 +179,73 @@ public class ConditionObjectTest extends BaseTest {
                     .returnType(Integer.class)
                     .get();
             assertEquals(null, id);
+        }
+    }
+
+    @Test
+    public void keyword() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            KeywordLikeREQ queryReq = new KeywordLikeREQ();
+            queryReq.setKeyword("test");
+            List<SysUser> list = QueryChain.of(sysUserMapper)
+                    .where(queryReq)
+                    .orderBy(SysUser::getId)
+                    .list();
+
+            assertEquals(2, list.get(0).getId());
+            assertEquals(3, list.get(1).getId());
+        }
+    }
+
+    @Test
+    public void keyword2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            KeywordLikeREQ queryReq = new KeywordLikeREQ();
+            queryReq.setKeyword("test");
+            queryReq.setId(3);
+            List<SysUser> list = QueryChain.of(sysUserMapper)
+                    .where(queryReq)
+                    .orderBy(SysUser::getId)
+                    .list();
+
+            assertEquals(3, list.get(0).getId());
+        }
+    }
+
+    @Test
+    public void keyword3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            KeywordLikeREQ2 queryReq = new KeywordLikeREQ2();
+            queryReq.setKeyword("test");
+            queryReq.setId(3);
+            List<SysUser> list = QueryChain.of(sysUserMapper)
+                    .where(queryReq)
+                    .orderBy(SysUser::getId)
+                    .list();
+
+            assertEquals(2, list.get(0).getId());
+            assertEquals(3, list.get(1).getId());
+        }
+    }
+
+    @Test
+    public void gtOrLte3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            QueryREQ queryReq = new QueryREQ();
+            queryReq.setId(1);
+            queryReq.setId1(2);
+            queryReq.setId2(3);
+            queryReq.setKeyword("test");
+            Integer count = QueryChain.of(sysUserMapper)
+                    .where(queryReq)
+                    .select(SysUser::getId)
+                    .returnType(Integer.class)
+                    .count();
+            assertEquals(2, count);
         }
     }
 }

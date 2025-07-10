@@ -16,10 +16,7 @@ package com.xbatis.core.test.REQ;
 
 import cn.xbatis.core.sql.ObjectConditionLifeCycle;
 import cn.xbatis.db.Logic;
-import cn.xbatis.db.annotations.Condition;
-import cn.xbatis.db.annotations.ConditionGroup;
-import cn.xbatis.db.annotations.ConditionTarget;
-import cn.xbatis.db.annotations.Ignore;
+import cn.xbatis.db.annotations.*;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -31,7 +28,7 @@ import static cn.xbatis.db.annotations.Condition.Type.*;
 @Data
 @ConditionTarget(value = SysUser.class)
 @ConditionGroup(value = {QueryREQ.Fields.id, QueryREQ.Fields.id1}, logic = Logic.OR)
-@ConditionGroup(value = {QueryREQ.Fields.id1, QueryREQ.Fields.id2}, logic = Logic.OR)
+@ConditionGroup(value = {QueryREQ.Fields.id1, QueryREQ.Fields.id2, QueryREQ.Fields.keyword}, logic = Logic.OR)
 @FieldNameConstants
 public class QueryREQ implements ObjectConditionLifeCycle {
 
@@ -69,6 +66,15 @@ public class QueryREQ implements ObjectConditionLifeCycle {
 
     @Ignore
     private String rangeType;
+
+    @Conditions(
+            logic = Logic.OR,
+            value = {
+                    @Condition(property = SysUser.Fields.userName, value = LIKE),
+                    @Condition(property = SysUser.Fields.password, value = LIKE)
+            }
+    )
+    private String keyword;
 
     @Override
     public void beforeBuildCondition() {
