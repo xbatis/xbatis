@@ -620,6 +620,26 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
         return this;
     }
 
+    public <T1, T2> ConditionChain notExists(Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
+        return notExists(true, sourceGetter, targetGetter, consumer);
+    }
+
+    public <T1, T2> ConditionChain notExists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
+        return notExists(when, sourceGetter, 1, targetGetter, consumer);
+    }
+
+    public <T1, T2> ConditionChain notExists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
+        return notExists(true, sourceGetter, sourceStorey, targetGetter, consumer);
+    }
+
+    public <T1, T2> ConditionChain notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
+        ICondition condition = conditionFactory.notExists(when, sourceGetter, sourceStorey, targetGetter, consumer);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
     @Override
     public ConditionChain notIn(Cmd cmd, IQuery query) {
         ICondition condition = conditionFactory.notIn(cmd, query);

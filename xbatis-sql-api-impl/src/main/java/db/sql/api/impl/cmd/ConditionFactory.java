@@ -797,4 +797,18 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
                 .connect(consumer != null, q -> consumer.accept(q))
         );
     }
+
+    public <T1, T2> ICondition notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
+        if (!when) {
+            return null;
+        }
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
+
+        return Methods.notExists(cmdFactory.createSubQuery()
+                .select1()
+                .from(lambdaFieldInfo.getType())
+                .eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey))
+                .connect(consumer != null, q -> consumer.accept(q))
+        );
+    }
 }
