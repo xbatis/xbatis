@@ -20,6 +20,7 @@ import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.cmd.executor.method.condition.IConditionMethods;
+import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.exception.ConditionArrayValueEmptyException;
 import db.sql.api.impl.exception.ConditionValueNullException;
@@ -783,7 +784,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         return Methods.notIn(createTableField(column, storey), values);
     }
 
-    public <T1, T2> ICondition exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+    public <T1, T2> ICondition exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
         if (!when) {
             return null;
         }
@@ -793,7 +794,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
                 .select1()
                 .from(lambdaFieldInfo.getType())
                 .eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey))
-                .connect(consumer != null, q -> consumer.accept(q.getWhere().getConditionChain()))
+                .connect(consumer != null, q -> consumer.accept(q))
         );
     }
 }

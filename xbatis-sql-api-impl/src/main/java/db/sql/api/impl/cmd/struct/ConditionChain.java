@@ -27,6 +27,7 @@ import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.basic.ConditionBlock;
 import db.sql.api.impl.cmd.basic.Connector;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -581,19 +582,19 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
         return this;
     }
 
-    public <T1, T2> ConditionChain exists(Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+    public <T1, T2> ConditionChain exists(Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
         return exists(true, sourceGetter, targetGetter, consumer);
     }
 
-    public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+    public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
         return exists(when, sourceGetter, 1, targetGetter, consumer);
     }
 
-    public <T1, T2> ConditionChain exists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+    public <T1, T2> ConditionChain exists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
         return exists(true, sourceGetter, sourceStorey, targetGetter, consumer);
     }
 
-    public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+    public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
         ICondition condition = conditionFactory.exists(when, sourceGetter, sourceStorey, targetGetter, consumer);
         if (condition != null) {
             this.appendCondition(this.connector, condition);
