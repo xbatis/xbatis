@@ -35,6 +35,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Stack;
 
 public final class PagingUtil {
 
@@ -175,11 +176,7 @@ public final class PagingUtil {
         return "SELECT TOP " + size + " * FROM  ( " + selectSql + middleSql + " ) T WHERE R$N > " + offset;
     }
 
-    public static String getCountSQL(DbType dbType, String sql, boolean optimize) {
-        if (dbType == DbType.SQL_SERVER) {
-            //sql server 必须移除order by
-            optimize = true;
-        }
+    private static String removeOrderBy(String sql, boolean optimize) {
         if (optimize) {
             String upperCaseSql = sql.toUpperCase();
             //移除最外层的order by
@@ -189,10 +186,35 @@ public final class PagingUtil {
                     //后面有 分页 不处理
                     return sql;
                 }
+
+                Stack<Character> stack = new Stack<>();
+                for (int i = orderByIndex + "ORDER BY".length() + 1; i < sql.length(); i++) {
+                    char ch = sql.charAt(i);
+                    if (ch == '(') {
+                        stack.push('(');
+                    } else if (ch == ')') {
+                        if (stack.isEmpty() || stack.pop() != '(') {
+                            //后面有 ), 不进行 order by剔除
+                            return sql;
+                        }
+                    }
+                }
+                if (!stack.isEmpty()) {
+                    //后面有 ), 不进行 order by剔除
+                    return sql;
+                }
                 sql = sql.substring(0, orderByIndex + (sql.length() - upperCaseSql.length()));
             }
         }
-        return "SELECT COUNT(*) FROM (" + sql + ") T";
+        return sql;
+    }
+
+    public static String getCountSQL(DbType dbType, String sql, boolean optimize) {
+        if (dbType == DbType.SQL_SERVER) {
+            //sql server 必须移除order by
+            optimize = true;
+        }
+        return "SELECT COUNT(*) FROM (" + removeOrderBy(sql, optimize) + ") T";
     }
 
 }
