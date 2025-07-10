@@ -25,7 +25,9 @@
         from sys_role
         where id >= #{id}
           and id &lt;= #{id2}
-        order by id asc
+        group by id
+        order by
+            id asc,     id asc
     </select>
 
     <select id="xmlPaging2" resultMap="sysRole">

@@ -684,6 +684,9 @@ public class ConditionTest extends BaseTest {
                         subquery.eq(SysRole::getId, query.$(SysUser::getRole_id));
                         subquery.in(SysRole::getId, new Integer[]{});
                     })
+                    .andNested(c -> {
+                        c.exists(SysUser::getRole_id, SysRole::getId);
+                    })
                     .count();
 
             assertEquals(count, 2);

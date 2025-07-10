@@ -29,6 +29,7 @@ import db.sql.api.tookit.LambdaUtil;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Object> {
 
@@ -780,5 +781,19 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
         return Methods.notIn(createTableField(column, storey), values);
+    }
+
+    public <T1, T2> ICondition exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+        if (!when) {
+            return null;
+        }
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
+
+        return Methods.exists(cmdFactory.createSubQuery()
+                .select1()
+                .from(lambdaFieldInfo.getType())
+                .eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey))
+                .connect(consumer != null, q -> consumer.accept(q.getWhere().getConditionChain()))
+        );
     }
 }

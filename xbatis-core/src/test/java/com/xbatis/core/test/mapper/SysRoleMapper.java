@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface SysRoleMapper extends MybatisMapper<SysRole> {
-    @Paging(optimize = false)
+    @Paging(optimize = true)
     Pager<SysRole> xmlPaging(Pager<SysRole> pager, @Param("id") Integer id, @Param("id2") Integer id2);
 
     @Paging

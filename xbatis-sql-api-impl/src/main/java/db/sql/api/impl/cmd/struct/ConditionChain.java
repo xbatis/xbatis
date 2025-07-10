@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ConditionChain implements IConditionChain<ConditionChain, TableField, Cmd, Object>, ICondition {
@@ -574,6 +575,26 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     @Override
     public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
         ICondition condition = conditionFactory.exists(when, sourceGetter, sourceStorey, targetGetter);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    public <T1, T2> ConditionChain exists(Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+        return exists(true, sourceGetter, targetGetter, consumer);
+    }
+
+    public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+        return exists(when, sourceGetter, 1, targetGetter, consumer);
+    }
+
+    public <T1, T2> ConditionChain exists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+        return exists(true, sourceGetter, sourceStorey, targetGetter, consumer);
+    }
+
+    public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<ConditionChain> consumer) {
+        ICondition condition = conditionFactory.exists(when, sourceGetter, sourceStorey, targetGetter, consumer);
         if (condition != null) {
             this.appendCondition(this.connector, condition);
         }
