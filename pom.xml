@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis</artifactId>
-    <version>1.8.9</version>
+    <version>1.8.8</version>
     <packaging>pom</packaging>
     <modules>
         <module>xbatis-annotation</module>
@@ -62,10 +62,10 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <xbatis.version>1.8.9</xbatis.version>
+        <xbatis.version>1.8.8</xbatis.version>
         <xbatis-generator-core.version>1.1.2</xbatis-generator-core.version>
         <xbatis-datasource-routing.version>1.0.7</xbatis-datasource-routing.version>
-        <xbatis-spring-boot-starter.version>1.8.9</xbatis-spring-boot-starter.version>
+        <xbatis-spring-boot-starter.version>1.8.8</xbatis-spring-boot-starter.version>
 
         <!-- mybatis version -->
         <mybatis.version>3.5.19</mybatis.version>
@@ -73,15 +73,15 @@
         <!-- jdbc version -->
         <h2.version>2.2.224</h2.version>
         <mysql.version>9.3.0</mysql.version>
-        <postgresql.version>42.7.7</postgresql.version>
+        <postgresql.version>42.7.5</postgresql.version>
         <oracle.version>19.23.0.0</oracle.version>
         <mariadb.version>3.5.3</mariadb.version>
-        <sql_server.version>12.10.1.jre8</sql_server.version>
+        <sql_server.version>12.8.1.jre8</sql_server.version>
         <dm.version>8.1.3.140</dm.version>
-        <db2.version>12.1.2.0</db2.version>
+        <db2.version>12.1.0.0</db2.version>
         <kingbase.version>9.0.1</kingbase.version>
         <clickhouse.version>0.8.6</clickhouse.version>
-        <sqlite.version>3.50.1.0</sqlite.version>
+        <sqlite.version>3.49.1.0</sqlite.version>
         <opengauss.version>6.0.0-og</opengauss.version>
 
         <!-- log version -->
@@ -100,7 +100,7 @@
         <beecp.verion>4.1.3</beecp.verion>
         <druid.version>1.2.23</druid.version>
         <!-- junit -->
-        <junit.version>5.13.2</junit.version>
+        <junit.version>5.12.2</junit.version>
         <seata.version>2.0.0</seata.version>
     </properties>
 
@@ -109,17 +109,17 @@
             <dependency>
                 <groupId>cn.xbatis</groupId>
                 <artifactId>xbatis-sql-api</artifactId>
-                <version>${xbatis.version}</version>
+                <version>1.8.9-M1</version>
             </dependency>
             <dependency>
                 <groupId>cn.xbatis</groupId>
                 <artifactId>xbatis-sql-api-impl</artifactId>
-                <version>${xbatis.version}</version>
+                <version>1.8.9-M1</version>
             </dependency>
             <dependency>
                 <groupId>cn.xbatis</groupId>
                 <artifactId>xbatis-annotation</artifactId>
-                <version>${xbatis.version}</version>
+                <version>1.8.9-M1</version>
             </dependency>
             <dependency>
                 <groupId>cn.xbatis</groupId>
@@ -145,13 +145,13 @@
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
-                <version>${mybatis.version}</version>
+                <version>3.5.19</version>
             </dependency>
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
+                <version>1.18.38</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -177,13 +177,13 @@
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql.version}</version>
+                <version>9.3.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>${postgresql.version}</version>
+                <version>42.7.7</version>
             </dependency>
 
             <dependency>
@@ -195,49 +195,49 @@
             <dependency>
                 <groupId>org.mariadb.jdbc</groupId>
                 <artifactId>mariadb-java-client</artifactId>
-                <version>${mariadb.version}</version>
+                <version>3.5.3</version>
             </dependency>
 
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
                 <artifactId>mssql-jdbc</artifactId>
-                <version>${sql_server.version}</version>
+                <version>12.8.1.jre11</version>
             </dependency>
 
             <dependency>
                 <groupId>com.dameng</groupId>
                 <artifactId>DmJdbcDriver18</artifactId>
-                <version>${dm.version}</version>
+                <version>8.1.3.140</version>
             </dependency>
 
             <dependency>
                 <groupId>com.ibm.db2</groupId>
                 <artifactId>jcc</artifactId>
-                <version>${db2.version}</version>
+                <version>12.1.0.0</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.com.kingbase</groupId>
                 <artifactId>kingbase8</artifactId>
-                <version>${kingbase.version}</version>
+                <version>9.0.1.jre7</version>
             </dependency>
 
             <dependency>
                 <groupId>com.clickhouse</groupId>
                 <artifactId>clickhouse-jdbc</artifactId>
-                <version>${clickhouse.version}</version>
+                <version>0.8.6</version>
             </dependency>
 
             <dependency>
                 <groupId>org.xerial</groupId>
                 <artifactId>sqlite-jdbc</artifactId>
-                <version>${sqlite.version}</version>
+                <version>3.49.1.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opengauss</groupId>
                 <artifactId>opengauss-jdbc</artifactId>
-                <version>${opengauss.version}</version>
+                <version>6.0.0-og</version>
             </dependency>
 
             <dependency>
@@ -251,7 +251,7 @@
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>${h2.version}</version>
+                <version>2.2.224</version>
                 <scope>test</scope>
             </dependency>
 
