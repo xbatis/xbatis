@@ -74,7 +74,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
         if (mappedStatement.getResultMaps().size() == 1) {
             Class<?> returnType = mappedStatement.getResultMaps().get(0).getType();
-            if (returnType.isAnnotationPresent(ResultEntity.class)) {
+            if (!(boundSql.getParameterObject() instanceof SQLCmdCountFromQueryContext) && returnType.isAnnotationPresent(ResultEntity.class)) {
                 ResultInfo resultInfo = ResultInfos.get(returnType);
                 this.fetchInfosMap = resultInfo.getFetchInfoMap();
                 if (Objects.nonNull(this.fetchInfosMap) && !this.fetchInfosMap.isEmpty()) {
