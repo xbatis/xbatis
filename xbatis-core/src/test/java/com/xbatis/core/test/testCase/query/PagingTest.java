@@ -134,4 +134,17 @@ public class PagingTest extends BaseTest {
             assertEquals(pager.getResults().get(1).getId(), 2);
         }
     }
+
+    @Test
+    public void pagingForechTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            QueryChain.of(sysUserMapper)
+                    .selectAll()
+                    .returnType(SysUser.class, i -> {
+                        System.out.println(i);
+                    })
+                    .paging(Pager.of(1, 2));
+        }
+    }
 }

@@ -17,6 +17,7 @@ package cn.xbatis.core.mybatis.executor.resultset;
 import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
+import cn.xbatis.core.mybatis.mapper.context.SQLCmdCountFromQueryContext;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.Query;
@@ -93,8 +94,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
             if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
                 BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
-                this.onRowEvent = baseQuery.getOnRowEvent();
                 this.returnType = baseQuery.getReturnType();
+                if (!(boundSql.getParameterObject() instanceof SQLCmdCountFromQueryContext)) {
+                    this.onRowEvent = baseQuery.getOnRowEvent();
+                }
             }
         }
     }
