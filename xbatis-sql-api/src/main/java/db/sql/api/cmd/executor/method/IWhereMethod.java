@@ -43,26 +43,4 @@ public interface IWhereMethod<SELF extends IWhereMethod,
         conditionChain().setStringTrim(bool);
         return (SELF) this;
     }
-
-    /**
-     * 为搜索（注意查询和搜索是不一样的）
-     *
-     * @return
-     */
-    default SELF forSearch() {
-        return this.forSearch(true);
-    }
-
-    /**
-     * 为搜索（注意查询和搜索是不一样的）
-     *
-     * @param bool 开关
-     * @return
-     */
-    default SELF forSearch(boolean bool) {
-        this.ignoreNullValueInCondition(bool);
-        this.ignoreEmptyInCondition(bool);
-        this.trimStringInCondition(bool);
-        return (SELF) this;
-    }
 }

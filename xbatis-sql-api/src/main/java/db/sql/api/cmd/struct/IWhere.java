@@ -19,4 +19,25 @@ import db.sql.api.cmd.executor.method.IWhereMethod;
 import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 
 public interface IWhere<SELF extends IWhere, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN extends IConditionChain<CONDITION_CHAIN, TABLE_FIELD, COLUMN, V>> extends IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>, Cmd {
+    /**
+     * 为搜索（注意查询和搜索是不一样的）
+     *
+     * @return
+     */
+    default SELF forSearch() {
+        return this.forSearch(true);
+    }
+
+    /**
+     * 为搜索（注意查询和搜索是不一样的）
+     *
+     * @param bool 开关
+     * @return
+     */
+    default SELF forSearch(boolean bool) {
+        this.ignoreNullValueInCondition(bool);
+        this.ignoreEmptyInCondition(bool);
+        this.trimStringInCondition(bool);
+        return (SELF) this;
+    }
 }

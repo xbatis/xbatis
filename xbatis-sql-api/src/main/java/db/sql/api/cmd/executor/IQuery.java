@@ -227,4 +227,25 @@ public interface IQuery<SELF extends IQuery
 
     Map<String, Boolean> getFetchEnables();
 
+    /**
+     * 为搜索（注意查询和搜索是不一样的）
+     *
+     * @return
+     */
+    default SELF forSearch() {
+        return this.forSearch(true);
+    }
+
+    /**
+     * 为搜索（注意查询和搜索是不一样的）
+     *
+     * @param bool 开关
+     * @return
+     */
+    default SELF forSearch(boolean bool) {
+        this.ignoreNullValueInCondition(bool);
+        this.ignoreEmptyInCondition(bool);
+        this.trimStringInCondition(bool);
+        return (SELF) this;
+    }
 }
