@@ -834,6 +834,16 @@ public interface FunctionInterface extends Cmd {
     /**
      * 条件判断（LIKE模糊匹配）
      *
+     * @param value 匹配值
+     * @return Like
+     */
+    default Like like(Cmd value) {
+        return like(LikeMode.DEFAULT, value);
+    }
+
+    /**
+     * 条件判断（LIKE模糊匹配）
+     *
      * @param mode  匹配方式；例如LikeMode.LEFT
      * @param value 匹配值
      * @return Like
@@ -860,6 +870,16 @@ public interface FunctionInterface extends Cmd {
      * @return Like
      */
     default NotLike notLike(String value) {
+        return notLike(LikeMode.DEFAULT, value);
+    }
+
+    /**
+     * 条件判断（NOT LIKE模糊匹配）
+     *
+     * @param value 匹配值
+     * @return Like
+     */
+    default NotLike notLike(Cmd value) {
         return notLike(LikeMode.DEFAULT, value);
     }
 
@@ -898,6 +918,16 @@ public interface FunctionInterface extends Cmd {
     /**
      * 条件判断（iLIKE模糊匹配）
      *
+     * @param value 匹配值
+     * @return Like
+     */
+    default ILike iLike(Cmd value) {
+        return iLike(LikeMode.DEFAULT, value);
+    }
+
+    /**
+     * 条件判断（iLIKE模糊匹配）
+     *
      * @param mode  匹配方式；例如LikeMode.LEFT
      * @param value 匹配值
      * @return Like
@@ -924,6 +954,16 @@ public interface FunctionInterface extends Cmd {
      * @return Like
      */
     default NotILike notILike(String value) {
+        return notILike(LikeMode.DEFAULT, value);
+    }
+
+    /**
+     * 条件判断（NOT ILIKE模糊匹配）
+     *
+     * @param value 匹配值
+     * @return Like
+     */
+    default NotILike notILike(Cmd value) {
         return notILike(LikeMode.DEFAULT, value);
     }
 
