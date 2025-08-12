@@ -51,8 +51,24 @@ public final class LambdaUtil {
 
     private static <T> LambdaFieldInfo<T> getLambdaFieldInfo(SerializedLambda serializedLambda, ClassLoader classLoader) {
         Class type = getClass(serializedLambda, classLoader);
-        String methodName = serializedLambda.getImplMethodName();
-        String fieldName = PropertyNamer.methodToProperty(methodName);
+
+        String fieldName = null;
+        // 兼容 Kotlin KProperty 的 Lambda 解析
+        if (serializedLambda.getCapturedArgCount() == 1) {
+            Object capturedArg = serializedLambda.getCapturedArg(0);
+            try {
+                fieldName = (String) capturedArg.getClass()
+                        .getMethod("getName")
+                        .invoke(capturedArg);
+            } catch (Exception e) {
+                // 忽略这个异常，使用java方式获取方法名
+            }
+        }
+
+        if (fieldName == null) {
+            String methodName = serializedLambda.getImplMethodName();
+            fieldName = PropertyNamer.methodToProperty(methodName);
+        }
         return new LambdaFieldInfo(type, fieldName);
     }
 
