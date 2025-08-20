@@ -124,12 +124,10 @@ public class ConditionInfo {
         }
 
         TableInfo tableInfo;
-        if (condition == null) {
-            tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(targetTable));
-        } else if (condition.target() == Void.class) {
+        if (condition == null || condition.target() == Void.class) {
             tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(targetTable));
         } else {
-            tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(condition.target()));
+            tableInfo = tableInfoMap.computeIfAbsent(condition.target(), k -> Tables.get(condition.target()));
         }
 
         String property = field.getName();
@@ -138,7 +136,7 @@ public class ConditionInfo {
         }
         TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
         if (tableFieldInfo == null) {
-            throw new RuntimeException("can not find entity property " + property + " in entity class " + tableInfo.getType());
+            throw new RuntimeException("can not find entity property " + property + " in entity " + tableInfo.getType());
         }
         return new ConditionItem(field, tableFieldInfo, condition);
     }

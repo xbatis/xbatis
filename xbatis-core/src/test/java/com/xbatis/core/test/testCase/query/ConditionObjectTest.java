@@ -15,6 +15,7 @@
 package com.xbatis.core.test.testCase.query;
 
 import cn.xbatis.core.sql.executor.chain.QueryChain;
+import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.REQ.KeywordLikeREQ;
 import com.xbatis.core.test.REQ.KeywordLikeREQ2;
@@ -41,10 +42,29 @@ public class ConditionObjectTest extends BaseTest {
             Integer id = QueryChain.of(sysUserMapper)
                     .where(queryReq)
                     .select(SysUser::getId)
+                    .leftJoin(SysUser::getRole_id, SysRole::getId)
                     .returnType(Integer.class)
                     .get();
 
             assertEquals(1, id);
+        }
+    }
+
+    @Test
+    public void join() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            QueryREQ queryReq = new QueryREQ();
+            queryReq.setId(2);
+            queryReq.setRoleId(1);
+            Integer roleId = QueryChain.of(sysUserMapper)
+                    .leftJoin(SysUser::getRole_id, SysRole::getId)
+                    .where(queryReq)
+                    .select(SysRole::getId)
+                    .returnType(Integer.class)
+                    .get();
+
+            assertEquals(roleId, 1);
         }
     }
 

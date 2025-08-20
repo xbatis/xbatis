@@ -17,6 +17,7 @@ package com.xbatis.core.test.REQ;
 import cn.xbatis.core.sql.ObjectConditionLifeCycle;
 import cn.xbatis.db.Logic;
 import cn.xbatis.db.annotations.*;
+import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -33,6 +34,9 @@ import static cn.xbatis.db.annotations.Condition.Type.*;
 public class QueryREQ implements ObjectConditionLifeCycle {
 
     private Integer id;
+
+    @Condition(target = SysRole.class, property = SysRole.Fields.id)
+    private Integer roleId;
 
     @Condition(value = LIKE)
     private String userName;
