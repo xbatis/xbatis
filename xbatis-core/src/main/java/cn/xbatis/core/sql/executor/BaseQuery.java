@@ -29,6 +29,7 @@ import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.OptimizeOptions;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -186,13 +187,34 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
         subQuery.ignoreNullValueInCondition(this.conditionFactory.isIgnoreNull());
         subQuery.ignoreEmptyInCondition(this.conditionFactory.isIgnoreEmpty());
         subQuery.trimStringInCondition(this.conditionFactory.isStringTrim());
-        consumer.accept((Q) this, subQuery);
+        if (consumer != null) {
+            consumer.accept((Q) this, subQuery);
+        }
         if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
             subQuery.select1();
         }
         if (subQuery.getFrom() == null) {
             subQuery.from(entity);
         }
+        return subQuery;
+    }
+
+    private <T1, T2> SubQuery buildExistsSubQuery(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
+        SubQuery subQuery = this.$().createSubQuery();
+        subQuery.ignoreNullValueInCondition(this.conditionFactory.isIgnoreNull());
+        subQuery.ignoreEmptyInCondition(this.conditionFactory.isIgnoreEmpty());
+        subQuery.trimStringInCondition(this.conditionFactory.isStringTrim());
+        if (consumer != null) {
+            consumer.accept((Q) this, subQuery);
+        }
+        if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
+            subQuery.select1();
+        }
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
+        if (subQuery.getFrom() == null) {
+            subQuery.from(lambdaFieldInfo.getType());
+        }
+        subQuery.eq(targetGetter, this.$(sourceGetter, sourceStorey));
         return subQuery;
     }
 
@@ -207,6 +229,25 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
         return this.exists(this.buildExistsSubQuery(entity, consumer));
     }
 
+    public <T1, T2> Q exists(Getter<T1> sourceGetter, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
+        return this.exists(sourceGetter, 1, targetGetter, consumer);
+    }
+
+    public <T1, T2> Q exists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
+        return this.exists(when, sourceGetter, 1, targetGetter, consumer);
+    }
+
+    public <T1, T2> Q exists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
+        return this.exists(true, sourceGetter, sourceStorey, targetGetter, consumer);
+    }
+
+    public <T1, T2> Q exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
+        if (!when) {
+            return (Q) this;
+        }
+        return this.exists(this.buildExistsSubQuery(sourceGetter, sourceStorey, targetGetter, consumer));
+    }
+
 
     public <T2> Q notExists(Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
         return this.notExists(true, entity, consumer);
@@ -217,6 +258,25 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
             return (Q) this;
         }
         return this.notExists(this.buildExistsSubQuery(entity, consumer));
+    }
+
+    public <T1, T2> Q notExists(Getter<T1> sourceGetter, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
+        return this.notExists(sourceGetter, 1, targetGetter, consumer);
+    }
+
+    public <T1, T2> Q notExists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
+        return this.notExists(when, sourceGetter, 1, targetGetter, consumer);
+    }
+
+    public <T1, T2> Q notExists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
+        return this.notExists(true, sourceGetter, sourceStorey, targetGetter, consumer);
+    }
+
+    public <T1, T2> Q notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
+        if (!when) {
+            return (Q) this;
+        }
+        return this.notExists(this.buildExistsSubQuery(sourceGetter, sourceStorey, targetGetter, consumer));
     }
 
     /**************以下为去除警告************/

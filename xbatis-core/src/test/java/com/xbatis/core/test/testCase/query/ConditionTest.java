@@ -696,6 +696,26 @@ public class ConditionTest extends BaseTest {
     }
 
     @Test
+    public void exists3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int count = QueryChain.of(sysUserMapper)
+                    .forSearch()
+                    .exists(SysUser::getRole_id, SysRole::getId, (query, subquery) -> {
+                        subquery.in(SysRole::getId, new Integer[]{});
+                    })
+                    .andNested(c -> {
+                        c.exists(SysUser::getRole_id, SysRole::getId, subquery -> {
+                            subquery.isNotNull(SysRole::getId);
+                        });
+                    })
+                    .count();
+
+            assertEquals(count, 2);
+        }
+    }
+
+    @Test
     public void notexists1() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
