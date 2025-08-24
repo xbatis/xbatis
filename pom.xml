@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis</artifactId>
-    <version>1.9.1-M1</version>
+    <version>1.9.1-M2</version>
     <packaging>pom</packaging>
     <modules>
         <module>xbatis-annotation</module>
@@ -62,10 +62,10 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <xbatis.version>1.9.1-M1</xbatis.version>
+        <xbatis.version>1.9.1-M2</xbatis.version>
         <xbatis-generator-core.version>1.1.2</xbatis-generator-core.version>
         <xbatis-datasource-routing.version>1.0.7</xbatis-datasource-routing.version>
-        <xbatis-spring-boot-starter.version>1.9.1-M1</xbatis-spring-boot-starter.version>
+        <xbatis-spring-boot-starter.version>1.9.1-M2</xbatis-spring-boot-starter.version>
 
         <!-- mybatis version -->
         <mybatis.version>3.5.19</mybatis.version>
@@ -98,7 +98,7 @@
         <!-- 连接池 -->
         <p6spy.version>3.9.1</p6spy.version>
         <beecp.verion>4.1.3</beecp.verion>
-        <druid.version>1.2.23</druid.version>
+        <druid.version>1.2.27</druid.version>
         <!-- junit -->
         <junit.version>5.13.4</junit.version>
         <seata.version>2.0.0</seata.version>
