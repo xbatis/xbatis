@@ -33,19 +33,26 @@ public class OrderByInfo {
         List<Field> fieldList = FieldUtil.getFields(clazz);
         List<OrderByItem> orderByList = new ArrayList<>(fieldList.size());
         OrderByTarget orderByTarget = clazz.getAnnotation(OrderByTarget.class);
-        Class<?> targetTable = orderByTarget.value();
+
         Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
         for (Field field : fieldList) {
-            orderByList.add(this.parseOrderByAnnotation(field, targetTable, tableInfoMap));
+            OrderByItem orderByItem = this.parseOrderByAnnotation(field, orderByTarget, tableInfoMap);
+            if (orderByItem == null) {
+                continue;
+            }
+            orderByList.add(orderByItem);
         }
         this.orderByItems = orderByList;
     }
 
-    private OrderByItem parseOrderByAnnotation(Field field, Class<?> targetTable, Map<Class<?>, TableInfo> tableInfoMap) {
+    private OrderByItem parseOrderByAnnotation(Field field, OrderByTarget orderByTarget, Map<Class<?>, TableInfo> tableInfoMap) {
         OrderBy condition = field.getAnnotation(OrderBy.class);
+        if (orderByTarget.strict() && condition == null) {
+            return null;
+        }
         TableInfo tableInfo;
         if (condition == null || condition.target() == Void.class) {
-            tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(targetTable));
+            tableInfo = tableInfoMap.computeIfAbsent(orderByTarget.value(), k -> Tables.get(orderByTarget.value()));
         } else {
             tableInfo = tableInfoMap.computeIfAbsent(condition.target(), k -> Tables.get(condition.target()));
         }

@@ -30,4 +30,11 @@ public @interface OrderByTarget {
      * @return 实体类
      */
     Class<?> value();
+
+    /**
+     * 是否严格模式：开启则只匹配带有@OrderBy注解字段
+     *
+     * @return
+     */
+    boolean strict() default false;
 }
