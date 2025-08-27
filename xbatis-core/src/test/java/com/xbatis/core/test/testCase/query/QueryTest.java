@@ -21,6 +21,7 @@ import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.util.WhereUtil;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.REQ.SysUserOrderBys;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
@@ -757,6 +758,51 @@ public class QueryTest extends BaseTest {
             Integer[] ids = null;
             assertEquals(sysUserMapper.getByIds(ids), Collections.emptyList());
             assertEquals(sysUserMapper.getByIds(Collections.emptyList()), Collections.emptyList());
+        }
+    }
+
+
+    @Test
+    public void orderByObjectTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUserOrderBys sysUserOrderBys = new SysUserOrderBys();
+            sysUserOrderBys.setRoleId(false);
+            List<Integer> roleIds = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getRole_id)
+                    .from(SysUser.class)
+                    .orderBy(sysUserOrderBys)
+                    .returnType(Integer.class)
+                    .list();
+
+            assertEquals(roleIds.get(0), Integer.valueOf(1), "orderByObjectTest");
+            assertEquals(roleIds.get(1), Integer.valueOf(1), "orderByObjectTest");
+            assertEquals(roleIds.get(2), Integer.valueOf(0), "orderByObjectTest");
+
+            sysUserOrderBys.setRoleId(true);
+            roleIds = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getRole_id)
+                    .from(SysUser.class)
+                    .orderBy(sysUserOrderBys)
+                    .returnType(Integer.class)
+                    .list();
+
+            assertEquals(roleIds.get(0), Integer.valueOf(0), "orderByObjectTest");
+            assertEquals(roleIds.get(1), Integer.valueOf(1), "orderByObjectTest");
+            assertEquals(roleIds.get(2), Integer.valueOf(1), "orderByObjectTest");
+
+            sysUserOrderBys.setId(0);
+            sysUserOrderBys.setRoleId(true);
+            roleIds = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId)
+                    .from(SysUser.class)
+                    .orderBy(sysUserOrderBys)
+                    .returnType(Integer.class)
+                    .list();
+
+            assertEquals(roleIds.get(0), Integer.valueOf(1), "orderByObjectTest");
+            assertEquals(roleIds.get(1), Integer.valueOf(3), "orderByObjectTest");
+            assertEquals(roleIds.get(2), Integer.valueOf(2), "orderByObjectTest");
         }
     }
 }

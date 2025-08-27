@@ -15,6 +15,7 @@
 package cn.xbatis.core.sql.executor;
 
 import cn.xbatis.core.XbatisGlobalConfig;
+import cn.xbatis.core.db.reflect.OrderBys;
 import cn.xbatis.core.mybatis.executor.statement.Fetchable;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
@@ -103,13 +104,30 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     /**
      * 追加非null，非空的字段值的条件
      *
-     * @param object 对象类上必须有实体类注解或@ConditionTarget
+     * @param object 对象类上必须有注解@ConditionTarget 或者 是实体类
      * @return Q
      * @see cn.xbatis.db.annotations.ConditionTarget @ConditionTarget 条件目标注解
      * @see cn.xbatis.db.annotations.Condition @Condition条件注解
      */
     public Q where(Object object) {
         return WhereUtil.where((Q) this, object);
+    }
+
+
+    /**
+     * 追加排序，非空的字段值的（0，1，true，false）
+     * 1 true 代表升序 0 false 代表 倒序
+     * @param object 对象类上必须有注解@OrderByTarget
+     * @return Q
+     * @see cn.xbatis.db.annotations.OrderByTarget @OrderByTarget 条件目标注解
+     * @see cn.xbatis.db.annotations.OrderBy @OrderBy排序注解
+     */
+    public Q orderBy(Object object) {
+        if (object == null) {
+            return (Q) this;
+        }
+        OrderBys.get(object.getClass()).appendOrderBy(this,object);
+        return (Q)this;
     }
 
     /**
