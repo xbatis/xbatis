@@ -19,7 +19,7 @@ import cn.xbatis.db.annotations.OrderByTarget;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class OrderBys{
+public class OrderBys {
 
     private static final Map<Class, OrderByInfo> CACHE = new ConcurrentHashMap<>();
 

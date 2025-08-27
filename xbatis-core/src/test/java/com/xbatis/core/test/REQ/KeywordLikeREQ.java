@@ -30,8 +30,8 @@ public class KeywordLikeREQ {
     @Conditions(
             logic = Logic.OR,
             value = {
-                    @Condition(property=SysUser.Fields.userName,value = LIKE),
-                    @Condition(property=SysUser.Fields.password,value = LIKE)
+                    @Condition(property = SysUser.Fields.userName, value = LIKE),
+                    @Condition(property = SysUser.Fields.password, value = LIKE)
             }
     )
     private String keyword;

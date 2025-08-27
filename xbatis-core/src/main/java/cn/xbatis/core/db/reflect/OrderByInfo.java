@@ -14,15 +14,10 @@
 
 package cn.xbatis.core.db.reflect;
 
-import cn.xbatis.core.sql.ObjectConditionLifeCycle;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.util.FieldUtil;
-import cn.xbatis.db.Logic;
-import cn.xbatis.db.annotations.Condition;
-import cn.xbatis.db.annotations.ConditionTarget;
 import cn.xbatis.db.annotations.OrderBy;
 import cn.xbatis.db.annotations.OrderByTarget;
-import db.sql.api.impl.cmd.struct.ConditionChain;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -40,14 +35,14 @@ public class OrderByInfo {
         OrderByTarget orderByTarget = clazz.getAnnotation(OrderByTarget.class);
         Class<?> targetTable = orderByTarget.value();
         Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
-        for(Field field : fieldList){
-            orderByList.add(this.parseOrderByAnnotation(field,targetTable,tableInfoMap));
+        for (Field field : fieldList) {
+            orderByList.add(this.parseOrderByAnnotation(field, targetTable, tableInfoMap));
         }
-        this.orderByItems=orderByList;
+        this.orderByItems = orderByList;
     }
 
     private OrderByItem parseOrderByAnnotation(Field field, Class<?> targetTable, Map<Class<?>, TableInfo> tableInfoMap) {
-        OrderBy condition= field.getAnnotation(OrderBy.class);
+        OrderBy condition = field.getAnnotation(OrderBy.class);
         TableInfo tableInfo;
         if (condition == null || condition.target() == Void.class) {
             tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(targetTable));
@@ -66,7 +61,7 @@ public class OrderByInfo {
         return new OrderByItem(field, tableFieldInfo, condition);
     }
 
-    public void appendOrderBy(BaseQuery<?,?> query, Object target) {
+    public void appendOrderBy(BaseQuery<?, ?> query, Object target) {
         if (target == null) {
             return;
         }

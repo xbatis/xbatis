@@ -29,8 +29,8 @@ public class ConditionsItem {
 
     private final List<ConditionItem> conditionItemList;
 
-    public ConditionsItem( Field field,Conditions annotation,List<ConditionItem> conditionItemList){
-        this.field=field;
+    public ConditionsItem(Field field, Conditions annotation, List<ConditionItem> conditionItemList) {
+        this.field = field;
         this.annotation = annotation;
         this.conditionItemList = conditionItemList;
     }

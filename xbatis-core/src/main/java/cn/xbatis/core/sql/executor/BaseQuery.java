@@ -117,6 +117,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     /**
      * 追加排序，非空的字段值的（0，1，true，false）
      * 1 true 代表升序 0 false 代表 倒序
+     *
      * @param object 对象类上必须有注解@OrderByTarget
      * @return Q
      * @see cn.xbatis.db.annotations.OrderByTarget @OrderByTarget 条件目标注解
@@ -126,8 +127,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
         if (object == null) {
             return (Q) this;
         }
-        OrderBys.get(object.getClass()).appendOrderBy(this,object);
-        return (Q)this;
+        OrderBys.get(object.getClass()).appendOrderBy(this, object);
+        return (Q) this;
     }
 
     /**

@@ -135,12 +135,12 @@ public class DbFunTest extends BaseTest {
 
             System.out.println(resultMap);
             assertEquals(resultMap.size(), 2);
-            if("1".equals(resultMap.get(0).getGroupIds())){
+            if ("1".equals(resultMap.get(0).getGroupIds())) {
                 assertEquals(resultMap.get(0).getGroupIds(), "1");
-                assertTrue(resultMap.get(1).getGroupIds().equals("2,3")||resultMap.get(1).getGroupIds().equals("3,2"));
-            }else{
+                assertTrue(resultMap.get(1).getGroupIds().equals("2,3") || resultMap.get(1).getGroupIds().equals("3,2"));
+            } else {
                 assertEquals(resultMap.get(1).getGroupIds(), "1");
-                assertTrue(resultMap.get(0).getGroupIds().equals("2,3")||resultMap.get(0).getGroupIds().equals("3,2"));
+                assertTrue(resultMap.get(0).getGroupIds().equals("2,3") || resultMap.get(0).getGroupIds().equals("3,2"));
             }
 
         }

@@ -24,14 +24,14 @@ import lombok.Data;
 import static cn.xbatis.db.annotations.Condition.Type.LIKE;
 
 @Data
-@ConditionTarget(value = SysUser.class,logic = Logic.OR)
+@ConditionTarget(value = SysUser.class, logic = Logic.OR)
 public class KeywordLikeREQ2 {
 
     @Conditions(
             logic = Logic.OR,
             value = {
-                    @Condition(property=SysUser.Fields.userName,value = LIKE),
-                    @Condition(property=SysUser.Fields.password,value = LIKE)
+                    @Condition(property = SysUser.Fields.userName, value = LIKE),
+                    @Condition(property = SysUser.Fields.password, value = LIKE)
             }
     )
     private String keyword;

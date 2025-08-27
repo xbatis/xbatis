@@ -16,10 +16,7 @@ package cn.xbatis.core.db.reflect;
 
 
 import cn.xbatis.core.sql.executor.BaseQuery;
-import cn.xbatis.core.util.TypeConvertUtil;
-import cn.xbatis.db.annotations.Condition;
 import cn.xbatis.db.annotations.OrderBy;
-import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.basic.TableField;
 
 import java.lang.reflect.Field;
@@ -27,7 +24,6 @@ import java.lang.reflect.Field;
 /**
  * 被注解的字段必须为 Integer Boolean 类型
  * 1 true 代表升序 0 false 代表 倒序
- *
  */
 public class OrderByItem {
 
@@ -36,17 +32,16 @@ public class OrderByItem {
     private final TableFieldInfo tableFieldInfo;
 
     private final int storey;
+    private final Integer ZERO = 0;
 
     public OrderByItem(Field field, TableFieldInfo tableFieldInfo, OrderBy annotation) {
         field.setAccessible(true);
         this.field = field;
         this.tableFieldInfo = tableFieldInfo;
-        this.storey =annotation==null?1: annotation.storey();
+        this.storey = annotation == null ? 1 : annotation.storey();
     }
 
-    private final Integer ZERO=0;
-
-    public void appendOrderBy(BaseQuery<?,?> query, Object target) {
+    public void appendOrderBy(BaseQuery<?, ?> query, Object target) {
         Object value;
         try {
             value = this.field.get(target);
@@ -59,9 +54,9 @@ public class OrderByItem {
 
         FieldInfo fieldInfo = this.tableFieldInfo.getFieldInfo();
         TableField tableField = query.$().field(fieldInfo.getClazz(), fieldInfo.getField().getName(), this.storey);
-        if(Boolean.FALSE.equals(value) || ZERO.equals(value) ){
+        if (Boolean.FALSE.equals(value) || ZERO.equals(value)) {
             query.orderByDesc(tableField);
-        }else {
+        } else {
             query.orderBy(tableField);
         }
     }
