@@ -23,5 +23,5 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 public @interface OnInsert {
 
-    Class<? extends OnInsertListener<?>> value();
+    Class<? extends OnInsertListener> value();
 }

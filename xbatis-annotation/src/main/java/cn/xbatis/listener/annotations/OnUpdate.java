@@ -23,5 +23,5 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 public @interface OnUpdate {
 
-    Class<? extends OnUpdateListener<?>> value();
+    Class<? extends OnUpdateListener> value();
 }
