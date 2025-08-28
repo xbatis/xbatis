@@ -15,18 +15,26 @@
 package com.xbatis.core.test.REQ;
 
 import cn.xbatis.db.annotations.OrderBy;
+import cn.xbatis.db.annotations.OrderByAsField;
+import cn.xbatis.db.annotations.OrderByColumn;
 import cn.xbatis.db.annotations.OrderByTarget;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 @Data
-@OrderByTarget(value=SysUser.class,strict = true)
+@OrderByTarget(value = SysUser.class, strict = true)
+@FieldNameConstants
 public class SysUserOrderBys2 {
 
     @OrderBy(property = SysUser.Fields.role_id)
-    private boolean roleId;
+    private Boolean roleId;
 
     private Integer id;
 
+    @OrderByColumn("id")
+    private Boolean createTime;
 
+    @OrderByAsField(target = SysUserOrderBys2.class, property = SysUserOrderBys2.Fields.id)
+    private Boolean createTime2;
 }

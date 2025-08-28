@@ -17,7 +17,10 @@ package cn.xbatis.core.db.reflect;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.db.annotations.OrderBy;
+import cn.xbatis.db.annotations.OrderByAsField;
+import cn.xbatis.db.annotations.OrderByColumn;
 import cn.xbatis.db.annotations.OrderByTarget;
+import db.sql.api.impl.tookit.SqlUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,6 +49,18 @@ public class OrderByInfo {
     }
 
     private OrderByItem parseOrderByAnnotation(Field field, OrderByTarget orderByTarget, Map<Class<?>, TableInfo> tableInfoMap) {
+
+        if (field.isAnnotationPresent(OrderByColumn.class)) {
+            OrderByColumn orderByColumn = field.getAnnotation(OrderByColumn.class);
+            return new OrderByItem(field, orderByColumn.value());
+        } else if (field.isAnnotationPresent(OrderByAsField.class)) {
+            OrderByAsField orderByColumn = field.getAnnotation(OrderByAsField.class);
+            if (orderByColumn.property().isEmpty()) {
+                return new OrderByItem(field, SqlUtil.getAsName(orderByColumn.target(), field.getName()));
+            }
+            return new OrderByItem(field, SqlUtil.getAsName(orderByColumn.target(), orderByColumn.property()));
+        }
+
         OrderBy condition = field.getAnnotation(OrderBy.class);
         if (orderByTarget.strict() && condition == null) {
             return null;

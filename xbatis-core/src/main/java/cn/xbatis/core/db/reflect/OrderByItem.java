@@ -17,7 +17,8 @@ package cn.xbatis.core.db.reflect;
 
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.db.annotations.OrderBy;
-import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.Cmd;
+import db.sql.api.impl.cmd.Methods;
 
 import java.lang.reflect.Field;
 
@@ -29,16 +30,23 @@ public class OrderByItem {
 
     private final Field field;
 
-    private final TableFieldInfo tableFieldInfo;
+    private final Object orderByInfo;
 
     private final int storey;
     private final Integer ZERO = 0;
 
-    public OrderByItem(Field field, TableFieldInfo tableFieldInfo, OrderBy annotation) {
+    public OrderByItem(Field field, Object orderByInfo, OrderBy annotation) {
         field.setAccessible(true);
         this.field = field;
-        this.tableFieldInfo = tableFieldInfo;
+        this.orderByInfo = orderByInfo;
         this.storey = annotation == null ? 1 : annotation.storey();
+    }
+
+    public OrderByItem(Field field, Object orderByInfo) {
+        field.setAccessible(true);
+        this.field = field;
+        this.orderByInfo = orderByInfo;
+        this.storey = 0;
     }
 
     public void appendOrderBy(BaseQuery<?, ?> query, Object target) {
@@ -51,13 +59,18 @@ public class OrderByItem {
         if (value == null) {
             return;
         }
-
-        FieldInfo fieldInfo = this.tableFieldInfo.getFieldInfo();
-        TableField tableField = query.$().field(fieldInfo.getClazz(), fieldInfo.getField().getName(), this.storey);
-        if (Boolean.FALSE.equals(value) || ZERO.equals(value)) {
-            query.orderByDesc(tableField);
+        Cmd column;
+        if (orderByInfo instanceof TableFieldInfo) {
+            FieldInfo fieldInfo = ((TableFieldInfo) this.orderByInfo).getFieldInfo();
+            column = query.$().field(fieldInfo.getClazz(), fieldInfo.getField().getName(), this.storey);
         } else {
-            query.orderBy(tableField);
+            column = Methods.column((String) orderByInfo);
+        }
+
+        if (Boolean.FALSE.equals(value) || ZERO.equals(value)) {
+            query.orderByDesc(column);
+        } else {
+            query.orderBy(column);
         }
     }
 }

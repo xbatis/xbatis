@@ -850,4 +850,43 @@ public class QueryTest extends BaseTest {
             assertEquals(roleIds.get(2), Integer.valueOf(3), "orderByObjectTest2");
         }
     }
+
+
+    @Test
+    public void orderByObjectTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUserOrderBys2 sysUserOrderBys = new SysUserOrderBys2();
+            sysUserOrderBys.setCreateTime(false);
+            List<Integer> roleIds = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId)
+                    .from(SysUser.class)
+                    .orderBy(sysUserOrderBys)
+                    .returnType(Integer.class)
+                    .list();
+
+            assertEquals(roleIds.get(0), Integer.valueOf(3), "orderByObjectTest3");
+            assertEquals(roleIds.get(1), Integer.valueOf(2), "orderByObjectTest3");
+            assertEquals(roleIds.get(2), Integer.valueOf(1), "orderByObjectTest3");
+        }
+    }
+
+    @Test
+    public void orderByObjectTest4() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUserOrderBys2 sysUserOrderBys = new SysUserOrderBys2();
+            sysUserOrderBys.setCreateTime2(false);
+            List<Integer> roleIds = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, c -> c.as(SysUserOrderBys2::getId))
+                    .from(SysUser.class)
+                    .orderBy(sysUserOrderBys)
+                    .returnType(Integer.class)
+                    .list();
+
+            assertEquals(roleIds.get(0), Integer.valueOf(3), "orderByObjectTest4");
+            assertEquals(roleIds.get(1), Integer.valueOf(2), "orderByObjectTest4");
+            assertEquals(roleIds.get(2), Integer.valueOf(1), "orderByObjectTest4");
+        }
+    }
 }

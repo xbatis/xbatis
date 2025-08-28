@@ -17,24 +17,16 @@ package cn.xbatis.db.annotations;
 import java.lang.annotation.*;
 
 /**
- * 排序类，配合 @OrderBy注解使用
- * 注意字段顺序，排在前面的优先排序
+ * 指定列名排序
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface OrderByTarget {
+@Target(ElementType.FIELD)
+public @interface OrderByColumn {
     /**
-     * 目标实体类
-     *
-     * @return 实体类
-     */
-    Class<?> value();
-
-    /**
-     * 是否严格模式：开启则只匹配带有@OrderBy|@OrderByColumn|OrderByAsField注解字段
+     * 列名
      *
      * @return
      */
-    boolean strict() default false;
+    String value();
 }

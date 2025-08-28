@@ -29,7 +29,11 @@ public final class SqlUtil {
     }
 
     public static String getAsName(Class clazz, Field field) {
-        return clazz.getSimpleName() + AS_SPLIT + field.getName();
+        return getAsName(clazz, field.getName());
+    }
+
+    public static String getAsName(Class clazz, String fieldName) {
+        return clazz.getSimpleName() + AS_SPLIT + fieldName;
     }
 
     public static boolean isAsName(Class clazz, Field field, String name) {
