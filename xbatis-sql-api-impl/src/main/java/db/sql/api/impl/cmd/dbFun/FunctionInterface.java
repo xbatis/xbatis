@@ -1041,6 +1041,15 @@ public interface FunctionInterface extends Cmd {
     }
 
     /**
+     * 条件判断（是否NULL值判断）
+     *
+     * @return IsNotNull
+     */
+    default IsNotNull isNotNull() {
+        return Methods.isNotNull(this);
+    }
+
+    /**
      * 条件判断（是否空值判断）
      *
      * @return Empty
