@@ -49,11 +49,10 @@ public class InsertValues implements IInsertValues<Cmd> {
             return sqlBuilder;
         }
         boolean oracleMuti = false;
-        AbstractInsert abstractInsert = null;
+
         if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {
             List<List<Cmd>> insertValues = this.getValues();
             if (Objects.nonNull(insertValues) && insertValues.size() > 1) {
-                abstractInsert = (AbstractInsert) parent;
                 oracleMuti = true;
             }
         }
@@ -64,10 +63,9 @@ public class InsertValues implements IInsertValues<Cmd> {
 
         boolean isFirstLine = true;
         for (List<Cmd> values : this.values) {
-
             if (!isFirstLine) {
                 if (oracleMuti) {
-                    sqlBuilder.append(SqlConst.UNION);
+                    sqlBuilder.append(SqlConst.UNION_ALL);
                 } else {
                     sqlBuilder.append(SqlConst.DELIMITER);
                 }
