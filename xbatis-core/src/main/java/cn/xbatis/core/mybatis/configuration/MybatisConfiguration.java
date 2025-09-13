@@ -112,7 +112,10 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public ParameterHandler newParameterHandler(MappedStatement ms, Object parameterObject, BoundSql boundSql) {
-        if (parameterObject instanceof PreparedParameterContext && !ms.getId().endsWith(SelectKeyGenerator.SELECT_KEY_SUFFIX)) {
+        if (ms.getId().endsWith(SelectKeyGenerator.SELECT_KEY_SUFFIX)) {
+            return super.newParameterHandler(ms, parameterObject, boundSql);
+        }
+        if (parameterObject instanceof PreparedParameterContext) {
             return (ParameterHandler) interceptorChain.pluginAll(new PreparedParameterHandler(this, (PreparedParameterContext) parameterObject));
         }
         return super.newParameterHandler(ms, parameterObject, boundSql);
