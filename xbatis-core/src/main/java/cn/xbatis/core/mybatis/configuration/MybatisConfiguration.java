@@ -28,6 +28,7 @@ import cn.xbatis.core.mybatis.typeHandler.EnumTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.xbatis.core.util.GenericUtil;
 import cn.xbatis.db.annotations.Table;
+import db.sql.api.SqlBuilderContext;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.executor.*;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
@@ -117,6 +118,16 @@ public class MybatisConfiguration extends Configuration {
         }
         if (parameterObject instanceof PreparedParameterContext) {
             return (ParameterHandler) interceptorChain.pluginAll(new PreparedParameterHandler(this, (PreparedParameterContext) parameterObject));
+        }
+        if (parameterObject instanceof Map) {
+            //兼容 PageHelper
+            Map<String, Object> parameterMap = (Map<String, Object>) parameterObject;
+            if (parameterMap.containsKey("sqlBuilderContext")) {
+                Object sqlBuilderContext = parameterMap.get("sqlBuilderContext");
+                if (sqlBuilderContext != null && sqlBuilderContext instanceof SqlBuilderContext && (parameterMap.containsKey(PageHelper.PAGE_PARAMETER_FIRST) || parameterMap.containsKey(PageHelper.PAGE_PARAMETER_SECOND))) {
+                    return (ParameterHandler) interceptorChain.pluginAll(new PageHelperPreparedParameterHandler(this, boundSql, (Map) parameterObject));
+                }
+            }
         }
         return super.newParameterHandler(ms, parameterObject, boundSql);
     }

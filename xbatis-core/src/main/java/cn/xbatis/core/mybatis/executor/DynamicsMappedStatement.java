@@ -19,14 +19,17 @@ import cn.xbatis.core.mybatis.configuration.MybatisMapperProxy;
 import cn.xbatis.core.mybatis.mapper.context.*;
 import cn.xbatis.core.mybatis.mapping.ResultMapWrapper;
 import cn.xbatis.core.mybatis.provider.SQLCmdSqlSource;
+import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
+import db.sql.api.SqlBuilderContext;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 public class DynamicsMappedStatement {
@@ -59,9 +62,31 @@ public class DynamicsMappedStatement {
                 }
             }
             return ms;
-        } else if (!(parameterObject instanceof SQLCmdQueryContext)) {
-            return ms;
         } else if (ms.getResultMaps().get(0).getType() != Object.class && !ms.getId().endsWith(MybatisMapperProxy.MAP_WITH_KEY_METHOD_NAME)) {
+            return ms;
+        } else if (parameterObject != null && parameterObject instanceof Map && ms.getSqlCommandType() == SqlCommandType.SELECT) {
+            //兼容 PageHelper
+            Map<String, Object> parameterMap = (Map<String, Object>) parameterObject;
+            if (!parameterMap.containsKey("sqlBuilderContext")) {
+                return ms;
+            }
+            Object sqlBuilderContext = parameterMap.get("sqlBuilderContext");
+            if (sqlBuilderContext != null && sqlBuilderContext instanceof SqlBuilderContext) {
+                if (!parameterMap.containsKey("execution")) {
+                    return ms;
+                }
+                Object execution = parameterMap.get("execution");
+                if (execution != null && execution instanceof BaseQuery) {
+                    BaseQuery<?, ?> query = (BaseQuery) execution;
+                    if (Objects.isNull(query.getReturnType())) {
+                        return ms;
+                    }
+                    return createQueryMappedStatement(query.getReturnType(), ms);
+                }
+            }
+
+            return ms;
+        } else if (!(parameterObject instanceof SQLCmdQueryContext)) {
             return ms;
         }
         SQLCmdQueryContext queryContext = (SQLCmdQueryContext) parameterObject;
