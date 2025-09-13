@@ -17,6 +17,8 @@ package com.xbatis.core.test.listerner;
 import cn.xbatis.core.XbatisGlobalConfig;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
+import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +38,7 @@ public class OnInsertModelTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserModelOnInsert sysUserOnInsert = new SysUserModelOnInsert();
+            sysUserOnInsert.setId(TestDataSource.DB_TYPE == DbType.ORACLE ? 4 : null);
             sysUserOnInsert.setRole_id(1);
             sysUserOnInsert.setUserName("xx");
             sysUserOnInsert.setPassword("xx");
@@ -53,11 +56,13 @@ public class OnInsertModelTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserModelOnInsert sysUserOnInsert = new SysUserModelOnInsert();
+            sysUserOnInsert.setId(TestDataSource.DB_TYPE == DbType.ORACLE ? 4 : null);
             sysUserOnInsert.setRole_id(1);
             sysUserOnInsert.setUserName("xx");
             sysUserOnInsert.setPassword("xx");
 
             SysUserModelOnInsert sysUserOnInsert2 = new SysUserModelOnInsert();
+            sysUserOnInsert2.setId(TestDataSource.DB_TYPE == DbType.ORACLE ? 5 : null);
             sysUserOnInsert2.setRole_id(1);
             sysUserOnInsert2.setUserName("xx");
             sysUserOnInsert2.setPassword("xx");

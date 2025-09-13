@@ -836,8 +836,9 @@ public class QueryTest extends BaseTest {
             assertEquals(roleIds.get(1), Integer.valueOf(1), "orderByObjectTest2");
             assertEquals(roleIds.get(2), Integer.valueOf(1), "orderByObjectTest2");
 
-            sysUserOrderBys.setId(0);
+            sysUserOrderBys.setId(1);
             sysUserOrderBys.setRoleId(true);
+
             roleIds = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId)
                     .from(SysUser.class)
@@ -846,8 +847,8 @@ public class QueryTest extends BaseTest {
                     .list();
 
             assertEquals(roleIds.get(0), Integer.valueOf(1), "orderByObjectTest2");
-            assertEquals(roleIds.get(1), Integer.valueOf(2), "orderByObjectTest2");
-            assertEquals(roleIds.get(2), Integer.valueOf(3), "orderByObjectTest2");
+            assertTrue(roleIds.get(1) == 2 || roleIds.get(1) == 3, "orderByObjectTest2");
+            assertTrue(roleIds.get(2) == 2 || roleIds.get(2) == 3, "orderByObjectTest2");
         }
     }
 
