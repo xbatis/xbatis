@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd;
 
 import db.sql.api.Cmd;
+import db.sql.api.Getter;
 import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IParamWrap;
@@ -29,6 +30,7 @@ import db.sql.api.impl.cmd.postgis.ST_Distance;
 import db.sql.api.impl.cmd.postgis.ST_Point;
 import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.impl.tookit.SqlUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -144,6 +146,16 @@ public final class Methods {
     public static Column column(String column) {
         Objects.requireNonNull(column);
         return new Column(column);
+    }
+
+    /**
+     * 将指定列名转成 Column
+     *
+     * @param column getter列名,指的是你as(XX.getXXX)后的列名
+     * @return Column
+     */
+    public static <T> Column column(Getter<T> column) {
+        return new Column(SqlUtil.getAsName(column));
     }
 
     /**
