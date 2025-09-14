@@ -74,7 +74,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
         if (mappedStatement.getResultMaps().size() == 1) {
             Class<?> returnType = mappedStatement.getResultMaps().get(0).getType();
-            if (!(boundSql.getParameterObject() instanceof SQLCmdCountFromQueryContext) && returnType.isAnnotationPresent(ResultEntity.class)) {
+            Object parameterObject = boundSql.getParameterObject();
+            BaseQuery<?, ?> baseQuery = getExecution(parameterObject);
+            if (isNeedFetch(parameterObject, returnType)) {
                 ResultInfo resultInfo = ResultInfos.get(returnType);
                 this.fetchInfosMap = resultInfo.getFetchInfoMap();
                 if (Objects.nonNull(this.fetchInfosMap) && !this.fetchInfosMap.isEmpty()) {
@@ -82,8 +84,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     this.basicMapper = BasicMapperThreadLocalUtil.get();
                 }
 
-                if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
-                    BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
+                if (baseQuery != null) {
                     this.fetchFilters = baseQuery.getFetchFilters();
                     this.fetchEnables = baseQuery.getFetchEnables();
                     this.putEnumValueInfoMap = resultInfo.getPutEnumValueInfoMap();
@@ -92,14 +93,47 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 }
             }
 
-            if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
-                BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
+            if (baseQuery != null) {
                 this.returnType = baseQuery.getReturnType();
-                if (!(boundSql.getParameterObject() instanceof SQLCmdCountFromQueryContext)) {
+                if (!(parameterObject instanceof SQLCmdCountFromQueryContext)) {
                     this.onRowEvent = baseQuery.getOnRowEvent();
                 }
             }
         }
+    }
+
+    private static boolean isNeedFetch(Object parameterObject, Class<?> returnType) {
+        if (parameterObject instanceof SQLCmdCountFromQueryContext) {
+            return false;
+        }
+        if (!returnType.isAnnotationPresent(ResultEntity.class)) {
+            return false;
+        }
+
+        if (parameterObject instanceof Map) {
+            Map parameterMap = (Map) parameterObject;
+            if (parameterMap.containsKey("execution")) {
+                Object execution = parameterMap.get("execution");
+                return execution != null && execution instanceof BaseQuery;
+            }
+        } else return parameterObject instanceof SQLCmdQueryContext;
+        return false;
+    }
+
+    private static BaseQuery<?, ?> getExecution(Object parameterObject) {
+        if (parameterObject instanceof SQLCmdQueryContext) {
+            return ((SQLCmdQueryContext) parameterObject).getExecution();
+        }
+        if (parameterObject instanceof Map) {
+            Map parameterMap = (Map) parameterObject;
+            if (parameterMap.containsKey("execution")) {
+                Object execution = parameterMap.get("execution");
+                if (execution != null && execution instanceof BaseQuery) {
+                    return (BaseQuery) execution;
+                }
+            }
+        }
+        return null;
     }
 
     private void clearObjects() {
