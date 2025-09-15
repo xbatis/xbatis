@@ -264,7 +264,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
 
     /**
      * 将结果转成map（key value都是简单类型的情况）
-     * 缺点：需要自定义类接收key value的值
+     * 缺点：需要额外非基本类型 类接收key value的值（框架内部操作）
      *
      * @param mapKey 指定的map的key属性
      * @param <R>    valueGetter  指定返回T中的某字段的Getter方法
