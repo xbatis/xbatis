@@ -22,7 +22,7 @@ import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.function.Consumer;
 
-public interface PagingBasicMapper extends BaseBasicMapper {
+public interface BasicPagingMapper extends BasicBaseMapper {
 
     /**
      * 分页查询

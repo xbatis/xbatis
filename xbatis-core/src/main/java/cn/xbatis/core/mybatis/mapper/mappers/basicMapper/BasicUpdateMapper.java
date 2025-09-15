@@ -23,7 +23,7 @@ import db.sql.api.impl.cmd.struct.Where;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public interface UpdateBasicMapper extends BaseBasicMapper {
+public interface BasicUpdateMapper extends BasicBaseMapper {
 
     /**
      * 实体类修改

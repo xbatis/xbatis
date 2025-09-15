@@ -41,9 +41,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Mapper
-public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapper, CountBasicMapper, ListBasicMapper, CursorBasicMapper,
-        PagingBasicMapper, MapWithKeyBasicMapper, SaveBasicMapper, SaveOrUpdateBasicMapper, SaveModelBasicMapper, SaveOrUpdateModelBasicMapper,
-        UpdateBasicMapper, UpdateModelBasicMapper, DeleteBasicMapper, DbRunner {
+public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapper, cn.xbatis.core.mybatis.mapper.mappers.basicMapper.BasicCountMapper, BasicListMapper, BasicCursorMapper,
+        BasicPagingMapper, BasicMapWithKeyMapper, BasicSaveMapper, BasicSaveOrUpdateMapper, BasicSaveModelMapper, BasicSaveOrUpdateModelMapper,
+        BasicUpdateMapper, BasicUpdateModelMapper, BasicDeleteMapper, DbRunner {
 
     /**
      * 获取当前数据库的类型

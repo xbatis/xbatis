@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public interface DeleteBasicMapper extends BaseBasicMapper {
+public interface BasicDeleteMapper extends BasicBaseMapper {
     /**
      * 根据实体类删除
      *

@@ -22,7 +22,7 @@ import db.sql.api.impl.cmd.struct.Where;
 import java.io.Serializable;
 import java.util.function.Consumer;
 
-public interface GetBasicMapper extends BaseBasicMapper {
+public interface BasicGetMapper extends BasicBaseMapper {
 
     /**
      * 根据ID查询

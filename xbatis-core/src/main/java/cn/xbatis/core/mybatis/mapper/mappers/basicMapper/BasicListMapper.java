@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface ListBasicMapper extends BaseBasicMapper {
+public interface BasicListMapper extends BasicBaseMapper {
 
     /**
      * 列表查询,返回类型，当前实体类

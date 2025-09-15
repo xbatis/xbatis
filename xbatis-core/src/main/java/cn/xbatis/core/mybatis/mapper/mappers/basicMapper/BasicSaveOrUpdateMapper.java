@@ -23,7 +23,7 @@ import db.sql.api.Getter;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
+public interface BasicSaveOrUpdateMapper extends BasicBaseMapper {
 
     /**
      * 实体类新增或修改

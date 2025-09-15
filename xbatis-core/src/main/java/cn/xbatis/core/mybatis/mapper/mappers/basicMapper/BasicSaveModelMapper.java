@@ -24,7 +24,7 @@ import db.sql.api.Getter;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public interface SaveModelBasicMapper extends BaseBasicMapper {
+public interface BasicSaveModelMapper extends BasicBaseMapper {
 
     /**
      * 实体类新增

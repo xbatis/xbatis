@@ -17,7 +17,7 @@ package cn.xbatis.core.mybatis.mapper.mappers.basicMapper;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.ProviderMapper;
 
-public interface BaseBasicMapper extends ProviderMapper {
+public interface BasicBaseMapper extends ProviderMapper {
 
     default BasicMapper getBasicMapper() {
         return (BasicMapper) this;

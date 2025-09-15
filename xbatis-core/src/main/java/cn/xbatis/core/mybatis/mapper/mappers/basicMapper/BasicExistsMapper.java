@@ -20,7 +20,7 @@ import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.function.Consumer;
 
-public interface ExistsBasicMapper extends BaseBasicMapper {
+public interface BasicExistsMapper extends BasicBaseMapper {
 
     /**
      * 是否存在

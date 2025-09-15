@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public interface CursorBasicMapper extends BaseBasicMapper {
+public interface BasicCursorMapper extends BasicBaseMapper {
 
     /**
      * 列表查询,返回类型，当前实体类

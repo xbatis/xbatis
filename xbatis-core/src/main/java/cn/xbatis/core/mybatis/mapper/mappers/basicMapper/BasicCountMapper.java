@@ -20,7 +20,7 @@ import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.function.Consumer;
 
-public interface CountBasicMapper extends BaseBasicMapper {
+public interface BasicCountMapper extends BasicBaseMapper {
 
     /**
      * 总数

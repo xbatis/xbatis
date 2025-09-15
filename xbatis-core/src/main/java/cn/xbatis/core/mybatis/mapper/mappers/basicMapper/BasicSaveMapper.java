@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public interface SaveBasicMapper extends BaseBasicMapper {
+public interface BasicSaveMapper extends BasicBaseMapper {
 
     /**
      * 实体类新增

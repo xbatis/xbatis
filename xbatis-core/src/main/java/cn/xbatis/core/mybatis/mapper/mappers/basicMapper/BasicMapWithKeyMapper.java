@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public interface MapWithKeyBasicMapper extends BaseBasicMapper {
+public interface BasicMapWithKeyMapper extends BasicBaseMapper {
 
     /**
      * 根据多个id查询结果转map
