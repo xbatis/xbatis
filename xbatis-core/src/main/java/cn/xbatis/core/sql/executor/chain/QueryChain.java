@@ -278,6 +278,9 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
             return null;
         }
         data.entrySet().forEach(entry -> {
+            if (entry.getValue() == null) {
+                return;
+            }
             Object value = valueGetter.apply((T) entry.getValue());
             entry.setValue(value);
         });
