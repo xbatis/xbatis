@@ -97,4 +97,18 @@ public class MapWithKeyTest extends BaseTest {
             assertEquals(true, maps.keySet().contains(1));
         }
     }
+
+    @Test
+    public void mapKeyAndValueTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            this.configuration.setMapUnderscoreToCamelCase(true);
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            Map<Integer, String> maps = QueryChain.of(sysRoleMapper)
+                    .select(SysRole::getId, SysRole::getName)
+                    .mapWithKeyAndValue(SysRole::getId, SysRole::getName);
+            assertEquals(2, maps.size());
+            assertEquals("测试", maps.get(1));
+            assertEquals("运维", maps.get(2));
+        }
+    }
 }

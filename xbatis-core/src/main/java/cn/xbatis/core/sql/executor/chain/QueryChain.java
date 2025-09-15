@@ -254,12 +254,34 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
      * 将结果转成map
      *
      * @param mapKey 指定的map的key属性
-     * @param <K>    map的key
+     * @param mapKey map的key
      * @return
      */
-    public <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey) {
+    public <R> Map<R, T> mapWithKey(GetterFun<T, R> mapKey) {
         this.setDefault();
         return mapper.mapWithKey(LambdaUtil.getName(mapKey), this);
+    }
+
+    /**
+     * 将结果转成map（key value都是简单类型的情况）
+     * 缺点：需要自定义类接收key value的值
+     *
+     * @param mapKey 指定的map的key属性
+     * @param <R>    valueGetter  指定返回T中的某字段的Getter方法
+     * @param <R>    map的key类型
+     * @param <R2>   map的value类型
+     * @return
+     */
+    public <R, R2> Map<R, R2> mapWithKeyAndValue(GetterFun<T, R> mapKey, GetterFun<T, R2> valueGetter) {
+        Map<R, Object> data = (Map<R, Object>) this.mapWithKey(mapKey);
+        if (data == null) {
+            return null;
+        }
+        data.entrySet().forEach(entry -> {
+            Object value = valueGetter.apply((T) entry.getValue());
+            entry.setValue(value);
+        });
+        return (Map<R, R2>) data;
     }
 
     /**
