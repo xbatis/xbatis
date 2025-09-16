@@ -34,8 +34,8 @@ public interface IHavingMethods<SELF extends IHavingMethods,
         return this.havingAnd(condition);
     }
 
-    default SELF having(ICondition condition, boolean when) {
-        return this.havingAnd(condition, when);
+    default SELF having(boolean when, ICondition condition) {
+        return this.havingAnd(when, condition);
     }
 
     default <T> SELF having(Getter<T> column, Function<TABLE_FIELD, ICondition> f) {

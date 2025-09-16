@@ -26,7 +26,7 @@ public interface IHavingOrMethod<SELF extends IHavingOrMethod, TABLE extends ITa
 
     SELF havingOr(ICondition condition);
 
-    default SELF havingOr(ICondition condition, boolean when) {
+    default SELF havingOr(boolean when, ICondition condition) {
         if (!when) {
             return (SELF) this;
         }

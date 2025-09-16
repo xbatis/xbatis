@@ -26,7 +26,7 @@ public interface IHavingAndMethod<SELF extends IHavingAndMethod, TABLE extends I
 
     SELF havingAnd(ICondition condition);
 
-    default SELF havingAnd(ICondition condition, boolean when) {
+    default SELF havingAnd(boolean when, ICondition condition) {
         if (!when) {
             return (SELF) this;
         }
