@@ -23,7 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class PageHelperPreparedParameterHandler implements ParameterHandler {
+public class OtherFrameworkPreparedParameterHandler implements ParameterHandler {
 
     private final Map<String, Object> parameterObject;
 
@@ -31,7 +31,7 @@ public class PageHelperPreparedParameterHandler implements ParameterHandler {
 
     private final BoundSql boundSql;
 
-    public PageHelperPreparedParameterHandler(MybatisConfiguration configuration, BoundSql boundSql, Map<String, Object> parameterObject) {
+    public OtherFrameworkPreparedParameterHandler(MybatisConfiguration configuration, BoundSql boundSql, Map<String, Object> parameterObject) {
         this.configuration = configuration;
         this.parameterObject = parameterObject;
         this.boundSql = boundSql;
@@ -45,6 +45,10 @@ public class PageHelperPreparedParameterHandler implements ParameterHandler {
     @Override
     public void setParameters(PreparedStatement ps) throws SQLException {
         int index = ParameterHandleUtil.setParameters(configuration, ps, (Object[]) parameterObject.get("parameters"));
+        this.pageHelperSetParameters(ps, index);
+    }
+
+    private void pageHelperSetParameters(PreparedStatement ps, int index) throws SQLException {
         boolean hasPageHelperFirstParam = false;
         boolean hasPageHelperSecondParam = false;
         for (ParameterMapping parameterMapping : boundSql.getParameterMappings()) {

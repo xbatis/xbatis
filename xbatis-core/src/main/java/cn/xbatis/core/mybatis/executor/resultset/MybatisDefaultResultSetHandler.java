@@ -15,6 +15,7 @@
 package cn.xbatis.core.mybatis.executor.resultset;
 
 import cn.xbatis.core.db.reflect.*;
+import cn.xbatis.core.mybatis.configuration.XbatisContextUtil;
 import cn.xbatis.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdCountFromQueryContext;
@@ -75,7 +76,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (mappedStatement.getResultMaps().size() == 1) {
             Class<?> returnType = mappedStatement.getResultMaps().get(0).getType();
             Object parameterObject = boundSql.getParameterObject();
-            BaseQuery<?, ?> baseQuery = getExecution(parameterObject);
+            BaseQuery<?, ?> baseQuery = XbatisContextUtil.getExecution(parameterObject);
             if (isNeedFetch(parameterObject, returnType)) {
                 ResultInfo resultInfo = ResultInfos.get(returnType);
                 this.fetchInfosMap = resultInfo.getFetchInfoMap();
@@ -110,30 +111,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             return false;
         }
 
-        if (parameterObject instanceof Map) {
-            Map parameterMap = (Map) parameterObject;
-            if (parameterMap.containsKey("execution")) {
-                Object execution = parameterMap.get("execution");
-                return execution != null && execution instanceof BaseQuery;
-            }
-        } else return parameterObject instanceof SQLCmdQueryContext;
-        return false;
-    }
-
-    private static BaseQuery<?, ?> getExecution(Object parameterObject) {
-        if (parameterObject instanceof SQLCmdQueryContext) {
-            return ((SQLCmdQueryContext) parameterObject).getExecution();
+        if (parameterObject instanceof Map && XbatisContextUtil.getExecution(parameterObject) != null) {
+            return true;
         }
-        if (parameterObject instanceof Map) {
-            Map parameterMap = (Map) parameterObject;
-            if (parameterMap.containsKey("execution")) {
-                Object execution = parameterMap.get("execution");
-                if (execution != null && execution instanceof BaseQuery) {
-                    return (BaseQuery) execution;
-                }
-            }
-        }
-        return null;
+        return parameterObject instanceof SQLCmdQueryContext;
     }
 
     private void clearObjects() {
