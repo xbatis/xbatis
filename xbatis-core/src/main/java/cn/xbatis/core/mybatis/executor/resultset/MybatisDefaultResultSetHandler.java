@@ -414,7 +414,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private List<Object> fetchData(FetchInfo fetchInfo, Query<?> query, List<Serializable> queryValueList) {
         if (queryValueList.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList();
         }
         if (Objects.nonNull(query.$where().getConditionChain())) {
             query.$where().getConditionChain().getConditionBlocks().clear();
@@ -493,7 +493,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     protected List<Object> fetchData(FetchInfo fetchInfo, List conditionList, boolean single) {
         if (conditionList.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList();
         }
         int batchSize = 100;
         List queryValueList = new ArrayList<>(100);

@@ -24,8 +24,8 @@ import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.Objects;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -37,14 +37,14 @@ public final class ListMethodUtil {
 
     public static <T> List<T> listByIds(BasicMapper basicMapper, TableInfo tableInfo, Serializable[] ids, Getter<T>[] selectFields) {
         if (ids == null || ids.length == 0) {
-            return Collections.emptyList();
+            return new ArrayList();
         }
         return listByIds(basicMapper, tableInfo, selectFields, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
     public static <T, ID extends Serializable> List<T> listByIds(BasicMapper basicMapper, TableInfo tableInfo, Collection<ID> ids, Getter<T>[] selectFields) {
         if (ids == null || ids.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList();
         }
         return listByIds(basicMapper, tableInfo, selectFields, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }

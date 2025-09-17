@@ -757,8 +757,8 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer[] ids = null;
-            assertEquals(sysUserMapper.getByIds(ids), Collections.emptyList());
-            assertEquals(sysUserMapper.getByIds(Collections.emptyList()), Collections.emptyList());
+            assertTrue(sysUserMapper.getByIds(ids).isEmpty());
+            assertTrue(sysUserMapper.getByIds(Collections.emptyList()).isEmpty());
         }
     }
 

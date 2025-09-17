@@ -207,7 +207,7 @@ public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapp
             Integer total = Optional.of(count).orElse(0);
             pager.set(PagerField.TOTAL, total);
             if (total < 1) {
-                pager.set(PagerField.RESULTS, Collections.emptyList());
+                pager.set(PagerField.RESULTS, new ArrayList());
                 return pager;
             }
         }
