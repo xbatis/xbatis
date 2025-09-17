@@ -30,9 +30,9 @@ public @interface Conditions {
     Condition[] value();
 
     /**
-     * 逻辑符号
+     * 逻辑符号,默认是OR关系
      *
      * @return Logic
      */
-    Logic logic() default Logic.AND;
+    Logic logic() default Logic.OR;
 }
