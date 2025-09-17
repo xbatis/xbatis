@@ -91,7 +91,7 @@ https://gitee.com/xbatis/xbatis-spring-boot-demo
         <dependency>
             <groupId>cn.xbatis</groupId>
             <artifactId>xbatis-spring-boot-parent</artifactId>
-            <version>1.9.1-M6</version>
+            <version>1.9.1-M7</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -116,7 +116,7 @@ https://gitee.com/xbatis/xbatis-spring-boot-demo
         <dependency>
             <groupId>cn.xbatis</groupId>
             <artifactId>xbatis-spring-boot-parent</artifactId>
-            <version>1.9.1-M6-spring-boot3</version>
+            <version>1.9.1-M7-spring-boot3</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>

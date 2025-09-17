@@ -20,7 +20,7 @@
     <parent>
         <groupId>cn.xbatis</groupId>
         <artifactId>xbatis</artifactId>
-        <version>1.9.1-M6</version>
+        <version>1.9.1-M7</version>
     </parent>
 
     <url>https://gitee.com/xbatis</url>

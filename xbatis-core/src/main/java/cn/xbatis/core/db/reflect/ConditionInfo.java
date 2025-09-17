@@ -150,6 +150,12 @@ public class ConditionInfo {
             ObjectConditionLifeCycle objectConditionLifeCycle = (ObjectConditionLifeCycle) target;
             objectConditionLifeCycle.beforeBuildCondition();
         }
+
         this.conditionItemGroups.stream().forEach(i -> i.appendCondition(conditionChain, target));
+
+        if (target instanceof ObjectConditionLifeCycle) {
+            ObjectConditionLifeCycle objectConditionLifeCycle = (ObjectConditionLifeCycle) target;
+            objectConditionLifeCycle.afterBuildCondition(conditionChain);
+        }
     }
 }
