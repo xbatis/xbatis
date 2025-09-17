@@ -87,11 +87,11 @@ public final class XbatisGlobalConfig {
             } else if (type.isArray()) {
                 return Array.newInstance(type, 0);
             } else if (List.class.isAssignableFrom(type)) {
-                return Collections.EMPTY_LIST;
+                return new ArrayList<>();
             } else if (Set.class.isAssignableFrom(type)) {
-                return Collections.EMPTY_SET;
+                return new HashSet<>();
             } else if (Map.class.isAssignableFrom(type)) {
-                return Collections.EMPTY_MAP;
+                return new HashMap<>();
             }
             throw new RuntimeException("Inconsistent types：" + type);
         });

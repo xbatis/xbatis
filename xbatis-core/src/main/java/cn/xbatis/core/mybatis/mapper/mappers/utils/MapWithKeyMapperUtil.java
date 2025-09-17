@@ -24,7 +24,7 @@ import db.sql.api.tookit.LambdaUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -57,28 +57,28 @@ public final class MapWithKeyMapperUtil {
 
     public static <T, K, ID extends Serializable> Map<K, T> mapWithKey(BasicMapper basicMapper, TableInfo tableInfo, GetterFun<T, K> mapKey, ID[] ids) {
         if (Objects.isNull(ids) || ids.length == 0) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
         return mapWithKey(basicMapper, tableInfo, mapKey, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
     public static <T, K, ID extends Serializable> Map<K, T> mapWithKey(BasicMapper basicMapper, TableInfo tableInfo, GetterFun<T, K> mapKey, Collection<ID> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
         return mapWithKey(basicMapper, tableInfo, mapKey, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
     public static <ID extends Serializable, T> Map<ID, T> map(BasicMapper basicMapper, TableInfo tableInfo, ID[] ids) {
         if (Objects.isNull(ids) || ids.length == 0) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
         return basicMapper.mapWithKey(tableInfo.getSingleIdFieldInfo(true).getField().getName(), QueryUtil.buildIdsQuery(tableInfo, ids));
     }
 
     public static <ID extends Serializable, T> Map<ID, T> map(BasicMapper basicMapper, TableInfo tableInfo, Collection<ID> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
         return basicMapper.mapWithKey(tableInfo.getSingleIdFieldInfo(true).getField().getName(), QueryUtil.buildIdsQuery(tableInfo, ids));
     }

@@ -25,7 +25,7 @@ import db.sql.api.tookit.LambdaUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -42,7 +42,7 @@ public interface BasicMapWithKeyMapper extends BasicBaseMapper {
      */
     default <T, K, ID extends Serializable> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, ID... ids) {
         if (Objects.isNull(ids) || ids.length < 1) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(mapKey);
         return MapWithKeyMapperUtil.mapWithKey(getBasicMapper(), Tables.get(lambdaFieldInfo.getType()), lambdaFieldInfo.getName(), ids);
@@ -58,7 +58,7 @@ public interface BasicMapWithKeyMapper extends BasicBaseMapper {
      */
     default <T, K, ID extends Serializable> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, Collection<ID> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         }
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(mapKey);
         return MapWithKeyMapperUtil.mapWithKey(getBasicMapper(), Tables.get(lambdaFieldInfo.getType()), lambdaFieldInfo.getName(), ids);
