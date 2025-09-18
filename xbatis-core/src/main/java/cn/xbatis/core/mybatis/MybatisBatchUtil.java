@@ -15,6 +15,7 @@
 package cn.xbatis.core.mybatis;
 
 import cn.xbatis.core.XbatisGlobalConfig;
+import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.ExecutorType;
@@ -36,13 +37,13 @@ public final class MybatisBatchUtil {
      * 批量插入（表自增的，无法获取主键ID）
      *
      * @param sqlSessionFactory mybatis SqlSessionFactory 通过spring 注解注入获取
-     * @param mapperType        MybatisMapper 的 class
+     * @param mapperType        Mapper 的 class 可以是 MybatisMapper 或 BasicMapper 或子类
      * @param list              数据列表
-     * @param <M>               MybatisMapper
+     * @param <M>               Mapper 实例
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M extends MybatisMapper<T>, T> int batchSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list) {
+    public static <M, T> int batchSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list) {
         return batchSave(sqlSessionFactory, mapperType, list, XbatisGlobalConfig.getDefaultBatchSize());
     }
 
@@ -50,15 +51,21 @@ public final class MybatisBatchUtil {
      * 批量插入（batchSize！=1时，无法获取主键）
      *
      * @param sqlSessionFactory mybatis SqlSessionFactory 通过spring 注解注入获取
-     * @param mapperType        MybatisMapper 的 class
+     * @param mapperType        Mapper 的 class 可以是 MybatisMapper 或 BasicMapper 或子类
      * @param list              数据列表
      * @param batchSize         一次批量处理的条数(如需获取主键，请设置为1)
-     * @param <M>               MybatisMapper
+     * @param <M>               Mapper 实例
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M extends MybatisMapper<T>, T> int batchSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize) {
-        return batch(sqlSessionFactory, mapperType, list, batchSize, (session, mapper, data) -> mapper.save(data));
+    public static <M, T> int batchSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize) {
+        return batch(sqlSessionFactory, mapperType, list, batchSize, (session, mapper, data) -> {
+            if (mapper instanceof BasicMapper) {
+                ((BasicMapper) mapper).save(data);
+            } else {
+                ((MybatisMapper) mapper).save(data);
+            }
+        });
     }
 
 
@@ -66,13 +73,13 @@ public final class MybatisBatchUtil {
      * 批量更新
      *
      * @param sqlSessionFactory mybatis SqlSessionFactory 通过spring 注解注入获取
-     * @param mapperType        MybatisMapper 的 class
+     * @param mapperType        Mapper 的 class 可以是 MybatisMapper 或 BasicMapper 或子类
      * @param list              数据列表
-     * @param <M>               MybatisMapper
+     * @param <M>               Mapper 实例
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M extends MybatisMapper<T>, T> int batchUpdate(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list) {
+    public static <M, T> int batchUpdate(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list) {
         return batchUpdate(sqlSessionFactory, mapperType, list, XbatisGlobalConfig.getDefaultBatchSize());
     }
 
@@ -80,26 +87,32 @@ public final class MybatisBatchUtil {
      * 批量更新
      *
      * @param sqlSessionFactory mybatis SqlSessionFactory 通过spring 注解注入获取
-     * @param mapperType        MybatisMapper 的 class
+     * @param mapperType        Mapper 的 class 可以是 MybatisMapper 或 BasicMapper 或子类
      * @param list              数据列表
      * @param batchSize         一次批量处理的条数
-     * @param <M>               MybatisMapper
+     * @param <M>               Mapper 实例
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M extends MybatisMapper<T>, T> int batchUpdate(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize) {
-        return batch(sqlSessionFactory, mapperType, list, batchSize, ((session, mapper, data) -> mapper.update(data)));
+    public static <M, T> int batchUpdate(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize) {
+        return batch(sqlSessionFactory, mapperType, list, batchSize, ((session, mapper, data) -> {
+            if (mapper instanceof BasicMapper) {
+                ((BasicMapper) mapper).update(data);
+            } else {
+                ((MybatisMapper) mapper).update(data);
+            }
+        }));
     }
 
     /**
      * 批量操作
      *
      * @param sqlSessionFactory mybatis SqlSessionFactory 通过spring 注解注入获取
-     * @param mapperType        MybatisMapper 的 class
+     * @param mapperType        Mapper 的 class 可以是 MybatisMapper 或 BasicMapper 或子类
      * @param list              数据列表
      * @param batchSize         一次批量处理的条数
      * @param batchFunction     操作方法
-     * @param <M>               MybatisMapper
+     * @param <M>               Mapper 实例
      * @param <T>               数据的类型
      * @return 影响的条数
      */
@@ -127,14 +140,52 @@ public final class MybatisBatchUtil {
     }
 
     /**
-     * 批量操作,一次多组分隔后的数据
+     * 批量原生插入操作,一次多组分隔后的数据
+     * 默认是原生100条 然后10个原生插入
      *
      * @param sqlSessionFactory mybatis SqlSessionFactory 通过spring 注解注入获取
-     * @param mapperType        MybatisMapper 的 class
+     * @param mapperType        Mapper 的 class 可以是 MybatisMapper 或 BasicMapper 或子类
+     * @param list              数据列表
+     * @param <M>               Mapper 实例
+     * @param <T>               数据的类型
+     * @return 影响的条数
+     */
+    public static <M, T> int batchMultiSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list) {
+        return batchMultiSave(sqlSessionFactory, mapperType, list, 10, 100);
+    }
+
+    /**
+     * 批量原生插入操作,一次多组分隔后的数据
+     * 默认是原生100条 然后10个原生插入
+     *
+     * @param sqlSessionFactory mybatis SqlSessionFactory 通过spring 注解注入获取
+     * @param mapperType        Mapper 的 class 可以是 MybatisMapper 或 BasicMapper 或子类
+     * @param list              数据列表
+     * @param batchSize         一次批量处理的条数
+     * @param <M>               Mapper 实例
+     * @param <T>               数据的类型
+     * @return 影响的条数
+     */
+    public static <M, T> int batchMultiSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize, int subBatchSize) {
+        MybatisBatchBiConsumer<SqlSession, M, List<T>> batchFunction = ((session, mapper, data) -> {
+            if (mapper instanceof BasicMapper) {
+                ((BasicMapper) mapper).saveBatch(data);
+            } else {
+                ((MybatisMapper) mapper).saveBatch(data);
+            }
+        });
+        return batchMulti(sqlSessionFactory, mapperType, list, batchSize, subBatchSize, batchFunction);
+    }
+
+    /**
+     * 批量分批操作,一次多组分隔后的数据
+     *
+     * @param sqlSessionFactory mybatis SqlSessionFactory 通过spring 注解注入获取
+     * @param mapperType        Mapper 的 class 可以是 MybatisMapper 或 BasicMapper 或子类
      * @param list              数据列表
      * @param batchSize         一次批量处理的条数
      * @param batchFunction     操作方法
-     * @param <M>               MybatisMapper
+     * @param <M>               Mapper 实例
      * @param <T>               数据的类型
      * @return 影响的条数
      */
