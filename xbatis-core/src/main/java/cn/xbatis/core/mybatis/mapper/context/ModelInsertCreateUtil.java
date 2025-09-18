@@ -77,7 +77,7 @@ public class ModelInsertCreateUtil {
 
         if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
             Object value = modelFieldInfo.getValue(insertData);
-            if (value != null) {
+            if (value != null && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValueFillAlways()) {
                 return;
             }
 

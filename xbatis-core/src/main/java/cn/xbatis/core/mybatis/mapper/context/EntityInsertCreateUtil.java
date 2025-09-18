@@ -80,7 +80,7 @@ public class EntityInsertCreateUtil {
 
         if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
             Object value = tableFieldInfo.getValue(insertData);
-            if (value != null) {
+            if (value != null && !tableFieldInfo.getTableFieldAnnotation().defaultValueFillAlways()) {
                 return;
             }
 

@@ -22,6 +22,7 @@ import cn.xbatis.core.sql.executor.chain.InsertChain;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import com.xbatis.core.test.DO.DefaultValue2Test;
 import com.xbatis.core.test.DO.DefaultValueTest;
+import com.xbatis.core.test.DO.DefaultValueTest3;
 import com.xbatis.core.test.DO.TestEnum;
 import com.xbatis.core.test.mapper.DefaultValueTestMapper;
 import com.xbatis.core.test.model.DefaultValue2ModelTest;
@@ -659,4 +660,24 @@ public class DefaultValueTestCase extends BaseTest {
         }
 
     }
+
+    @Test
+    public void defaultValueTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            BasicMapper mapper = session.getMapper(BasicMapper.class);
+            DefaultValueTest3 defaultValueTest = new DefaultValueTest3();
+            defaultValueTest.setValue2(0);
+            mapper.save(defaultValueTest);
+            assertEquals(defaultValueTest.getValue2(), 1);
+
+            defaultValueTest = mapper.getById(DefaultValueTest3.class, defaultValueTest.getId());
+            System.out.println(defaultValueTest);
+            assertEquals(defaultValueTest.getValue2(), 1);
+
+            mapper.update(defaultValueTest);
+            assertEquals(defaultValueTest.getValue2(), 2);
+
+        }
+    }
+
 }

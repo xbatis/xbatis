@@ -58,7 +58,7 @@ public class ModelUpdateCreateUtil {
 
         if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
             Object value = modelFieldInfo.getValue(insertData);
-            if (value != null) {
+            if (value != null && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValueFillAlways()) {
                 return;
             }
             //读取回填 修改默认值

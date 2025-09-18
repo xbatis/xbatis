@@ -70,12 +70,22 @@ public @interface TableField {
     Class<? extends TypeHandler<?>> typeHandler() default UnknownTypeHandler.class;
 
     /**
-     * 默认值 默认为NULL，“”表示NULL，如需表达 空字符，填 {BLANK}
+     * 插入默认值 默认为NULL，“”表示NULL，如需表达 空字符，填 {BLANK}
      */
     String defaultValue() default "";
+
+    /**
+     * 插入默认值是否总是填充,开启则不管有没有值都是填充
+     */
+    boolean defaultValueFillAlways() default false;
 
     /**
      * 修改默认值 默认为NULL，“”表示NULL，如需表达 空字符，填 {BLANK}
      */
     String updateDefaultValue() default "";
+
+    /**
+     * 修改默认值 是否总是填充,开启则不管有没有值都是填充
+     */
+    boolean updateDefaultValueFillAlways() default false;
 }

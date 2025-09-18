@@ -59,7 +59,7 @@ public class EntityUpdateCreateUtil {
 
         if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
             Object value = tableFieldInfo.getValue(insertData);
-            if (value != null) {
+            if (value != null && !tableFieldInfo.getTableFieldAnnotation().updateDefaultValueFillAlways()) {
                 return;
             }
             //读取回填 修改默认值
