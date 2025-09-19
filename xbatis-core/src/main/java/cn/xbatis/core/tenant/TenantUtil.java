@@ -163,6 +163,7 @@ public final class TenantUtil {
                 conditionChain.in(new MpDatasetField(table, tenantIdFieldInfo.getColumnName(),
                         tenantIdFieldInfo.getFieldInfo(), tenantIdFieldInfo.getTypeHandler(),
                         tenantIdFieldInfo.getTableFieldAnnotation().jdbcType()), tenantId.getValues());
+                onWhere(conditionChain);
                 return;
             }
             tid = tenantId.getValues()[0];
@@ -171,5 +172,16 @@ public final class TenantUtil {
         conditionChain.eq(new MpDatasetField(table, tenantIdFieldInfo.getColumnName(),
                 tenantIdFieldInfo.getFieldInfo(), tenantIdFieldInfo.getTypeHandler(),
                 tenantIdFieldInfo.getTableFieldAnnotation().jdbcType()), tid);
+        onWhere(conditionChain);
+    }
+
+    private static void onWhere(ConditionChain where) {
+        if (Objects.isNull(where)) {
+            return;
+        }
+        if (TenantContext.getTenantOnWhere() == null) {
+            return;
+        }
+        TenantContext.getTenantOnWhere().accept(where);
     }
 }

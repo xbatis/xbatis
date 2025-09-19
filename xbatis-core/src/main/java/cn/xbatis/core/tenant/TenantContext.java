@@ -14,8 +14,11 @@
 
 package cn.xbatis.core.tenant;
 
+import db.sql.api.impl.cmd.struct.ConditionChain;
+
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -23,7 +26,9 @@ import java.util.function.Supplier;
  */
 public class TenantContext {
 
-    private static Supplier<Serializable> tenantInfoGetter;
+    private static Supplier<Serializable> TENANT_INFO_GETTER;
+
+    private static Consumer<ConditionChain> TENANT_ON_WHERE;
 
     private TenantContext() {
     }
@@ -34,7 +39,16 @@ public class TenantContext {
      * @param tenantInfoGetter
      */
     public static void registerTenantGetter(Supplier<Serializable> tenantInfoGetter) {
-        TenantContext.tenantInfoGetter = tenantInfoGetter;
+        TenantContext.TENANT_INFO_GETTER = tenantInfoGetter;
+    }
+
+    /**
+     * 注册多租户on where监听
+     *
+     * @param onWhere
+     */
+    public static void registerTenantOnWhere(Consumer<ConditionChain> onWhere) {
+        TenantContext.TENANT_ON_WHERE = onWhere;
     }
 
     /**
@@ -43,10 +57,10 @@ public class TenantContext {
      * @return
      */
     public static Serializable getTenantId() {
-        if (Objects.isNull(tenantInfoGetter)) {
+        if (Objects.isNull(TENANT_INFO_GETTER)) {
             return null;
         }
-        Serializable id = tenantInfoGetter.get();
+        Serializable id = TENANT_INFO_GETTER.get();
         if (id != null && id instanceof TenantId) {
             TenantId tenantId = (TenantId) id;
             if (tenantId.getValues() == null || tenantId.getValues().length == 0) {
@@ -56,5 +70,9 @@ public class TenantContext {
             }
         }
         return id;
+    }
+
+    public static Consumer<ConditionChain> getTenantOnWhere() {
+        return TENANT_ON_WHERE;
     }
 }
