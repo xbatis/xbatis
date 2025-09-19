@@ -14,6 +14,7 @@
 
 package com.xbatis.core.test.testCase.query;
 
+import cn.xbatis.core.mybatis.mapper.context.Pager;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.SubQuery;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
@@ -293,15 +294,16 @@ public class JoinTest extends BaseTest {
 //            System.out.println(list2);
 
 
-            List<NestedTestVO> list = QueryChain.of(sysRoleMapper)
+            Pager<NestedTestVO> pager = QueryChain.of(sysRoleMapper)
                     .crossJoin(SysUser.class)
                     .returnType(NestedTestVO.class)
-                    .list();
+                    .paging(Pager.of(10000));
 
-            System.out.println((list));
-            assertEquals(2, list.size());
-            assertEquals(3, list.get(0).getRoles().size());
-            assertEquals(3, list.get(1).getRoles().size());
+            System.out.println((pager));
+            assertEquals(6, pager.getTotal());
+            assertEquals(2, pager.getResults().size());
+            assertEquals(3, pager.getResults().get(0).getRoles().size());
+            assertEquals(3, pager.getResults().get(1).getRoles().size());
         }
     }
 }
