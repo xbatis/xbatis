@@ -15,8 +15,6 @@
 package com.xbatis.core.test.vo;
 
 import cn.xbatis.db.annotations.NestedResultEntityField;
-import cn.xbatis.db.annotations.ResultField;
-import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 

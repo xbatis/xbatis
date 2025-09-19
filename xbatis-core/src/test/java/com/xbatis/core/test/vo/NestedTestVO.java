@@ -15,7 +15,6 @@
 package com.xbatis.core.test.vo;
 
 import cn.xbatis.db.annotations.NestedResultEntity;
-import cn.xbatis.db.annotations.NestedResultEntityField;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.ResultEntityField;
 import com.xbatis.core.test.DO.SysRole;
@@ -28,9 +27,9 @@ import java.util.List;
 @ResultEntity(SysRole.class)
 public class NestedTestVO {
 
-    @ResultEntityField(property=SysRole.Fields.name)
+    @ResultEntityField(property = SysRole.Fields.name)
     private String roleName;
 
-    @NestedResultEntity(target=SysUser.class)
+    @NestedResultEntity(target = SysUser.class)
     private List<NestedTestVO2> roles;
 }
