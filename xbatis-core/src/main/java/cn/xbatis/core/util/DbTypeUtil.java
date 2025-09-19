@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.util;
 
-import cn.xbatis.core.XbatisGlobalConfig;
+import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.Configuration;
 
@@ -26,14 +26,21 @@ import java.util.Objects;
 public final class DbTypeUtil {
 
     public static DbType getDbType(Configuration configuration) {
+        MybatisConfiguration xbatisConfiguration = (MybatisConfiguration) configuration;
+
+        DbType dbType;
         try {
-            return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
+            dbType = getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
         } catch (DbTypeParseException e) {
-            if (XbatisGlobalConfig.getDefaultDbType() != null) {
-                return XbatisGlobalConfig.getDefaultDbType();
+            if (xbatisConfiguration.getDefaultDbType() != null) {
+                dbType = xbatisConfiguration.getDefaultDbType();
+            } else {
+                throw e;
             }
-            throw e;
         }
+
+        DbType finalDbType = xbatisConfiguration.getDbTypeConvert().get(dbType);
+        return finalDbType == null ? dbType : finalDbType;
     }
 
     public static DbType getDbType(String databaseId, DataSource dataSource) {

@@ -20,6 +20,8 @@ import java.util.Set;
 
 public enum DbType {
 
+    UNKNOWN(new KeywordWrap("", ""), new HashSet<>()),
+
     H2(new KeywordWrap("`", "`"), new HashSet<>()),
 
     MYSQL(new KeywordWrap("`", "`"), new HashSet<>()),

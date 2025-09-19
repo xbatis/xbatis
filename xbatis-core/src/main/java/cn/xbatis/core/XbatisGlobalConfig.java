@@ -64,8 +64,6 @@ public final class XbatisGlobalConfig {
 
     private static final Object NULL = new Object();
 
-    private static volatile DbType DEFAULT_DB_TYPE;
-
     static {
         SQL_LISTENERS.add(new ForeignKeySQLListener());
         SQL_LISTENERS.add(new TenantSQLListener());
@@ -138,24 +136,6 @@ public final class XbatisGlobalConfig {
             }
             throw new RuntimeException("Inconsistent types：" + type);
         });
-    }
-
-    /**
-     * 获取默认DbType
-     *
-     * @return
-     */
-    public static DbType getDefaultDbType() {
-        return XbatisGlobalConfig.DEFAULT_DB_TYPE;
-    }
-
-    /**
-     * 设置默认DbType
-     *
-     * @param defaultDbType
-     */
-    public static void setDefaultDbType(DbType defaultDbType) {
-        XbatisGlobalConfig.DEFAULT_DB_TYPE = defaultDbType;
     }
 
     /**
