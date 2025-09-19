@@ -106,7 +106,7 @@ public class FetchInfo {
         this.returnType = returnType;
 
         this.otherConditions = otherConditions;
-        this.singleFetch = fetch.limit() >= 1;
+        this.singleFetch = fetch.limit() >= 1 && !fetch.memoryLimit();
 
         //如果自定义了select 且 里面有函数（根据括号判断）
         this.group = this.targetSelect != null && this.targetSelect.contains("(");

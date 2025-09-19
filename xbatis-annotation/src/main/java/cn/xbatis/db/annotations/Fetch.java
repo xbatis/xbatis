@@ -113,10 +113,17 @@ public @interface Fetch {
 
     /**
      * 限制条数
-     *
+     * 如果 memoryLimit true 则sql条件还是in，否则单个1个个limit 分页
      * @return
      */
     int limit() default 0;
+
+    /**
+     * 通过内存的形式进行limit；默认是SQL；内存limit的好处就是使用in查询后，代码limit，减少了查询次数
+     *
+     * @return
+     */
+    boolean memoryLimit() default false;
 
     /**
      * 当值为null时，填充的值

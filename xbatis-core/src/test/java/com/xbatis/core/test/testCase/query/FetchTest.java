@@ -385,4 +385,45 @@ public class FetchTest extends BaseTest {
             assertEquals("测试", list.get(0).getSysRole().getSysRole().getName());
         }
     }
+
+    @Test
+    public void fetchLimit() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+
+            List<FetchSysRoleVo4> listResult = QueryChain.of(sysRoleMapper)
+                    .select(FetchSysRoleVo4.class)
+                    .from(SysRole.class)
+                    .returnType(FetchSysRoleVo4.class)
+                    .list();
+
+            System.out.println(listResult);
+
+            assertEquals(listResult.size(), 2);
+            assertEquals(listResult.get(0).getSysRole().size(), 1);
+            assertEquals(listResult.get(1).getSysRole().size(), 0);
+
+        }
+    }
+
+    @Test
+    public void fetchLimit2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+
+            List<FetchSysRoleVo5> listResult = QueryChain.of(sysRoleMapper)
+                    .select(FetchSysRoleVo5.class)
+                    .from(SysRole.class)
+                    .returnType(FetchSysRoleVo5.class)
+                    .list();
+
+            System.out.println(listResult);
+
+            assertEquals(listResult.size(), 2);
+            assertEquals(listResult.get(0).getSysRole().size(), 1);
+            assertEquals(listResult.get(1).getSysRole().size(), 0);
+
+        }
+    }
+
 }

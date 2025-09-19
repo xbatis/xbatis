@@ -421,7 +421,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         if (queryValueList.size() == 1) {
-            if (fetchInfo.getFetch().limit() > 0) {
+            if (fetchInfo.getFetch().limit() > 0 && !fetchInfo.getFetch().memoryLimit()) {
                 query.limit(fetchInfo.getFetch().limit());
             }
             if (fetchInfo.getMiddleTableInfo() != null) {
@@ -578,6 +578,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 matchValues = ((List<FetchTargetValue>) matchValues)
                         .stream().map(m -> TypeConvertUtil.convert(m.getTarget(), fetchInfo.getFieldInfo().getFinalClass()))
                         .collect(Collectors.toList());
+            }
+            if (fetchInfo.getFetch().limit() > 0 && fetchInfo.getFetch().memoryLimit() && matchValues.size() > fetchInfo.getFetch().limit()) {
+                matchValues = matchValues.stream().limit(fetchInfo.getFetch().limit()).collect(Collectors.toList());
             }
             fetchInfo.setValue(rowValue, matchValues, defaultValueContext);
         } else {
