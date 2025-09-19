@@ -56,7 +56,7 @@ public final class SQLOptimizeUtils {
             if (j == current) {
                 continue;
             }
-            if (j.getOn().contain(current.getSecondTable())) {
+            if (j.getOn() != null && j.getOn().contain(current.getSecondTable())) {
                 return false;
             }
         }

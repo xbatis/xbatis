@@ -12,20 +12,25 @@
  *
  */
 
-package db.sql.api.cmd;
+package com.xbatis.core.test.vo;
 
-public enum JoinMode {
+import cn.xbatis.db.annotations.NestedResultEntity;
+import cn.xbatis.db.annotations.NestedResultEntityField;
+import cn.xbatis.db.annotations.ResultEntity;
+import cn.xbatis.db.annotations.ResultEntityField;
+import com.xbatis.core.test.DO.SysRole;
+import com.xbatis.core.test.DO.SysUser;
+import lombok.Data;
 
-    LEFT(" LEFT JOIN "), RIGHT(" RIGHT JOIN "), INNER(" INNER JOIN "), FULL(" FULL OUTER JOIN "), $CROSS(" CROSS JOIN ");
+import java.util.List;
 
-    private final String sql;
+@Data
+@ResultEntity(SysRole.class)
+public class NestedTestVO {
 
-    JoinMode(String sql) {
-        this.sql = sql;
-    }
+    @ResultEntityField(property=SysRole.Fields.name)
+    private String roleName;
 
-    public String getSql() {
-        return sql;
-    }
-
+    @NestedResultEntity(target=SysUser.class)
+    private List<NestedTestVO2> roles;
 }

@@ -356,7 +356,14 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public Join $join(JoinMode mode, IDataset<?, ?> mainTable, IDataset<?, ?> secondTable, Consumer<On> onConsumer) {
-        Join join = new Join(mode, mainTable, secondTable, (joinDataset -> new On(this.conditionFactory, joinDataset)));
+        Join join;
+
+        if (mode == JoinMode.$CROSS) {
+            join = new Join(mode, mainTable, secondTable, (joinDataset -> null));
+        } else {
+            join = new Join(mode, mainTable, secondTable, (joinDataset -> new On(this.conditionFactory, joinDataset)));
+        }
+
         if (Objects.isNull(joins)) {
             joins = new Joins();
             this.append(joins);
@@ -377,6 +384,18 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     @Override
     public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, IDataset<?, ?> secondTable, Consumer<On> consumer) {
         return this.join(mode, $.table(mainTable, mainTableStorey), secondTable, consumer);
+    }
+
+    public SELF crossJoin(Class<?> entityClass) {
+        return this.crossJoin(entityClass, 1);
+    }
+
+    public SELF crossJoin(IDataset<?, ?> table) {
+        return this.join(JoinMode.$CROSS, (IDataset<?, ?>) null, table, null);
+    }
+
+    public SELF crossJoin(Class<?> mainTable, int mainTableStorey) {
+        return this.crossJoin($.table(mainTable, mainTableStorey));
     }
 
     @Override

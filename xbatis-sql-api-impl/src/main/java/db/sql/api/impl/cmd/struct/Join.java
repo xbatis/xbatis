@@ -41,7 +41,11 @@ public class Join implements IJoin<Join, On, Table, TableField, Cmd, Object, Con
         this.mode = mode;
         this.mainTable = mainTable;
         this.secondTable = secondTable;
-        this.on = onFunction.apply(this);
+        if (onFunction != null) {
+            this.on = onFunction.apply(this);
+        } else {
+            this.on = null;
+        }
     }
 
     @Override
@@ -68,7 +72,9 @@ public class Join implements IJoin<Join, On, Table, TableField, Cmd, Object, Con
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.BLANK).append(this.mode.getSql());
         getSecondTable().sql(module, this, context, sqlBuilder);
-        getOn().sql(module, this, context, sqlBuilder);
+        if (on != null) {
+            getOn().sql(module, this, context, sqlBuilder);
+        }
         return sqlBuilder;
     }
 

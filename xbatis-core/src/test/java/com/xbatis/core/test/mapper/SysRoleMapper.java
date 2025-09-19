@@ -21,6 +21,7 @@ import cn.xbatis.db.annotations.Paging;
 import com.xbatis.core.test.DO.ReqEntity;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.vo.JsonTypeTestVo;
+import com.xbatis.core.test.vo.NestedTestVO;
 import com.xbatis.core.test.vo.XmlNestedResultMap;
 import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.annotations.Param;
@@ -66,4 +67,8 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
     List<Map> testSuperMapParams(ReqEntity reqEntity);
 
     List<Map> selectAll2();
+
+    List<NestedTestVO> nestedTest();
+
+    List<NestedTestVO> nestedTest2();
 }

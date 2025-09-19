@@ -19,9 +19,11 @@ import cn.xbatis.core.sql.executor.SubQuery;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import com.xbatis.core.test.vo.NestedTestVO;
 import com.xbatis.core.test.vo.SysUserJoinSelfVo;
 import db.sql.api.DbType;
 import db.sql.api.cmd.JoinMode;
@@ -277,6 +279,29 @@ public class JoinTest extends BaseTest {
             System.out.println(list);
 
             check("joinSelf2 sql", SQLPrinter.sql(queryChain).toLowerCase().trim(), "SELECT t2.id , t2.password , t2.role_id , t2.create_time , t2.user_name FROM t_sys_user t LEFT JOIN t_sys_user t2 ON t.id = t2.role_id WHERE t.id =1".toLowerCase());
+        }
+    }
+
+    @Test
+    public void crossJoinTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+//            List<NestedTestVO>  list= sysRoleMapper.nestedTest();
+//            System.out.println(list);
+//
+//            List<NestedTestVO>  list2= sysRoleMapper.nestedTest2();
+//            System.out.println(list2);
+
+
+            List<NestedTestVO> list = QueryChain.of(sysRoleMapper)
+                    .crossJoin(SysUser.class)
+                    .returnType(NestedTestVO.class)
+                    .list();
+
+            System.out.println((list));
+            assertEquals(2, list.size());
+            assertEquals(3, list.get(0).getRoles().size());
+            assertEquals(3, list.get(1).getRoles().size());
         }
     }
 }

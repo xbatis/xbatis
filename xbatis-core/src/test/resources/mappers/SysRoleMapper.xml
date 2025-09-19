@@ -112,7 +112,28 @@
         select t.id from t_sys_user t where <if test="params.type == 1"> id=#{params.type} </if>
     </select>
 
-    <select id="selectAll2" resultType="Map" >
+    <select id="selectAll2" resultType="Map">
         select t.id from t_sys_user t
     </select>
+
+
+    <select id="nestedTest" resultMap="nestedTestResult">
+        select t.user_name, t2.name
+        from t_sys_user t
+                 inner join sys_role t2 on t.id = t2.id
+    </select>
+
+    <select id="nestedTest2" resultType="com.xbatis.core.test.vo.NestedTestVO">
+        select t.user_name, t2.name, t2.id
+        from t_sys_user t
+                 inner join sys_role t2 on t.id = t2.id
+    </select>
+
+    <resultMap id="nestedTestResult" type="com.xbatis.core.test.vo.NestedTestVO">
+
+        <result column="name" property="roleName"></result>
+        <collection property="roles" ofType="com.xbatis.core.test.vo.NestedTestVO2">
+            <result column="user_name" property="userName"></result>
+        </collection>
+    </resultMap>
 </mapper>
