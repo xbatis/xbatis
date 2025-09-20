@@ -18,6 +18,7 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
+import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IParamWrap;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.*;
@@ -49,6 +50,16 @@ public final class Methods {
      */
     public static NULL NULL() {
         return NULL.NULL;
+    }
+
+    /**
+     * 对应SQL中的1=1;创建一个始终TRUE条件
+     * 方便开发者使用
+     *
+     * @return
+     */
+    public static ICondition TRUE() {
+        return cTpl("1=1");
     }
 
     /**
