@@ -18,6 +18,7 @@ import db.sql.api.impl.cmd.struct.ConditionChain;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -28,7 +29,7 @@ public class TenantContext {
 
     private static Supplier<Serializable> TENANT_INFO_GETTER;
 
-    private static Consumer<ConditionChain> TENANT_ON_WHERE;
+    private static BiConsumer<Class<?>, ConditionChain> TENANT_ON_WHERE;
 
     private static Consumer<Object> TENANT_ON_INSERT;
 
@@ -49,7 +50,7 @@ public class TenantContext {
      *
      * @param onWhere
      */
-    public static void registerTenantOnWhere(Consumer<ConditionChain> onWhere) {
+    public static void registerTenantOnWhere(BiConsumer<Class<?>, ConditionChain> onWhere) {
         TenantContext.TENANT_ON_WHERE = onWhere;
     }
 
@@ -83,7 +84,7 @@ public class TenantContext {
         return id;
     }
 
-    public static Consumer<ConditionChain> getTenantOnWhere() {
+    public static BiConsumer<Class<?>, ConditionChain> getTenantOnWhere() {
         return TENANT_ON_WHERE;
     }
 
