@@ -12,7 +12,7 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.mappers.basicMapper;
+package cn.xbatis.core.mybatis.mapper.mappers.basic;
 
 import cn.xbatis.core.db.reflect.Tables;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
@@ -143,5 +143,18 @@ public interface BasicUpdateMapper extends BasicBaseMapper {
         return UpdateMethodUtil.updateList(getBasicMapper(), list, updateStrategy -> {
             updateStrategy.forceFields(forceFields);
         });
+    }
+
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     * @param list
+     * @param batchFields 必须指定字段
+     * @return
+     * @param <T>
+     */
+    default <T> int updateBatch(Collection<T> list,Getter<T>... batchFields) {
+        return UpdateMethodUtil.updateBatch(getBasicMapper(), list, batchFields);
     }
 }

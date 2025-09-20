@@ -17,7 +17,7 @@ package cn.xbatis.core.mybatis.mapper;
 
 import cn.xbatis.core.function.ThreeFunction;
 import cn.xbatis.core.mybatis.mapper.context.*;
-import cn.xbatis.core.mybatis.mapper.mappers.basicMapper.*;
+import cn.xbatis.core.mybatis.mapper.mappers.basic.*;
 import cn.xbatis.core.mybatis.provider.TablePrefixUtil;
 import cn.xbatis.core.sql.executor.BaseDelete;
 import cn.xbatis.core.sql.executor.BaseInsert;
@@ -41,7 +41,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Mapper
-public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapper, cn.xbatis.core.mybatis.mapper.mappers.basicMapper.BasicCountMapper, BasicListMapper, BasicCursorMapper,
+public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapper, cn.xbatis.core.mybatis.mapper.mappers.basic.BasicCountMapper, BasicListMapper, BasicCursorMapper,
         BasicPagingMapper, BasicMapWithKeyMapper, BasicSaveMapper, BasicSaveOrUpdateMapper, BasicSaveModelMapper, BasicSaveOrUpdateModelMapper,
         BasicUpdateMapper, BasicUpdateModelMapper, BasicDeleteMapper, DbRunner {
 

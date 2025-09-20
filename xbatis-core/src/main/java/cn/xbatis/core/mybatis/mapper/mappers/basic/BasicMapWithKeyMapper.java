@@ -12,7 +12,7 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.mappers.basicMapper;
+package cn.xbatis.core.mybatis.mapper.mappers.basic;
 
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.db.reflect.Tables;

@@ -12,7 +12,7 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.mappers.basicMapper;
+package cn.xbatis.core.mybatis.mapper.mappers.basic;
 
 import cn.xbatis.core.db.reflect.Tables;
 import cn.xbatis.core.mybatis.mapper.mappers.utils.CountMethodUtil;

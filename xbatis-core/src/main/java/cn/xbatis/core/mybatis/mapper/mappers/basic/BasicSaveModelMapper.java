@@ -12,7 +12,7 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.mappers.basicMapper;
+package cn.xbatis.core.mybatis.mapper.mappers.basic;
 
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
