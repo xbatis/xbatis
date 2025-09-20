@@ -131,7 +131,6 @@ public final class UpdateMethodUtil {
 
         UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
 
-
         Map<String, List<Serializable>> columnUpdateValues = new HashMap<>();
         Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
@@ -179,6 +178,7 @@ public final class UpdateMethodUtil {
                 }
                 sqlCase.when(buildIdCaseWhen(updateChain, tableInfo, idFieldInfos, columnUpdateValues, i), Methods.cmd(value));
             }
+            sqlCase.else_(tableField);
             updateChain.set(tableField, sqlCase);
         }
 

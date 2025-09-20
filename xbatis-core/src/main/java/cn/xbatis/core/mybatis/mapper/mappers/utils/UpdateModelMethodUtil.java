@@ -139,6 +139,7 @@ public final class UpdateModelMethodUtil {
                 }
                 sqlCase.when(buildIdCaseWhen(updateChain, modelInfo.getTableInfo(), idFieldInfos, columnUpdateValues, i), Methods.cmd(value));
             }
+            sqlCase.else_(tableField);
             updateChain.set(tableField, sqlCase);
         }
 
