@@ -30,6 +30,8 @@ public class TenantContext {
 
     private static Consumer<ConditionChain> TENANT_ON_WHERE;
 
+    private static Consumer<Object> TENANT_ON_INSERT;
+
     private TenantContext() {
     }
 
@@ -49,6 +51,15 @@ public class TenantContext {
      */
     public static void registerTenantOnWhere(Consumer<ConditionChain> onWhere) {
         TenantContext.TENANT_ON_WHERE = onWhere;
+    }
+
+    /**
+     * 注册多租户on Insert 监听
+     *
+     * @param onInsert
+     */
+    public static void registerTenantOnInsert(Consumer<Object> onInsert) {
+        TenantContext.TENANT_ON_INSERT = onInsert;
     }
 
     /**
@@ -74,5 +85,9 @@ public class TenantContext {
 
     public static Consumer<ConditionChain> getTenantOnWhere() {
         return TENANT_ON_WHERE;
+    }
+
+    public static Consumer<Object> getTenantOnInsert() {
+        return TENANT_ON_INSERT;
     }
 }
