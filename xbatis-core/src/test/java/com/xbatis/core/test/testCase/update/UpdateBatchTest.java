@@ -15,8 +15,11 @@
 package com.xbatis.core.test.testCase.update;
 
 import cn.xbatis.core.sql.executor.chain.QueryChain;
+import com.xbatis.core.test.DO.DefaultValueTest;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.mapper.DefaultValueTestMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
+import com.xbatis.core.test.model.DefaultValueTestModel;
 import com.xbatis.core.test.model.SysUserModel;
 import com.xbatis.core.test.testCase.BaseTest;
 import org.apache.ibatis.session.SqlSession;
@@ -33,19 +36,18 @@ public class UpdateBatchTest extends BaseTest {
     @Test
     public void entityBatchUpdate() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            List<SysUser> list = sysUserMapper.listAll();
-            LocalDateTime now = LocalDateTime.now();
-            list.stream().forEach(sysUser -> {
-                sysUser.setPassword("123456789");
-                sysUser.setCreate_time(null);
-            });
+            DefaultValueTestMapper defaultValueTestMapper = session.getMapper(DefaultValueTestMapper.class);
+            List<DefaultValueTest> list = QueryChain.of(defaultValueTestMapper).list();
 
-            sysUserMapper.updateBatch(list);
-            list = sysUserMapper.listAll();
             list.stream().forEach(sysUser -> {
-                assertEquals(sysUser.getPassword(), "123456789");
-                assertEquals(sysUser.getCreate_time().toLocalDate(), now.toLocalDate());
+                sysUser.setValue1("123456789");
+                sysUser.setValue2(null);
+            });
+            defaultValueTestMapper.updateBatch(list);
+            list = QueryChain.of(defaultValueTestMapper).list();
+            list.stream().forEach(sysUser -> {
+                assertEquals(sysUser.getValue1(), "123456789");
+                assertEquals(sysUser.getValue2(), "2");
             });
         }
     }
@@ -58,7 +60,7 @@ public class UpdateBatchTest extends BaseTest {
             LocalDateTime now = LocalDateTime.now();
             list.stream().forEach(sysUser -> {
                 sysUser.setPassword("123456789");
-                sysUser.setCreate_time(null);
+                sysUser.setCreate_time(now);
             });
             sysUserMapper.updateBatch(list, SysUser::getUserName);
             list = sysUserMapper.listAll();
@@ -72,18 +74,18 @@ public class UpdateBatchTest extends BaseTest {
     @Test
     public void modelBatchUpdate() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            List<SysUserModel> list = QueryChain.of(sysUserMapper).returnType(SysUserModel.class).list();
-            LocalDateTime now = LocalDateTime.now();
+            DefaultValueTestMapper defaultValueTestMapper = session.getMapper(DefaultValueTestMapper.class);
+            List<DefaultValueTestModel> list = QueryChain.of(defaultValueTestMapper).returnType(DefaultValueTestModel.class).list();
+
             list.stream().forEach(sysUser -> {
-                sysUser.setPassword("123456789");
-                sysUser.setCreate_time(null);
+                sysUser.setValue1("123456789");
+                sysUser.setValue2(null);
             });
-            sysUserMapper.updateBatchModel(list);
-            list = QueryChain.of(sysUserMapper).returnType(SysUserModel.class).list();
+            defaultValueTestMapper.updateBatchModel(list);
+            list = QueryChain.of(defaultValueTestMapper).returnType(DefaultValueTestModel.class).list();
             list.stream().forEach(sysUser -> {
-                assertEquals(sysUser.getPassword(), "123456789");
-                assertEquals(sysUser.getCreate_time().toLocalDate(), now.toLocalDate());
+                assertEquals(sysUser.getValue1(), "123456789");
+                assertEquals(sysUser.getValue2(), "2");
             });
         }
     }
@@ -96,7 +98,7 @@ public class UpdateBatchTest extends BaseTest {
             LocalDateTime now = LocalDateTime.now();
             list.stream().forEach(sysUser -> {
                 sysUser.setPassword("123456789");
-                sysUser.setCreate_time(null);
+                sysUser.setCreate_time(now);
             });
             sysUserMapper.updateBatchModel(list, SysUserModel::getUserName);
             list = QueryChain.of(sysUserMapper).returnType(SysUserModel.class).list();

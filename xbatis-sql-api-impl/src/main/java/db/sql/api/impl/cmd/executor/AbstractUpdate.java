@@ -18,6 +18,7 @@ import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.UpdateStrategy;
 import db.sql.api.cmd.basic.ICondition;
@@ -35,8 +36,10 @@ import db.sql.api.impl.cmd.struct.query.Returning;
 import db.sql.api.impl.cmd.struct.update.UpdateSets;
 import db.sql.api.impl.cmd.struct.update.UpdateTable;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -168,7 +171,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         return this.set(field, value);
     }
 
-    public <T, V> SELF set(Getter<T> field, V value, Predicate<V> predicate) {
+    public <T, V extends Serializable> SELF set(Getter<T> field, V value, Predicate<V> predicate) {
         return this.set(predicate.test(value), field, value);
     }
 
@@ -178,6 +181,28 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
             return this.set($.field(field), $.field((Getter) value));
         }
         return IUpdate.super.set(field, value);
+    }
+
+    public <T, T2> SELF set(Getter<T> field, Getter<T2> targetField, BiFunction<TableField, TableField, Object> f) {
+        return IUpdate.super.set(field, f.apply($.field(field), $.field(targetField)));
+    }
+
+    public <T, T2> SELF set(boolean when, Getter<T> field, Getter<T2> targetField, BiFunction<TableField, TableField, Object> f) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.set(field, targetField, f);
+    }
+
+    public <T> SELF set(Getter<T> field, GetterField[] targetFields, Function<TableField[], Cmd> f) {
+        return IUpdate.super.set(field, f.apply($.fields(targetFields)));
+    }
+
+    public <T> SELF set(boolean when, Getter<T> field, GetterField[] targetField, Function<TableField[], Cmd> f) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.set(field, targetField, f);
     }
 
 

@@ -26,6 +26,7 @@ import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
+import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -572,6 +573,25 @@ public class UpdateTest extends BaseTest {
                     .execute();
 
             assertEquals(cnt, 1);
+        }
+    }
+
+    @Test
+    public void updateBatch() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            int cnt = UpdateChain.of(sysUserMapper)
+                    .set(true, SysUser::getUserName, true)
+                    .set(SysUser::getRole_id, SysUser::getId, (c1, c2) -> {
+                        return Methods.case_()
+                                .when(c2.eq(1), 1)
+                                .else_(c1);
+                    })
+                    .in(SysUser::getId, 1, 2, 3)
+                    .execute();
+
+            assertEquals(cnt, 3);
         }
     }
 }
