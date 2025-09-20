@@ -43,6 +43,15 @@ import java.util.stream.Collectors;
 public final class Methods {
 
     /**
+     * 对应SQL中的NULL
+     *
+     * @return
+     */
+    public static NULL NULL() {
+        return NULL.NULL;
+    }
+
+    /**
      * 如果两个对象之间的距离在指定范围之内，则返回True
      *
      * @param column   列

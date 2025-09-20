@@ -329,6 +329,28 @@ public interface Dao<T, ID> {
 
 
     /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list
+     * @return
+     */
+    default int updateBatch(Collection<T> list) {
+        return updateBatch(list, (Getter<T>[]) null);
+    }
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list
+     * @param batchFields 必须指定字段
+     * @return
+     */
+    int updateBatch(Collection<T> list, Getter<T>... batchFields);
+
+
+    /**
      * 实体类Model修改
      *
      * @param model 实体类Model对象
@@ -401,6 +423,27 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     <M extends Model<T>> int updateModel(Collection<M> list, boolean allFieldForce);
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list
+     * @return
+     */
+    default <M extends Model<T>> int updateBatchModel(Collection<M> list) {
+        return updateBatchModel(list, (Getter<M>[]) null);
+    }
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list
+     * @param batchFields 必须指定字段
+     * @return
+     */
+    <M extends Model<T>> int updateBatchModel(Collection<M> list, Getter<M>... batchFields);
 
     /**
      * 实体类保存或修改

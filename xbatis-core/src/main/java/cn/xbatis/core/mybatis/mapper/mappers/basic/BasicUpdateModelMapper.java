@@ -178,4 +178,27 @@ public interface BasicUpdateModelMapper extends BasicBaseMapper {
         updateStrategy.on(where);
         return this.update(model, updateStrategy);
     }
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list 实体类Model对象List
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int updateBatchModel(Collection<M> list) {
+        return updateBatchModel(list, (Getter<M>[]) null);
+    }
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list        实体类Model对象List
+     * @param batchFields 指定字段修改
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int updateBatchModel(Collection<M> list, Getter<M>... batchFields) {
+        return UpdateModelMethodUtil.updateBatchModel(getBasicMapper(), list, batchFields);
+    }
 }

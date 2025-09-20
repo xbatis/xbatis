@@ -995,6 +995,12 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         });
     }
 
+    @Override
+    public int updateBatch(Collection<T> list, Getter<T>... batchFields) {
+        checkIdType();
+        return UpdateMethodUtil.updateBatch(getBasicMapper(), getTableInfo(), list, batchFields);
+    }
+
     protected <M extends Model<T>> int updateWithStrategy(M model, Consumer<UpdateStrategy<M>> updateStrategy) {
         return UpdateModelMethodUtil.update(getBasicMapper(), model, updateStrategy);
     }
@@ -1048,6 +1054,12 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         return this.updateModel(list, updateStrategy -> {
             updateStrategy.allFieldUpdate(allFieldForce);
         });
+    }
+
+    @Override
+    public <M extends Model<T>> int updateBatchModel(Collection<M> list, Getter<M>... batchFields) {
+        checkIdType();
+        return UpdateModelMethodUtil.updateBatchModel(getBasicMapper(), list, batchFields);
     }
 
     @Override

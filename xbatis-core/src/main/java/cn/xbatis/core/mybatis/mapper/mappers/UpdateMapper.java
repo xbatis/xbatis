@@ -171,4 +171,29 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
             updateStrategy.forceFields(forceFields);
         });
     }
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list
+     * @param <T>
+     * @return
+     */
+    default <T> int updateBatch(Collection<T> list) {
+        return updateBatch(list, (Getter<T>[]) null);
+    }
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list
+     * @param batchFields 必须指定字段
+     * @param <T>
+     * @return
+     */
+    default <T> int updateBatch(Collection<T> list, Getter<T>... batchFields) {
+        return UpdateMethodUtil.updateBatch(getBasicMapper(), getTableInfo(), list, batchFields);
+    }
 }
