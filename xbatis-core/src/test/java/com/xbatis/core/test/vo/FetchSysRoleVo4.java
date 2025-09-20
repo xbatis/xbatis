@@ -26,7 +26,6 @@ import java.util.List;
 public class FetchSysRoleVo4 {
 
 
-
-    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, orderBy = "[{id} asc,{userName} desc]",limit = 1)
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, orderBy = "[{id} asc,{userName} desc]", limit = 1)
     private List<FetchSysUserForRoleVo> sysRole;
 }

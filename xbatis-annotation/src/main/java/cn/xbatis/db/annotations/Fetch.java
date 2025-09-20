@@ -114,6 +114,7 @@ public @interface Fetch {
     /**
      * 限制条数
      * 如果 memoryLimit true 则sql条件还是in，否则单个1个个limit 分页
+     *
      * @return
      */
     int limit() default 0;
