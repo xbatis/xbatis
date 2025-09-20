@@ -14,12 +14,10 @@
 
 package cn.xbatis.core.mybatis.mapper.mappers.utils;
 
-import cn.xbatis.core.db.reflect.ModelFieldInfo;
-import cn.xbatis.core.db.reflect.ModelInfo;
-import cn.xbatis.core.db.reflect.Models;
-import cn.xbatis.core.db.reflect.TableInfo;
+import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.ModelUpdateContext;
+import cn.xbatis.core.mybatis.mapper.context.ModelUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.db.Model;
@@ -94,14 +92,32 @@ public final class UpdateModelMethodUtil {
 
         UpdateChain updateChain = UpdateChain.of(basicMapper, modelInfo.getEntityType());
         Map<String, List<Serializable>> columnUpdateValues = new HashMap<>();
+        Map<String, Object> defaultValueContext = new HashMap<>();
         for (M model : list) {
+            if (batchFields == null || batchFields.length == 0) {
+                for (ModelFieldInfo modelFieldInfo : modelFieldInfos) {
+                    ModelUpdateCreateUtil.initUpdateValue(modelFieldInfo, model, Collections.EMPTY_SET, defaultValueContext);
+                }
+            }
+
             for (ModelFieldInfo modelFieldInfo : modelFieldInfos) {
                 List<Serializable> values = columnUpdateValues.get(modelFieldInfo.getTableFieldInfo().getColumnName());
                 if (values == null) {
                     values = new ArrayList<>();
                     columnUpdateValues.put(modelFieldInfo.getTableFieldInfo().getColumnName(), values);
                 }
+
+                if (batchFields != null && batchFields.length == 0) {
+                    ModelUpdateCreateUtil.initUpdateValue(modelFieldInfo, model, Collections.EMPTY_SET, defaultValueContext);
+                }
+
                 values.add((Serializable) modelFieldInfo.getValue(model));
+            }
+
+            if (batchFields == null || batchFields.length == 0) {
+                //非局部修改 触发onUpdate操作
+                //更新动作通知
+                OnListenerUtil.notifyUpdate(model);
             }
         }
 

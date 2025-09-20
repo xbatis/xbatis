@@ -39,7 +39,7 @@ import java.util.Set;
 
 public class EntityUpdateCreateUtil {
 
-    public static void initUpdateValue(TableInfo tableInfo, TableFieldInfo tableFieldInfo, Object insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
+    public static void initUpdateValue(TableFieldInfo tableFieldInfo, Object insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
         if (tableFieldInfo.isTenantId()) {
             boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
             Object value = tableFieldInfo.getValue(insertData);
@@ -67,12 +67,11 @@ public class EntityUpdateCreateUtil {
             return;
         }
 
-        throw new RuntimeException("未处理");
     }
 
     private static void doBefore(TableInfo tableInfo, Object insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
         for (TableFieldInfo tableFieldInfo : tableInfo.getUpdateDoBeforeTableFieldInfos()) {
-            initUpdateValue(tableInfo, tableFieldInfo, insertData, forceFields, defaultValueContext);
+            initUpdateValue(tableFieldInfo, insertData, forceFields, defaultValueContext);
         }
         //更新动作通知
         OnListenerUtil.notifyUpdate(insertData);

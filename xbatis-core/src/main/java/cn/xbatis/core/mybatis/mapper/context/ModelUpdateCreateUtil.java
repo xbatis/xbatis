@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class ModelUpdateCreateUtil {
-    public static <M extends Model<T>, T> void initUpdateValue(ModelInfo modelInfo, ModelFieldInfo modelFieldInfo, M insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
+    public static <M extends Model<T>, T> void initUpdateValue(ModelFieldInfo modelFieldInfo, M insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
         if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
             boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName());
             if (isForceUpdate) {
@@ -65,12 +65,12 @@ public class ModelUpdateCreateUtil {
             DefaultValueUtil.getAndSetUpdateDefaultValue(insertData, modelFieldInfo, defaultValueContext);
             return;
         }
-        throw new RuntimeException("未处理");
+
     }
 
     private static <M extends Model<T>, T> void doBefore(ModelInfo modelInfo, M insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
         for (ModelFieldInfo modelFieldInfo : modelInfo.getUpdateDoBeforeModelFieldInfos()) {
-            initUpdateValue(modelInfo, modelFieldInfo, insertData, forceFields, defaultValueContext);
+            initUpdateValue(modelFieldInfo, insertData, forceFields, defaultValueContext);
         }
 
         //更新动作通知

@@ -14,11 +14,13 @@
 
 package cn.xbatis.core.mybatis.mapper.mappers.utils;
 
+import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.db.reflect.Tables;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
+import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import db.sql.api.Getter;
@@ -128,15 +130,35 @@ public final class UpdateMethodUtil {
         }
 
         UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
+
+
         Map<String, List<Serializable>> columnUpdateValues = new HashMap<>();
+        Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
+            if (batchFields == null || batchFields.length == 0) {
+                for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
+                    EntityUpdateCreateUtil.initUpdateValue(tableFieldInfo, entity, Collections.EMPTY_SET, defaultValueContext);
+                }
+            }
+
             for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
                 List<Serializable> values = columnUpdateValues.get(tableFieldInfo.getColumnName());
                 if (values == null) {
                     values = new ArrayList<>();
                     columnUpdateValues.put(tableFieldInfo.getColumnName(), values);
                 }
+
+                if (batchFields != null && batchFields.length == 0) {
+                    EntityUpdateCreateUtil.initUpdateValue(tableFieldInfo, entity, Collections.EMPTY_SET, defaultValueContext);
+                }
+
                 values.add((Serializable) tableFieldInfo.getValue(entity));
+            }
+
+            if (batchFields == null || batchFields.length == 0) {
+                //非局部修改 触发onUpdate操作
+                //更新动作通知
+                OnListenerUtil.notifyUpdate(entity);
             }
         }
 
