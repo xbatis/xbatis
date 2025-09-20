@@ -537,21 +537,33 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             query.orderBy(OrderByDirection.NONE, fetchInfo.getTargetOrderBy());
         }
 
+        if (conditionList.size() < batchSize) {
+            //无需 分批次查
+            return fetchData(fetchInfo, query, (List<Serializable>) conditionList);
+        }
+
         List<Object> resultList = new ArrayList<>(conditionList.size());
         int size = conditionList.size();
         for (int i = 0; i < size; i++) {
             queryValueList.add(conditionList.get(i));
             if (i != 0 && i % batchSize == 0) {
+                //达到单次查询
                 resultList.addAll(fetchData(fetchInfo, query, (List<Serializable>) queryValueList));
+                queryValueList.clear();
             }
         }
-        if (size == 1 || (size - 1) % batchSize != 0) {
-            List<Object> list = fetchData(fetchInfo, query, (List<Serializable>) queryValueList);
-            if (resultList.isEmpty()) {
-                return list;
-            }
+
+        if (queryValueList.isEmpty()) {
+            return resultList;
+        }
+
+        //还有没查询的 继续查询
+        List<Object> list = fetchData(fetchInfo, query, (List<Serializable>) queryValueList);
+        queryValueList.clear();
+        if (!resultList.isEmpty()) {
             resultList.addAll(list);
         }
+
         return resultList;
     }
 
