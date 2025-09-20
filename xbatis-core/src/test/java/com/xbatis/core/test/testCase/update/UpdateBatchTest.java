@@ -22,6 +22,7 @@ import com.xbatis.core.test.testCase.BaseTest;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,13 +35,17 @@ public class UpdateBatchTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUser> list = sysUserMapper.listAll();
+            LocalDateTime now = LocalDateTime.now();
             list.stream().forEach(sysUser -> {
                 sysUser.setPassword("123456789");
+                sysUser.setCreate_time(null);
             });
+
             sysUserMapper.updateBatch(list);
             list = sysUserMapper.listAll();
             list.stream().forEach(sysUser -> {
                 assertEquals(sysUser.getPassword(), "123456789");
+                assertEquals(sysUser.getCreate_time().toLocalDate(), now.toLocalDate());
             });
         }
     }
@@ -50,13 +55,16 @@ public class UpdateBatchTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUser> list = sysUserMapper.listAll();
+            LocalDateTime now = LocalDateTime.now();
             list.stream().forEach(sysUser -> {
                 sysUser.setPassword("123456789");
+                sysUser.setCreate_time(null);
             });
             sysUserMapper.updateBatch(list, SysUser::getUserName);
             list = sysUserMapper.listAll();
             list.stream().forEach(sysUser -> {
                 assertNotEquals(sysUser.getPassword(), "123456789");
+                assertNotEquals(sysUser.getCreate_time().toLocalDate(), now.toLocalDate());
             });
         }
     }
@@ -66,13 +74,16 @@ public class UpdateBatchTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUserModel> list = QueryChain.of(sysUserMapper).returnType(SysUserModel.class).list();
+            LocalDateTime now = LocalDateTime.now();
             list.stream().forEach(sysUser -> {
                 sysUser.setPassword("123456789");
+                sysUser.setCreate_time(null);
             });
             sysUserMapper.updateBatchModel(list);
             list = QueryChain.of(sysUserMapper).returnType(SysUserModel.class).list();
             list.stream().forEach(sysUser -> {
                 assertEquals(sysUser.getPassword(), "123456789");
+                assertEquals(sysUser.getCreate_time().toLocalDate(), now.toLocalDate());
             });
         }
     }
@@ -82,13 +93,16 @@ public class UpdateBatchTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUserModel> list = QueryChain.of(sysUserMapper).returnType(SysUserModel.class).list();
+            LocalDateTime now = LocalDateTime.now();
             list.stream().forEach(sysUser -> {
                 sysUser.setPassword("123456789");
+                sysUser.setCreate_time(null);
             });
             sysUserMapper.updateBatchModel(list, SysUserModel::getUserName);
             list = QueryChain.of(sysUserMapper).returnType(SysUserModel.class).list();
             list.stream().forEach(sysUser -> {
                 assertNotEquals(sysUser.getPassword(), "123456789");
+                assertNotEquals(sysUser.getCreate_time().toLocalDate(), now.toLocalDate());
             });
         }
     }

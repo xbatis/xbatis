@@ -34,6 +34,7 @@ public class SysUser extends SysUserBase {
     private String password;
     @ForeignKey(SysRole.class)
     private Integer role_id;
+    @TableField(updateDefaultValue = "{NOW}")
     private LocalDateTime create_time;
 
     public static final class Fields extends SysUserBase.Fields {
