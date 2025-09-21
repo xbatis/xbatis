@@ -30,11 +30,27 @@ public class CmdTemplate extends BaseTemplate<CmdTemplate> {
         super(template, params);
     }
 
+    public CmdTemplate(boolean wrapping, String template, Object... params) {
+        super(wrapping, template, params);
+    }
+
+    public CmdTemplate(boolean wrapping, String template, Cmd... params) {
+        super(wrapping, template, params);
+    }
+
     public static CmdTemplate create(String template, Object... params) {
         return new CmdTemplate(template, params);
     }
 
     public static CmdTemplate create(String template, Cmd... params) {
         return new CmdTemplate(template, params);
+    }
+
+    public static CmdTemplate create(boolean wrapping, String template, Object... params) {
+        return new CmdTemplate(wrapping, template, params);
+    }
+
+    public static CmdTemplate create(boolean wrapping, String template, Cmd... params) {
+        return new CmdTemplate(wrapping, template, params);
     }
 }

@@ -25,6 +25,7 @@ import com.xbatis.core.test.vo.SysUserRoleAutoSelectVo;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.cmd.GetterFields;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.CmdTemplate;
 import db.sql.api.impl.cmd.basic.ConditionTemplate;
 import db.sql.api.impl.cmd.basic.FunTemplate;
@@ -89,6 +90,22 @@ public class CmdTemplateTestCase extends BaseTest {
                     .get();
 
             assertEquals(vo.getId(), 2);
+        }
+    }
+
+
+    @Test
+    public void templateWrappingTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String str = QueryChain.of(sysUserMapper)
+                    .select(Methods.tpl(true, "'123'").as("xxx"))
+                    .from(SysUser.class)
+                    .limit(1)
+                    .returnType(String.class)
+                    .get();
+
+            assertTrue(str.equals("123"));
         }
     }
 }

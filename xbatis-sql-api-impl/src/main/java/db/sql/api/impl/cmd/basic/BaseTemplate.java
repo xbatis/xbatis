@@ -29,7 +29,13 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
 
     protected final Cmd[] params;
 
+    protected final boolean wrapping;
+
     public BaseTemplate(String template, Object... params) {
+        this(false, template, params);
+    }
+
+    public BaseTemplate(boolean wrapping, String template, Object... params) {
         this.template = template;
         if (Objects.nonNull(params)) {
             Cmd[] cmds = new Cmd[params.length];
@@ -41,11 +47,55 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
         } else {
             this.params = null;
         }
+        this.wrapping = wrapping;
     }
 
-    public BaseTemplate(String template, Cmd... params) {
+    public BaseTemplate(boolean wrapping, String template, Cmd... params) {
         this.template = template;
+        this.wrapping = wrapping;
         this.params = params;
+    }
+
+    /**
+     * 对模板特殊字符 进行封装：例如 ',format会报错，自动包装成 ''
+     *
+     * @param template
+     * @return
+     */
+    protected String wrapTemplate(String template) {
+        StringBuilder tsb = new StringBuilder();
+        for (int i = 0; i < template.length(); i++) {
+            boolean hasPre = i > 0;
+            boolean hasNext = i < template.length() - 1;
+            System.out.println(i);
+            char c = template.charAt(i);
+            if (c != '\'') {
+                tsb.append(c);
+                continue;
+            }
+
+            boolean doAppend = false;
+            if (hasPre && hasNext) {
+
+                if (template.charAt(i - 1) != '\'' && template.charAt(i + 1) != '\'') {
+                    doAppend = true;
+                }
+            } else if (hasPre) {
+                if (template.charAt(i - 1) != '\'') {
+                    doAppend = true;
+                }
+            } else if (hasNext) {
+                if (template.charAt(i + 1) != '\'') {
+                    doAppend = true;
+                }
+            }
+
+            if (doAppend) {
+                tsb.append('\'');
+            }
+            tsb.append(c);
+        }
+        return tsb.toString();
     }
 
     /**
@@ -70,12 +120,17 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.BLANK);
         String str = this.template;
+        if (wrapping) {
+            str = wrapTemplate(this.template);
+        }
         if (Objects.nonNull(params) && params.length > 0) {
             Object[] paramsStr = new Object[params.length];
             for (int i = 0; i < params.length; i++) {
                 paramsStr[i] = params[i].sql(module, this, context, new StringBuilder());
             }
-            str = MessageFormat.format(this.template, paramsStr);
+            str = MessageFormat.format(str, paramsStr);
+        } else if (wrapping) {
+            str = MessageFormat.format(str,null);
         }
         sqlBuilder.append(SqlConst.BLANK).append(str);
         this.appendAlias(module, parent, context, sqlBuilder);

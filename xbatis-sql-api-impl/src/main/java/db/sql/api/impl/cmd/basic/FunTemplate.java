@@ -30,6 +30,14 @@ public class FunTemplate extends BaseTemplate<FunTemplate> implements FunctionIn
         super(template, params);
     }
 
+    public FunTemplate(boolean wrapping, String template, Object... params) {
+        super(wrapping, template, params);
+    }
+
+    public FunTemplate(boolean wrapping, String template, Cmd... params) {
+        super(wrapping, template, params);
+    }
+
     public static FunTemplate create(String template, Object... params) {
         return new FunTemplate(template, params);
     }
@@ -38,4 +46,11 @@ public class FunTemplate extends BaseTemplate<FunTemplate> implements FunctionIn
         return new FunTemplate(template, params);
     }
 
+    public static FunTemplate create(boolean wrapping, String template, Object... params) {
+        return new FunTemplate(wrapping, template, params);
+    }
+
+    public static FunTemplate create(boolean wrapping, String template, Cmd... params) {
+        return new FunTemplate(wrapping, template, params);
+    }
 }

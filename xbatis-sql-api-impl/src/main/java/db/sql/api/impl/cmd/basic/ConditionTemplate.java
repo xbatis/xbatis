@@ -31,11 +31,27 @@ public class ConditionTemplate extends BaseTemplate<ConditionTemplate> implement
         super(template, params);
     }
 
+    public ConditionTemplate(boolean wrapping, String template, Object... params) {
+        super(wrapping, template, params);
+    }
+
+    public ConditionTemplate(boolean wrapping, String template, Cmd... params) {
+        super(wrapping, template, params);
+    }
+
     public static ConditionTemplate create(String template, Object... params) {
         return new ConditionTemplate(template, params);
     }
 
     public static ConditionTemplate create(String template, Cmd... params) {
         return new ConditionTemplate(template, params);
+    }
+
+    public static ConditionTemplate create(boolean wrapping, String template, Object... params) {
+        return new ConditionTemplate(wrapping, template, params);
+    }
+
+    public static ConditionTemplate create(boolean wrapping, String template, Cmd... params) {
+        return new ConditionTemplate(wrapping, template, params);
     }
 }
