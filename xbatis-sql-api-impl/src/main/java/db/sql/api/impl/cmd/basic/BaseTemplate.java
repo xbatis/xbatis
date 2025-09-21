@@ -58,7 +58,6 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
 
     /**
      * 对模板特殊字符 进行封装：例如 ',format会报错，自动包装成 ''
-     *
      * @param template
      * @return
      */
@@ -120,17 +119,15 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.BLANK);
         String str = this.template;
-        if (wrapping) {
-            str = wrapTemplate(this.template);
-        }
         if (Objects.nonNull(params) && params.length > 0) {
             Object[] paramsStr = new Object[params.length];
             for (int i = 0; i < params.length; i++) {
                 paramsStr[i] = params[i].sql(module, this, context, new StringBuilder());
             }
+            if (wrapping) {
+                str = wrapTemplate(this.template);
+            }
             str = MessageFormat.format(str, paramsStr);
-        } else if (wrapping) {
-            str = MessageFormat.format(str,null);
         }
         sqlBuilder.append(SqlConst.BLANK).append(str);
         this.appendAlias(module, parent, context, sqlBuilder);
