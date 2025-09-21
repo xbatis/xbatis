@@ -128,6 +128,9 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
                 str = wrapTemplate(this.template);
             }
             str = MessageFormat.format(str, paramsStr);
+        } else if (wrapping) {
+            str = wrapTemplate(this.template);
+            str = MessageFormat.format(str, null);
         }
         sqlBuilder.append(SqlConst.BLANK).append(str);
         this.appendAlias(module, parent, context, sqlBuilder);
