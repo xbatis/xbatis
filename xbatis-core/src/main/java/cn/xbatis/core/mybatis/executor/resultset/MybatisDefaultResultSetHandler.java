@@ -496,7 +496,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             return new ArrayList();
         }
         int batchSize = 100;
-        List queryValueList = new ArrayList<>(100);
+        List queryValueList = new ArrayList<>(batchSize);
         Query<?> query = Query.create().returnType(fetchInfo.getReturnType());
 
         //如果有中间表
@@ -546,7 +546,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         int size = conditionList.size();
         for (int i = 0; i < size; i++) {
             queryValueList.add(conditionList.get(i));
-            if (i != 0 && i % batchSize == 0) {
+            if ((i + 1) % batchSize == 0) {
                 //达到单次查询
                 resultList.addAll(fetchData(fetchInfo, query, (List<Serializable>) queryValueList));
                 queryValueList.clear();
