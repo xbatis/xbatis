@@ -104,7 +104,6 @@ public class MapWithKeyTest extends BaseTest {
             this.configuration.setMapUnderscoreToCamelCase(true);
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             Map<Integer, String> maps = QueryChain.of(sysRoleMapper)
-                    .select(SysRole::getId, SysRole::getName)
                     .mapWithKeyAndValue(SysRole::getId, SysRole::getName);
             assertEquals(2, maps.size());
             assertEquals("测试", maps.get(1));

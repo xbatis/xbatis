@@ -548,6 +548,24 @@ public class ResultInfo {
         return tablePrefixes;
     }
 
+    public ResultFieldInfo getFieldInfo(Field field) {
+        for (ResultFieldInfo resultFieldInfo : resultFieldInfos) {
+            if (resultFieldInfo.getField().equals(field)) {
+                return resultFieldInfo;
+            }
+        }
+        return null;
+    }
+
+    public ResultFieldInfo getFieldInfo(Class<?> clazz, String fieldName) {
+        for (ResultFieldInfo resultFieldInfo : resultFieldInfos) {
+            if (resultFieldInfo.getFieldInfo().getClazz().equals(clazz) && resultFieldInfo.getField().getName().equals(fieldName)) {
+                return resultFieldInfo;
+            }
+        }
+        return null;
+    }
+
     static class ParseResult {
 
         public final Map<Class, List<FetchInfo>> fetchInfoMap = new HashMap<>();

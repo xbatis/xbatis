@@ -14,11 +14,15 @@
 
 package cn.xbatis.core.sql.executor.chain;
 
+import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.mapper.BaseMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.util.SelectClassUtil;
+import cn.xbatis.db.annotations.ResultEntity;
+import cn.xbatis.db.annotations.Table;
 import cn.xbatis.page.IPager;
+import db.sql.api.Cmd;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
@@ -262,6 +266,52 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         return mapper.mapWithKey(LambdaUtil.getName(mapKey), this);
     }
 
+    private <R> Cmd getCmdFromMapWithGetter(GetterFun<T, R> getter) {
+        LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(getter);
+        if (fieldInfo.getType().isAnnotationPresent(Table.class)) {
+            TableFieldInfo tableFieldInfo = $().getTableInfo(fieldInfo.getType()).getFieldInfo(fieldInfo.getName());
+            if (tableFieldInfo != null) {
+                return $(fieldInfo.getType(), fieldInfo.getName());
+            }
+        } else if (fieldInfo.getType().isAnnotationPresent(ResultEntity.class)) {
+            ResultInfo resultInfo = ResultInfos.get(fieldInfo.getType());
+            ResultFieldInfo resultFieldInfo = resultInfo.getFieldInfo(fieldInfo.getType(), fieldInfo.getName());
+            if (resultFieldInfo != null) {
+                if (resultFieldInfo instanceof ResultTableFieldInfo) {
+                    //select Vo field
+                    ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) resultFieldInfo;
+                    Cmd tableField = $.field(resultTableFieldInfo.getTableInfo().getType(), resultTableFieldInfo.getTableFieldInfo().getField().getName(), resultTableFieldInfo.getStorey());
+                    return tableField;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 2个都有对应列映射时 才会返回，否则为null
+     *
+     * @param mapKey
+     * @param valueGetter
+     * @param <R>
+     * @param <R2>
+     * @return
+     */
+    private <R, R2> Cmd[] getCmdFromMapWithKeyAndValue(GetterFun<T, R> mapKey, GetterFun<T, R2> valueGetter) {
+        Cmd[] cmds = new Cmd[2];
+        Cmd cmd = getCmdFromMapWithGetter(mapKey);
+        if (cmd == null) {
+            return null;
+        }
+        cmds[0] = cmd;
+        cmd = getCmdFromMapWithGetter(valueGetter);
+        if (cmd == null) {
+            return null;
+        }
+        cmds[1] = cmd;
+        return cmds;
+    }
+
     /**
      * 将结果转成map（key value都是简单类型的情况）
      * 缺点：需要额外非基本类型 类接收key value的值（框架内部操作）
@@ -273,6 +323,13 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
      * @return
      */
     public <R, R2> Map<R, R2> mapWithKeyAndValue(GetterFun<T, R> mapKey, GetterFun<T, R2> valueGetter) {
+        if (this.select == null || this.select.getSelectField().isEmpty()) {
+            Cmd[] selectCmds = this.getCmdFromMapWithKeyAndValue(mapKey, valueGetter);
+            if (selectCmds != null) {
+                this.select(selectCmds);
+            }
+        }
+
         Map<R, Object> data = (Map<R, Object>) this.mapWithKey(mapKey);
         if (data == null) {
             return null;
