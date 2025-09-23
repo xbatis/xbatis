@@ -41,6 +41,11 @@ public class ResultFieldInfo {
      */
     private final String mappingColumnName;
 
+    /**
+     * 其他映射的列
+     */
+    private String[] otherMappingColumnNames;
+
 
     /**
      * typeHandler
@@ -55,6 +60,12 @@ public class ResultFieldInfo {
 
     public ResultFieldInfo(Class clazz, Field field, ResultField resultField) {
         this(true, clazz, field, getColumnName(clazz, field, resultField), getTypeHandler(field, resultField), resultField.jdbcType());
+        if (resultField.value().length > 1) {
+            String[] otherMappingColumnNames = new String[resultField.value().length - 1];
+            for (int i = 1; i < resultField.value().length; i++) {
+                otherMappingColumnNames[i - 1] = resultField.value()[i];
+            }
+        }
     }
 
     public ResultFieldInfo(boolean resultMapping, Class clazz, Field field, String mappingColumnName, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
@@ -75,7 +86,7 @@ public class ResultFieldInfo {
     }
 
     static String getColumnName(Class clazz, Field field, ResultField resultField) {
-        String name = resultField.value();
+        String name = resultField.value()[0];
         if (name.isEmpty()) {
             name = SqlUtil.getAsName(clazz, field);
         }
@@ -104,5 +115,9 @@ public class ResultFieldInfo {
 
     public FieldInfo getFieldInfo() {
         return fieldInfo;
+    }
+
+    public String[] getOtherMappingColumnNames() {
+        return otherMappingColumnNames;
     }
 }

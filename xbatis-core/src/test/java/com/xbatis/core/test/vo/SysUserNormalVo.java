@@ -8,6 +8,6 @@ public class SysUserNormalVo {
 
     private Integer id;
 
-    @ResultField("user_name")
+    @ResultField({"name2", "user_name"})
     private String name2;
 }

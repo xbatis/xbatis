@@ -34,7 +34,7 @@ public @interface ResultField {
      *
      * @return
      */
-    String value() default "";
+    String[] value() default "";
 
     /**
      * 配置 列的 jdbcType

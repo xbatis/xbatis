@@ -112,8 +112,10 @@ public final class ResultMapUtils {
                 ResultField resultField = field.getAnnotation(ResultField.class);
                 jdbcType = resultField.jdbcType();
                 typeHandler = resultField.typeHandler();
-                if (!resultField.value().isEmpty()) {
-                    resultMappings.add(configuration.buildResultMapping(false, fieldInfo, resultField.value(), jdbcType, typeHandler));
+                if (resultField.value().length != 1 || !resultField.value()[0].isEmpty()) {
+                    for (String columnName : resultField.value()) {
+                        resultMappings.add(configuration.buildResultMapping(false, fieldInfo, columnName, jdbcType, typeHandler));
+                    }
                     resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), jdbcType, typeHandler));
                     resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), jdbcType, typeHandler));
                     resultMappings.add(configuration.buildResultMapping(false, fieldInfo, PropertyNamer.camelToUnderscore(field.getName()), jdbcType, typeHandler));
