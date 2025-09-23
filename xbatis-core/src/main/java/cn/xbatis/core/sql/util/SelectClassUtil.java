@@ -26,8 +26,14 @@ import java.util.List;
 
 public final class SelectClassUtil {
 
-    private static void buildSelect(AbstractQuery query, List<ResultFieldInfo> resultFieldInfos, List<Cmd> cmdList) {
-        resultFieldInfos.stream().filter(item -> item instanceof ResultTableFieldInfo)
+    public static void buildSelect(AbstractQuery query, List<ResultFieldInfo> resultFieldInfos, List<Cmd> cmdList, boolean throwExceptionWhenNonEntityRefField) {
+        resultFieldInfos.stream().filter(item -> {
+                    boolean isEntityRefField = item instanceof ResultTableFieldInfo;
+                    if (!isEntityRefField && throwExceptionWhenNonEntityRefField) {
+                        throw new RuntimeException("包含非实体类引用字段，无法自动select");
+                    }
+                    return isEntityRefField;
+                })
                 .forEach(item -> {
                     ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
                     Cmd tableField = query.$().field(resultTableFieldInfo.getTableInfo().getType(), resultTableFieldInfo.getTableFieldInfo().getField().getName(), resultTableFieldInfo.getStorey());
@@ -37,18 +43,18 @@ public final class SelectClassUtil {
                 });
     }
 
-    private static void buildNestedSelect(AbstractQuery query, List<NestedResultInfo> nestedResultInfos, List<Cmd> cmdList) {
+    public static void buildNestedSelect(AbstractQuery query, List<NestedResultInfo> nestedResultInfos, List<Cmd> cmdList, boolean throwExceptionWhenNonEntityRefField) {
         nestedResultInfos.forEach(item -> {
-            buildSelect(query, item.getResultFieldInfos(), cmdList);
-            buildNestedSelect(query, item.getNestedResultInfos(), cmdList);
+            buildSelect(query, item.getResultFieldInfos(), cmdList, throwExceptionWhenNonEntityRefField);
+            buildNestedSelect(query, item.getNestedResultInfos(), cmdList, throwExceptionWhenNonEntityRefField);
         });
     }
 
-    private static List<Cmd> buildSelect(AbstractQuery query, Class clazz, int storey, List<Cmd> cmdList) {
+    public static List<Cmd> buildSelect(AbstractQuery query, Class clazz, int storey, List<Cmd> cmdList, boolean throwExceptionWhenNonEntityRefField) {
         if (clazz.isAnnotationPresent(ResultEntity.class)) {
             ResultInfo resultInfo = ResultInfos.get(clazz);
-            buildSelect(query, resultInfo.getResultFieldInfos(), cmdList);
-            buildNestedSelect(query, resultInfo.getNestedResultInfos(), cmdList);
+            buildSelect(query, resultInfo.getResultFieldInfos(), cmdList, throwExceptionWhenNonEntityRefField);
+            buildNestedSelect(query, resultInfo.getNestedResultInfos(), cmdList, throwExceptionWhenNonEntityRefField);
         } else if (clazz.isAnnotationPresent(Table.class)) {
             TableInfo tableInfo = Tables.get(clazz);
             for (int i = 0; i < tableInfo.getFieldSize(); i++) {
@@ -57,6 +63,8 @@ public final class SelectClassUtil {
                     cmdList.add(query.$().field(clazz, tableFieldInfo.getField().getName(), storey));
                 }
             }
+        } else if (throwExceptionWhenNonEntityRefField) {
+            throw new RuntimeException("包含非实体类引用字段，无法自动select");
         }
         return cmdList;
     }
@@ -67,14 +75,14 @@ public final class SelectClassUtil {
 
     public static boolean select(AbstractQuery query, Class clazz, int storey) {
         List<Cmd> list = new ArrayList<>();
-        query.select(buildSelect(query, clazz, storey, list));
+        query.select(buildSelect(query, clazz, storey, list, false));
         return !list.isEmpty();
     }
 
     public static void select(AbstractQuery query, int storey, Class[] entities) {
         List<Cmd> list = new ArrayList<>();
         for (Class entity : entities) {
-            buildSelect(query, entity, storey, list);
+            buildSelect(query, entity, storey, list, false);
         }
         query.select(list);
     }

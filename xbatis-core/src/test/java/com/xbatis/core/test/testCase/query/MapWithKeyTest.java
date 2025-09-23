@@ -16,8 +16,10 @@ package com.xbatis.core.test.testCase.query;
 
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import com.xbatis.core.test.DO.SysRole;
+import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.testCase.BaseTest;
+import com.xbatis.core.test.vo.SysRoleVo3;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -108,6 +110,22 @@ public class MapWithKeyTest extends BaseTest {
             assertEquals(2, maps.size());
             assertEquals("测试", maps.get(1));
             assertEquals("运维", maps.get(2));
+        }
+    }
+
+    @Test
+    public void mapKeyAndValueTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            this.configuration.setMapUnderscoreToCamelCase(true);
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            Map<Integer, SysUser> maps = QueryChain.of(sysRoleMapper)
+                    .innerJoin(SysRole::getId, SysUser::getRole_id)
+                    .returnType(SysRoleVo3.class)
+                    .mapWithKeyAndValue(SysRoleVo3::getId, SysRoleVo3::getSysUser);
+
+            System.out.println(maps);
+            assertEquals(1, maps.size());
+            assertEquals("test2", maps.get(1).getUserName());
         }
     }
 }

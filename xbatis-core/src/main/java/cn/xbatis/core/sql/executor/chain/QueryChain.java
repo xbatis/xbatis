@@ -19,6 +19,7 @@ import cn.xbatis.core.mybatis.mapper.BaseMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.util.SelectClassUtil;
+import cn.xbatis.db.annotations.NestedResultEntity;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.page.IPager;
@@ -28,10 +29,13 @@ import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * 查询链路
@@ -266,50 +270,55 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         return mapper.mapWithKey(LambdaUtil.getName(mapKey), this);
     }
 
-    private <R> Cmd getCmdFromMapWithGetter(GetterFun<T, R> getter) {
-        LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(getter);
-        if (fieldInfo.getType().isAnnotationPresent(Table.class)) {
-            TableFieldInfo tableFieldInfo = $().getTableInfo(fieldInfo.getType()).getFieldInfo(fieldInfo.getName());
-            if (tableFieldInfo != null) {
-                return $(fieldInfo.getType(), fieldInfo.getName());
-            }
-        } else if (fieldInfo.getType().isAnnotationPresent(ResultEntity.class)) {
-            ResultInfo resultInfo = ResultInfos.get(fieldInfo.getType());
-            ResultFieldInfo resultFieldInfo = resultInfo.getFieldInfo(fieldInfo.getType(), fieldInfo.getName());
+    private <R> void selectFromMapWithGetter(GetterFun<T, R> getter) {
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
+        if (lambdaFieldInfo.getType().isAnnotationPresent(Table.class)) {
+            this.select($(lambdaFieldInfo.getType(), lambdaFieldInfo.getName()));
+        } else if (lambdaFieldInfo.getType().isAnnotationPresent(ResultEntity.class)) {
+            ResultInfo resultInfo = ResultInfos.get(lambdaFieldInfo.getType());
+            ResultFieldInfo resultFieldInfo = resultInfo.getFieldInfo(lambdaFieldInfo.getType(), lambdaFieldInfo.getName());
             if (resultFieldInfo != null) {
                 if (resultFieldInfo instanceof ResultTableFieldInfo) {
                     //select Vo field
                     ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) resultFieldInfo;
                     Cmd tableField = $.field(resultTableFieldInfo.getTableInfo().getType(), resultTableFieldInfo.getTableFieldInfo().getField().getName(), resultTableFieldInfo.getStorey());
-                    return tableField;
+                    this.select(tableField);
+                } else {
+                    throw new RuntimeException("包含非实体类引用字段，无法自动select");
+                }
+            } else {
+                //复杂的类 字段
+                Field field;
+                try {
+                    field = lambdaFieldInfo.getType().getDeclaredField(lambdaFieldInfo.getName());
+                } catch (NoSuchFieldException e) {
+                    throw new RuntimeException(e);
+                }
+                if (field.isAnnotationPresent(NestedResultEntity.class)) {
+                    List<Cmd> list = new ArrayList();
+                    SelectClassUtil.buildNestedSelect(this, resultInfo.getNestedResultInfos(), list, true);
+                    this.select(list);
+                } else {
+                    throw new RuntimeException("包含非实体类引用字段，无法自动select");
                 }
             }
         }
-        return null;
+    }
+
+    private List<NestedResultInfo> getNestedResultFieldInfo(ResultInfo resultInfo, Class clazz) {
+        return resultInfo.getNestedResultInfos().stream().filter(i -> i.getFieldInfo().getClazz() == clazz).collect(Collectors.toList());
     }
 
     /**
-     * 2个都有对应列映射时 才会返回，否则为null
-     *
+     * 自动select mapKey value
      * @param mapKey
      * @param valueGetter
      * @param <R>
      * @param <R2>
-     * @return
      */
-    private <R, R2> Cmd[] getCmdFromMapWithKeyAndValue(GetterFun<T, R> mapKey, GetterFun<T, R2> valueGetter) {
-        Cmd[] cmds = new Cmd[2];
-        Cmd cmd = getCmdFromMapWithGetter(mapKey);
-        if (cmd == null) {
-            return null;
-        }
-        cmds[0] = cmd;
-        cmd = getCmdFromMapWithGetter(valueGetter);
-        if (cmd == null) {
-            return null;
-        }
-        cmds[1] = cmd;
-        return cmds;
+    private <R, R2> void selectMapWithKeyAndValue(GetterFun<T, R> mapKey, GetterFun<T, R2> valueGetter) {
+        this.selectFromMapWithGetter(mapKey);
+        this.selectFromMapWithGetter(valueGetter);
     }
 
     /**
@@ -324,10 +333,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
      */
     public <R, R2> Map<R, R2> mapWithKeyAndValue(GetterFun<T, R> mapKey, GetterFun<T, R2> valueGetter) {
         if (this.select == null || this.select.getSelectField().isEmpty()) {
-            Cmd[] selectCmds = this.getCmdFromMapWithKeyAndValue(mapKey, valueGetter);
-            if (selectCmds != null) {
-                this.select(selectCmds);
-            }
+            this.selectMapWithKeyAndValue(mapKey, valueGetter);
         }
 
         Map<R, Object> data = (Map<R, Object>) this.mapWithKey(mapKey);
