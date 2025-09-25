@@ -40,23 +40,18 @@ public class ResultFieldInfo {
      * 隐射的列名
      */
     private final String mappingColumnName;
-
-    /**
-     * 其他映射的列
-     */
-    private String[] otherMappingColumnNames;
-
-
     /**
      * typeHandler
      */
     private final Class<? extends TypeHandler<?>> typeHandler;
-
-
     /**
      * jdbcType
      */
     private final JdbcType jdbcType;
+    /**
+     * 其他映射的列
+     */
+    private String[] otherMappingColumnNames;
 
     public ResultFieldInfo(Class clazz, Field field, ResultField resultField) {
         this(true, clazz, field, getColumnName(clazz, field, resultField), getTypeHandler(field, resultField), resultField.jdbcType());

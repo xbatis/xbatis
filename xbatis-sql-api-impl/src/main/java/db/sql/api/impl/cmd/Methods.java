@@ -88,6 +88,7 @@ public final class Methods {
 
     /**
      * 创建普通sql模板
+     *
      * @param wrapping 会对单引号进行包裹，因为使用的是MessageFormat,单引号是特殊字符；开启后无需关注单引号问题
      * @param template 模板
      * @param params   参数
@@ -112,6 +113,7 @@ public final class Methods {
 
     /**
      * 创建函数sql模板
+     *
      * @param wrapping 会对单引号进行包裹，因为使用的是MessageFormat,单引号是特殊字符；开启后无需关注单引号问题
      * @param template 模板
      * @param params   参数
@@ -136,6 +138,7 @@ public final class Methods {
 
     /**
      * 创建条件sql模板
+     *
      * @param wrapping 会对单引号进行包裹，因为使用的是MessageFormat,单引号是特殊字符；开启后无需关注单引号问题
      * @param template 模板
      * @param params   参数

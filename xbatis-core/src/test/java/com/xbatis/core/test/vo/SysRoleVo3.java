@@ -14,10 +14,10 @@
 
 package com.xbatis.core.test.vo;
 
-import cn.xbatis.db.annotations.*;
+import cn.xbatis.db.annotations.NestedResultEntity;
+import cn.xbatis.db.annotations.ResultEntity;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
-import com.xbatis.core.test.GetPutValueFactory;
 import lombok.Data;
 
 @Data

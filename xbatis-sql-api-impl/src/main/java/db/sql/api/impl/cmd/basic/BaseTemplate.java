@@ -58,6 +58,7 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
 
     /**
      * 对模板特殊字符 进行封装：例如 ',format会报错，自动包装成 ''
+     *
      * @param template
      * @return
      */

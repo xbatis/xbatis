@@ -311,6 +311,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
 
     /**
      * 自动select mapKey value
+     *
      * @param mapKey
      * @param valueGetter
      * @param <R>
