@@ -28,7 +28,11 @@ import java.util.Objects;
 
 public class BasicValue extends AbstractField<BasicValue> {
 
-    private final Object value;
+    private Object value;
+
+    public BasicValue() {
+
+    }
 
     public BasicValue(Object value) {
         this.value = value;
@@ -38,8 +42,15 @@ public class BasicValue extends AbstractField<BasicValue> {
         return value;
     }
 
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (this.value == null) {
+            throw new IllegalArgumentException("BasicValue's value is null");
+        }
         Object originValue = this.value;
 
         if (value instanceof ValueWrap) {
