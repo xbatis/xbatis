@@ -21,6 +21,7 @@ import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface IHavingAndMethod<SELF extends IHavingAndMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> {
 
@@ -31,6 +32,21 @@ public interface IHavingAndMethod<SELF extends IHavingAndMethod, TABLE extends I
             return (SELF) this;
         }
         return this.havingAnd(condition);
+    }
+
+    default SELF havingAnd(Supplier<ICondition> supplier) {
+        ICondition condition = supplier.get();
+        if (condition == null) {
+            return (SELF) this;
+        }
+        return this.havingAnd(condition);
+    }
+
+    default SELF havingAnd(boolean when, Supplier<ICondition> supplier) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.havingAnd(supplier);
     }
 
     //---

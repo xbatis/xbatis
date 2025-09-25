@@ -175,6 +175,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
+    public ICondition $conditionWhenFalseRV() {
+        return null;
+    }
+
+    @Override
     public ICondition empty(Cmd column) {
         if (!isKeyValid(column)) {
             return null;

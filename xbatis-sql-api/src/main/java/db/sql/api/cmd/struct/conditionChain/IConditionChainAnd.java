@@ -26,7 +26,7 @@ public interface IConditionChainAnd<SELF extends IConditionChainAnd, TABLE_FIELD
 
     SELF and(ICondition condition);
 
-    default SELF and(ICondition condition, boolean when) {
+    default SELF and(boolean when, ICondition condition) {
         if (!when) {
             return (SELF) this;
         }

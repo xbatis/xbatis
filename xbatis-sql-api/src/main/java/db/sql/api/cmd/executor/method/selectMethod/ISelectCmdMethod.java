@@ -18,24 +18,61 @@ package db.sql.api.cmd.executor.method.selectMethod;
 import db.sql.api.Cmd;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public interface ISelectCmdMethod<SELF extends ISelectCmdMethod, COLUMN extends Cmd> {
 
     SELF select(COLUMN column);
 
+    default SELF select(boolean when, COLUMN column) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.select(column);
+    }
+
+    default SELF select(Supplier<COLUMN> supplier) {
+        COLUMN column = supplier.get();
+        if (column == null) {
+            return (SELF) this;
+        }
+        return this.select(column);
+    }
+
+    default SELF select(boolean when, Supplier<COLUMN> supplier) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.select(supplier);
+    }
+
     @SuppressWarnings("unchecked")
     default SELF select(COLUMN... columns) {
+        return this.select(true, columns);
+    }
+
+    @SuppressWarnings("unchecked")
+    default SELF select(boolean when, COLUMN... columns) {
+        if (!when) {
+            return (SELF) this;
+        }
         for (COLUMN column : columns) {
             this.select(column);
         }
         return (SELF) this;
     }
 
-
     default SELF select(List<COLUMN> columns) {
         for (COLUMN column : columns) {
             this.select(column);
         }
         return (SELF) this;
+    }
+
+    default SELF select(boolean when, List<COLUMN> columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.select(columns);
     }
 }

@@ -28,10 +28,10 @@ public interface IILikeGetterCompare<RV> {
     }
 
     default <T> RV iLike(Getter<T> column, String value, int storey) {
-        return iLike(column, storey, value, true);
+        return iLike(true, column, storey, value);
     }
 
-    default <T> RV iLike(Getter<T> column, int storey, String value, boolean when) {
+    default <T> RV iLike(boolean when, Getter<T> column, int storey, String value) {
         return this.iLike(when, LikeMode.DEFAULT, column, storey, value);
     }
 

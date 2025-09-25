@@ -21,6 +21,7 @@ import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface IHavingOrMethod<SELF extends IHavingOrMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> {
 
@@ -31,6 +32,21 @@ public interface IHavingOrMethod<SELF extends IHavingOrMethod, TABLE extends ITa
             return (SELF) this;
         }
         return this.havingOr(condition);
+    }
+
+    default SELF havingOr(Supplier<ICondition> supplier) {
+        ICondition condition = supplier.get();
+        if (condition == null) {
+            return (SELF) this;
+        }
+        return this.havingOr(condition);
+    }
+
+    default SELF havingOr(boolean when, Supplier<ICondition> supplier) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.havingOr(supplier);
     }
 
     //---

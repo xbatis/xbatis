@@ -19,6 +19,7 @@ import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.IOrderByDirection;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extends Cmd> extends IBaseOrderByMethods {
 
@@ -26,17 +27,75 @@ public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extend
         return this.orderBy(ascOrderByDirection(), column);
     }
 
+    default SELF orderBy(boolean when, COLUMN column) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(column);
+    }
+
+    default SELF orderBy(Supplier<COLUMN> supplier) {
+        COLUMN column = supplier.get();
+        if (column == null) {
+            return (SELF) this;
+        }
+        return this.orderBy(column);
+    }
+
+    default SELF orderBy(boolean when, Supplier<COLUMN> supplier) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(supplier);
+    }
+
     @SuppressWarnings("unchecked")
     default SELF orderBy(COLUMN... columns) {
         return this.orderBy(ascOrderByDirection(), columns);
+    }
+
+    default SELF orderBy(boolean when, COLUMN... columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(columns);
     }
 
     default SELF orderBy(List<COLUMN> columns) {
         return this.orderBy(ascOrderByDirection(), columns);
     }
 
+    default SELF orderBy(boolean when, List<COLUMN> columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(columns);
+    }
+
     default SELF orderByDesc(COLUMN column) {
         return this.orderBy(descOrderByDirection(), column);
+    }
+
+    default SELF orderByDesc(boolean when, COLUMN column) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderByDesc(column);
+    }
+
+    default SELF orderByDesc(Supplier<COLUMN> supplier) {
+        COLUMN column = supplier.get();
+        if (column == null) {
+            return (SELF) this;
+        }
+        return this.orderByDesc(column);
+    }
+
+    default SELF orderByDesc(boolean when, Supplier<COLUMN> supplier) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderByDesc(supplier);
     }
 
     @SuppressWarnings("unchecked")
@@ -44,11 +103,33 @@ public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extend
         return this.orderBy(descOrderByDirection(), columns);
     }
 
+    @SuppressWarnings("unchecked")
+    default SELF orderByDesc(boolean when, COLUMN... columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(columns);
+    }
+
     default SELF orderByDesc(List<COLUMN> columns) {
         return this.orderBy(descOrderByDirection(), columns);
     }
 
+    default SELF orderByDesc(boolean when, List<COLUMN> columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(columns);
+    }
+
     SELF orderBy(IOrderByDirection orderByDirection, COLUMN column);
+
+    default SELF orderBy(boolean when, IOrderByDirection orderByDirection, COLUMN column) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(orderByDirection, column);
+    }
 
     @SuppressWarnings("unchecked")
     default SELF orderBy(IOrderByDirection orderByDirection, COLUMN... columns) {
@@ -58,10 +139,25 @@ public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extend
         return (SELF) this;
     }
 
+    @SuppressWarnings("unchecked")
+    default SELF orderBy(boolean when, IOrderByDirection orderByDirection, COLUMN... columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(orderByDirection, columns);
+    }
+
     default SELF orderBy(IOrderByDirection orderByDirection, List<COLUMN> columns) {
         for (COLUMN column : columns) {
             this.orderBy(orderByDirection, column);
         }
         return (SELF) this;
+    }
+
+    default SELF orderBy(boolean when, IOrderByDirection orderByDirection, List<COLUMN> columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(orderByDirection, columns);
     }
 }

@@ -47,7 +47,7 @@ public interface IConditionChain<SELF extends IConditionChain,
     default SELF andNested(Consumer<SELF> consumer) {
         SELF newSelf = newInstance();
         consumer.accept(newSelf);
-        this.and(newSelf, newSelf.hasContent());
+        this.and(newSelf.hasContent(), newSelf);
         return (SELF) this;
     }
 
@@ -55,7 +55,7 @@ public interface IConditionChain<SELF extends IConditionChain,
     default SELF orNested(Consumer<SELF> consumer) {
         SELF newSelf = newInstance();
         consumer.accept(newSelf);
-        this.or(newSelf, newSelf.hasContent());
+        this.or(newSelf.hasContent(), newSelf);
         return (SELF) this;
     }
 }

@@ -19,6 +19,7 @@ import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.basic.*;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface IHavingMethods<SELF extends IHavingMethods,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
@@ -36,6 +37,22 @@ public interface IHavingMethods<SELF extends IHavingMethods,
 
     default SELF having(boolean when, ICondition condition) {
         return this.havingAnd(when, condition);
+    }
+
+
+    default SELF having(Supplier<ICondition> supplier) {
+        ICondition condition = supplier.get();
+        if (condition == null) {
+            return (SELF) this;
+        }
+        return this.having(condition);
+    }
+
+    default SELF having(boolean when, Supplier<ICondition> supplier) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.having(supplier);
     }
 
     default <T> SELF having(Getter<T> column, Function<TABLE_FIELD, ICondition> f) {
@@ -66,7 +83,7 @@ public interface IHavingMethods<SELF extends IHavingMethods,
         return this.havingAnd(dataset, columnName, f);
     }
 
-    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, String columnName, Function<DATASET_FIELD, ICondition> f) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, ICondition> f) {
         return this.havingAnd(when, dataset, columnName, f);
     }
 

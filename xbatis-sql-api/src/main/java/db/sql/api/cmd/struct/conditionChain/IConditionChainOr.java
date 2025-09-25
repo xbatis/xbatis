@@ -26,7 +26,7 @@ public interface IConditionChainOr<SELF extends IConditionChainOr, TABLE_FIELD> 
 
     SELF or(ICondition condition);
 
-    default SELF or(ICondition condition, boolean when) {
+    default SELF or(boolean when, ICondition condition) {
         if (!when) {
             return (SELF) this;
         }

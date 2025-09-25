@@ -18,10 +18,33 @@ package db.sql.api.cmd.executor.method.groupByMethod;
 import db.sql.api.Cmd;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public interface IGroupByCmdMethod<SELF extends IGroupByCmdMethod, COLUMN extends Cmd> {
 
     SELF groupBy(COLUMN column);
+
+    default SELF groupBy(boolean when, COLUMN column) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.groupBy(column);
+    }
+
+    default SELF groupBy(Supplier<COLUMN> supplier) {
+        COLUMN column = supplier.get();
+        if (column == null) {
+            return (SELF) this;
+        }
+        return this.groupBy(column);
+    }
+
+    default SELF groupBy(boolean when, Supplier<COLUMN> supplier) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.groupBy(supplier);
+    }
 
     @SuppressWarnings("unchecked")
     default SELF groupBy(COLUMN... columns) {
@@ -37,5 +60,12 @@ public interface IGroupByCmdMethod<SELF extends IGroupByCmdMethod, COLUMN extend
             this.groupBy(column);
         }
         return (SELF) this;
+    }
+
+    default SELF groupBy(boolean when, List<COLUMN> columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.groupBy(columns);
     }
 }
