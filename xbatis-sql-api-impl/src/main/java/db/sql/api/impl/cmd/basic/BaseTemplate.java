@@ -16,6 +16,7 @@ package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
@@ -140,9 +141,20 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
 
     @Override
     public final boolean contain(Cmd cmd) {
-        if (Objects.isNull(params)) {
-            return false;
+        boolean contain = false;
+
+        if (Objects.nonNull(params)) {
+            contain = CmdUtils.contain(cmd, params);
         }
-        return CmdUtils.contain(cmd, (Object[]) params);
+
+        if (!contain && cmd instanceof IDataset) {
+            //支持字符串列；需要含有“别名.xx"的情况
+            IDataset dataset = (IDataset) cmd;
+            if (dataset.getAlias() != null && !dataset.getAlias().isEmpty()) {
+                return this.template.contains(dataset.getAlias() + ".");
+            }
+        }
+
+        return contain;
     }
 }

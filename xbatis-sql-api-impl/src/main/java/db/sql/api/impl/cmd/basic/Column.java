@@ -19,6 +19,7 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.tookit.CmdUtils;
 import db.sql.api.tookit.SqlInjectionUtils;
 
 import java.util.Objects;
@@ -49,6 +50,20 @@ public class Column extends AbstractDatasetField<Column> {
 
     @Override
     public boolean contain(Cmd cmd) {
-        return false;
+        boolean contain = false;
+
+        if (Objects.nonNull(getTable())) {
+            contain = CmdUtils.contain(cmd, getTable());
+        }
+
+        if (!contain && cmd instanceof IDataset) {
+            //支持字符串列；需要含有“别名.xx"的情况
+            IDataset dataset = (IDataset) cmd;
+            if (dataset.getAlias() != null && !dataset.getAlias().isEmpty()) {
+                return getName().contains(dataset.getAlias() + ".");
+            }
+        }
+
+        return contain;
     }
 }

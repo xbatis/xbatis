@@ -19,6 +19,7 @@ import db.sql.api.Getter;
 import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.ICondition;
+import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IParamWrap;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.*;
@@ -205,6 +206,18 @@ public final class Methods {
     public static Column column(String column) {
         Objects.requireNonNull(column);
         return new Column(column);
+    }
+
+    /**
+     * 将指定列名转成 Column
+     *
+     * @param dataset 表/子查询
+     * @param column  列名
+     * @return Column
+     */
+    public static Column column(IDataset dataset, String column) {
+        Objects.requireNonNull(column);
+        return new Column(dataset, column);
     }
 
     /**
