@@ -23,4 +23,8 @@ public class PreparedSQLProvider {
     public static String sql(PreparedContext preparedContext) {
         return preparedContext.getSql();
     }
+
+    public static String cmdSql(PreparedContext preparedContext) {
+        return preparedContext.getSql();
+    }
 }

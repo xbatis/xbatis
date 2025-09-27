@@ -20,6 +20,7 @@ import cn.xbatis.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
+import cn.xbatis.core.mybatis.mapper.context.SelectPreparedContext;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInvocation;
 import cn.xbatis.core.mybatis.mapper.mappers.BaseMapper;
@@ -56,6 +57,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     public final static String CURRENT_DB_TYPE_METHOD_NAME = "getCurrentDbType";
 
     public final static String WITH_SQL_SESSION_METHOD_NAME = "withSqlSession";
+
+    public final static String SELECT = "$select";
+
+    public final static String SELECT_LIST = "$selectList";
 
     protected final SqlSession sqlSession;
     protected final Class<T> mapperInterface;
@@ -198,6 +203,9 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 } else {
                     throw new RuntimeException("NOT SUPPORTED");
                 }
+            } else if ((method.getName().equals(SELECT) || method.getName().equals(SELECT_LIST)) && args.length == 1 && args[0] instanceof SelectPreparedContext) {
+                SelectPreparedContext selectPreparedContext = (SelectPreparedContext) args[0];
+                selectPreparedContext.initWithDbType(getDbType());
             }
             this.wrapperParams(method, args);
             return super.invoke(proxy, method, args);

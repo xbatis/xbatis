@@ -15,6 +15,7 @@
 package com.xbatis.core.test.testCase.query;
 
 import cn.xbatis.core.mybatis.mapper.DbRunner;
+import cn.xbatis.core.sql.util.WhereUtil;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
@@ -108,6 +109,26 @@ public class DbRunnerTest extends BaseTest {
 
             assertEquals("admin", list2.get(0).get("user_name"));
             assertEquals("test1", list2.get(1).get("user_name"));
+        }
+    }
+
+    @Test
+    public void cmdSelectTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Map map = sysUserMapper.select(Map.class, "select * from t_sys_user t where ? ", WhereUtil.create().eq(SysUser::getId, 1));
+            System.out.println(map);
+            assertEquals("admin", map.get("user_name"));
+        }
+    }
+
+    @Test
+    public void cmdSelectTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Map map = sysUserMapper.select(Map.class, "select * from t_sys_user t where id=? and ? ", 1, WhereUtil.create().eq(SysUser::getId, 1));
+            System.out.println(map);
+            assertEquals("admin", map.get("user_name"));
         }
     }
 }

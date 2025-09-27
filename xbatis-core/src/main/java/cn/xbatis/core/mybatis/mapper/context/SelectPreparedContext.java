@@ -14,9 +14,24 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
+import db.sql.api.Cmd;
+import db.sql.api.DbType;
+import db.sql.api.SQLMode;
+import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.struct.IWhere;
+import db.sql.api.impl.tookit.SqlConst;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class SelectPreparedContext<T> extends PreparedContext {
 
     private Class<T> returnType;
+
+    private String sql;
+
+    private Object[] parameters;
 
     public SelectPreparedContext(Class<T> returnType, String sql, Object[] params) {
         super(sql, params);
@@ -25,5 +40,55 @@ public class SelectPreparedContext<T> extends PreparedContext {
 
     public Class<T> getReturnType() {
         return returnType;
+    }
+
+    public void initWithDbType(DbType dbType) {
+        if (sql == null) {
+            List<Object> args = new ArrayList<>();
+            Object[] params = super.getParameters();
+
+            boolean existsCmd = Arrays.stream(params).anyMatch(i -> i instanceof Cmd);
+            if (existsCmd) {
+                StringBuilder sql = new StringBuilder();
+                String[] sqls = super.getSql().split("\\?");
+
+                for (int i = 0; i < params.length; i++) {
+                    Object param = params[i];
+                    sql.append(sqls[i]);
+                    if (param instanceof Cmd) {
+                        SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(dbType, SQLMode.PREPARED) {
+                            @Override
+                            public String addParam(Object value) {
+                                args.add(value);
+                                return super.addParam(value);
+                            }
+                        };
+                        StringBuilder cmdSql = ((Cmd) param).sql(null, null, sqlBuilderContext, new StringBuilder());
+                        if (param instanceof IWhere) {
+                            sql.append(cmdSql.toString().replace(new String(SqlConst.WHERE), ""));
+                        }
+                    } else {
+                        sql.append("?");
+                        args.add(param);
+                    }
+                }
+
+                this.parameters = args.toArray();
+                this.sql = sql.toString();
+            } else {
+                this.parameters = super.getParameters();
+                this.sql = super.getSql();
+            }
+        }
+    }
+
+    @Override
+    public String getSql() {
+        return sql;
+    }
+
+    @Override
+    public Object[] getParameters() {
+        return parameters;
     }
 }
