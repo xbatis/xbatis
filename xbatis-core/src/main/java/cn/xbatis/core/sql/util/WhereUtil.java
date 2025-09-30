@@ -54,6 +54,12 @@ public final class WhereUtil {
         return where;
     }
 
+    /**
+     * where 动态对象转条件
+     *
+     * @param where
+     * @param object
+     */
     public static Where where(Object object) {
         return where(create(), object);
     }

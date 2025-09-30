@@ -19,6 +19,12 @@ import db.sql.api.impl.cmd.struct.On;
 
 public class OnUtil {
 
+    /**
+     * join on-动态对象转条件
+     *
+     * @param on
+     * @param object
+     */
     public static void on(On on, Object object) {
         if (object != null) {
             Conditions.get(object.getClass()).appendCondition(on.conditionChain(), object);
