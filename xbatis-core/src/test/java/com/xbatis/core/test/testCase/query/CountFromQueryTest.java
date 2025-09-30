@@ -21,7 +21,9 @@ import com.xbatis.core.test.testCase.BaseTest;
 import db.sql.api.DbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.GetterFields;
 import db.sql.api.cmd.JoinMode;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SQLOptimizeUtils;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.junit.jupiter.api.Test;
@@ -822,5 +824,21 @@ public class CountFromQueryTest extends BaseTest {
                                 .orderBy(SysUser::getId))
                 )
         );
+
+
+        check("distinct on count 不优化",
+                "select count(*) from (select distinct on(t.id,t.user_name) t.user_name,t.role_id from t_sys_user t where t.id=1 ) t",
+                getCountSql(Query.create()
+                        //.select(SysUser::getId, c -> c.postgres().distinctOn())
+                        .select(GetterFields.of(SysUser::getId, SysUser::getUserName), cs -> Methods.postgres().distinctOn(cs))
+                        .select(SysUser::getUserName)
+                        .select(SysUser::getRole_id)
+                        .from(SysUser.class)
+                        .eq(SysUser::getId, 1)
+                        .orderBy(SysUser::getId)
+                )
+        );
     }
+
+
 }

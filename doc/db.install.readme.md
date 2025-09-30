@@ -91,6 +91,7 @@ CREATE DATABASE test3 WITH ENCODING 'utf-8';
 ```
 
 # opengauss
+
 ```
 docker run -d --name opengauss --privileged -e GS_PASSWORD="Enmo@123" -p 5437:5432 -u root enmotech/opengauss-lite:5.0.2
 ```

@@ -17,6 +17,7 @@ package db.sql.api.tookit;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.NoAfterDelimiter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -37,14 +38,18 @@ public final class CmdUtils {
             return builder;
         }
         Iterator<? extends Cmd> iterator = cmdList.iterator();
+
         while (true) {
             Cmd cmd = iterator.next();
             builder = cmd.sql(module, parent, context, builder);
             if (!iterator.hasNext()) {
                 break;
             }
+
             if (delimiter != null) {
-                builder.append(delimiter);
+                if (!(cmd instanceof NoAfterDelimiter)) {
+                    builder.append(delimiter);
+                }
             }
         }
         return builder;
@@ -57,7 +62,9 @@ public final class CmdUtils {
         int length = cmds.length;
         for (int i = 0; i < length; i++) {
             if (i != 0 && delimiter != null) {
-                builder.append(delimiter);
+                if (!(cmds[i - 1] instanceof NoAfterDelimiter)) {
+                    builder.append(delimiter);
+                }
             }
             builder = cmds[i].sql(module, parent, context, builder);
         }

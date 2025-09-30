@@ -17,6 +17,7 @@ package db.sql.api.impl.tookit;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.AffectLineNumber;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.CmdList;
 import db.sql.api.cmd.basic.SQL1;
@@ -186,7 +187,7 @@ public final class SQLOptimizeUtils {
         }
 
         Select select = (Select) classCmdMap.get(Select.class);
-        if (forCount && !isUnionQuery && !select.isDistinct()) {
+        if (forCount && !isUnionQuery && !select.isDistinct() && !select.getSelectField().stream().anyMatch(i -> i instanceof AffectLineNumber)) {
             if (classCmdMap.containsKey(GroupBy.class) || select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
                 Select newSelect;
                 if (dbType == DbType.ORACLE) {
@@ -255,6 +256,9 @@ public final class SQLOptimizeUtils {
         } else if (classCmdMap.containsKey(GroupBy.class)) {
             //包含分组查询
             needWarp = true;
+        } else {
+            Select select = (Select) classCmdMap.get(Select.class);
+            needWarp = select.getSelectField().stream().anyMatch(i -> i instanceof AffectLineNumber);
         }
 
         if (!needWarp) {

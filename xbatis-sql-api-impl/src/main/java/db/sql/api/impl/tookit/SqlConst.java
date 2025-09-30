@@ -36,6 +36,8 @@ public final class SqlConst {
 
     public static final char[] DISTINCT = " DISTINCT ".toCharArray();
 
+    public static final char[] DISTINCT_ON = " DISTINCT ON".toCharArray();
+
     public static final char[] NULL = " NULL ".toCharArray();
 
     public static final char[] UNION = " UNION ".toCharArray();

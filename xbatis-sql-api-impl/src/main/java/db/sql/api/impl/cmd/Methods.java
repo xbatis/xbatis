@@ -26,6 +26,8 @@ import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.*;
 import db.sql.api.impl.cmd.dbFun.mysql.*;
+import db.sql.api.impl.cmd.dbFun.postgres.DistinctOn;
+import db.sql.api.impl.cmd.dbFun.postgres.PostgresFunctions;
 import db.sql.api.impl.cmd.postgis.ST_Contains;
 import db.sql.api.impl.cmd.postgis.ST_DWithin;
 import db.sql.api.impl.cmd.postgis.ST_Distance;
@@ -1942,10 +1944,52 @@ public final class Methods {
     /**
      * 获得 mysql的函数聚合类
      *
+     * @return MysqlFunctions
+     */
+    public static MysqlFunctions mysql() {
+        return new MysqlFunctions(null);
+    }
+
+    /**
+     * 获得 mysql的函数聚合类
+     *
      * @param column 列，后续可以以此列操作
      * @return MysqlFunctions
      */
-    public MysqlFunctions mysql(Cmd column) {
+    public static MysqlFunctions mysql(Cmd column) {
+        Objects.requireNonNull(column);
         return new MysqlFunctions(column);
+    }
+
+    /**
+     * 获得 postgres的函数聚合类
+     *
+     * @return PostgresFunctions
+     */
+    public static PostgresFunctions postgres() {
+        return new PostgresFunctions(null);
+    }
+
+    /**
+     * 获得 postgres的函数聚合类
+     *
+     * @param column 列，后续可以以此列操作
+     * @return PostgresFunctions
+     */
+    public static PostgresFunctions postgres(Cmd column) {
+        Objects.requireNonNull(column);
+        return new PostgresFunctions(column);
+    }
+
+    /**
+     * postgres DistinctOn
+     *
+     * @param onKeys 排重依据列
+     * @return DISTINCT ON(...onKeys)
+     */
+    @SafeVarargs
+    public static DistinctOn postgresDistinctOn(Cmd... onKeys) {
+        Objects.requireNonNull(onKeys);
+        return new DistinctOn(onKeys);
     }
 }

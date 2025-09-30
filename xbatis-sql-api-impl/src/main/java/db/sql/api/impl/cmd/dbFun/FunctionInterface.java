@@ -20,6 +20,7 @@ import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.DatePattern;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.mysql.MysqlFunctions;
+import db.sql.api.impl.cmd.dbFun.postgres.PostgresFunctions;
 import db.sql.api.impl.cmd.postgis.ST_Contains;
 import db.sql.api.impl.cmd.postgis.ST_DWithin;
 import db.sql.api.impl.cmd.postgis.ST_Distance;
@@ -38,6 +39,15 @@ public interface FunctionInterface extends Cmd {
      */
     default MysqlFunctions mysql() {
         return new MysqlFunctions(this);
+    }
+
+    /**
+     * 获得 postgres的函数聚合类
+     *
+     * @return PostgresFunctions
+     */
+    default PostgresFunctions postgres() {
+        return new PostgresFunctions(this);
     }
 
     /**

@@ -16,6 +16,7 @@ package db.sql.api.impl.cmd.dbFun.mysql;
 
 import db.sql.api.Cmd;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.tookit.Objects;
 
 import java.io.Serializable;
 
@@ -28,31 +29,101 @@ public class MysqlFunctions {
     }
 
     public JsonExtract jsonExtract(String... paths) {
+        if (Objects.isNull(this.key)) {
+            throw new RuntimeException("Need set json column ?");
+        }
         return Methods.mysqlJsonExtract(this.key, paths);
     }
 
+    public JsonExtract jsonExtract(Cmd column, String... paths) {
+        if (Objects.isNull(column)) {
+            throw new RuntimeException("Need set distinct on key ?");
+        }
+        return Methods.mysqlJsonExtract(column, paths);
+    }
+
     public JsonContainsPath jsonContainsPath(String... paths) {
+        if (Objects.isNull(this.key)) {
+            throw new RuntimeException("Need set json column ?");
+        }
         return Methods.mysqlJsonContainsPath(this.key, paths);
     }
 
+    public JsonContainsPath jsonContainsPath(Cmd column, String... paths) {
+        if (Objects.isNull(column)) {
+            throw new RuntimeException("Need set json column ?");
+        }
+        return Methods.mysqlJsonContainsPath(column, paths);
+    }
+
     public JsonContainsPath jsonContainsPath(boolean allMatch, String... paths) {
+        if (Objects.isNull(this.key)) {
+            throw new RuntimeException("Need set json column ?");
+        }
         return Methods.mysqlJsonContainsPath(this.key, allMatch, paths);
     }
 
+    public JsonContainsPath jsonContainsPath(Cmd column, boolean allMatch, String... paths) {
+        if (Objects.isNull(column)) {
+            throw new RuntimeException("Need set json column ?");
+        }
+        return Methods.mysqlJsonContainsPath(column, allMatch, paths);
+    }
+
     public JsonContains jsonContains(Serializable containValue) {
+        if (Objects.isNull(this.key)) {
+            throw new RuntimeException("Need set json column ?");
+        }
         return Methods.mysqlJsonContains(this.key, containValue);
     }
 
+    public JsonContains jsonContains(Cmd column, Serializable containValue) {
+        if (Objects.isNull(column)) {
+            throw new RuntimeException("Need set json column ?");
+        }
+        return Methods.mysqlJsonContains(column, containValue);
+    }
+
     public JsonContains jsonContains(Serializable containValue, String path) {
+        if (Objects.isNull(this.key)) {
+            throw new RuntimeException("Need set json column ?");
+        }
         return Methods.mysqlJsonContains(this.key, containValue, path);
     }
 
+    public JsonContains jsonContains(Cmd column, Serializable containValue, String path) {
+        if (Objects.isNull(column)) {
+            throw new RuntimeException("Need set json column ?");
+        }
+        return Methods.mysqlJsonContains(column, containValue, path);
+    }
+
     public FindInSet findInSet(String str) {
+        if (Objects.isNull(this.key)) {
+            throw new RuntimeException("Need set findInSet column ?");
+        }
         return Methods.mysqlFindInSet(this.key, str);
     }
 
+    public FindInSet findInSet(Cmd column, String str) {
+        if (Objects.isNull(column)) {
+            throw new RuntimeException("Need set findInSet column ?");
+        }
+        return Methods.mysqlFindInSet(column, str);
+    }
+
     public FindInSet findInSet(Number value) {
+        if (Objects.isNull(this.key)) {
+            throw new RuntimeException("Need set findInSet column ?");
+        }
         return Methods.mysqlFindInSet(this.key, value);
+    }
+
+    public FindInSet findInSet(Cmd column, Number value) {
+        if (Objects.isNull(column)) {
+            throw new RuntimeException("Need set findInSet column ?");
+        }
+        return Methods.mysqlFindInSet(column, value);
     }
 
     public Field filed(Object... values) {
@@ -60,10 +131,30 @@ public class MysqlFunctions {
     }
 
     public FromUnixTime fromUnixTime() {
+        if (Objects.isNull(this.key)) {
+            throw new RuntimeException("Need set fromUnixTime column ?");
+        }
         return Methods.mysqlFromUnixTime(this.key);
     }
 
+    public FromUnixTime fromUnixTime(Cmd column) {
+        if (Objects.isNull(column)) {
+            throw new RuntimeException("Need set fromUnixTime column ?");
+        }
+        return Methods.mysqlFromUnixTime(column);
+    }
+
     public Md5 md5() {
+        if (Objects.isNull(this.key)) {
+            throw new RuntimeException("Need set md5 column ?");
+        }
         return Methods.mysqlMd5(this.key);
+    }
+
+    public Md5 md5(Cmd column) {
+        if (Objects.isNull(column)) {
+            throw new RuntimeException("Need set md5 column ?");
+        }
+        return Methods.mysqlMd5(column);
     }
 }
