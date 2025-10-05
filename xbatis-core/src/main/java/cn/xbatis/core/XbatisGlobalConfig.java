@@ -49,8 +49,9 @@ import java.util.function.BiFunction;
 public final class XbatisGlobalConfig {
 
     private static final Map<String, Object> CACHE = new ConcurrentHashMap<>();
-    private static final String COLUMN_UNDERLINE = "columnUnderline";
+    private static final String DATABASE_NAMING_RULE = "databaseNamingRule";
     private static final String TABLE_UNDERLINE = "tableUnderline";
+    private static final String COLUMN_UNDERLINE = "columnUnderline";
     private static final String DEFAULT_BATCH_SIZE = "defaultBatchSize";
     private static final String SQL_BUILDER = "SQLBuilder";
     private static final String LOGIC_DELETE_SWITCH = "logicDeleteSwitch";
@@ -139,6 +140,44 @@ public final class XbatisGlobalConfig {
     }
 
     /**
+     * 数据库命名规则 默认 不处理
+     *
+     * @return 命名规则
+     */
+    public static DatabaseNamingRule getDatabaseNamingRule() {
+        return (DatabaseNamingRule) CACHE.computeIfAbsent(DATABASE_NAMING_RULE, key -> DatabaseNamingRule.DEFAULT);
+    }
+
+    /**
+     * 设置数据库命名规则 默认 不处理
+     *
+     * @return 命名规则
+     */
+    public static void setDatabaseNamingRule(DatabaseNamingRule databaseNamingRule) {
+        CACHE.putIfAbsent(DATABASE_NAMING_RULE, databaseNamingRule);
+    }
+
+    /**
+     * 数据库表是否下划线规则 默认 true
+     *
+     * @return 是否是下划线规则
+     */
+    public static boolean isTableUnderline() {
+        return (boolean) CACHE.computeIfAbsent(TABLE_UNDERLINE, key -> true);
+    }
+
+
+    /**
+     * 设置数据库表是否下划线规则（必须在项目启动时设置，否则可能永远不会成功）
+     *
+     * @param bool 是否是下划线规则
+     */
+    public static void setTableUnderline(boolean bool) {
+        CACHE.putIfAbsent(TABLE_UNDERLINE, bool);
+    }
+
+
+    /**
      * 数据库列是否下划线规则 默认 true
      *
      * @return 列是否是下划线命名规则
@@ -156,23 +195,6 @@ public final class XbatisGlobalConfig {
         CACHE.putIfAbsent(COLUMN_UNDERLINE, bool);
     }
 
-    /**
-     * 数据库表是否下划线规则 默认 true
-     *
-     * @return 是否是下划线规则
-     */
-    public static boolean isTableUnderline() {
-        return (boolean) CACHE.computeIfAbsent(TABLE_UNDERLINE, key -> true);
-    }
-
-    /**
-     * 设置数据库表是否下划线规则（必须在项目启动时设置，否则可能永远不会成功）
-     *
-     * @param bool 是否是下划线规则
-     */
-    public static void setTableUnderline(boolean bool) {
-        CACHE.putIfAbsent(TABLE_UNDERLINE, bool);
-    }
 
     /**
      * 默认1000

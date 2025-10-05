@@ -114,6 +114,8 @@ public final class TableInfoUtil {
                 tableName = NamingUtil.camelToUnderline(tableName);
             }
         }
+
+        tableName = XbatisGlobalConfig.getDatabaseNamingRule().convert(tableName);
         return tableName;
     }
 
@@ -184,6 +186,7 @@ public final class TableInfoUtil {
                 }
             }
         }
+        columnName = XbatisGlobalConfig.getDatabaseNamingRule().convert(columnName);
         return columnName;
     }
 

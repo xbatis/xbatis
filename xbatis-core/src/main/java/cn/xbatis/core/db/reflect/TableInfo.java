@@ -110,7 +110,7 @@ public class TableInfo {
         this.type = entity;
 
         Table table = entity.getAnnotation(Table.class);
-        this.schema = table.schema();
+        this.schema = XbatisGlobalConfig.getDatabaseNamingRule().convert(table.schema());
         SplitTable splitTable = entity.getAnnotation(SplitTable.class);
         this.isSplitTable = splitTable != null;
         if (this.isSplitTable) {
