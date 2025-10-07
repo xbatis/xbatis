@@ -115,19 +115,7 @@ public final class TableInfoUtil {
             }
         }
 
-        switch (table.databaseCaseRule()) {
-            case DEFAULT: {
-                // 采用全局的规则
-                tableName = XbatisGlobalConfig.getDatabaseCaseRule().convert(tableName);
-                break;
-            }
-            default: {
-                // 采用注解的规则
-                tableName = table.databaseCaseRule().convert(tableName);
-                break;
-            }
-        }
-
+        tableName = buildDatabaseCaseNaming(table, tableName);
         return tableName;
     }
 
@@ -198,18 +186,7 @@ public final class TableInfoUtil {
             }
         }
 
-        switch (table.databaseCaseRule()) {
-            case DEFAULT: {
-                // 采用全局的规则
-                columnName = XbatisGlobalConfig.getDatabaseCaseRule().convert(columnName);
-                break;
-            }
-            default: {
-                // 采用注解的规则
-                columnName = table.databaseCaseRule().convert(columnName);
-                break;
-            }
-        }
+        columnName = buildDatabaseCaseNaming(table, columnName);
         return columnName;
     }
 
@@ -262,7 +239,7 @@ public final class TableInfoUtil {
         return isCommonUpdateDoBeforeTableField(tableFieldInfo);
     }
 
-    static boolean isCommonUpdateDoBeforeTableField(TableFieldInfo tableFieldInfo) {
+    public static boolean isCommonUpdateDoBeforeTableField(TableFieldInfo tableFieldInfo) {
         if (tableFieldInfo.isTenantId()) {
             return true;
         }
@@ -270,5 +247,18 @@ public final class TableInfoUtil {
             return true;
         }
         return false;
+    }
+
+    public static String buildDatabaseCaseNaming(Table table, String name) {
+        switch (table.databaseCaseRule()) {
+            case DEFAULT: {
+                // 采用全局的规则
+                return XbatisGlobalConfig.getDatabaseCaseRule().convert(name);
+            }
+            default: {
+                // 采用注解的规则
+                return table.databaseCaseRule().convert(name);
+            }
+        }
     }
 }
