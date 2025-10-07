@@ -26,7 +26,7 @@ import cn.xbatis.core.sql.listener.LogicDeleteSQLListener;
 import cn.xbatis.core.sql.listener.TenantSQLListener;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TypeConvertUtil;
-import cn.xbatis.db.annotations.DatabaseCaseRule;
+import cn.xbatis.db.DatabaseCaseRule;
 import cn.xbatis.listener.OnInsertListener;
 import cn.xbatis.listener.OnUpdateListener;
 import db.sql.api.DbType;

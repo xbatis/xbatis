@@ -12,7 +12,7 @@
  *
  */
 
-package cn.xbatis.db.annotations;
+package cn.xbatis.db;
 
 public enum DatabaseCaseRule {
     // 默认 - 不处理

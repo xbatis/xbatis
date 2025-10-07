@@ -15,6 +15,7 @@
 package cn.xbatis.db.annotations;
 
 import cn.xbatis.db.ColumnNameRule;
+import cn.xbatis.db.DatabaseCaseRule;
 
 import java.lang.annotation.*;
 
