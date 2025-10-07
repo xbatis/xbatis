@@ -15,7 +15,6 @@
 package db.sql.api;
 
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 public enum DbType {
@@ -73,13 +72,16 @@ public enum DbType {
     }
 
     public boolean addKeyword(String keyword) {
-        return keywords.add(keyword);
+        return keywords.add(keyword.toUpperCase());
     }
 
     public String wrap(String name) {
-        if (getKeywords().contains(name)) {
+        if (getKeywords().isEmpty()) {
+            return name;
+        }
+        if (getKeywords().contains(name.toUpperCase())) {
             if (getKeywordWrap().isToUpperCase()) {
-                name = name.toUpperCase(Locale.ENGLISH);
+                name = name.toUpperCase();
             }
             return getKeywordWrap().getPrefix() + name + getKeywordWrap().getSuffix();
         }
