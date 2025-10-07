@@ -47,6 +47,7 @@ public @interface Table {
 
     /**
      * 数据库大小写规则
+     *
      * @return
      */
     DatabaseCaseRule databaseCaseRule() default DatabaseCaseRule.DEFAULT;
