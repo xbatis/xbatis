@@ -26,6 +26,7 @@ import cn.xbatis.core.sql.listener.LogicDeleteSQLListener;
 import cn.xbatis.core.sql.listener.TenantSQLListener;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TypeConvertUtil;
+import cn.xbatis.db.annotations.DatabaseCaseRule;
 import cn.xbatis.listener.OnInsertListener;
 import cn.xbatis.listener.OnUpdateListener;
 import db.sql.api.DbType;
@@ -49,7 +50,7 @@ import java.util.function.BiFunction;
 public final class XbatisGlobalConfig {
 
     private static final Map<String, Object> CACHE = new ConcurrentHashMap<>();
-    private static final String DATABASE_NAMING_RULE = "databaseNamingRule";
+    private static final String DATABASE_CASE_RULE = "databaseCaseRule";
     private static final String TABLE_UNDERLINE = "tableUnderline";
     private static final String COLUMN_UNDERLINE = "columnUnderline";
     private static final String DEFAULT_BATCH_SIZE = "defaultBatchSize";
@@ -144,8 +145,8 @@ public final class XbatisGlobalConfig {
      *
      * @return 命名规则
      */
-    public static DatabaseNamingRule getDatabaseNamingRule() {
-        return (DatabaseNamingRule) CACHE.computeIfAbsent(DATABASE_NAMING_RULE, key -> DatabaseNamingRule.DEFAULT);
+    public static DatabaseCaseRule getDatabaseCaseRule() {
+        return (DatabaseCaseRule) CACHE.computeIfAbsent(DATABASE_CASE_RULE, key -> DatabaseCaseRule.DEFAULT);
     }
 
     /**
@@ -153,8 +154,8 @@ public final class XbatisGlobalConfig {
      *
      * @return 命名规则
      */
-    public static void setDatabaseNamingRule(DatabaseNamingRule databaseNamingRule) {
-        CACHE.putIfAbsent(DATABASE_NAMING_RULE, databaseNamingRule);
+    public static void setDatabaseCaseRule(DatabaseCaseRule databaseNamingRule) {
+        CACHE.putIfAbsent(DATABASE_CASE_RULE, databaseNamingRule);
     }
 
     /**

@@ -12,9 +12,9 @@
  *
  */
 
-package cn.xbatis.core;
+package cn.xbatis.db.annotations;
 
-public enum DatabaseNamingRule {
+public enum DatabaseCaseRule {
     // 默认 - 不处理
     DEFAULT,
     // 全大写

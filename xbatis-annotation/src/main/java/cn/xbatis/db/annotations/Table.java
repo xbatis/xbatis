@@ -45,4 +45,9 @@ public @interface Table {
      */
     ColumnNameRule columnNameRule() default ColumnNameRule.IGNORE;
 
+    /**
+     * 数据库大小写规则
+     * @return
+     */
+    DatabaseCaseRule databaseCaseRule() default DatabaseCaseRule.DEFAULT;
 }

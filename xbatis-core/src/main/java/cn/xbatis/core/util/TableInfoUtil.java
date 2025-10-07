@@ -115,7 +115,19 @@ public final class TableInfoUtil {
             }
         }
 
-        tableName = XbatisGlobalConfig.getDatabaseNamingRule().convert(tableName);
+        switch (table.databaseCaseRule()) {
+            case DEFAULT: {
+                // 采用全局的规则
+                tableName = XbatisGlobalConfig.getDatabaseCaseRule().convert(tableName);
+                break;
+            }
+            default: {
+                // 采用注解的规则
+                tableName = table.databaseCaseRule().convert(tableName);
+                break;
+            }
+        }
+
         return tableName;
     }
 
@@ -133,7 +145,6 @@ public final class TableInfoUtil {
         }
         TableId tableId = null;
         for (TableId item : tableIdAnnotations) {
-
             if (item.dbType() == dbType) {
                 tableId = item;
                 break;
@@ -186,7 +197,19 @@ public final class TableInfoUtil {
                 }
             }
         }
-        columnName = XbatisGlobalConfig.getDatabaseNamingRule().convert(columnName);
+
+        switch (table.databaseCaseRule()) {
+            case DEFAULT: {
+                // 采用全局的规则
+                columnName = XbatisGlobalConfig.getDatabaseCaseRule().convert(columnName);
+                break;
+            }
+            default: {
+                // 采用注解的规则
+                columnName = table.databaseCaseRule().convert(columnName);
+                break;
+            }
+        }
         return columnName;
     }
 
