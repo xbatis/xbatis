@@ -109,7 +109,7 @@ public class ResultInfo {
 
             if (field.isAnnotationPresent(Fetch.class)) {
                 //Fetch
-                tableCount = parseFetch(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
+                tableCount = parseFetch(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount, 1);
                 continue;
             }
 
@@ -241,7 +241,7 @@ public class ResultInfo {
                 FieldInfo fieldInfo = new FieldInfo(targetType, sourceField);
                 Class fetchType = fieldInfo.getFinalClass();
 
-                tableCount = parseFetch(parseResult, tableInfo, nestedResultInfo.getResultFieldInfos(), fetchType, field, tableCount);
+                tableCount = parseFetch(parseResult, tableInfo, nestedResultInfo.getResultFieldInfos(), fetchType, field, tableCount, nestedResultEntity.storey());
                 continue;
             }
 
@@ -341,9 +341,10 @@ public class ResultInfo {
      * @param currentTableInfo 当前对应TableInfo
      * @param field            字段
      * @param tableCount       当前表个数
+     * @param parentStorey 父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
      * @return 当前已存在表的个数
      */
-    private static int parseFetch(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
+    private static int parseFetch(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount, int parentStorey) {
         Fetch fetch = field.getAnnotation(Fetch.class);
 
         String valueColumn = fetch.column();
@@ -363,17 +364,27 @@ public class ResultInfo {
                 fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
             }
 
+            int storey;
+
+            if (fetch.storey() != -1) {
+                storey = fetch.storey();
+            } else if (fetchTableInfo == currentTableInfo) {
+                storey = parentStorey;
+            } else {
+                storey = 1;
+            }
+
             if (Objects.isNull(fetchFieldInfo)) {
                 throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + fetch.property() + " is not a entity field");
             }
             valueTypeHandler = fetchFieldInfo.getTypeHandler();
             //以字段为基础的查询
             //创建前缀
-            tableCount = createPrefix(fetchTableInfo.getType(), fetch.storey(), parseResult.tablePrefixes, tableCount);
+            tableCount = createPrefix(fetchTableInfo.getType(), storey, parseResult.tablePrefixes, tableCount);
             //获取前缀
-            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), fetch.storey());
+            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), storey);
 
-            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, fetch.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
+            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, fetchTableInfo, fetchFieldInfo, field));
             valueColumn = tablePrefix + fetchFieldInfo.getColumnName();
         }
 

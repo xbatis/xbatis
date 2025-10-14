@@ -267,3 +267,39 @@ CREATE TABLE IF NOT EXISTS multi_pk
     name VARCHAR(100) not null,
     PRIMARY KEY(id1,id2)
 );
+
+
+drop table if exists addr;
+
+CREATE TABLE IF NOT EXISTS addr
+(
+    id INTEGER PRIMARY KEY auto_increment,
+    name varchar(10)
+);
+
+insert into addr(id,name)
+values
+    (1,'江西'),
+    (2,'南昌'),
+    (3,'赣州'),
+    (4,'章贡区'),
+    (5,'瑞金市'),
+    (6,'兴国县'),
+    (7,'新建县');
+
+drop table if exists addr_archive;
+
+CREATE TABLE IF NOT EXISTS addr_archive
+(
+    id INTEGER PRIMARY KEY auto_increment,
+    pid int,
+    cid int,
+    did int
+);
+
+insert into addr_archive(pid,cid,did)
+values
+    (1,2,7),
+    (1,3,4),
+    (1,3,5),
+    (1,3,6);

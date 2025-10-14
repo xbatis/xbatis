@@ -14,9 +14,16 @@
 
 package com.xbatis.core.test.testCase.query;
 
+import cn.xbatis.core.db.reflect.FetchInfo;
+import cn.xbatis.core.db.reflect.ResultInfo;
+import cn.xbatis.core.db.reflect.ResultInfos;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xbatis.core.test.DO.AddrArchive;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.mapper.AddrArchiveMapper;
 import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
@@ -425,5 +432,45 @@ public class FetchTest extends BaseTest {
 
         }
     }
+
+    @Test
+    public void fetchSameTargetTest() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            AddrArchiveMapper addrArchiveMapper = session.getMapper(AddrArchiveMapper.class);
+
+            List<AddrArchiveFetchTestVO> listResult = QueryChain.of(addrArchiveMapper)
+                    .from(AddrArchive.class)
+                    .leftJoin(AddrArchive::getId, 1, AddrArchive::getId, 2)
+                    .eq(AddrArchive::getCid, 3)
+                    .returnType(AddrArchiveFetchTestVO.class)
+                    .list();
+
+            System.out.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(listResult));
+
+            assertEquals(listResult.size(), 3);
+            assertEquals(listResult.get(0).getAddrArchiveNested().getDname(), "章贡区");
+            assertEquals(listResult.get(1).getAddrArchiveNested().getDname(), "瑞金市");
+            assertEquals(listResult.get(2).getAddrArchiveNested().getDname(), "兴国县");
+
+            assertEquals(listResult.get(0).getAddrArchiveNested2().getDname(), "章贡区");
+            assertEquals(listResult.get(1).getAddrArchiveNested2().getDname(), "瑞金市");
+            assertEquals(listResult.get(2).getAddrArchiveNested2().getDname(), "兴国县");
+
+            ResultInfo resultInfo = ResultInfos.get(AddrArchiveFetchTestVO.class);
+
+            List<FetchInfo> fetchList = resultInfo.getFetchInfoMap().get(AddrArchiveNested.class);
+
+            assertEquals("x2$pid", fetchList.get(3).getValueColumn());
+            assertEquals("x2$cid", fetchList.get(4).getValueColumn());
+            assertEquals("x2$did", fetchList.get(5).getValueColumn());
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

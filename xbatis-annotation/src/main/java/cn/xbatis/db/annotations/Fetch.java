@@ -47,10 +47,10 @@ public @interface Fetch {
 
     /**
      * 存储层级
-     *
+     * 默认为-1；当为默认值-1时，如果有在内嵌类里，则使用内嵌类的层级，否则认为1
      * @return
      */
-    int storey() default 1;
+    int storey() default -1;
 
     /**
      * 中间实体类（中间表）

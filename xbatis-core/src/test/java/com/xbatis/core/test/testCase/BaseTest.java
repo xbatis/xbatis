@@ -120,6 +120,7 @@ public class BaseTest {
         configuration.addMapper(DbRunner.class);
         configuration.addMapper(SysUserIDMapper.class);
         configuration.addMapper(SplitTableTestMapper.class);
+        configuration.addMapper(AddrArchiveMapper.class);
 
 
         String mapperLocations = "classpath:/mappers/**.xml";
