@@ -82,7 +82,7 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         return new DeleteChain();
     }
 
-    protected Class<?> getEntityType() {
+    public Class<?> getEntityType() {
         if (entityType != null) {
             return entityType;
         }

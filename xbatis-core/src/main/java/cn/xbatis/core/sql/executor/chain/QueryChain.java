@@ -99,7 +99,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         return new QueryChain<>(mapper, entityType, where);
     }
 
-    protected Class<?> getEntityType() {
+    public Class<?> getEntityType() {
         if (entityType != null) {
             return entityType;
         }

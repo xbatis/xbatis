@@ -68,7 +68,7 @@ public class InsertChain extends BaseInsert<InsertChain> {
         return new InsertChain();
     }
 
-    protected Class<?> getEntityType() {
+    public Class<?> getEntityType() {
         if (entityType != null) {
             return entityType;
         }

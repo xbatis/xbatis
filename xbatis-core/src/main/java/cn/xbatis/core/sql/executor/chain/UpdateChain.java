@@ -82,7 +82,7 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
         return new UpdateChain();
     }
 
-    protected Class<?> getEntityType() {
+    public Class<?> getEntityType() {
         if (entityType != null) {
             return entityType;
         }
