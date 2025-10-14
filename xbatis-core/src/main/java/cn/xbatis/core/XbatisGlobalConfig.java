@@ -48,29 +48,27 @@ import java.util.function.BiFunction;
  * 全局配置
  */
 public final class XbatisGlobalConfig {
-
-    private static final Map<String, Object> CACHE = new ConcurrentHashMap<>();
-    private static final String DATABASE_CASE_RULE = "databaseCaseRule";
-    private static final String TABLE_UNDERLINE = "tableUnderline";
-    private static final String COLUMN_UNDERLINE = "columnUnderline";
-    private static final String DEFAULT_BATCH_SIZE = "defaultBatchSize";
-    private static final String SQL_BUILDER = "SQLBuilder";
-    private static final String LOGIC_DELETE_SWITCH = "logicDeleteSwitch";
-    private static final String LOGIC_DELETE_INTERCEPTOR = "logicDeleteInterceptor";
-    private static final String DYNAMIC_VALUE_MANAGER = "dynamicValueManager";
-    private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
-    private static final String GLOBAL_ON_INSERT_LISTENER = "globalOnInsertListener";
-    private static final String GLOBAL_ON_UPDATE_LISTENER = "globalOnUpdateListener";
+    private static final Object NULL = new Object();
+    private static final Map<String, BiFunction<Class<?>, Class<?>, ?>> DYNAMIC_VALUE_MANAGER = new ConcurrentHashMap();
+    private static volatile Object DATABASE_CASE_RULE = NULL;
+    private static volatile Object TABLE_UNDERLINE = NULL;
+    private static volatile Object COLUMN_UNDERLINE = NULL;
+    private static volatile Object DEFAULT_BATCH_SIZE = NULL;
+    private static volatile Object SQL_BUILDER = NULL;
+    private static volatile Object LOGIC_DELETE_SWITCH = NULL;
+    private static volatile Object LOGIC_DELETE_INTERCEPTOR = NULL;
+    private static volatile Object SINGLE_MAPPER_CLASS = NULL;
+    private static volatile Object GLOBAL_ON_INSERT_LISTENER = NULL;
+    private static volatile Object GLOBAL_ON_UPDATE_LISTENER = NULL;
     private static final List<SQLListener> SQL_LISTENERS = new ArrayList<>();
     private static final List<MethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
+    private static volatile Object INTERCEPT_OFFICIAL_MAPPER_METHOD = NULL;
 
-    private static final Object NULL = new Object();
 
     static {
         SQL_LISTENERS.add(new ForeignKeySQLListener());
         SQL_LISTENERS.add(new TenantSQLListener());
         SQL_LISTENERS.add(new LogicDeleteSQLListener());
-        CACHE.put(DYNAMIC_VALUE_MANAGER, new ConcurrentHashMap<>());
     }
 
     private XbatisGlobalConfig() {
@@ -146,16 +144,24 @@ public final class XbatisGlobalConfig {
      * @return 命名规则
      */
     public static DatabaseCaseRule getDatabaseCaseRule() {
-        return (DatabaseCaseRule) CACHE.computeIfAbsent(DATABASE_CASE_RULE, key -> DatabaseCaseRule.DEFAULT);
+        if (DATABASE_CASE_RULE == NULL) {
+            DATABASE_CASE_RULE = DatabaseCaseRule.DEFAULT;
+        }
+        return (DatabaseCaseRule) DATABASE_CASE_RULE;
     }
 
     /**
      * 设置数据库命名规则 默认 不处理
      *
-     * @return 命名规则
+     * @return 是否成功
      */
-    public static void setDatabaseCaseRule(DatabaseCaseRule databaseNamingRule) {
-        CACHE.putIfAbsent(DATABASE_CASE_RULE, databaseNamingRule);
+    public static boolean setDatabaseCaseRule(DatabaseCaseRule databaseNamingRule) {
+        if (DATABASE_CASE_RULE == NULL) {
+            DATABASE_CASE_RULE = databaseNamingRule;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -164,7 +170,10 @@ public final class XbatisGlobalConfig {
      * @return 是否是下划线规则
      */
     public static boolean isTableUnderline() {
-        return (boolean) CACHE.computeIfAbsent(TABLE_UNDERLINE, key -> true);
+        if (TABLE_UNDERLINE == NULL) {
+            TABLE_UNDERLINE = true;
+        }
+        return (boolean) TABLE_UNDERLINE;
     }
 
 
@@ -172,9 +181,14 @@ public final class XbatisGlobalConfig {
      * 设置数据库表是否下划线规则（必须在项目启动时设置，否则可能永远不会成功）
      *
      * @param bool 是否是下划线规则
+     * @return 是否成功
      */
-    public static void setTableUnderline(boolean bool) {
-        CACHE.putIfAbsent(TABLE_UNDERLINE, bool);
+    public static boolean setTableUnderline(boolean bool) {
+        if (TABLE_UNDERLINE == NULL) {
+            TABLE_UNDERLINE = bool;
+            return true;
+        }
+        return false;
     }
 
 
@@ -184,16 +198,24 @@ public final class XbatisGlobalConfig {
      * @return 列是否是下划线命名规则
      */
     public static boolean isColumnUnderline() {
-        return (boolean) CACHE.computeIfAbsent(COLUMN_UNDERLINE, key -> true);
+        if (COLUMN_UNDERLINE == NULL) {
+            COLUMN_UNDERLINE = true;
+        }
+        return (boolean) COLUMN_UNDERLINE;
     }
 
     /**
-     * 数据库列是否下划线规则（必须在项目启动时设置，否则可能永远不会成功）
+     * 设置数据库列是否下划线规则（必须在项目启动时设置，否则可能永远不会成功）
      *
      * @param bool 列是否下划线命名规则
+     * @return 是否成功
      */
-    public static void setColumnUnderline(boolean bool) {
-        CACHE.putIfAbsent(COLUMN_UNDERLINE, bool);
+    public static boolean setColumnUnderline(boolean bool) {
+        if (COLUMN_UNDERLINE == NULL) {
+            COLUMN_UNDERLINE = bool;
+            return true;
+        }
+        return false;
     }
 
 
@@ -203,27 +225,52 @@ public final class XbatisGlobalConfig {
      * @return 批量提交的默认size
      */
     public static int getDefaultBatchSize() {
-        return (int) CACHE.computeIfAbsent(DEFAULT_BATCH_SIZE, key -> 1000);
-    }
-
-    public static void setDefaultBatchSize(int defaultBatchSize) {
-        if (defaultBatchSize < 1) {
-            throw new RuntimeException("defaultBatchSize can't less 1");
+        if (DEFAULT_BATCH_SIZE == NULL) {
+            DEFAULT_BATCH_SIZE = 1000;
         }
-        CACHE.put(DEFAULT_BATCH_SIZE, defaultBatchSize);
+        return (int) DEFAULT_BATCH_SIZE;
     }
 
     /**
-     * 设置QUERY SQL BUILDER
+     * 设置批量的size
+     *
+     * @param defaultBatchSize
+     */
+    public static boolean setDefaultBatchSize(int defaultBatchSize) {
+        if (defaultBatchSize < 1) {
+            throw new RuntimeException("defaultBatchSize can't less 1");
+        }
+        if (DEFAULT_BATCH_SIZE == NULL) {
+            DEFAULT_BATCH_SIZE = defaultBatchSize;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取xbatis SQL BUILDER
      *
      * @return 返回QuerySQLBuilder
      */
     public static SQLBuilder getSQLBuilder() {
-        return (SQLBuilder) CACHE.computeIfAbsent(SQL_BUILDER, key -> new XbatisSQLBuilder());
+        if (SQL_BUILDER == NULL) {
+            SQL_BUILDER = new XbatisSQLBuilder();
+        }
+        return (SQLBuilder) SQL_BUILDER;
     }
 
-    public static void setSQLBuilder(SQLBuilder sqlBuilder) {
-        CACHE.put(SQL_BUILDER, sqlBuilder);
+    /**
+     * 设置xbatis SQL BUILDER
+     *
+     * @param sqlBuilder
+     * @return 是否成功
+     */
+    public static boolean setSQLBuilder(SQLBuilder sqlBuilder) {
+        if (SQL_BUILDER == NULL) {
+            SQL_BUILDER = sqlBuilder;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -232,12 +279,29 @@ public final class XbatisGlobalConfig {
      * @return 逻辑开关的是否打开
      */
     public static boolean isLogicDeleteSwitchOpen() {
+        if (LOGIC_DELETE_SWITCH == NULL) {
+            LOGIC_DELETE_SWITCH = true;
+        }
         Boolean state = LogicDeleteSwitch.getState();
         if (state != null) {
             //局部开关 优先
             return state;
         }
-        return (boolean) CACHE.computeIfAbsent(LOGIC_DELETE_SWITCH, key -> true);
+        return (boolean) LOGIC_DELETE_SWITCH;
+    }
+
+    /**
+     * 设置逻辑删除开关状态（必须在项目启动时设置，否则可能永远true）
+     *
+     * @param bool 开关状态
+     * @return 是否成功
+     */
+    public static boolean setLogicDeleteSwitch(boolean bool) {
+        if (LOGIC_DELETE_SWITCH == NULL) {
+            LOGIC_DELETE_SWITCH = bool;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -246,25 +310,24 @@ public final class XbatisGlobalConfig {
      * @return
      */
     public static BiConsumer<Class<?>, BaseUpdate<?>> getLogicDeleteInterceptor() {
-        return (BiConsumer<Class<?>, BaseUpdate<?>>) CACHE.get(LOGIC_DELETE_INTERCEPTOR);
+        if (LOGIC_DELETE_INTERCEPTOR == NULL) {
+            LOGIC_DELETE_INTERCEPTOR = null;
+        }
+        return (BiConsumer<Class<?>, BaseUpdate<?>>) LOGIC_DELETE_INTERCEPTOR;
     }
 
     /**
      * 设置逻辑删除 update 拦截器
      *
      * @param interceptor
+     * @return 是否成功
      */
-    public static void setLogicDeleteInterceptor(BiConsumer<Class<?>, BaseUpdate<?>> interceptor) {
-        CACHE.putIfAbsent(LOGIC_DELETE_INTERCEPTOR, interceptor);
-    }
-
-    /**
-     * 设置逻辑删除开关状态（必须在项目启动时设置，否则可能永远true）
-     *
-     * @param bool 开关状态
-     */
-    public static void setLogicDeleteSwitch(boolean bool) {
-        CACHE.putIfAbsent(LOGIC_DELETE_SWITCH, bool);
+    public static boolean setLogicDeleteInterceptor(BiConsumer<Class<?>, BaseUpdate<?>> interceptor) {
+        if (LOGIC_DELETE_INTERCEPTOR == NULL) {
+            LOGIC_DELETE_INTERCEPTOR = interceptor;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -287,7 +350,7 @@ public final class XbatisGlobalConfig {
         if (!isDynamicValueKeyFormat(key)) {
             key = "{" + key + "}";
         }
-        ((Map<String, BiFunction<Class<?>, Class<?>, Object>>) CACHE.get(DYNAMIC_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
+        DYNAMIC_VALUE_MANAGER.computeIfAbsent(key, mapKey -> f);
     }
 
     public static void checkDynamicValueKey(String key) {
@@ -354,8 +417,8 @@ public final class XbatisGlobalConfig {
         if (!isDynamicValueKeyFormat(key)) {
             key = "{" + key + "}";
         }
-        Map<String, BiFunction<Class<?>, Class<?>, T>> map = (Map<String, BiFunction<Class<?>, Class<?>, T>>) CACHE.get(DYNAMIC_VALUE_MANAGER);
-        BiFunction<Class<?>, Class<?>, T> f = map.get(key);
+
+        BiFunction<Class<?>, Class<?>, T> f = (BiFunction<Class<?>, Class<?>, T>) DYNAMIC_VALUE_MANAGER.get(key);
         if (f == null) {
             throw new RuntimeException("default value key:  " + key + " not set");
         }
@@ -399,16 +462,24 @@ public final class XbatisGlobalConfig {
      * @return 单Mapper的class
      */
     public static Class<? extends BasicMapper> getSingleMapperClass() {
-        return (Class) CACHE.computeIfAbsent(SINGLE_MAPPER_CLASS, key -> BasicMapper.class);
+        if (SINGLE_MAPPER_CLASS == NULL) {
+            SINGLE_MAPPER_CLASS = BasicMapper.class;
+        }
+        return (Class) SINGLE_MAPPER_CLASS;
     }
 
     /**
      * 设置单Mapper的class 用于BasicMapper.withSqlSession方法 statement 拼接
      *
      * @param singleMapperClass
+     * @return 是否成功
      */
-    public static void setSingleMapperClass(Class<? extends BasicMapper> singleMapperClass) {
-        CACHE.putIfAbsent(SINGLE_MAPPER_CLASS, singleMapperClass);
+    public static boolean setSingleMapperClass(Class<? extends BasicMapper> singleMapperClass) {
+        if (SINGLE_MAPPER_CLASS == NULL) {
+            SINGLE_MAPPER_CLASS = singleMapperClass;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -496,16 +567,40 @@ public final class XbatisGlobalConfig {
     }
 
     /**
+     * 是否拦截官方的mapper方法
+     *
+     * @return
+     */
+    public static boolean isEnableInterceptOfficialMapperMethod() {
+        if (INTERCEPT_OFFICIAL_MAPPER_METHOD == NULL) {
+            INTERCEPT_OFFICIAL_MAPPER_METHOD = false;
+        }
+        return (boolean) INTERCEPT_OFFICIAL_MAPPER_METHOD;
+    }
+
+    /**
+     * 开启拦截官方的mapper方法
+     *
+     * @return 是否成功
+     */
+    public static boolean enableInterceptOfficialMapperMethod() {
+        if (INTERCEPT_OFFICIAL_MAPPER_METHOD == NULL) {
+            INTERCEPT_OFFICIAL_MAPPER_METHOD = true;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 获取全局OnInsertListener
      *
      * @return
      */
     public static OnInsertListener getGlobalOnInsertListener() {
-        Object listener = CACHE.computeIfAbsent(GLOBAL_ON_INSERT_LISTENER, k -> NULL);
-        if (listener == NULL) {
-            return null;
+        if (GLOBAL_ON_INSERT_LISTENER == NULL) {
+            GLOBAL_ON_INSERT_LISTENER = null;
         }
-        return (OnInsertListener) listener;
+        return (OnInsertListener) GLOBAL_ON_INSERT_LISTENER;
     }
 
     /**
@@ -514,7 +609,9 @@ public final class XbatisGlobalConfig {
      * @param listener
      */
     public static void setGlobalOnInsertListener(OnInsertListener<?> listener) {
-        CACHE.putIfAbsent(GLOBAL_ON_INSERT_LISTENER, listener);
+        if (GLOBAL_ON_INSERT_LISTENER == NULL) {
+            GLOBAL_ON_INSERT_LISTENER = listener;
+        }
     }
 
     /**
@@ -523,19 +620,25 @@ public final class XbatisGlobalConfig {
      * @return
      */
     public static OnUpdateListener<?> getGlobalOnUpdateListener() {
-        Object listener = CACHE.computeIfAbsent(GLOBAL_ON_UPDATE_LISTENER, k -> NULL);
-        if (listener == NULL) {
-            return null;
+        if (GLOBAL_ON_UPDATE_LISTENER == NULL) {
+            GLOBAL_ON_UPDATE_LISTENER = null;
         }
-        return (OnUpdateListener) listener;
+        return (OnUpdateListener) GLOBAL_ON_UPDATE_LISTENER;
     }
 
     /**
      * 设置全局OnUpdateListener
      *
      * @param listener
+     * @return 是否成功
      */
-    public static void setGlobalOnUpdateListener(OnUpdateListener<?> listener) {
-        CACHE.putIfAbsent(GLOBAL_ON_UPDATE_LISTENER, listener);
+    public static boolean setGlobalOnUpdateListener(OnUpdateListener<?> listener) {
+        if (GLOBAL_ON_UPDATE_LISTENER == NULL) {
+            GLOBAL_ON_UPDATE_LISTENER = listener;
+            return true;
+        }
+        return false;
     }
+
+
 }

@@ -129,7 +129,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             methodIntercepting = true;
             try {
                 //不拦截xbatis自带的方法
-                if (interceptors != null && !interceptors.isEmpty() && !method.getDeclaringClass().getPackage().getName().startsWith(BaseMapper.class.getPackage().getName())) {
+                if (interceptors != null && !interceptors.isEmpty() &&
+                        (XbatisGlobalConfig.isEnableInterceptOfficialMapperMethod() || !method.getDeclaringClass().getPackage().getName().startsWith(BaseMapper.class.getPackage().getName()))) {
                     MethodInvocation methodInvocation = new MethodInvocation(interceptors, proxy, method, args, () -> {
                         return doInvoke(proxy, method, args);
                     });
