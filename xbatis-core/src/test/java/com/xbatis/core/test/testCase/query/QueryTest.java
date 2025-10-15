@@ -912,8 +912,8 @@ public class QueryTest extends BaseTest {
             assertEquals(list.get(2).getCount1(), 1);
 
             assertEquals(list.get(0).getCount2(), list.get(0).getId() + 1);
-            assertEquals(list.get(1).getCount2(), list.get(0).getId() + 1);
-            assertEquals(list.get(2).getCount2(), list.get(0).getId() + 1);
+            assertEquals(list.get(1).getCount2(), list.get(1).getId() + 1);
+            assertEquals(list.get(2).getCount2(), list.get(2).getId() + 1);
         }
     }
 }
