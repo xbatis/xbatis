@@ -226,4 +226,12 @@ public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapp
     default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, V> query) {
         return this.$mapWithKey(new MapKeySQLCmdQueryContext(mapKey, query));
     }
+
+
+    /**
+     * 设置公共变量Map
+     *
+     * @param shareVariablesMap
+     */
+    void $setShareVariablesMap(Map<ShareVariableName, Object> shareVariablesMap);
 }

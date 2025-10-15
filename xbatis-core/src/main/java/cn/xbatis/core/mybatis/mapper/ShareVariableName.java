@@ -12,27 +12,12 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.context;
+package cn.xbatis.core.mybatis.mapper;
 
+public enum ShareVariableName {
 
-import cn.xbatis.core.mybatis.executor.PreparedParameterContext;
-import cn.xbatis.core.mybatis.mapper.BasicMapper;
-import db.sql.api.DbType;
-import db.sql.api.impl.cmd.executor.Executor;
+    BASIC_MAPPER,
 
-public interface SQLCmdContext<E extends Executor> extends PreparedParameterContext {
+    MAPPER_METHOD_INTERCEPTED
 
-    E getExecution();
-
-    default void init(DbType dbType) {
-
-    }
-
-    String sql(DbType dbType);
-
-    Object[] getParameters();
-
-    BasicMapper $getBasicMapper();
-
-    void $setBasicMapper(BasicMapper basicMapper);
 }

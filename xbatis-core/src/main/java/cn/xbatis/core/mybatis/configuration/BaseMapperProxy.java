@@ -16,10 +16,11 @@ package cn.xbatis.core.mybatis.configuration;
 
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.function.ThreeFunction;
-import cn.xbatis.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
+import cn.xbatis.core.mybatis.mapper.ShareVariableName;
 import cn.xbatis.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
+import cn.xbatis.core.mybatis.mapper.context.SQLCmdContext;
 import cn.xbatis.core.mybatis.mapper.context.SelectPreparedContext;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInvocation;
@@ -39,14 +40,10 @@ import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class BaseMapperProxy<T> extends MapperProxy<T> {
 
@@ -66,7 +63,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     protected final Class<T> mapperInterface;
     private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
     private volatile DbType dbType;
-    private boolean methodIntercepting = false;
+    protected Map<ShareVariableName, Object> shareVariables = new HashMap<>();
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
@@ -81,15 +78,13 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         return dbType;
     }
 
-    protected boolean setBasicMapperToThreadLocal(Object proxy) {
+    protected BasicMapper getBasicMapperFromProxy(Object proxy) {
         if (proxy instanceof BasicMapper) {
-            BasicMapperThreadLocalUtil.set(proxy);
-            return true;
+            return (BasicMapper) proxy;
         } else if (proxy instanceof MybatisMapper) {
-            BasicMapperThreadLocalUtil.set((Supplier<BasicMapper>) () -> ((MybatisMapper) proxy).getBasicMapper());
-            return true;
+            return ((MybatisMapper) proxy).getBasicMapper();
         }
-        return false;
+        return null;
     }
 
     private void wrapperParams(Method method, Object[] args) {
@@ -124,24 +119,50 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (!methodIntercepting) {
-            //只拦截开头的方法
-            methodIntercepting = true;
-            try {
-                //不拦截xbatis自带的方法
-                if (interceptors != null && !interceptors.isEmpty() &&
-                        (XbatisGlobalConfig.isEnableInterceptOfficialMapperMethod() || !method.getDeclaringClass().getPackage().getName().startsWith(BaseMapper.class.getPackage().getName()))) {
-                    MethodInvocation methodInvocation = new MethodInvocation(interceptors, proxy, method, args, () -> {
-                        return doInvoke(proxy, method, args);
-                    });
-                    return interceptors.get(0).around(methodInvocation);
-                }
-                return this.doInvoke(proxy, method, args);
-            } finally {
-                methodIntercepting = false;
+        boolean isSetSQLCmdContext = false;
+        if (args != null && args.length > 0 && args[0] instanceof SQLCmdContext) {
+            SQLCmdContext sqlCmdContext = (SQLCmdContext) args[0];
+            if (sqlCmdContext.$getBasicMapper() == null) {
+                isSetSQLCmdContext = true;
+                sqlCmdContext.$setBasicMapper(getBasicMapperFromProxy(proxy));
             }
         }
-        return this.doInvoke(proxy, method, args);
+        //没有拦截器
+        if (interceptors == null || interceptors.isEmpty()) {
+            return this.doInvoke(proxy, method, args);
+        }
+        //已经拦截过了 不拦截；只拦截第一个
+        Boolean methodIntercepted = (Boolean) shareVariables.get(ShareVariableName.MAPPER_METHOD_INTERCEPTED);
+        if (methodIntercepted != null && methodIntercepted) {
+            return this.doInvoke(proxy, method, args);
+        }
+
+        try {
+            shareVariables.put(ShareVariableName.MAPPER_METHOD_INTERCEPTED, true);
+
+            if (method.getDeclaringClass().getPackage().getName().startsWith("java.")) {
+                //java自带方法
+                return this.doInvoke(proxy, method, args);
+            }
+
+            if (method.getDeclaringClass().getPackage().getName().startsWith(BaseMapper.class.getPackage().getName()) && !XbatisGlobalConfig.isEnableInterceptOfficialMapperMethod()) {
+                //xbatis mapper官方方法且未开启官方方法拦截开关
+                return this.doInvoke(proxy, method, args);
+            }
+
+            MethodInvocation methodInvocation = new MethodInvocation(interceptors, proxy, method, args, () -> {
+                return doInvoke(proxy, method, args);
+            });
+
+            return interceptors.get(0).around(methodInvocation);
+        } finally {
+            shareVariables.remove(ShareVariableName.MAPPER_METHOD_INTERCEPTED);
+            if (isSetSQLCmdContext) {
+                SQLCmdContext sqlCmdContext = (SQLCmdContext) args[0];
+                sqlCmdContext.$setBasicMapper(null);
+            }
+        }
+
     }
 
 
@@ -150,9 +171,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             return super.invoke(proxy, method, args);
         }
 
-        boolean isSetBasicMapperToThreadLocal = false;
-        try {
-            isSetBasicMapperToThreadLocal = setBasicMapperToThreadLocal(proxy);
+
             if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
                 Consumer<Object> consumer = (Consumer<Object>) args[0];
                 DbSelectorCall dbSelector = new DbSelectorCall();
@@ -210,11 +229,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             }
             this.wrapperParams(method, args);
             return super.invoke(proxy, method, args);
-        } finally {
-            if (isSetBasicMapperToThreadLocal) {
-                BasicMapperThreadLocalUtil.clear();
-            }
-        }
 
     }
 
@@ -253,4 +267,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         pager.set(PagerField.TOTAL, count);
         return pager;
     }
+
+
 }

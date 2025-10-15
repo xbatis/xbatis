@@ -12,6 +12,7 @@ public class MethodInterceptorTestcase extends BaseTest {
 
     @Test
     public void test() {
+        XbatisGlobalConfig.enableInterceptOfficialMapperMethod();
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
@@ -26,6 +27,8 @@ public class MethodInterceptorTestcase extends BaseTest {
 
             cnt = sysUserMapper.javaLimitAnnotationCount();
             assertEquals(123, cnt);
+
+//            sysUserMapper.getById(1);
         }
     }
 

@@ -15,12 +15,27 @@
 package cn.xbatis.core.mybatis.configuration;
 
 
+import cn.xbatis.core.mybatis.mapper.ShareVariableName;
 import org.apache.ibatis.session.SqlSession;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 public class BasicMapperProxy<T> extends BaseMapperProxy<T> {
+
+    public final static String SET_SHARE_VARIABLES_MAP = "$setShareVariablesMap";
+
     public BasicMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        //设置公共共享变量
+        if (SET_SHARE_VARIABLES_MAP.equals(method.getName())) {
+            this.shareVariables = (Map<ShareVariableName, Object>) args[0];
+            return null;
+        }
+        return super.invoke(proxy, method, args);
     }
 }

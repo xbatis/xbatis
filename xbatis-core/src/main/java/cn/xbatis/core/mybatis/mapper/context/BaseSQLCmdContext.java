@@ -15,6 +15,7 @@
 package cn.xbatis.core.mybatis.mapper.context;
 
 
+import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.provider.MybatisSqlBuilderContext;
 import db.sql.api.DbType;
 import db.sql.api.SQLMode;
@@ -29,8 +30,8 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
 
     protected String sql;
     protected E execution;
-
-    private DbType dbType;
+    protected DbType dbType;
+    protected BasicMapper basicMapper;
 
     public BaseSQLCmdContext() {
 
@@ -67,5 +68,15 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
 
     public DbType getDbType() {
         return dbType;
+    }
+
+    @Override
+    public BasicMapper $getBasicMapper() {
+        return this.basicMapper;
+    }
+
+    @Override
+    public void $setBasicMapper(BasicMapper basicMapper) {
+        this.basicMapper = basicMapper;
     }
 }

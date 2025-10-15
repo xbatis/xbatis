@@ -14,6 +14,8 @@
 
 package cn.xbatis.core.mybatis.configuration;
 
+import cn.xbatis.core.mybatis.mapper.BasicMapper;
+import cn.xbatis.core.mybatis.mapper.context.BaseSQLCmdContext;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.xbatis.core.sql.executor.BaseQuery;
 
@@ -31,6 +33,22 @@ public class XbatisContextUtil {
                 Object execution = parameterMap.get("execution");
                 if (execution != null && execution instanceof BaseQuery) {
                     return (BaseQuery) execution;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static BasicMapper getBasicMapper(Object parameterObject) {
+        if (parameterObject instanceof BaseSQLCmdContext) {
+            return ((BaseSQLCmdContext) parameterObject).$getBasicMapper();
+        }
+        if (parameterObject instanceof Map) {
+            Map parameterMap = (Map) parameterObject;
+            if (parameterMap.containsKey("basicMapper")) {
+                Object basicMapper = parameterMap.get("basicMapper");
+                if (basicMapper != null && basicMapper instanceof BasicMapper) {
+                    return (BasicMapper) basicMapper;
                 }
             }
         }

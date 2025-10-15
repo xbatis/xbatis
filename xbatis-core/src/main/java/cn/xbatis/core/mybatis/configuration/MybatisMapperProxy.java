@@ -17,6 +17,7 @@ package cn.xbatis.core.mybatis.configuration;
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
+import cn.xbatis.core.mybatis.mapper.ShareVariableName;
 import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Method;
@@ -33,7 +34,6 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
     private final Class<T> mapperInterface;
     private final Class<?> entityType;
     private final TableInfo tableInfo;
-    private BasicMapper basicMapper;
 
     public MybatisMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache, Class<?> entityType, TableInfo tableInfo) {
         super(sqlSession, mapperInterface, methodCache);
@@ -43,8 +43,11 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
     }
 
     private BasicMapper getBasicMapper() {
+        BasicMapper basicMapper = (BasicMapper) shareVariables.get(ShareVariableName.BASIC_MAPPER);
         if (Objects.isNull(basicMapper)) {
             basicMapper = sqlSession.getMapper(XbatisGlobalConfig.getSingleMapperClass());
+            shareVariables.put(ShareVariableName.BASIC_MAPPER, basicMapper);
+            basicMapper.$setShareVariablesMap(this.shareVariables);
         }
         return basicMapper;
     }

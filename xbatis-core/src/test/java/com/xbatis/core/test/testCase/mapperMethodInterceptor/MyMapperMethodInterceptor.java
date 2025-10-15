@@ -9,7 +9,7 @@ public class MyMapperMethodInterceptor implements MethodInterceptor {
     @Override
     public Object around(Invocation invocation) throws Throwable {
         try {
-            System.out.println(invocation.getMethod());
+            System.out.println("1111->>>>>" + invocation.getMethod());
             if (invocation.getMethod().isAnnotationPresent(MapperLimit.class)) {
                 System.out.println(">>1111>>>>>>>start");
             }

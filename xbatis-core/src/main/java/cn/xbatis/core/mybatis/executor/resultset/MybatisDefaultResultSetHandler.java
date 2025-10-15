@@ -16,7 +16,6 @@ package cn.xbatis.core.mybatis.executor.resultset;
 
 import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.configuration.XbatisContextUtil;
-import cn.xbatis.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdCountFromQueryContext;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
@@ -82,7 +81,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 this.fetchInfosMap = resultInfo.getFetchInfoMap();
                 if (Objects.nonNull(this.fetchInfosMap) && !this.fetchInfosMap.isEmpty()) {
                     this.needFetchValuesMap = new HashMap<>();
-                    this.basicMapper = BasicMapperThreadLocalUtil.get();
+                    this.basicMapper = XbatisContextUtil.getBasicMapper(parameterObject);
                 }
 
                 if (baseQuery != null) {
