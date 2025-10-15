@@ -26,6 +26,7 @@ import com.xbatis.core.test.REQ.SysUserOrderBys2;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import com.xbatis.core.test.vo.SysUserCalcSelectVo;
 import com.xbatis.core.test.vo.SysUserHandlerVo;
 import db.sql.api.DbType;
 import db.sql.api.Getters;
@@ -888,6 +889,31 @@ public class QueryTest extends BaseTest {
             assertEquals(roleIds.get(0), Integer.valueOf(3), "orderByObjectTest4");
             assertEquals(roleIds.get(1), Integer.valueOf(2), "orderByObjectTest4");
             assertEquals(roleIds.get(2), Integer.valueOf(1), "orderByObjectTest4");
+        }
+    }
+
+
+    @Test
+    public void queryWithResultCalcFiled() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUserCalcSelectVo> list = QueryChain.of(sysUserMapper)
+                    .groupBy(SysUser::getId)
+                    .returnType(SysUserCalcSelectVo.class)
+                    .list();
+            System.out.println(list);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+            assertEquals(list.get(2).getId(), 3);
+
+
+            assertEquals(list.get(0).getCount1(), 1);
+            assertEquals(list.get(1).getCount1(), 1);
+            assertEquals(list.get(2).getCount1(), 1);
+
+            assertEquals(list.get(0).getCount2(), list.get(0).getId() + 1);
+            assertEquals(list.get(1).getCount2(), list.get(0).getId() + 1);
+            assertEquals(list.get(2).getCount2(), list.get(0).getId() + 1);
         }
     }
 }

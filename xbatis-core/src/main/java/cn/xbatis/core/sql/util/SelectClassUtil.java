@@ -28,17 +28,24 @@ public final class SelectClassUtil {
 
     public static void buildSelect(AbstractQuery query, List<ResultFieldInfo> resultFieldInfos, List<Cmd> cmdList, boolean throwExceptionWhenNonEntityRefField) {
         resultFieldInfos.stream().filter(item -> {
-                    boolean isEntityRefField = item instanceof ResultTableFieldInfo;
+                    boolean isEntityRefField = item instanceof ResultTableFieldInfo || item instanceof ResultCalcFieldInfo;
                     if (!isEntityRefField && throwExceptionWhenNonEntityRefField) {
                         throw new RuntimeException("包含非实体类引用字段，无法自动select");
                     }
                     return isEntityRefField;
                 })
                 .forEach(item -> {
-                    ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
-                    Cmd tableField = query.$().field(resultTableFieldInfo.getTableInfo().getType(), resultTableFieldInfo.getTableFieldInfo().getField().getName(), resultTableFieldInfo.getStorey());
-                    if (!cmdList.contains(tableField)) {
-                        cmdList.add(tableField);
+                    if (item instanceof ResultTableFieldInfo) {
+                        ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
+                        Cmd tableField = query.$().field(resultTableFieldInfo.getTableInfo().getType(), resultTableFieldInfo.getTableFieldInfo().getField().getName(), resultTableFieldInfo.getStorey());
+                        if (!cmdList.contains(tableField)) {
+                            cmdList.add(tableField);
+                        }
+                    } else if (item instanceof ResultCalcFieldInfo) {
+                        ResultCalcFieldInfo resultCalcFieldInfo = (ResultCalcFieldInfo) item;
+                        cmdList.add(resultCalcFieldInfo.getCmd(query.$()));
+                    } else {
+                        throw new RuntimeException("<UNK>select");
                     }
                 });
     }

@@ -36,6 +36,7 @@ public class DistinctOn extends BasicFunction<DistinctOn> implements NoAfterDeli
         sqlBuilder.append(this.operator).append(SqlConst.BRACKET_LEFT);
         sqlBuilder = CmdUtils.join(module, this, context, sqlBuilder, this.onKeys, SqlConst.DELIMITER);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+        sqlBuilder.append(SqlConst.BLANK);
         return sqlBuilder;
     }
 

@@ -107,6 +107,12 @@ public class ResultInfo {
                 continue;
             }
 
+            if (field.isAnnotationPresent(ResultCalcField.class)) {
+                //计算字段
+                tableCount = parseResultCalcField(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
+                continue;
+            }
+
             if (field.isAnnotationPresent(Fetch.class)) {
                 //Fetch
                 tableCount = parseFetch(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount, 1);
@@ -233,6 +239,12 @@ public class ResultInfo {
                 //普通字段
                 ResultField resultField = field.getAnnotation(ResultField.class);
                 nestedResultInfo.getResultFieldInfos().add(new ResultFieldInfo(targetType, field, resultField));
+                continue;
+            }
+
+            if (field.isAnnotationPresent(ResultCalcField.class)) {
+                //计算字段
+                tableCount = parseResultCalcField(parseResult, tableInfo, parseResult.resultFieldInfos, targetType, field, tableCount);
                 continue;
             }
 
@@ -399,6 +411,85 @@ public class ResultInfo {
         }
 
         parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, fieldInfo, fetch, returnType, valueColumn, valueTypeHandler));
+        return tableCount;
+    }
+
+    /**
+     * 解析计算字段
+     *
+     * @param parseResult      解析结果
+     * @param currentTableInfo 当前对应TableInfo
+     * @param field            字段
+     * @param tableCount       当前表个数
+     * @return 当前已存在表的个数
+     */
+    private static int parseResultCalcField(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
+        ResultCalcField resultCalcField = field.getAnnotation(ResultCalcField.class);
+        String value = resultCalcField.value();
+
+        TableInfo tableInfo;
+        if (resultCalcField.target() != Void.class) {
+            if (!resultCalcField.target().isAnnotationPresent(Table.class)) {
+                throw new RuntimeException(clazz.getName() + "->" + field.getName() + " @ResultCalcField config error,the target: " + resultCalcField.target().getName() + " is not a entity");
+            }
+            tableInfo = Tables.get(resultCalcField.target());
+        } else {
+            //如果没有设置Fetch source 字段，则当前作用域的TableInfo
+            tableInfo = currentTableInfo;
+        }
+
+        int storey = resultCalcField.storey();
+
+        //以字段为基础的查询
+        //创建前缀
+        tableCount = createPrefix(tableInfo.getType(), storey, parseResult.tablePrefixes, tableCount);
+
+
+        List<TableFieldInfo> tableFieldInfoList = new ArrayList<>();
+
+
+        StringBuilder sql = new StringBuilder();
+        int startIndex = 0;
+
+        int pos = -1;
+        String annotationName = ResultCalcField.class.getSimpleName();
+        String annotationPropertyName = "value";
+
+        while (true) {
+            int start = value.indexOf("{", startIndex);
+            if (start == -1) {
+                if (sql.length() == 0 && value.length() <= 2) {
+                    throw buildException(clazz, field, ResultCalcField.class.getSimpleName(), annotationPropertyName, "format error");
+                } else {
+                    sql.append(value, startIndex, value.length());
+                    break;
+                }
+            }
+            int end = value.indexOf("}", start);
+            if (end == -1) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+            }
+            String property = value.substring(start + 1, end);
+
+            String[] arr = property.split("\\.");
+            if (arr.length > 2) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+            }
+
+            property = arr[arr.length - 1];
+            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
+            if (Objects.isNull(tableFieldInfo)) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
+            }
+            sql.append(value, startIndex, start);
+            sql.append("{").append(++pos).append("}");
+            tableFieldInfoList.add(tableFieldInfo);
+            startIndex = end + 1;
+        }
+
+        TableFieldInfo[] tableFieldInfos = tableFieldInfoList.toArray(new TableFieldInfo[0]);
+        resultFieldInfos.add(new ResultCalcFieldInfo(clazz, storey, tableInfo, tableFieldInfos, field, resultCalcField, sql.toString()));
+
         return tableCount;
     }
 

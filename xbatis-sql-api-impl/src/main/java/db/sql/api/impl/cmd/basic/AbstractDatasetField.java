@@ -61,9 +61,7 @@ public abstract class AbstractDatasetField<T extends AbstractDatasetField<T>> ex
         }
 
         if (this.table.getAlias() != null && !(module instanceof IInsert)) {
-            sqlBuilder.append(SqlConst.BLANK).append(this.table.getAlias()).append(SqlConst.DOT);
-        } else {
-            sqlBuilder.append(SqlConst.BLANK);
+            sqlBuilder.append(this.table.getAlias()).append(SqlConst.DOT);
         }
 
         sqlBuilder.append(getName(context.getDbType()));
