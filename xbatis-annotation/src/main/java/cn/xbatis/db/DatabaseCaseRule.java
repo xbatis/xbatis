@@ -22,12 +22,12 @@ public enum DatabaseCaseRule {
     // 全小写
     LOWERCASE,
 
-    DatabaseNamingRule(){
+    DatabaseNamingRule() {
 
     };
 
-    public String convert(String name){
-        if(this == DEFAULT){
+    public String convert(String name) {
+        if (this == DEFAULT) {
             return name;
         } else if (this == UPPERCASE) {
             return name.toUpperCase();

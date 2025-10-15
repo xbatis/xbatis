@@ -62,8 +62,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     protected final SqlSession sqlSession;
     protected final Class<T> mapperInterface;
     private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
-    private volatile DbType dbType;
     protected Map<ShareVariableName, Object> shareVariables = new HashMap<>();
+    private volatile DbType dbType;
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
@@ -172,63 +172,63 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         }
 
 
-            if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
-                Consumer<Object> consumer = (Consumer<Object>) args[0];
-                DbSelectorCall dbSelector = new DbSelectorCall();
-                consumer.accept(dbSelector);
-                return dbSelector.dbExecute(this.getDbType());
-            } else if (method.getName().equals(MAP_WITH_KEY_METHOD_NAME)) {
-                this.wrapperParams(method, args);
-                return mapWithKey(method, args);
-            } else if (method.isAnnotationPresent(Paging.class)) {
-                this.wrapperParams(method, args);
-                return paging(method, args);
-            } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
-                return this.getDbType();
-            } else if (method.getName().equals(WITH_SQL_SESSION_METHOD_NAME)) {
-                this.wrapperParams(method, args);
-                if (args.length == 1) {
-                    Function<SqlSession, ?> function = (Function<SqlSession, ?>) args[0];
-                    return function.apply(this.sqlSession);
-                }
-
-                String statement;
-                if (args.length == 4) {
-                    statement = XbatisGlobalConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
-                } else {
-                    if (args[0] instanceof String) {
-                        statement = (String) args[0];
-                        if (statement.startsWith(".")) {
-                            statement = XbatisGlobalConfig.getSingleMapperClass().getName() + statement;
-                        }
-                    } else {
-                        statement = XbatisGlobalConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
-                    }
-                }
-
-                if (args.length == 2) {
-                    BiFunction<String, SqlSession, ?> function = (BiFunction<String, SqlSession, ?>) args[1];
-                    return function.apply(statement, this.sqlSession);
-                } else if (args.length == 3) {
-                    if (args[0] instanceof String) {
-                        ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[2];
-                        return function.apply(statement, args[1], this.sqlSession);
-                    } else {
-                        BiFunction<String, SqlSession, ?> function = (BiFunction<String, SqlSession, ?>) args[2];
-                        return function.apply(statement, this.sqlSession);
-                    }
-                } else if (args.length == 4) {
-                    ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[3];
-                    return function.apply(statement, args[2], this.sqlSession);
-                } else {
-                    throw new RuntimeException("NOT SUPPORTED");
-                }
-            } else if ((method.getName().equals(SELECT) || method.getName().equals(SELECT_LIST)) && args.length == 1 && args[0] instanceof SelectPreparedContext) {
-                SelectPreparedContext selectPreparedContext = (SelectPreparedContext) args[0];
-                selectPreparedContext.initWithDbType(getDbType());
-            }
+        if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
+            Consumer<Object> consumer = (Consumer<Object>) args[0];
+            DbSelectorCall dbSelector = new DbSelectorCall();
+            consumer.accept(dbSelector);
+            return dbSelector.dbExecute(this.getDbType());
+        } else if (method.getName().equals(MAP_WITH_KEY_METHOD_NAME)) {
             this.wrapperParams(method, args);
-            return super.invoke(proxy, method, args);
+            return mapWithKey(method, args);
+        } else if (method.isAnnotationPresent(Paging.class)) {
+            this.wrapperParams(method, args);
+            return paging(method, args);
+        } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
+            return this.getDbType();
+        } else if (method.getName().equals(WITH_SQL_SESSION_METHOD_NAME)) {
+            this.wrapperParams(method, args);
+            if (args.length == 1) {
+                Function<SqlSession, ?> function = (Function<SqlSession, ?>) args[0];
+                return function.apply(this.sqlSession);
+            }
+
+            String statement;
+            if (args.length == 4) {
+                statement = XbatisGlobalConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
+            } else {
+                if (args[0] instanceof String) {
+                    statement = (String) args[0];
+                    if (statement.startsWith(".")) {
+                        statement = XbatisGlobalConfig.getSingleMapperClass().getName() + statement;
+                    }
+                } else {
+                    statement = XbatisGlobalConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
+                }
+            }
+
+            if (args.length == 2) {
+                BiFunction<String, SqlSession, ?> function = (BiFunction<String, SqlSession, ?>) args[1];
+                return function.apply(statement, this.sqlSession);
+            } else if (args.length == 3) {
+                if (args[0] instanceof String) {
+                    ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[2];
+                    return function.apply(statement, args[1], this.sqlSession);
+                } else {
+                    BiFunction<String, SqlSession, ?> function = (BiFunction<String, SqlSession, ?>) args[2];
+                    return function.apply(statement, this.sqlSession);
+                }
+            } else if (args.length == 4) {
+                ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[3];
+                return function.apply(statement, args[2], this.sqlSession);
+            } else {
+                throw new RuntimeException("NOT SUPPORTED");
+            }
+        } else if ((method.getName().equals(SELECT) || method.getName().equals(SELECT_LIST)) && args.length == 1 && args[0] instanceof SelectPreparedContext) {
+            SelectPreparedContext selectPreparedContext = (SelectPreparedContext) args[0];
+            selectPreparedContext.initWithDbType(getDbType());
+        }
+        this.wrapperParams(method, args);
+        return super.invoke(proxy, method, args);
 
     }
 

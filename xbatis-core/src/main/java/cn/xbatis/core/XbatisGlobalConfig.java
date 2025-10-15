@@ -50,6 +50,8 @@ import java.util.function.BiFunction;
 public final class XbatisGlobalConfig {
     private static final Object NULL = new Object();
     private static final Map<String, BiFunction<Class<?>, Class<?>, ?>> DYNAMIC_VALUE_MANAGER = new ConcurrentHashMap();
+    private static final List<SQLListener> SQL_LISTENERS = new ArrayList<>();
+    private static final List<MethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
     private static volatile Object DATABASE_CASE_RULE = NULL;
     private static volatile Object TABLE_UNDERLINE = NULL;
     private static volatile Object COLUMN_UNDERLINE = NULL;
@@ -60,8 +62,6 @@ public final class XbatisGlobalConfig {
     private static volatile Object SINGLE_MAPPER_CLASS = NULL;
     private static volatile Object GLOBAL_ON_INSERT_LISTENER = NULL;
     private static volatile Object GLOBAL_ON_UPDATE_LISTENER = NULL;
-    private static final List<SQLListener> SQL_LISTENERS = new ArrayList<>();
-    private static final List<MethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
     private static volatile Object INTERCEPT_OFFICIAL_MAPPER_METHOD = NULL;
 
 

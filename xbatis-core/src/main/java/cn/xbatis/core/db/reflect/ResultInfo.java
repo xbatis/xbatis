@@ -341,7 +341,7 @@ public class ResultInfo {
      * @param currentTableInfo 当前对应TableInfo
      * @param field            字段
      * @param tableCount       当前表个数
-     * @param parentStorey 父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
+     * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
      * @return 当前已存在表的个数
      */
     private static int parseFetch(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount, int parentStorey) {
