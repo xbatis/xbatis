@@ -209,6 +209,47 @@ public class ConditionItem {
                 conditionChain.between(tableField, array[0], annotation != null && annotation.toEndDayTime() ? toEndDayTime(array[1]) : array[1]);
                 break;
             }
+
+            case NULL: {
+                if (isTrueOr1(value)) {
+                    conditionChain.isNull(tableField);
+                } else {
+                    conditionChain.isNotNull(tableField);
+                }
+                break;
+            }
+
+            case NOT_NULL: {
+                if (isTrueOr1(value)) {
+                    conditionChain.isNotNull(tableField);
+                } else {
+                    conditionChain.isNull(tableField);
+                }
+                break;
+            }
+
+            case BLANK: {
+                if (isTrueOr1(value)) {
+                    conditionChain.empty(tableField);
+                } else {
+                    conditionChain.notEmpty(tableField);
+                }
+                break;
+            }
+
+            case NOT_BLANK: {
+                if (isTrueOr1(value)) {
+                    conditionChain.notEmpty(tableField);
+                } else {
+                    conditionChain.empty(tableField);
+                }
+                break;
+            }
         }
+    }
+
+    private boolean isTrueOr1(Object value) {
+        String str = value.toString();
+        return str.equalsIgnoreCase("true") || str.equals("1") ? true : false;
     }
 }

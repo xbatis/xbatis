@@ -80,6 +80,15 @@ public class QueryREQ implements ObjectConditionLifeCycle {
     )
     private String keyword;
 
+    @Conditions(
+            logic = Logic.AND,
+            value = {
+                    @Condition(property = SysUser.Fields.userName, value = NOT_NULL),
+                    @Condition(property = SysUser.Fields.userName, value = NOT_BLANK)
+            }
+    )
+    private boolean idNotNullAndBlank = true;
+
     @Override
     public void beforeBuildCondition() {
         System.out.println("在构建条件前执行");

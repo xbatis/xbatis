@@ -88,7 +88,15 @@ public @interface Condition {
         GTE,
         LIKE,
         NOT_LIKE,
-        BETWEEN
+        BETWEEN,
+        // boolean 或 0 1表达
+        NULL,
+        // boolean 或 0 1表达
+        NOT_NULL,
+        // boolean 或 0 1表达
+        BLANK,
+        // boolean 或 0 1表达
+        NOT_BLANK,
     }
 
     enum LikeMode {
