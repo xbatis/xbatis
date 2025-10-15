@@ -149,7 +149,7 @@ public class BaseTest {
 //        mapper.getById(1);
 
         for (DbType dbType : DbType.values()) {
-            dbType.getKeywords().add("value3");
+            dbType.addKeyword("value3");
         }
     }
 
