@@ -89,6 +89,9 @@ public class SelectPreparedContext<T> extends PreparedContext {
 
     @Override
     public Object[] getParameters() {
+        if (parameters == null) {
+            return super.getParameters();
+        }
         return parameters;
     }
 }

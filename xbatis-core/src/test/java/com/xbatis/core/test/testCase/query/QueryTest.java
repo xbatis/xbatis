@@ -899,6 +899,7 @@ public class QueryTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUserCalcSelectVo> list = QueryChain.of(sysUserMapper)
                     .groupBy(SysUser::getId)
+                    .orderBy(SysUser::getId)
                     .returnType(SysUserCalcSelectVo.class)
                     .list();
             System.out.println(list);

@@ -59,6 +59,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     public final static String SELECT_LIST = "$selectList";
 
+    public final static String EXECUTE_AND_RETURNING = "$executeAndReturning";
+
+    public final static String EXECUTE_AND_RETURNING_LIST = "$executeAndReturningList";
+
     protected final SqlSession sqlSession;
     protected final Class<T> mapperInterface;
     private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
@@ -223,7 +227,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             } else {
                 throw new RuntimeException("NOT SUPPORTED");
             }
-        } else if ((method.getName().equals(SELECT) || method.getName().equals(SELECT_LIST)) && args.length == 1 && args[0] instanceof SelectPreparedContext) {
+        } else if ((method.getName().equals(SELECT) || method.getName().equals(SELECT_LIST) || method.getName().equals(EXECUTE_AND_RETURNING) || method.getName().equals(EXECUTE_AND_RETURNING_LIST))
+                && args.length == 1 && args[0] instanceof SelectPreparedContext) {
             SelectPreparedContext selectPreparedContext = (SelectPreparedContext) args[0];
             selectPreparedContext.initWithDbType(getDbType());
         }

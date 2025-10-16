@@ -93,13 +93,18 @@ public class MybatisExecutor implements Executor {
             cacheKey.update(context.getExecution().getReturnType().getName());
         } else if (parameterObject instanceof ExecuteAndSelectPreparedContext) {
             ExecuteAndSelectPreparedContext context = (ExecuteAndSelectPreparedContext) parameterObject;
-            cacheKey.updateAll(context.getParameters());
+            if (context.getParameters() != null) {
+                cacheKey.updateAll(context.getParameters());
+            }
             cacheKey.update(context.getReturnType().getName());
             cacheKey.update(System.currentTimeMillis());
         } else if (parameterObject instanceof SelectPreparedContext) {
             SelectPreparedContext context = (SelectPreparedContext) parameterObject;
-            cacheKey.updateAll(context.getParameters());
+            if (context.getParameters() != null) {
+                cacheKey.updateAll(context.getParameters());
+            }
             cacheKey.update(context.getReturnType().getName());
+            cacheKey.update(System.currentTimeMillis());
         } else if (parameterObject instanceof SQLCmdUpdateContext) {
             SQLCmdUpdateContext context = (SQLCmdUpdateContext) parameterObject;
             cacheKey.updateAll(context.getParameters());
