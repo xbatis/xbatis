@@ -62,7 +62,7 @@ public final class Methods {
      * @return
      */
     public static ICondition TRUE() {
-        return cTpl("1=1");
+        return TRUE.TRUE;
     }
 
     /**
@@ -72,7 +72,7 @@ public final class Methods {
      * @return
      */
     public static ICondition FALSE() {
-        return cTpl("1!=1");
+        return FALSE.FALSE;
     }
 
     /**

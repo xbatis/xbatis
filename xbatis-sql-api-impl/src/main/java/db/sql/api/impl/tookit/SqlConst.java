@@ -40,6 +40,14 @@ public final class SqlConst {
 
     public static final char[] NULL = " NULL ".toCharArray();
 
+    public static final char[] TRUE = " TRUE ".toCharArray();
+
+    public static final char[] FALSE = " FALSE ".toCharArray();
+
+    public static final char[] EQ_1_1 = " 1=1 ".toCharArray();
+
+    public static final char[] NE_1_1 = " 1!=1 ".toCharArray();
+
     public static final char[] UNION = " UNION ".toCharArray();
 
     public static final char[] UNION_ALL = " UNION ALL ".toCharArray();
