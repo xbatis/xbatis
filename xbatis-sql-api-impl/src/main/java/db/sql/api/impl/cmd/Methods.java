@@ -56,13 +56,23 @@ public final class Methods {
     }
 
     /**
-     * 对应SQL中的1=1;创建一个始终TRUE条件
+     * 对应SQL中的true;创建一个始终TRUE条件
      * 方便开发者使用
      *
      * @return
      */
     public static ICondition TRUE() {
-        return cTpl("1=1");
+        return cTpl("TRUE");
+    }
+
+    /**
+     * 对应SQL中的true;创建一个始终TRUE条件
+     * 方便开发者使用
+     *
+     * @return
+     */
+    public static ICondition FALSE() {
+        return cTpl("FALSE");
     }
 
     /**

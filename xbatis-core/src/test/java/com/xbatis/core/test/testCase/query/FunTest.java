@@ -54,6 +54,8 @@ public class FunTest extends BaseTest {
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
                     .and()
+                    .and(Methods.TRUE())
+                    .or(Methods.FALSE())
                     .returnType(Integer.class)
                     .count();
 
