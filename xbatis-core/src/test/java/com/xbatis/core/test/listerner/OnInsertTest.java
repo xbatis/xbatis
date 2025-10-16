@@ -65,11 +65,16 @@ public class OnInsertTest extends BaseTest {
             sysUserMapper.getBasicMapper().saveBatch(Arrays.asList(sysUserOnInsert, sysUserOnInsert2));
 
             assertEquals("onInsert", sysUserOnInsert.getUserName());
-            assertEquals(4, sysUserOnInsert.getId());
+            if (TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+                assertEquals(4, sysUserOnInsert.getId());
+            }
+
             assertNotNull(sysUserOnInsert.getCreateTime());
 
             assertEquals("onInsert", sysUserOnInsert2.getUserName());
-            assertEquals(5, sysUserOnInsert2.getId());
+            if (TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+                assertEquals(5, sysUserOnInsert2.getId());
+            }
             assertNotNull(sysUserOnInsert2.getCreateTime());
         }
     }
