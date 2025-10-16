@@ -132,12 +132,22 @@ public final class TableInfoUtil {
             return null;
         }
         TableId tableId = null;
+        TableId unkownTableId = null;
         for (TableId item : tableIdAnnotations) {
+            if (item.dbType() == DbType.UNKNOWN) {
+                unkownTableId = item;
+                break;
+            }
             if (item.dbType() == dbType) {
                 tableId = item;
                 break;
             }
         }
+
+        if (Objects.isNull(tableId)) {
+            tableId = unkownTableId;
+        }
+
         if (Objects.isNull(tableId)) {
             tableId = tableIdAnnotations[0];
         }

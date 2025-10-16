@@ -40,7 +40,7 @@ public @interface TableId {
      *
      * @return
      */
-    DbType dbType() default DbType.MYSQL;
+    DbType dbType() default DbType.UNKNOWN;
 
     /**
      * 自增器的名字
