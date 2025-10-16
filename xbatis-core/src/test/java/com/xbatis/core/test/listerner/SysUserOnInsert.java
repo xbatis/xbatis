@@ -14,6 +14,7 @@
 
 package com.xbatis.core.test.listerner;
 
+import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.ForeignKey;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableField;
@@ -21,6 +22,7 @@ import cn.xbatis.db.annotations.TableId;
 import cn.xbatis.listener.annotations.OnInsert;
 import cn.xbatis.listener.annotations.OnUpdate;
 import com.xbatis.core.test.DO.SysRole;
+import db.sql.api.DbType;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
@@ -35,7 +37,7 @@ import java.time.LocalDateTime;
 public class SysUserOnInsert {
 
     @TableId
-    @TableField("id")
+    @TableId(dbType = DbType.KING_BASE, value = IdAutoType.SQL, sql = "select t_sys_user_seq.NEXTVAL FROM dual")
     private Integer id;
 
     private String userName;

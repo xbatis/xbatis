@@ -37,10 +37,6 @@ CREATE TABLE sys_role
     create_time TIMESTAMP DEFAULT SYSDATE NOT NULL
 );
 
-DROP SEQUENCE sys_user_score_seq;
-
-CREATE SEQUENCE sys_user_score_seq;
-
 DROP TABLE sys_user_score;
 
 CREATE TABLE sys_user_score
@@ -51,16 +47,18 @@ CREATE TABLE sys_user_score
 
 insert
 all
-       into t_sys_user values (1, 'admin', '123', 0, TO_DATE('2023-10-11 15:16:17', 'YYYY-MM-DD HH24:MI:SS'))
-       into t_sys_user values (2, 'test1', '123456', 1, TO_DATE('2023-10-11 15:16:17', 'YYYY-MM-DD HH24:MI:SS'))
-       into t_sys_user values (3, 'test2', null, 1, TO_DATE('2023-10-12 15:16:17', 'YYYY-MM-DD HH24:MI:SS'))
+       into t_sys_user values (t_sys_user_seq.NEXTVAL, 'admin', '123', 0, TO_DATE('2023-10-11 15:16:17', 'YYYY-MM-DD HH24:MI:SS'))
+       into t_sys_user values (t_sys_user_seq.NEXTVAL, 'test1', '123456', 1, TO_DATE('2023-10-11 15:16:17', 'YYYY-MM-DD HH24:MI:SS'))
+       into t_sys_user values (t_sys_user_seq.NEXTVAL, 'test2', null, 1, TO_DATE('2023-10-12 15:16:17', 'YYYY-MM-DD HH24:MI:SS'))
 select *
 from dual;
 
+
+
 insert
 all
-       into sys_role values (1, '测试', TO_DATE('2022-10-10', 'YYYY-MM-DD'))
-       into sys_role values (2, '运维', TO_DATE('2022-10-10', 'YYYY-MM-DD'))
+       into sys_role values (sys_role_seq.NEXTVAL, '测试', TO_DATE('2022-10-10', 'YYYY-MM-DD'))
+       into sys_role values (sys_role_seq.NEXTVAL, '运维', TO_DATE('2022-10-10', 'YYYY-MM-DD'))
 select *
 from dual;
 
@@ -128,9 +126,9 @@ CREATE TABLE logic_delete_test
 
 insert
 all
-       into logic_delete_test values (1, '测试', 0, null)
-       into logic_delete_test values(2, '运维', 0, null)
-       into logic_delete_test values(3, '运维2', 0, null)
+       into logic_delete_test values (logic_delete_test_seq.NEXTVAL, '测试', 0, null)
+       into logic_delete_test values(logic_delete_test_seq.NEXTVAL, '运维', 0, null)
+       into logic_delete_test values(logic_delete_test_seq.NEXTVAL, '运维2', 0, null)
 select *
 from dual;
 
