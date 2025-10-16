@@ -61,7 +61,7 @@ public final class Methods {
      *
      * @return
      */
-    public static ICondition TRUE() {
+    public static TRUE TRUE() {
         return TRUE.TRUE;
     }
 
@@ -71,7 +71,7 @@ public final class Methods {
      *
      * @return
      */
-    public static ICondition FALSE() {
+    public static FALSE FALSE() {
         return FALSE.FALSE;
     }
 
