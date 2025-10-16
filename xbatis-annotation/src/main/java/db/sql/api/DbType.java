@@ -62,14 +62,6 @@ public enum DbType {
         return MYSQL;
     }
 
-    public KeywordWrap getKeywordWrap() {
-        return keywordWrap;
-    }
-
-    public Set<String> getKeywords() {
-        return keywords;
-    }
-
     /**
      * 官方提供的添加关键字的方法
      * 给所有数据库都加上数据库关键词
@@ -82,6 +74,14 @@ public enum DbType {
         for (DbType dbType : DbType.values()) {
             dbType.addKeyword(keywords);
         }
+    }
+
+    public KeywordWrap getKeywordWrap() {
+        return keywordWrap;
+    }
+
+    public Set<String> getKeywords() {
+        return keywords;
     }
 
     /**
