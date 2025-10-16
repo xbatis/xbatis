@@ -184,7 +184,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!isKeyValid(column)) {
             return null;
         }
-        return Methods.eq(column, Methods.value(""));
+        return Methods.empty(column);
     }
 
     @Override
@@ -200,7 +200,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!isKeyValid(column)) {
             return null;
         }
-        return Methods.ne(column, Methods.value(""));
+        return Methods.notEmpty(column);
     }
 
     @Override
