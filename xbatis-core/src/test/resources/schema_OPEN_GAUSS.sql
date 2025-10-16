@@ -50,10 +50,10 @@ CREATE TABLE IF NOT EXISTS sys_user_score
     score decimal(6, 2)
 );
 
-insert into t_sys_user
-values (1, 'admin', '123', 0, '2023-10-11 15:16:17'),
-       (2, 'test1', '123456', 1, '2023-10-11 15:16:17'),
-       (3, 'test2', null, 1, '2023-10-12 15:16:17');
+insert into t_sys_user(user_name, password, role_id, create_time)
+values (  'admin', '123', 0, '2023-10-11 15:16:17'),
+       (  'test1', '123456', 1, '2023-10-11 15:16:17'),
+       (  'test2', null, 1, '2023-10-12 15:16:17');
 
 insert into sys_role
 values (1, '测试', '2022-10-10'),

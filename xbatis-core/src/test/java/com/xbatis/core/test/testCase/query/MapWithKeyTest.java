@@ -120,6 +120,7 @@ public class MapWithKeyTest extends BaseTest {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             Map<Integer, SysUser> maps = QueryChain.of(sysRoleMapper)
                     .innerJoin(SysRole::getId, SysUser::getRole_id)
+                    .orderBy(SysUser::getId)
                     .returnType(SysRoleVo3.class)
                     .mapWithKeyAndValue(SysRoleVo3::getId, SysRoleVo3::getSysUser);
 
