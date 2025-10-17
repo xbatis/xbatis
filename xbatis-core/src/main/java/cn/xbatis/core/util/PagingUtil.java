@@ -58,8 +58,9 @@ public final class PagingUtil {
         }
 
         Paging paging = mapperMethod.getAnnotation(Paging.class);
-
-        addPagingCountMappedStatement(ms, paging);
+        if (IPager.class.isAssignableFrom(mapperMethod.getReturnType())) {
+            addPagingCountMappedStatement(ms, paging);
+        }
         addPagingListMappedStatement(ms, mapperMethod);
     }
 

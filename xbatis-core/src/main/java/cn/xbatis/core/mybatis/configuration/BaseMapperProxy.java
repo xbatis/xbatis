@@ -243,13 +243,17 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         return sqlSession.selectMap(statementId, queryContext, queryContext.getKey());
     }
 
-    private IPager<?> paging(Method method, Object[] args) {
+    private Object paging(Method method, Object[] args) {
         ParamNameResolver paramNameResolver = new ParamNameResolver(this.sqlSession.getConfiguration(), method);
         Object params = paramNameResolver.getNamedParams(args);
         String statementId = mapperInterface.getName() + "." + method.getName();
         IPager<?> pager = (IPager) args[0];
 
         Boolean executeCount = pager.get(PagerField.IS_EXECUTE_COUNT);
+        boolean returnPager = IPager.class.isAssignableFrom(method.getReturnType());
+        if (!returnPager) {
+            executeCount = false;
+        }
         Integer size = pager.get(PagerField.SIZE);
         Integer count = null;
         List list;
@@ -263,6 +267,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             }
         } else {
             list = sqlSession.selectList(statementId + "&list", params);
+        }
+
+        if (!returnPager) {
+            return list;
         }
 
         if (executeCount && size < 0) {

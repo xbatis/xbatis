@@ -35,6 +35,24 @@ import static org.junit.jupiter.api.Assertions.*;
 public class XmlPagingTestCase extends BaseTest {
 
     @Test
+    public void xmlPagingList() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            List<SysRole> list = sysRoleMapper.xmlPagingList(Pager.of(1), 1, 2);
+
+            assertEquals(1, list.get(0).getId());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+
+            list = sysRoleMapper.xmlPagingList(Pager.of(2), 1, 2);
+
+            assertEquals(2, list.get(1).getId());
+            assertNotNull(list.get(1).getCreateTime());
+            System.out.println(list);
+        }
+    }
+
+    @Test
     public void xmlPaging() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
