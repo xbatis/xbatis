@@ -115,7 +115,7 @@ public class ResultInfo {
 
             if (field.isAnnotationPresent(Fetch.class)) {
                 //Fetch
-                tableCount = parseFetch(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount, 1);
+                tableCount = parseFetch(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount, resultEntity.storey());
                 continue;
             }
 
