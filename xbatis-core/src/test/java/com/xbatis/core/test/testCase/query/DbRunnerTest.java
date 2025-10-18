@@ -120,9 +120,9 @@ public class DbRunnerTest extends BaseTest {
             System.out.println(map);
             assertEquals("admin", map.get("user_name"));
 
-            List<Map> list = sysUserMapper.selectList(Map.class, "select * from t_sys_user t where ? ", WhereUtil.create());
+            List<Map> list = sysUserMapper.selectList(Map.class, "select * from t_sys_user t where ? and ?", WhereUtil.create(), WhereUtil.create().eq(SysUser::getId, 1));
             System.out.println(list);
-            assertEquals(3, list.size());
+            assertEquals(1, list.size());
         }
     }
 
