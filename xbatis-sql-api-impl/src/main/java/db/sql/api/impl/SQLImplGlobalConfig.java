@@ -15,12 +15,18 @@
 package db.sql.api.impl;
 
 import cn.xbatis.db.DatabaseCaseRule;
+import db.sql.api.DbType;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class SQLImplGlobalConfig {
 
     private static final Object NULL = new Object();
 
     private static volatile Object DATABASE_CASE_RULE = NULL;
+
+    private final static Map<DbType, Object> DATABASE_CASE_RULES = new ConcurrentHashMap<>();
 
     /**
      * 数据库命名规则 默认 不处理
@@ -46,5 +52,28 @@ public final class SQLImplGlobalConfig {
         }
 
         return false;
+    }
+
+
+    /**
+     * 数据库命名规则 默认 不处理
+     *
+     * @return 命名规则
+     */
+    public static DatabaseCaseRule getDatabaseCaseRule(DbType dbType) {
+        Object value = DATABASE_CASE_RULES.computeIfAbsent(dbType, (i) -> NULL);
+        if (value == NULL) {
+            return null;
+        }
+        return (DatabaseCaseRule) value;
+    }
+
+    /**
+     * 设置数据库命名规则 默认 不处理
+     *
+     * @return 是否成功
+     */
+    public static void setDatabaseCaseRule(DbType dbType, DatabaseCaseRule databaseCaseRule) {
+        DATABASE_CASE_RULES.computeIfAbsent(dbType, i -> databaseCaseRule);
     }
 }

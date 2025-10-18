@@ -14,37 +14,34 @@
 
 package cn.xbatis.core.sql.executor;
 
-import cn.xbatis.core.db.reflect.FieldInfo;
+import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
+import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.impl.cmd.basic.DatasetField;
-import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.util.Objects;
 
 public class MpDatasetField extends DatasetField {
 
-    private final FieldInfo fieldInfo;
+    private final TableFieldInfo tableFieldInfo;
 
-    private final TypeHandler<?> typeHandler;
-
-    private final JdbcType jdbcType;
-
-    public MpDatasetField(IDataset dataset, String name, FieldInfo fieldInfo, TypeHandler<?> typeHandler, JdbcType jdbcType) {
-        super(dataset, name);
-        this.fieldInfo = fieldInfo;
-        this.typeHandler = typeHandler;
-        this.jdbcType = jdbcType;
+    public MpDatasetField(IDataset dataset, TableFieldInfo tableFieldInfo) {
+        super(dataset, tableFieldInfo.getColumnName());
+        this.tableFieldInfo = tableFieldInfo;
     }
 
     @Override
     public String getName(DbType dbType) {
+        if (tableFieldInfo.getTableAnnotation().databaseCaseRule() == DatabaseCaseRule.DEFAULT) {
+            return super.getName(dbType);
+        }
         return dbType.wrap(this.getName());
     }
 
@@ -53,13 +50,13 @@ public class MpDatasetField extends DatasetField {
         if (Objects.isNull(param) || param instanceof Cmd) {
             return param;
         }
-        if (!this.fieldInfo.getTypeClass().isAssignableFrom(param.getClass())) {
+        if (!this.tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
-        if (Objects.isNull(this.typeHandler)) {
+        if (Objects.isNull(this.tableFieldInfo.getTypeHandler())) {
             return param;
         }
-        return new MybatisParameter(param, (Class<? extends TypeHandler<?>>) typeHandler.getClass(), this.jdbcType);
+        return new MybatisParameter(param, (Class<? extends TypeHandler<?>>) this.tableFieldInfo.getTypeHandler().getClass(), this.tableFieldInfo.getTableFieldAnnotation().jdbcType());
     }
 
     @Override
@@ -67,18 +64,22 @@ public class MpDatasetField extends DatasetField {
         if (Objects.isNull(param) || param instanceof Cmd) {
             return param;
         }
-        if (!this.fieldInfo.getTypeClass().isAssignableFrom(param.getClass())) {
+        if (!this.tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
-        if (Objects.isNull(this.typeHandler)) {
+        if (Objects.isNull(this.tableFieldInfo.getTypeHandler())) {
             return param;
         }
-        if (!(this.typeHandler instanceof LikeQuerySupport)) {
+        if (!(this.tableFieldInfo.getTypeHandler() instanceof LikeQuerySupport)) {
             return param;
         }
-        LikeQuerySupport likeQuerySupport = (LikeQuerySupport) this.typeHandler;
-        param = new MybatisLikeQueryParameter(param, isNotLike, likeMode, (Class<? extends TypeHandler<?>>) typeHandler.getClass(), this.jdbcType);
+        LikeQuerySupport likeQuerySupport = (LikeQuerySupport) this.tableFieldInfo.getTypeHandler();
+        param = new MybatisLikeQueryParameter(param, isNotLike, likeMode, (Class<? extends TypeHandler<?>>) this.tableFieldInfo.getTypeHandler().getClass(), this.tableFieldInfo.getTableFieldAnnotation().jdbcType());
         likeMode = likeQuerySupport.convertLikeMode(likeMode, isNotLike);
         return new Object[]{likeMode, param};
+    }
+
+    public TableFieldInfo getTableFieldInfo() {
+        return tableFieldInfo;
     }
 }

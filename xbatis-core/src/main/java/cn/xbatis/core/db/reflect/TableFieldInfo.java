@@ -47,6 +47,8 @@ public class TableFieldInfo {
      */
     private final GetFieldInvoker readFieldInvoker;
 
+    private final Table tableAnnotation;
+
     /**
      * TableField 注解信息
      */
@@ -76,6 +78,7 @@ public class TableFieldInfo {
     public TableFieldInfo(Class clazz, Table tableAnnotation, Field field) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
+        this.tableAnnotation = tableAnnotation;
         this.tableFieldAnnotation = TableInfoUtil.getTableFieldAnnotation(field);
         this.columnName = TableInfoUtil.getFieldColumnName(tableAnnotation, field);
         this.readFieldInvoker = new GetFieldInvoker(field);
@@ -108,6 +111,10 @@ public class TableFieldInfo {
 
     public GetFieldInvoker getReadFieldInvoker() {
         return readFieldInvoker;
+    }
+
+    public Table getTableAnnotation() {
+        return tableAnnotation;
     }
 
     public TableField getTableFieldAnnotation() {

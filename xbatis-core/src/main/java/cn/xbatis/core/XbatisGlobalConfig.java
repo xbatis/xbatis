@@ -157,6 +157,25 @@ public final class XbatisGlobalConfig {
         return SQLImplGlobalConfig.setDatabaseCaseRule(databaseCaseRule);
     }
 
+
+    /**
+     * 数据库命名规则 默认 不处理
+     *
+     * @return 命名规则
+     */
+    public static DatabaseCaseRule getDatabaseCaseRule(DbType dbType) {
+        return SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
+    }
+
+    /**
+     * 设置数据库命名规则 默认 不处理
+     *
+     * @return 是否成功
+     */
+    public static void setDatabaseCaseRule(DbType dbType, DatabaseCaseRule databaseCaseRule) {
+        SQLImplGlobalConfig.setDatabaseCaseRule(dbType, databaseCaseRule);
+    }
+
     /**
      * 数据库表是否下划线规则 默认 true
      *

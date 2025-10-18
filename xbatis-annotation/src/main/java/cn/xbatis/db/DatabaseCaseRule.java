@@ -15,8 +15,10 @@
 package cn.xbatis.db;
 
 public enum DatabaseCaseRule {
-    // 默认 - 不处理
+    // 默认 - 不处理 未设置 双重含义
     DEFAULT,
+    // 默认 - 不处理
+    NONE,
     // 全大写
     UPPERCASE,
     // 全小写
@@ -27,7 +29,7 @@ public enum DatabaseCaseRule {
     };
 
     public String convert(String name) {
-        if (this == DEFAULT) {
+        if (this == DEFAULT || this == NONE) {
             return name;
         } else if (this == UPPERCASE) {
             return name.toUpperCase();

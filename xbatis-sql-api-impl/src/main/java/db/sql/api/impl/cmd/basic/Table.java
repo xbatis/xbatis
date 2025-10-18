@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.basic;
 
 
+import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
@@ -76,7 +77,11 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
     }
 
     public String getName(DbType dbType) {
-        return SQLImplGlobalConfig.getDatabaseCaseRule().convert(dbType.wrap(this.name));
+        DatabaseCaseRule databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
+        if (databaseCaseRule == null || databaseCaseRule == DatabaseCaseRule.DEFAULT) {
+            databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule();
+        }
+        return dbType.wrap(databaseCaseRule.convert(this.getName()));
     }
 
     @Override

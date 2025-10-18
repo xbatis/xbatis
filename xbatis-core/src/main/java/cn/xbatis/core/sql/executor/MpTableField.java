@@ -18,6 +18,7 @@ import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
+import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.cmd.CmdConvert;
@@ -41,6 +42,9 @@ public class MpTableField extends TableField {
 
     @Override
     public String getName(DbType dbType) {
+        if (tableFieldInfo.getTableAnnotation().databaseCaseRule() == DatabaseCaseRule.DEFAULT) {
+            return super.getName(dbType);
+        }
         return dbType.wrap(this.getName());
     }
 

@@ -106,12 +106,14 @@ public class TableInfo {
      */
     private final List<TableFieldInfo> updateDoBeforeTableFieldInfos;
 
+    private final Table annotation;
+
     public TableInfo(Class<?> entity) {
         this.type = entity;
 
-        Table table = entity.getAnnotation(Table.class);
+        this.annotation = entity.getAnnotation(Table.class);
 
-        this.schema = TableInfoUtil.buildDatabaseCaseNaming(table, table.schema());
+        this.schema = TableInfoUtil.buildDatabaseCaseNaming(annotation, annotation.schema());
 
         SplitTable splitTable = entity.getAnnotation(SplitTable.class);
         this.isSplitTable = splitTable != null;
@@ -147,7 +149,7 @@ public class TableInfo {
 
 
         for (Field field : fieldList) {
-            TableFieldInfo tableFieldInfo = new TableFieldInfo(entity, table, field);
+            TableFieldInfo tableFieldInfo = new TableFieldInfo(entity, annotation, field);
             tableFieldInfos.add(tableFieldInfo);
             tableFieldInfoMap.put(field.getName(), tableFieldInfo);
 
@@ -252,6 +254,10 @@ public class TableInfo {
      */
     public final ForeignInfo getForeignInfo(Class<?> entityClass) {
         return this.foreignInfoMap.get(entityClass);
+    }
+
+    public Table getAnnotation() {
+        return annotation;
     }
 
     public Class<?> getType() {

@@ -147,18 +147,14 @@ public final class TenantUtil {
         if (tid instanceof TenantId) {
             TenantId tenantId = (TenantId) tid;
             if (tenantId.isMultiValue()) {
-                conditionChain.in(new MpDatasetField(table, tenantIdFieldInfo.getColumnName(),
-                        tenantIdFieldInfo.getFieldInfo(), tenantIdFieldInfo.getTypeHandler(),
-                        tenantIdFieldInfo.getTableFieldAnnotation().jdbcType()), tenantId.getValues());
+                conditionChain.in(new MpDatasetField(table, tenantIdFieldInfo), tenantId.getValues());
                 onWhere(tableInfo.getType(), conditionChain);
                 return;
             }
             tid = tenantId.getValues()[0];
         }
 
-        conditionChain.eq(new MpDatasetField(table, tenantIdFieldInfo.getColumnName(),
-                tenantIdFieldInfo.getFieldInfo(), tenantIdFieldInfo.getTypeHandler(),
-                tenantIdFieldInfo.getTableFieldAnnotation().jdbcType()), tid);
+        conditionChain.eq(new MpDatasetField(table, tenantIdFieldInfo), tid);
         onWhere(tableInfo.getType(), conditionChain);
     }
 

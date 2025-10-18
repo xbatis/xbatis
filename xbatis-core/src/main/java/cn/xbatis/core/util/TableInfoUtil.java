@@ -260,15 +260,6 @@ public final class TableInfoUtil {
     }
 
     public static String buildDatabaseCaseNaming(Table table, String name) {
-        switch (table.databaseCaseRule()) {
-            case DEFAULT: {
-                // 采用全局的规则
-                return XbatisGlobalConfig.getDatabaseCaseRule().convert(name);
-            }
-            default: {
-                // 采用注解的规则
-                return table.databaseCaseRule().convert(name);
-            }
-        }
+        return table.databaseCaseRule().convert(name);
     }
 }
