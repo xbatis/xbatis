@@ -19,6 +19,7 @@ import cn.xbatis.core.db.reflect.ModelInfo;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.sql.MybatisCmdFactory;
+import cn.xbatis.core.sql.executor.Where;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.impl.cmd.CmdFactory;
@@ -27,7 +28,6 @@ import db.sql.api.impl.cmd.executor.AbstractDelete;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
 import db.sql.api.impl.cmd.executor.AbstractUpdate;
 import db.sql.api.impl.cmd.struct.ConditionChain;
-import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -36,15 +36,32 @@ import java.util.function.Consumer;
 
 public final class WhereUtil {
 
+    /**
+     * 创建
+     *
+     * @return
+     */
     public static Where create() {
-        return cn.xbatis.core.sql.executor.Where.create();
+        return Where.create();
+    }
+
+    /**
+     * 创建和消费
+     *
+     * @param consumer
+     * @return
+     */
+    public static Where create(Consumer<Where> consumer) {
+        Where where = create();
+        consumer.accept(where);
+        return where;
     }
 
     public static Where create(TableInfo tableInfo) {
         return create(tableInfo, null);
     }
 
-    public static Where create(TableInfo tableInfo, Consumer<Where> consumer) {
+    public static Where create(TableInfo tableInfo, Consumer<db.sql.api.impl.cmd.struct.Where> consumer) {
         Where where = create();
         CmdFactory cmdFactory = where.getConditionFactory().getCmdFactory();
         ((MybatisCmdFactory) cmdFactory).cacheTableInfo(tableInfo);
@@ -57,14 +74,13 @@ public final class WhereUtil {
     /**
      * where 动态对象转条件
      *
-     * @param where
      * @param object
      */
     public static Where where(Object object) {
         return where(create(), object);
     }
 
-    public static Where where(Where where, Object object) {
+    public static <T extends db.sql.api.impl.cmd.struct.Where> T where(T where, Object object) {
         if (object != null) {
             where(where.conditionChain(), object);
         }
@@ -99,25 +115,13 @@ public final class WhereUtil {
     }
 
     /**
-     * 创建和消费
-     *
-     * @param consumer
-     * @return
-     */
-    public static Where create(Consumer<Where> consumer) {
-        Where where = create();
-        consumer.accept(where);
-        return where;
-    }
-
-    /**
      * 拼接id条件
      *
      * @param where
      * @param tableInfo
      * @param id
      */
-    public static void appendIdWhere(Where where, TableInfo tableInfo, Serializable id) {
+    public static void appendIdWhere(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, Serializable id) {
         TableInfoUtil.checkId(tableInfo);
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
         Objects.requireNonNull(id, "id can't be null");
@@ -131,7 +135,7 @@ public final class WhereUtil {
      * @param tableInfo
      * @param entity
      */
-    public static void appendIdWhereWithEntity(Where where, TableInfo tableInfo, Object entity) {
+    public static void appendIdWhereWithEntity(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, Object entity) {
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
         if (tableInfo.getIdFieldInfos().isEmpty()) {
             throw new RuntimeException(tableInfo.getType().getName() + " has no id");
@@ -156,7 +160,7 @@ public final class WhereUtil {
      * @param modelInfo
      * @param model
      */
-    public static void appendIdWhereWithModel(Where where, ModelInfo modelInfo, Model<?> model) {
+    public static void appendIdWhereWithModel(db.sql.api.impl.cmd.struct.Where where, ModelInfo modelInfo, Model<?> model) {
         if (modelInfo.getIdFieldInfos().isEmpty()) {
             throw new RuntimeException(modelInfo.getType().getName() + " has no id");
         }
@@ -180,7 +184,7 @@ public final class WhereUtil {
      * @param tableInfo 表信息
      * @param ids
      */
-    public static void appendIdsWhere(Where where, TableInfo tableInfo, Serializable[] ids) {
+    public static void appendIdsWhere(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, Serializable[] ids) {
         Objects.requireNonNull(ids, "id can't be null");
         for (Serializable id : ids) {
             Objects.requireNonNull(id, "id can't be null");
@@ -195,13 +199,13 @@ public final class WhereUtil {
      * @param tableInfo 表信息
      * @param ids
      */
-    public static <ID extends Serializable> void appendIdsWhere(Where where, TableInfo tableInfo, Collection<ID> ids) {
+    public static <ID extends Serializable> void appendIdsWhere(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, Collection<ID> ids) {
         Objects.requireNonNull(ids, "id can't be null");
         ids.forEach(id -> Objects.requireNonNull(id, "id can't be null"));
         appendWhereWithIdTableField(where, tableInfo, idTableField -> where.in(idTableField, ids));
     }
 
-    private static void appendWhereWithIdTableField(Where where, TableInfo tableInfo, Consumer<TableField> consumer) {
+    private static void appendWhereWithIdTableField(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, Consumer<TableField> consumer) {
         TableInfoUtil.checkId(tableInfo);
         consumer.accept(where.getConditionFactory().getCmdFactory().field(tableInfo.getType(), tableInfo.getSingleIdFieldInfo(true)
                 .getField().getName(), 1));
@@ -215,7 +219,7 @@ public final class WhereUtil {
      * @param entity
      * @param <T>
      */
-    public static <T> void appendVersionWhere(Where where, TableInfo tableInfo, T entity) {
+    public static <T> void appendVersionWhere(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, T entity) {
         TableFieldInfo versionFieldInfo = tableInfo.getVersionFieldInfo();
         if (Objects.isNull(versionFieldInfo)) {
             return;
