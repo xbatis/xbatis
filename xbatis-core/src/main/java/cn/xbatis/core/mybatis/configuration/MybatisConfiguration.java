@@ -23,6 +23,7 @@ import cn.xbatis.core.mybatis.executor.resultset.MybatisDefaultResultSetHandler;
 import cn.xbatis.core.mybatis.executor.statement.MybatisRoutingStatementHandler;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
+import cn.xbatis.core.mybatis.mapper.context.XbatisContextUtil;
 import cn.xbatis.core.mybatis.mapping.ResultMapUtils;
 import cn.xbatis.core.mybatis.typeHandler.EnumTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;

@@ -15,7 +15,7 @@
 package cn.xbatis.core.mybatis.executor.resultset;
 
 import cn.xbatis.core.db.reflect.*;
-import cn.xbatis.core.mybatis.configuration.XbatisContextUtil;
+import cn.xbatis.core.mybatis.mapper.context.XbatisContextUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdCountFromQueryContext;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;

@@ -12,11 +12,9 @@
  *
  */
 
-package cn.xbatis.core.mybatis.configuration;
+package cn.xbatis.core.mybatis.mapper.context;
 
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
-import cn.xbatis.core.mybatis.mapper.context.BaseSQLCmdContext;
-import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.xbatis.core.sql.executor.BaseQuery;
 
 import java.util.Map;
