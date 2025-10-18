@@ -16,6 +16,7 @@ package cn.xbatis.core.sql.executor;
 
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.util.TableInfoUtil;
+import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.tookit.LambdaUtil;
@@ -32,6 +33,11 @@ public class MpTable extends db.sql.api.impl.cmd.basic.Table {
     public MpTable(TableInfo tableInfo, String alias) {
         super(tableInfo.getSchemaAndTableName(), tableInfo.getIdColumnNames(), alias);
         this.tableInfo = tableInfo;
+    }
+
+    @Override
+    public String getName(DbType dbType) {
+        return dbType.wrap(this.getName());
     }
 
     @Override

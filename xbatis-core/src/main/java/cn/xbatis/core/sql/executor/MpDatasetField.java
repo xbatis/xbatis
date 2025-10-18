@@ -19,6 +19,7 @@ import cn.xbatis.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.impl.cmd.basic.DatasetField;
@@ -40,6 +41,11 @@ public class MpDatasetField extends DatasetField {
         this.fieldInfo = fieldInfo;
         this.typeHandler = typeHandler;
         this.jdbcType = jdbcType;
+    }
+
+    @Override
+    public String getName(DbType dbType) {
+        return dbType.wrap(this.getName());
     }
 
     @Override

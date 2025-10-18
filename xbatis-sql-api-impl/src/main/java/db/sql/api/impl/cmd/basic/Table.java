@@ -21,6 +21,7 @@ import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.ITable;
+import db.sql.api.impl.SQLImplGlobalConfig;
 import db.sql.api.impl.cmd.struct.From;
 import db.sql.api.impl.cmd.struct.Join;
 import db.sql.api.impl.tookit.SqlConst;
@@ -75,7 +76,7 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
     }
 
     public String getName(DbType dbType) {
-        return dbType.wrap(this.name);
+        return SQLImplGlobalConfig.getDatabaseCaseRule().convert(dbType.wrap(this.name));
     }
 
     @Override

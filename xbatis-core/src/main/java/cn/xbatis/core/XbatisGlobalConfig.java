@@ -31,6 +31,7 @@ import cn.xbatis.listener.OnInsertListener;
 import cn.xbatis.listener.OnUpdateListener;
 import db.sql.api.DbType;
 import db.sql.api.cmd.listener.SQLListener;
+import db.sql.api.impl.SQLImplGlobalConfig;
 import db.sql.api.impl.paging.IPagingProcessor;
 import db.sql.api.impl.paging.PagingProcessorFactory;
 
@@ -52,7 +53,7 @@ public final class XbatisGlobalConfig {
     private static final Map<String, BiFunction<Class<?>, Class<?>, ?>> DYNAMIC_VALUE_MANAGER = new ConcurrentHashMap();
     private static final List<SQLListener> SQL_LISTENERS = new ArrayList<>();
     private static final List<MethodInterceptor> MAPPER_METHOD_INTERCEPTORS = new ArrayList<>();
-    private static volatile Object DATABASE_CASE_RULE = NULL;
+
     private static volatile Object TABLE_UNDERLINE = NULL;
     private static volatile Object COLUMN_UNDERLINE = NULL;
     private static volatile Object DEFAULT_BATCH_SIZE = NULL;
@@ -144,10 +145,7 @@ public final class XbatisGlobalConfig {
      * @return 命名规则
      */
     public static DatabaseCaseRule getDatabaseCaseRule() {
-        if (DATABASE_CASE_RULE == NULL) {
-            DATABASE_CASE_RULE = DatabaseCaseRule.DEFAULT;
-        }
-        return (DatabaseCaseRule) DATABASE_CASE_RULE;
+        return SQLImplGlobalConfig.getDatabaseCaseRule();
     }
 
     /**
@@ -155,13 +153,8 @@ public final class XbatisGlobalConfig {
      *
      * @return 是否成功
      */
-    public static boolean setDatabaseCaseRule(DatabaseCaseRule databaseNamingRule) {
-        if (DATABASE_CASE_RULE == NULL) {
-            DATABASE_CASE_RULE = databaseNamingRule;
-            return true;
-        }
-
-        return false;
+    public static boolean setDatabaseCaseRule(DatabaseCaseRule databaseCaseRule) {
+        return SQLImplGlobalConfig.setDatabaseCaseRule(databaseCaseRule);
     }
 
     /**

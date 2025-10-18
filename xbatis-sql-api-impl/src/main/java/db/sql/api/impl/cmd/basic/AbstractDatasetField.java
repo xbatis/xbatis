@@ -21,6 +21,7 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.executor.IInsert;
+import db.sql.api.impl.SQLImplGlobalConfig;
 import db.sql.api.impl.cmd.struct.insert.InsertFields;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
@@ -49,7 +50,7 @@ public abstract class AbstractDatasetField<T extends AbstractDatasetField<T>> ex
 
     @Override
     public String getName(DbType dbType) {
-        return dbType.wrap(this.name);
+        return SQLImplGlobalConfig.getDatabaseCaseRule().convert(dbType.wrap(this.name));
     }
 
     @Override

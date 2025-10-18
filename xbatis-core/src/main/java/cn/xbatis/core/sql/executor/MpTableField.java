@@ -19,6 +19,7 @@ import cn.xbatis.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.basic.TableField;
@@ -36,6 +37,11 @@ public class MpTableField extends TableField {
 
     public TableFieldInfo getTableFieldInfo() {
         return tableFieldInfo;
+    }
+
+    @Override
+    public String getName(DbType dbType) {
+        return dbType.wrap(this.getName());
     }
 
     @Override

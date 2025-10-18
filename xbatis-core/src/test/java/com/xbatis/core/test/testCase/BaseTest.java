@@ -72,6 +72,7 @@ public class BaseTest {
 
     @BeforeEach
     public void init() {
+        System.out.println("init");
         XbatisGlobalConfig.setPagingProcessor(DbType.ORACLE, new OracleRowNumPagingProcessor());
         XbatisGlobalConfig.setPagingProcessor(DbType.SQL_SERVER, new SQLServerRowNumberOverPagingProcessor());
         dataSource = TestDataSource.getDataSource();
