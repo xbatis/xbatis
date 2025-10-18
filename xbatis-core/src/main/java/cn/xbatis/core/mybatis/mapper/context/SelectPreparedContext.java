@@ -65,7 +65,7 @@ public class SelectPreparedContext<T> extends PreparedContext {
                         };
                         StringBuilder cmdSql = ((Cmd) param).sql(null, null, sqlBuilderContext, new StringBuilder());
                         if (param instanceof IWhere) {
-                            sql.append(cmdSql.toString().replace(new String(SqlConst.WHERE), ""));
+                            sql.append(cmdSql.toString().replaceFirst(new String(SqlConst.WHERE), ""));
                         }
                     } else {
                         sql.append("?");

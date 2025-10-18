@@ -34,12 +34,14 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import static db.sql.api.impl.cmd.basic.TRUE.TRUE;
+
 public final class WhereUtil {
 
     /**
      * 创建
      *
-     * @return
+     * @return Where
      */
     public static Where create() {
         return Where.create();
@@ -49,12 +51,21 @@ public final class WhereUtil {
      * 创建和消费
      *
      * @param consumer
-     * @return
+     * @return Where
      */
     public static Where create(Consumer<Where> consumer) {
         Where where = create();
         consumer.accept(where);
         return where;
+    }
+
+    /**
+     * 一个安全where 包含 一个类似 1=1的 条件
+     *
+     * @return Where
+     */
+    public static Where safeWhere() {
+        return (Where) create().and(TRUE);
     }
 
     public static Where create(TableInfo tableInfo) {
@@ -75,6 +86,7 @@ public final class WhereUtil {
      * where 动态对象转条件
      *
      * @param object
+     * @return Where
      */
     public static Where where(Object object) {
         return where(create(), object);
