@@ -38,7 +38,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -536,18 +535,79 @@ public class FunTest extends BaseTest {
         }
     }
 
+
+    @Test
+    public void secondAddTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            LocalDateTime date = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getCreate_time, c -> c.secondAdd(1).as("xx"))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(LocalDateTime.class)
+                    .get();
+            UpdateChain.of(sysUserMapper).set(SysUser::getId, 1);
+            assertEquals(date, LocalDateTime.parse("2023-10-11 15:16:18", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+    }
+
+    @Test
+    public void minuteAddTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            LocalDateTime date = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getCreate_time, c -> c.minuteAdd(1).as("xx"))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(LocalDateTime.class)
+                    .get();
+            UpdateChain.of(sysUserMapper).set(SysUser::getId, 1);
+            assertEquals(date, LocalDateTime.parse("2023-10-11 15:17:17", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+    }
+
     @Test
     public void dateHourAddTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             LocalDateTime date = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getCreate_time, c -> c.dateAdd(1, TimeUnit.HOURS).as("xx"))
+                    .select(SysUser::getCreate_time, c -> c.hourAdd(1).as("xx"))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(LocalDateTime.class)
                     .get();
             UpdateChain.of(sysUserMapper).set(SysUser::getId, 1);
             assertEquals(date, LocalDateTime.parse("2023-10-11 16:16:17", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+    }
+
+    @Test
+    public void monthAddTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            LocalDateTime date = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getCreate_time, c -> c.monthAdd(1).as("xx"))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(LocalDateTime.class)
+                    .get();
+            UpdateChain.of(sysUserMapper).set(SysUser::getId, 1);
+            assertEquals(date, LocalDateTime.parse("2023-11-11 15:16:17", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+    }
+
+    @Test
+    public void yearAddTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            LocalDateTime date = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getCreate_time, c -> c.yearAdd(1).as("xx"))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(LocalDateTime.class)
+                    .get();
+            UpdateChain.of(sysUserMapper).set(SysUser::getId, 1);
+            assertEquals(date, LocalDateTime.parse("2024-10-11 15:16:17", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
     }
 

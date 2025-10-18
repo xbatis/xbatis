@@ -28,7 +28,6 @@ import db.sql.api.impl.cmd.postgis.ST_Point;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 public interface FunctionInterface extends Cmd {
 
@@ -564,7 +563,7 @@ public interface FunctionInterface extends Cmd {
      * @return DateAdd
      */
     default DateAdd dateAdd(int n) {
-        return this.dateAdd(n, TimeUnit.DAYS);
+        return this.dateAdd(n, TimeUnits.DAYS);
     }
 
     /**
@@ -574,7 +573,7 @@ public interface FunctionInterface extends Cmd {
      * @param timeUnit n的单位
      * @return DateAdd
      */
-    default DateAdd dateAdd(int n, TimeUnit timeUnit) {
+    default DateAdd dateAdd(int n, TimeUnits timeUnit) {
         return Methods.dateAdd(this, n, timeUnit);
     }
 
@@ -585,7 +584,7 @@ public interface FunctionInterface extends Cmd {
      * @return DateAdd
      */
     default DateAdd dateSub(int n) {
-        return this.dateSub(n, TimeUnit.DAYS);
+        return this.dateSub(n, TimeUnits.DAYS);
     }
 
     /**
@@ -595,8 +594,108 @@ public interface FunctionInterface extends Cmd {
      * @param timeUnit n的单位
      * @return DateAdd
      */
-    default DateAdd dateSub(int n, TimeUnit timeUnit) {
-        return this.dateAdd(n * -1, timeUnit);
+    default DateAdd dateSub(int n, TimeUnits timeUnit) {
+        return Methods.dateSub(this, n, timeUnit);
+    }
+
+    /**
+     * 对自己进行秒增加
+     *
+     * @param n 增加的数量
+     * @return DateAdd
+     */
+    default DateAdd secondAdd(int n) {
+        return Methods.secondAdd(this, n);
+    }
+
+    /**
+     * 对自己进行秒减少
+     *
+     * @param n 减少的数量
+     * @return DateAdd
+     */
+    default DateAdd secondSub(int n) {
+        return Methods.secondSub(this, n);
+    }
+
+    /**
+     * 对自己进行分钟增加
+     *
+     * @param n 增加的数量
+     * @return DateAdd
+     */
+    default DateAdd minuteAdd(int n) {
+        return Methods.minuteAdd(this, n);
+    }
+
+    /**
+     * 对自己进行分钟减少
+     *
+     * @param n 减少的数量
+     * @return DateAdd
+     */
+    default DateAdd minuteSub(int n) {
+        return Methods.minuteSub(this, n);
+    }
+
+    /**
+     * 对自己进行小时增加
+     *
+     * @param n 增加的数量
+     * @return DateAdd
+     */
+    default DateAdd hourAdd(int n) {
+        return Methods.hourAdd(this, n);
+    }
+
+    /**
+     * 对自己进行小时减少
+     *
+     * @param n 减少的数量
+     * @return DateAdd
+     */
+    default DateAdd hourSub(int n) {
+        return Methods.hourSub(this, n);
+    }
+
+    /**
+     * 对自己进行月份增加
+     *
+     * @param n 增加的数量
+     * @return DateAdd
+     */
+    default DateAdd monthAdd(int n) {
+        return Methods.monthAdd(this, n);
+    }
+
+    /**
+     * 对自己进行月份减少
+     *
+     * @param n 减少的数量
+     * @return DateAdd
+     */
+    default DateAdd monthSub(int n) {
+        return Methods.monthSub(this, n);
+    }
+
+    /**
+     * 对自己进行月份增加
+     *
+     * @param n 增加的数量
+     * @return DateAdd
+     */
+    default DateAdd yearAdd(int n) {
+        return Methods.yearAdd(this, n);
+    }
+
+    /**
+     * 对自己进行年份减少
+     *
+     * @param n 减少的数量
+     * @return DateAdd
+     */
+    default DateAdd yearSub(int n) {
+        return Methods.yearSub(this, n);
     }
 
     /**
@@ -816,7 +915,7 @@ public interface FunctionInterface extends Cmd {
      * @param value2 结束区间值
      * @return Between
      */
-    default Between between(Serializable value1, Serializable value2) {
+    default Between between(Object value1, Object value2) {
         return Methods.between(this, value1, value2);
     }
 
@@ -827,7 +926,7 @@ public interface FunctionInterface extends Cmd {
      * @param value2 结束区间值
      * @return Between
      */
-    default NotBetween notBetween(Serializable value1, Serializable value2) {
+    default NotBetween notBetween(Object value1, Object value2) {
         return Methods.notBetween(this, value1, value2);
     }
 

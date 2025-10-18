@@ -18,7 +18,6 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
-import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IParamWrap;
 import db.sql.api.cmd.executor.IQuery;
@@ -38,7 +37,6 @@ import db.sql.api.impl.tookit.SqlUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -1117,9 +1115,146 @@ public final class Methods {
      * @param column 列
      * @return DateAdd
      */
-    public static DateAdd dateAdd(Cmd column, int n, TimeUnit timeUnit) {
+    public static DateAdd dateAdd(Cmd column, int n, TimeUnits timeUnit) {
         Objects.requireNonNull(column);
         return new DateAdd(column, n, timeUnit);
+    }
+
+    /**
+     * 日期增加
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd dateAdd(Cmd column, int n) {
+        Objects.requireNonNull(column);
+        return new DateAdd(column, n, TimeUnits.DAYS);
+    }
+
+    /**
+     * 日期减少
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd dateSub(Cmd column, int n, TimeUnits timeUnit) {
+        Objects.requireNonNull(column);
+        return new DateAdd(column, n * -1, timeUnit);
+    }
+
+    /**
+     * 日期减少
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd dateSub(Cmd column, int n) {
+        return dateSub(column, n);
+    }
+
+    /**
+     * 秒增加
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd secondAdd(Cmd column, int n) {
+        Objects.requireNonNull(column);
+        return new DateAdd(column, n, TimeUnits.SECONDS);
+    }
+
+    /**
+     * 秒减少
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd secondSub(Cmd column, int n) {
+        return secondAdd(column, n * -1);
+    }
+
+    /**
+     * 分增加
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd minuteAdd(Cmd column, int n) {
+        Objects.requireNonNull(column);
+        return new DateAdd(column, n, TimeUnits.MINUTES);
+    }
+
+    /**
+     * 分减少
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd minuteSub(Cmd column, int n) {
+        return minuteAdd(column, n * -1);
+    }
+
+    /**
+     * 小时增
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd hourAdd(Cmd column, int n) {
+        Objects.requireNonNull(column);
+        return new DateAdd(column, n, TimeUnits.HOURS);
+    }
+
+    /**
+     * 小时减少
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd hourSub(Cmd column, int n) {
+        return hourAdd(column, n * -1);
+    }
+
+    /**
+     * 月增加
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd monthAdd(Cmd column, int n) {
+        Objects.requireNonNull(column);
+        return new DateAdd(column, n, TimeUnits.MONTHS);
+    }
+
+    /**
+     * 月减少
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd monthSub(Cmd column, int n) {
+        return monthAdd(column, n * -1);
+    }
+
+    /**
+     * 年增加
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd yearAdd(Cmd column, int n) {
+        Objects.requireNonNull(column);
+        return new DateAdd(column, n, TimeUnits.YEARS);
+    }
+
+    /**
+     * 年减少
+     *
+     * @param column 列
+     * @return DateAdd
+     */
+    public static DateAdd yearSub(Cmd column, int n) {
+        return yearAdd(column, n * -1);
     }
 
     /**
