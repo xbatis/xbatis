@@ -104,7 +104,6 @@ public class MybatisExecutor implements Executor {
                 cacheKey.updateAll(context.getParameters());
             }
             cacheKey.update(context.getReturnType().getName());
-            cacheKey.update(System.currentTimeMillis());
         } else if (parameterObject instanceof SQLCmdUpdateContext) {
             SQLCmdUpdateContext context = (SQLCmdUpdateContext) parameterObject;
             cacheKey.updateAll(context.getParameters());
