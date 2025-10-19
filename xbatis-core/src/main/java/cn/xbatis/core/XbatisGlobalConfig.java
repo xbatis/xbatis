@@ -64,6 +64,7 @@ public final class XbatisGlobalConfig {
     private static volatile Object GLOBAL_ON_INSERT_LISTENER = NULL;
     private static volatile Object GLOBAL_ON_UPDATE_LISTENER = NULL;
     private static volatile Object INTERCEPT_OFFICIAL_MAPPER_METHOD = NULL;
+    private static volatile Object FETCH_IN_BATCH_SIZE = NULL;
 
 
     static {
@@ -652,5 +653,29 @@ public final class XbatisGlobalConfig {
         return false;
     }
 
+    /**
+     * 获取@Fetch的IN批量size
+     *
+     * @return
+     */
+    public static int getFetchInBatchSize() {
+        if (FETCH_IN_BATCH_SIZE == NULL) {
+            FETCH_IN_BATCH_SIZE = 100;
+        }
+        return (Integer) FETCH_IN_BATCH_SIZE;
+    }
 
+    /**
+     * 设置@Fetch的IN批量size
+     *
+     * @param fetchInBatchSize
+     * @return 是否成功
+     */
+    public static boolean setFetchInBatchSize(int fetchInBatchSize) {
+        if (FETCH_IN_BATCH_SIZE == NULL) {
+            FETCH_IN_BATCH_SIZE = fetchInBatchSize;
+            return true;
+        }
+        return false;
+    }
 }

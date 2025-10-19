@@ -14,11 +14,12 @@
 
 package cn.xbatis.core.mybatis.executor.resultset;
 
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.*;
-import cn.xbatis.core.mybatis.mapper.context.XbatisContextUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdCountFromQueryContext;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
+import cn.xbatis.core.mybatis.mapper.context.XbatisContextUtil;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.util.*;
@@ -494,7 +495,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (conditionList.isEmpty()) {
             return new ArrayList();
         }
-        int batchSize = 100;
+        int batchSize = XbatisGlobalConfig.getFetchInBatchSize();
         List queryValueList = new ArrayList<>(batchSize);
         Query<?> query = Query.create().returnType(fetchInfo.getReturnType());
 
