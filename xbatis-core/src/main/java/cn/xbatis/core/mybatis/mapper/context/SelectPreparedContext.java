@@ -51,7 +51,7 @@ public class SelectPreparedContext<T> extends PreparedContext {
             boolean existsCmd = Arrays.stream(params).anyMatch(i -> i instanceof Cmd);
             if (existsCmd) {
                 StringBuilder sql = new StringBuilder();
-                String[] sqls = super.getSql().split("\\?");
+                String[] sqls = super.getSql().split(" \\?");
 
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
@@ -77,6 +77,11 @@ public class SelectPreparedContext<T> extends PreparedContext {
                         sql.append("?");
                         args.add(param);
                     }
+                }
+
+                // 补充
+                for (int i = params.length; i < sqls.length; i++) {
+                    sql.append(sqls[i]);
                 }
 
                 this.parameters = args.toArray();

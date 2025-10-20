@@ -139,4 +139,15 @@ public class DbRunnerTest extends BaseTest {
             assertEquals("admin", map.get("user_name"));
         }
     }
+
+    @Test
+    public void cmdSelectTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.selectList(SysUser.class, "select * from t_sys_user t where ? order by id desc", WhereUtil.safeWhere().in(SysUser::getId, 1, 2));
+            System.out.println(list);
+            assertEquals(2, list.get(0).getId());
+            assertEquals(1, list.get(1).getId());
+        }
+    }
 }
