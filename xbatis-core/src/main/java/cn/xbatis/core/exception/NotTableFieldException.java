@@ -16,7 +16,7 @@ package cn.xbatis.core.exception;
 
 public class NotTableFieldException extends RuntimeException {
 
-    public NotTableFieldException(Class clazz, String fieldName) {
-        super("the field: " + fieldName + " not found in " + clazz.getName());
+    public NotTableFieldException(Class parent, String path, Class clazz, String fieldName) {
+        super(parent.getName() + "." + path + " config error ; " + "the field: " + fieldName + " not found in " + clazz.getName());
     }
 }

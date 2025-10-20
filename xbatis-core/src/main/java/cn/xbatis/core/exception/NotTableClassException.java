@@ -19,4 +19,12 @@ public class NotTableClassException extends RuntimeException {
     public NotTableClassException(Class clazz) {
         super(clazz.getName() + " is not a entity");
     }
+
+    public NotTableClassException(Class parent, Class clazz) {
+        super(parent.getName() + " config error ; " + clazz.getName() + " is not a entity");
+    }
+
+    public NotTableClassException(Class parent, String path, Class clazz) {
+        super(parent.getName() + "." + path + " config error ; " + clazz.getName() + " is not a entity");
+    }
 }
