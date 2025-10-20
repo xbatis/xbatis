@@ -50,9 +50,12 @@ public class SelectPreparedContext<T> extends PreparedContext {
 
             boolean existsCmd = Arrays.stream(params).anyMatch(i -> i instanceof Cmd);
             if (existsCmd) {
-                StringBuilder sql = new StringBuilder();
                 String[] sqls = super.getSql().split("\\?");
+                if (sqls.length != params.length && sqls.length != params.length + 1) {
+                    throw new IllegalArgumentException("The number of parameters does not match");
+                }
 
+                StringBuilder sql = new StringBuilder();
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
                     sql.append(sqls[i]);
@@ -81,9 +84,9 @@ public class SelectPreparedContext<T> extends PreparedContext {
                     }
                 }
 
-                // 补充
-                for (int i = params.length; i < sqls.length; i++) {
-                    sql.append(sqls[i]);
+                // 补充最后面的sql
+                if (sqls.length == params.length + 1) {
+                    sql.append(sqls[sqls.length - 1]);
                 }
 
                 this.parameters = args.toArray();
