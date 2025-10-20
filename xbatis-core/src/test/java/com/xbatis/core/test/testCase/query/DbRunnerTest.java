@@ -134,7 +134,7 @@ public class DbRunnerTest extends BaseTest {
     public void cmdSelectTest2() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            Map map = sysUserMapper.select(Map.class, "select * from t_sys_user t where id=? and ? ", 1, WhereUtil.safeWhere().eq(SysUser::getId, 1));
+            Map map = sysUserMapper.select(Map.class, "select * from t_sys_user t where id=? and ? ", 1, WhereUtil.create().eq(SysUser::getId, 1));
             System.out.println(map);
             assertEquals("admin", map.get("user_name"));
         }
@@ -144,7 +144,7 @@ public class DbRunnerTest extends BaseTest {
     public void cmdSelectTest3() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            List<SysUser> list = sysUserMapper.selectList(SysUser.class, "select * from t_sys_user t where ? order by id desc", WhereUtil.safeWhere().in(SysUser::getId, 1, 2));
+            List<SysUser> list = sysUserMapper.selectList(SysUser.class, "select * from t_sys_user t where ? order by id desc", WhereUtil.create().in(SysUser::getId, 1, 2));
             System.out.println(list);
             assertEquals(2, list.get(0).getId());
             assertEquals(1, list.get(1).getId());
