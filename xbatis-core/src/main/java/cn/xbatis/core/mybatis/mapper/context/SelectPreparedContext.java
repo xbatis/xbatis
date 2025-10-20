@@ -68,7 +68,7 @@ public class SelectPreparedContext<T> extends PreparedContext {
                         if (param instanceof Where) {
                             Where where = (Where) param;
                             if (where.hasContent()) {
-                                sql.append(cmdSql.toString().replaceFirst(new String(SqlConst.WHERE), ""));
+                                sql.append(cmdSql.toString().replaceFirst(new String(SqlConst.WHERE), " "));
                             } else {
                                 Methods.TRUE().sql(null, null, sqlBuilderContext, sql);
                             }
@@ -76,14 +76,14 @@ public class SelectPreparedContext<T> extends PreparedContext {
                             ((Cmd) param).sql(null, null, sqlBuilderContext, sql);
                         }
                     } else {
-                        sql.append("?");
+                        sql.append(" ?");
                         args.add(param);
                     }
                 }
 
                 // 补充
                 for (int i = params.length; i < sqls.length; i++) {
-                    sql.append(sqls[i]);
+                    sql.append(" ").append(sqls[i]);
                 }
 
                 this.parameters = args.toArray();
