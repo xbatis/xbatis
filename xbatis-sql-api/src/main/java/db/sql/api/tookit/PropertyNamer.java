@@ -23,17 +23,14 @@ public class PropertyNamer {
     public static String methodToProperty(String name) {
         if (name.startsWith("is")) {
             name = name.substring(2);
-        } else {
-            if (!name.startsWith("get") && !name.startsWith("set")) {
-                throw new RuntimeException("Error parsing property name '" + name + "'.  Didn't start with 'is', 'get' or 'set'.");
-            }
+        } else if (name.startsWith("get") || name.startsWith("set")) {
             name = name.substring(3);
+        } else {
+            return name;
         }
-
         if (name.length() >= 1) {
             name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
         }
-
         return name;
     }
 
