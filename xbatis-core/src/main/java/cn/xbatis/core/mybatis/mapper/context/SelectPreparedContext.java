@@ -72,6 +72,8 @@ public class SelectPreparedContext<T> extends PreparedContext {
                             } else {
                                 Methods.TRUE().sql(null, null, sqlBuilderContext, sql);
                             }
+                        } else {
+                            ((Cmd) param).sql(null, null, sqlBuilderContext, sql);
                         }
                     } else {
                         sql.append("?");
