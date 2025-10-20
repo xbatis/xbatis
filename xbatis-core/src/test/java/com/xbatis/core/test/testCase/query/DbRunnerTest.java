@@ -15,6 +15,7 @@
 package com.xbatis.core.test.testCase.query;
 
 import cn.xbatis.core.mybatis.mapper.DbRunner;
+import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.util.WhereUtil;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
@@ -146,6 +147,22 @@ public class DbRunnerTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUser> list = sysUserMapper.selectList(SysUser.class, "select * from t_sys_user t where ? and ? order by id desc", WhereUtil.create().in(SysUser::getId, 1, 2), Methods.TRUE());
+            System.out.println(list);
+            assertEquals(2, list.get(0).getId());
+            assertEquals(1, list.get(1).getId());
+        }
+    }
+
+    @Test
+    public void cmdSelectTest4() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Query<?> query = Query.create();
+            query.in(SysUser::getId, 1, 2);
+
+            Query<?> query2 = Query.create();
+            query2.orderByDesc(SysUser::getId);
+            List<SysUser> list = sysUserMapper.selectList(SysUser.class, "select * from t_sys_user t where ? and ? ?", query.where(), query2.where(), query2.getOrderBy());
             System.out.println(list);
             assertEquals(2, list.get(0).getId());
             assertEquals(1, list.get(1).getId());

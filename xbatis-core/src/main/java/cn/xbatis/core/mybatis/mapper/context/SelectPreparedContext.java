@@ -14,12 +14,12 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
-import cn.xbatis.core.sql.executor.Where;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.SqlConst;
 
 import java.util.ArrayList;
@@ -70,17 +70,21 @@ public class SelectPreparedContext<T> extends PreparedContext {
                         StringBuilder cmdSql = ((Cmd) param).sql(null, null, sqlBuilderContext, new StringBuilder());
                         if (param instanceof Where) {
                             Where where = (Where) param;
-                            if (where.hasContent()) {
+                            if (where != null && where.hasContent()) {
                                 sql.append(cmdSql.toString().replaceFirst(new String(SqlConst.WHERE), ""));
                             } else {
                                 Methods.TRUE().sql(null, null, sqlBuilderContext, sql);
                             }
                         } else {
-                            ((Cmd) param).sql(null, null, sqlBuilderContext, sql);
+                            if (param != null) {
+                                ((Cmd) param).sql(null, null, sqlBuilderContext, sql);
+                            }
                         }
                     } else {
-                        sql.append("?");
-                        args.add(param);
+                        if (param != null) {
+                            sql.append("?");
+                            args.add(param);
+                        }
                     }
                 }
 

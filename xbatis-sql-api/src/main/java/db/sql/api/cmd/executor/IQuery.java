@@ -74,6 +74,10 @@ public interface IQuery<SELF extends IQuery
 
     WHERE $where();
 
+    default WHERE where() {
+        return this.$where();
+    }
+
     GROUPBY $groupBy();
 
     HAVING $having();

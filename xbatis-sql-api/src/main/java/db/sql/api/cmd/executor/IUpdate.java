@@ -58,6 +58,10 @@ public interface IUpdate<SELF extends IUpdate,
 
     WHERE $where();
 
+    default WHERE where() {
+        return this.$where();
+    }
+
     RETURNING $returning();
 
     @Override

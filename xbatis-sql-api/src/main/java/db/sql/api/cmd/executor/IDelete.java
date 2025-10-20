@@ -54,6 +54,10 @@ public interface IDelete<SELF extends IDelete,
 
     WHERE $where();
 
+    default WHERE where() {
+        return this.$where();
+    }
+
     RETURNING $returning();
 
     @Override
