@@ -21,6 +21,7 @@ import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -144,7 +145,7 @@ public class DbRunnerTest extends BaseTest {
     public void cmdSelectTest3() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            List<SysUser> list = sysUserMapper.selectList(SysUser.class, "select * from t_sys_user t where ? order by id desc", WhereUtil.create().in(SysUser::getId, 1, 2));
+            List<SysUser> list = sysUserMapper.selectList(SysUser.class, "select * from t_sys_user t where ? and ? order by id desc", WhereUtil.create().in(SysUser::getId, 1, 2), Methods.TRUE());
             System.out.println(list);
             assertEquals(2, list.get(0).getId());
             assertEquals(1, list.get(1).getId());
