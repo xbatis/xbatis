@@ -1,4 +1,4 @@
-# [English wiki: deepwiki](https://deepwiki.com/xbatis/xbatis)
+# English wiki: [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/xbatis/xbatis)
 
 # 官网文档：<strong style="color:red">http://xbatis.cn </strong> !!!
 
