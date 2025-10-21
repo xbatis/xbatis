@@ -43,63 +43,69 @@ public class SelectPreparedContext<T> extends PreparedContext {
         return returnType;
     }
 
-    public void initWithDbType(DbType dbType) {
-        if (sql == null) {
-            List<Object> args = new ArrayList<>();
-            Object[] params = super.getParameters();
-
-            boolean existsCmd = Arrays.stream(params).anyMatch(i -> i instanceof Cmd);
-            if (existsCmd) {
-                String[] sqls = super.getSql().split("\\?");
-                if (sqls.length != params.length && sqls.length != params.length + 1) {
-                    throw new IllegalArgumentException("The number of parameters does not match");
-                }
-
-                StringBuilder sql = new StringBuilder();
-                for (int i = 0; i < params.length; i++) {
-                    Object param = params[i];
-                    sql.append(sqls[i]);
-                    if (param instanceof Cmd) {
-                        SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(dbType, SQLMode.PREPARED) {
-                            @Override
-                            public String addParam(Object value) {
-                                args.add(value);
-                                return super.addParam(value);
-                            }
-                        };
-                        StringBuilder cmdSql;
-                        if (param instanceof Where) {
-                            Where where = (Where) param;
-                            if (where != null && where.hasContent()) {
-                                cmdSql = ((Cmd) param).sql(null, null, sqlBuilderContext, new StringBuilder());
-                                sql.append(cmdSql.toString().replaceFirst(new String(SqlConst.WHERE), ""));
-                            } else {
-                                Methods.TRUE().sql(null, null, sqlBuilderContext, sql);
-                            }
-                        } else {
-                            if (param != null) {
-                                ((Cmd) param).sql(null, null, sqlBuilderContext, sql);
-                            }
-                        }
+    private static Object[] buildSqlAndArgsWithDbType(String originalSql, Object[] originalArgs, DbType dbType) {
+        Object[] params = originalArgs;
+        String[] sqls = originalSql.split("\\?");
+        if (sqls.length != params.length && sqls.length != params.length + 1) {
+            throw new IllegalArgumentException("The number of parameters does not match");
+        }
+        List<Object> args = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        for (int i = 0; i < params.length; i++) {
+            Object param = params[i];
+            sql.append(sqls[i]);
+            if (param instanceof Cmd) {
+                SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(dbType, SQLMode.PREPARED) {
+                    @Override
+                    public String addParam(Object value) {
+                        args.add(value);
+                        return super.addParam(value);
+                    }
+                };
+                StringBuilder cmdSql;
+                if (param instanceof Where) {
+                    Where where = (Where) param;
+                    if (where != null && where.hasContent()) {
+                        cmdSql = ((Cmd) param).sql(null, null, sqlBuilderContext, new StringBuilder());
+                        sql.append(cmdSql.toString().replaceFirst(new String(SqlConst.WHERE), ""));
                     } else {
-                        if (param != null) {
-                            sql.append("?");
-                            args.add(param);
-                        }
+                        Methods.TRUE().sql(null, null, sqlBuilderContext, sql);
+                    }
+                } else {
+                    if (param != null) {
+                        ((Cmd) param).sql(null, null, sqlBuilderContext, sql);
                     }
                 }
-
-                // 补充最后面的sql
-                if (sqls.length == params.length + 1) {
-                    sql.append(sqls[sqls.length - 1]);
-                }
-
-                this.parameters = args.toArray();
-                this.sql = sql.toString();
             } else {
-                this.parameters = super.getParameters();
-                this.sql = super.getSql();
+                if (param != null) {
+                    sql.append("?");
+                    args.add(param);
+                }
             }
+        }
+
+        // 补充最后面的sql
+        if (sqls.length == params.length + 1) {
+            sql.append(sqls[sqls.length - 1]);
+        }
+
+        return new Object[]{sql.toString(), args.toArray()};
+    }
+
+    public void initWithDbType(DbType dbType) {
+        if (sql != null) {
+            return;
+        }
+
+        Object[] params = super.getParameters();
+        boolean existsCmd = Arrays.stream(params).anyMatch(i -> i instanceof Cmd);
+        if (existsCmd) {
+            Object[] objs = buildSqlAndArgsWithDbType(super.getSql(), super.getParameters(), dbType);
+            this.sql = (String) objs[0];
+            this.parameters = (Object[]) objs[1];
+        } else {
+            this.parameters = super.getParameters();
+            this.sql = super.getSql();
         }
     }
 
