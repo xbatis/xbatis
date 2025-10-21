@@ -1,3 +1,5 @@
+# [English wiki: deepwiki](https://deepwiki.com/xbatis/xbatis)
+
 # 官网文档：<strong style="color:red">http://xbatis.cn </strong> !!!
 
 ## 喜欢的朋友加入QQ群：<font color="red">121908790</font> ，群里不仅可以提xbatis框架问题，还可以帮你解决后端的各种问题！
