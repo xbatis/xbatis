@@ -12,7 +12,7 @@
  *
  */
 
-package cn.xbatis.core.mybatis.executor;
+package cn.xbatis.core.mybatis.mapper.context;
 
 public interface PreparedParameterContext {
 

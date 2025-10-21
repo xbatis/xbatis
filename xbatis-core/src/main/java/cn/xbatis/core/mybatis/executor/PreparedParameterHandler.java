@@ -15,6 +15,7 @@
 package cn.xbatis.core.mybatis.executor;
 
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
+import cn.xbatis.core.mybatis.mapper.context.PreparedParameterContext;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 
 import java.sql.PreparedStatement;

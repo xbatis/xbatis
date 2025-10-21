@@ -168,4 +168,18 @@ public class DbRunnerTest extends BaseTest {
             assertEquals(1, list.get(1).getId());
         }
     }
+
+    @Test
+    public void cmdSelectTest5() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Query<?> query = Query.create();
+            query.in(SysUser::getId, 1, 2);
+            query.orderByDesc(SysUser::getId);
+            List<SysUser> list = sysUserMapper.selectList(SysUser.class, "select * from t_sys_user t ?", query);
+            System.out.println(list);
+            assertEquals(2, list.get(0).getId());
+            assertEquals(1, list.get(1).getId());
+        }
+    }
 }

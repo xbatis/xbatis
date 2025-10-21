@@ -15,7 +15,6 @@
 package cn.xbatis.core.mybatis.mapper.context;
 
 
-import cn.xbatis.core.mybatis.executor.PreparedParameterContext;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.Executor;

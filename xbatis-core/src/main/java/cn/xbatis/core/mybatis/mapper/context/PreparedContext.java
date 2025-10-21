@@ -14,8 +14,6 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
-import cn.xbatis.core.mybatis.executor.PreparedParameterContext;
-
 public class PreparedContext implements PreparedParameterContext {
 
     private final String sql;
