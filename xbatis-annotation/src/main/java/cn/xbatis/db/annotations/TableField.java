@@ -88,4 +88,11 @@ public @interface TableField {
      * 修改默认值 是否总是填充,开启则不管有没有值都是填充
      */
     boolean updateDefaultValueFillAlways() default false;
+
+    /**
+     * 列定义;不用于orm操作，用于未来表生成
+     *
+     * @return @ColumnDefinition
+     */
+    ColumnDefinition definition() default @ColumnDefinition;
 }
