@@ -15,7 +15,6 @@
 package com.xbatis.core.test.testCase.update;
 
 import cn.xbatis.core.sql.executor.chain.QueryChain;
-import com.xbatis.core.test.DO.DefaultValueTest;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.DefaultValueTestMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
@@ -28,26 +27,25 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UpdateBatchTest extends BaseTest {
 
     @Test
     public void entityBatchUpdate() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-            DefaultValueTestMapper defaultValueTestMapper = session.getMapper(DefaultValueTestMapper.class);
-            List<DefaultValueTest> list = QueryChain.of(defaultValueTestMapper).list();
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = QueryChain.of(sysUserMapper).list();
 
             list.stream().forEach(sysUser -> {
-                sysUser.setValue1("123456789");
-                sysUser.setValue2(null);
+                sysUser.setUserName("123456789");
+                sysUser.setPassword(null);
             });
-            defaultValueTestMapper.updateBatch(list);
-            list = QueryChain.of(defaultValueTestMapper).list();
+            sysUserMapper.updateBatch(list);
+            list = QueryChain.of(sysUserMapper).list();
             list.stream().forEach(sysUser -> {
-                assertEquals(sysUser.getValue1(), "123456789");
-                assertEquals(sysUser.getValue2(), "2");
+                assertEquals(sysUser.getUserName(), "123456789");
+                assertNull(sysUser.getPassword());
             });
         }
     }
