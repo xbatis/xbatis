@@ -151,7 +151,11 @@ public class DynamicsMappedStatement {
         }
         ResultMap resultMap;
         String resultMapId = returnTypeClass.getName();
-        if (ms.getConfiguration().hasResultMap(resultMapId)) {
+
+        Class resultType = ms.getResultMaps().get(0).getType();
+        if (!resultType.equals(Object.class) && resultType.getPackage().getName().startsWith("java.lang")) {
+            resultMap = ms.getResultMaps().get(0);
+        } else if (ms.getConfiguration().hasResultMap(resultMapId)) {
             resultMap = ms.getConfiguration().getResultMap(resultMapId);
         } else {
             resultMap = new ResultMap.Builder(ms.getConfiguration(), resultMapId, returnTypeClass, Collections.emptyList(), false).build();
