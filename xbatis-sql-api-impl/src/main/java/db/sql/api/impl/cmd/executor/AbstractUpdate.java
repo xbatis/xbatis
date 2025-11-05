@@ -261,7 +261,16 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
 
     @Override
     public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, Class<?> secondTable, int secondTableStorey, Consumer<On> consumer) {
-        return this.join(mode, this.$.table(mainTable, mainTableStorey), this.$.table(secondTable, secondTableStorey), consumer);
+        Table $mainTable;
+        Table $secondTable;
+        if ($.existsTable(mainTable, mainTableStorey)) {
+            $mainTable = $.table(mainTable, mainTableStorey);
+            $secondTable = $.table(secondTable, secondTableStorey);
+        } else {
+            $mainTable = $.table(secondTable, secondTableStorey);
+            $secondTable = $.table(mainTable, mainTableStorey);
+        }
+        return this.join(mode, $mainTable, $secondTable, consumer);
     }
 
     @Override
