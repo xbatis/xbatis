@@ -209,8 +209,8 @@ public interface IQuery<SELF extends IQuery
     }
 
     @Override
-    default SELF forUpdateSkipLock() {
-        $forUpdate().setSkipLock(true);
+    default SELF forUpdateSkipLocked() {
+        $forUpdate().setSkipLocked(true);
         return (SELF) this;
     }
 

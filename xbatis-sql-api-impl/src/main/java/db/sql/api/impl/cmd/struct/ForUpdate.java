@@ -21,21 +21,20 @@ import db.sql.api.impl.tookit.SqlConst;
 
 public class ForUpdate implements IForUpdate<ForUpdate> {
 
-    private boolean wait = true;
+    private boolean noWait = false;
 
     private String options;
 
-    private boolean skipLock = false;
+    private boolean skipLocked = false;
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.FOR_UPDATE);
-        if (!wait) {
-            sqlBuilder.append(wait ? SqlConst.FOR_UPDATE : SqlConst.NO_WAIT);
-        } else if (skipLock) {
-            sqlBuilder.append(skipLock ? SqlConst.SKIP_LOCKED : SqlConst.FOR_UPDATE);
+        if (noWait) {
+            sqlBuilder.append(SqlConst.NO_WAIT);
+        } else if (skipLocked) {
+            sqlBuilder.append(SqlConst.SKIP_LOCKED);
         }
-
         if (options != null) {
             sqlBuilder.append(SqlConst.BLANK).append(options);
         }
@@ -49,12 +48,12 @@ public class ForUpdate implements IForUpdate<ForUpdate> {
 
     @Override
     public void setWait(boolean wait) {
-        this.wait = wait;
+        this.noWait = !wait;
     }
 
     @Override
-    public void setSkipLock(boolean skipLock) {
-        this.skipLock = skipLock;
+    public void setSkipLocked(boolean skipLock) {
+        this.skipLocked = skipLock;
     }
 
     @Override

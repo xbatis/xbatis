@@ -24,7 +24,7 @@ public interface IForUpdateMethod<SELF> {
 
     SELF forUpdateNoWait();
 
-    SELF forUpdateSkipLock();
+    SELF forUpdateSkipLocked();
 
     SELF forUpdate(String options);
 

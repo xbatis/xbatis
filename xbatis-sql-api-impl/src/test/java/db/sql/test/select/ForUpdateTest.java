@@ -33,9 +33,9 @@ public class ForUpdateTest extends BaseTest {
     }
 
     @Test
-    public void forUpdateSkipLock() {
-        check("forUpdateSkipLock测试", "SELECT id FOR UPDATE SKIP LOCKED", new Query()
-                .select(userTable().$("id")).forUpdateSkipLock());
+    public void forUpdateSkipLocked() {
+        check("forUpdateSkipLocked测试", "SELECT id FOR UPDATE SKIP LOCKED", new Query()
+                .select(userTable().$("id")).forUpdateSkipLocked());
     }
 
     @Test
