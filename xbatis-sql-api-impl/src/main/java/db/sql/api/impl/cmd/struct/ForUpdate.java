@@ -23,9 +23,22 @@ public class ForUpdate implements IForUpdate<ForUpdate> {
 
     private boolean wait = true;
 
+    private String options;
+
+    private boolean skipLock = false;
+
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(wait ? SqlConst.FOR_UPDATE : SqlConst.FOR_UPDATE_NO_WAIT);
+        sqlBuilder.append(SqlConst.FOR_UPDATE);
+        if (!wait) {
+            sqlBuilder.append(wait ? SqlConst.FOR_UPDATE : SqlConst.NO_WAIT);
+        } else if (skipLock) {
+            sqlBuilder.append(skipLock ? SqlConst.SKIP_LOCKED : SqlConst.FOR_UPDATE);
+        }
+
+        if (options != null) {
+            sqlBuilder.append(SqlConst.BLANK).append(options);
+        }
         return sqlBuilder;
     }
 
@@ -37,5 +50,15 @@ public class ForUpdate implements IForUpdate<ForUpdate> {
     @Override
     public void setWait(boolean wait) {
         this.wait = wait;
+    }
+
+    @Override
+    public void setSkipLock(boolean skipLock) {
+        this.skipLock = skipLock;
+    }
+
+    @Override
+    public void setOptions(String options) {
+        this.options = options;
     }
 }

@@ -22,4 +22,10 @@ public interface IForUpdateMethod<SELF> {
 
     SELF forUpdate(boolean wait);
 
+    SELF forUpdateNoWait();
+
+    SELF forUpdateSkipLock();
+
+    SELF forUpdate(String options);
+
 }

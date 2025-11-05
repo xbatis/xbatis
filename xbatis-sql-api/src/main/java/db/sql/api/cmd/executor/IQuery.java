@@ -202,6 +202,24 @@ public interface IQuery<SELF extends IQuery
         return (SELF) this;
     }
 
+    @Override
+    default SELF forUpdateNoWait() {
+        $forUpdate().setWait(false);
+        return (SELF) this;
+    }
+
+    @Override
+    default SELF forUpdateSkipLock() {
+        $forUpdate().setSkipLock(true);
+        return (SELF) this;
+    }
+
+    @Override
+    default SELF forUpdate(String options) {
+        $forUpdate().setOptions(options);
+        return (SELF) this;
+    }
+
     SELECT getSelect();
 
     WHERE getWhere();

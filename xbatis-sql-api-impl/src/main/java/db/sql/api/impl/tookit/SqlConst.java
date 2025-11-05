@@ -186,7 +186,8 @@ public final class SqlConst {
     public static final char[] ASC = " ASC ".toCharArray();
     public static final char[] DESC = " DESC ".toCharArray();
     public static final char[] FOR_UPDATE = " FOR UPDATE".toCharArray();
-    public static final char[] FOR_UPDATE_NO_WAIT = " FOR UPDATE NOWAIT".toCharArray();
+    public static final char[] NO_WAIT = " NOWAIT".toCharArray();
+    public static final char[] SKIP_LOCKED = " SKIP LOCKED".toCharArray();
     public static final char[] DOUBLE_QUOT = "\"".toCharArray();
 
     public static final char[] CAST_TEXT = "::TEXT".toCharArray();
