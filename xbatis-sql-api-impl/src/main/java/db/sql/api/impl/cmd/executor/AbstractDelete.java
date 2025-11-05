@@ -164,16 +164,13 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
 
     @Override
     public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, Class<?> secondTable, int secondTableStorey, Consumer<On> consumer) {
-        Table $mainTable;
-        Table $secondTable;
-        if ($.existsTable(mainTable, mainTableStorey)) {
-            $mainTable = $.table(mainTable, mainTableStorey);
-            $secondTable = $.table(secondTable, secondTableStorey);
+        Table $secondTable = $.table(secondTable, secondTableStorey);
+        Joins<Join> js = getJoins();
+        if (js != null && js.getJoins().stream().anyMatch(i -> i.getSecondTable() == $secondTable)) {
+            return this.join(mode, $secondTable, $.table(mainTable, mainTableStorey), consumer);
         } else {
-            $mainTable = $.table(secondTable, secondTableStorey);
-            $secondTable = $.table(mainTable, mainTableStorey);
+            return this.join(mode, $.table(mainTable, mainTableStorey), $secondTable, consumer);
         }
-        return this.join(mode, $mainTable, $secondTable, consumer);
     }
 
     @Override
