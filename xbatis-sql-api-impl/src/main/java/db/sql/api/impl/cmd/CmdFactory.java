@@ -63,6 +63,10 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
         return this.tableCache.get(storey + entity.getName());
     }
 
+    public boolean existsTable(Class<?> entity, int storey) {
+        return this.tableCache.containsKey(storey + entity.getName());
+    }
+
     @Override
     public Table table(Class<?> entity, int storey) {
         if (storey > 1) {
