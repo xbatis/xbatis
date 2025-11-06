@@ -17,6 +17,7 @@ package com.xbatis.core.test.DO;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.ForeignKey;
 import cn.xbatis.db.annotations.Table;
+import cn.xbatis.db.annotations.TableField;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
 import lombok.Data;
@@ -37,6 +38,9 @@ public class SysUser extends SysUserBase {
     private Integer role_id;
 
     private LocalDateTime create_time;
+
+    @TableField(exists = false)
+    private String noExists = "xxxx";
 
     public static final class Fields extends SysUserBase.Fields {
 
