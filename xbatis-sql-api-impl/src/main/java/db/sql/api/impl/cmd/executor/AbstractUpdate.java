@@ -139,6 +139,9 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     public SELF update(Class entity, Consumer<Table> consumer) {
         Table table = this.$.table(entity);
         this.update(table);
+        if (Objects.nonNull(consumer)) {
+            consumer.accept(table);
+        }
         return (SELF) this;
     }
 

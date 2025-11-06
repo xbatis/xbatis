@@ -33,8 +33,31 @@ public class MybatisConditionChain extends ConditionChain {
 
     @Override
     protected void appendCondition(Connector connector, ICondition condition) {
-        super.appendCondition(connector, condition);
+        if (isCanAppendToConditionChain(condition)) {
+            super.appendCondition(connector, condition);
+        }
         this.handleTableSplit(condition);
+    }
+
+    /**
+     * 是否需要追加到condition chain里边
+     *
+     * @param condition
+     * @return
+     */
+    private boolean isCanAppendToConditionChain(ICondition condition) {
+        if (!(condition instanceof Condition)) {
+            return true;
+        }
+        Condition c = (Condition) condition;
+        if (!(c.getField() instanceof MpTableField)) {
+            return true;
+        }
+        MpTableField tableField = (MpTableField) c.getField();
+        if (!tableField.getTableFieldInfo().getTableFieldAnnotation().condition()) {
+            return false;
+        }
+        return true;
     }
 
     private void handleTableSplit(ICondition condition) {
@@ -58,5 +81,6 @@ public class MybatisConditionChain extends ConditionChain {
             return;
         }
         TableSplitUtil.splitHandle(table, c.getValue());
+
     }
 }

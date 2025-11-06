@@ -27,6 +27,8 @@ import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 import db.sql.api.cmd.struct.delete.IDeleteTable;
 import db.sql.api.cmd.struct.query.IReturning;
 
+import java.util.function.Consumer;
+
 public interface IDelete<SELF extends IDelete,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
         TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
@@ -59,6 +61,8 @@ public interface IDelete<SELF extends IDelete,
     }
 
     RETURNING $returning();
+
+    SELF delete(Class entity, Consumer<TABLE> consumer);
 
     @Override
     default SELF delete(IDataset<?, ?>... tables) {

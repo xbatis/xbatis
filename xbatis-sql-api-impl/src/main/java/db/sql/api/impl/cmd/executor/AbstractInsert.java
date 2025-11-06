@@ -150,7 +150,9 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     @Override
     public SELF insert(Class entity, Consumer<Table> consumer) {
         this.insert(entity);
-        consumer.accept(this.getInsertTable().getTable());
+        if (Objects.nonNull(consumer)) {
+            consumer.accept(this.getInsertTable().getTable());
+        }
         return (SELF) this;
     }
 

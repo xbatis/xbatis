@@ -56,6 +56,13 @@ public @interface TableField {
     boolean update() default true;
 
     /**
+     * 是否条件（对于非数据库字段，又需要根据此字段进行分表行为时可以使用）
+     *
+     * @return 默认 true
+     */
+    boolean condition() default true;
+
+    /**
      * 配置 列的 jdbcType
      *
      * @return

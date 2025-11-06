@@ -116,6 +116,16 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
     }
 
     @Override
+    public SELF delete(Class entity, Consumer<Table> consumer) {
+        Table table = this.$.table(entity);
+        this.delete(table);
+        if (Objects.nonNull(consumer)) {
+            consumer.accept(table);
+        }
+        return (SELF) this;
+    }
+
+    @Override
     public SELF delete(Class... entities) {
         int length = entities.length;
         Table[] tables = new Table[length];
