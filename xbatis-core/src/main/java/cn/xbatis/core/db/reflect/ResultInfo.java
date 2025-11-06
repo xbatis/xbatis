@@ -323,6 +323,9 @@ public class ResultInfo {
 
             TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(targetFieldName);
             if (Objects.isNull(nestedResultEntityField) && fieldTypeIsEntity) {
+                if (!tableFieldInfo.getTableFieldAnnotation().exists()) {
+                    continue;
+                }
                 if (!tableFieldInfo.getTableFieldAnnotation().select()) {
                     continue;
                 }

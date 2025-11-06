@@ -54,7 +54,7 @@ public class MybatisConditionChain extends ConditionChain {
             return true;
         }
         MpTableField tableField = (MpTableField) c.getField();
-        if (!tableField.getTableFieldInfo().getTableFieldAnnotation().condition()) {
+        if (!tableField.getTableFieldInfo().getTableFieldAnnotation().exists()) {
             return false;
         }
         return true;

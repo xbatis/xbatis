@@ -119,7 +119,11 @@ public final class UpdateMethodUtil {
 
         Collection<TableFieldInfo> tableFieldInfos;
         if (batchFields == null || batchFields.length == 0) {
-            tableFieldInfos = tableInfo.getTableFieldInfos();
+            tableFieldInfos = tableInfo.getTableFieldInfos()
+                    .stream()
+                    .filter(i -> i.getTableFieldAnnotation().exists() && i.getTableFieldAnnotation().update())
+                    .collect(Collectors.toSet());
+            ;
         } else {
             tableFieldInfos = Arrays.stream(batchFields)
                     .map(i -> LambdaUtil.getName(i))

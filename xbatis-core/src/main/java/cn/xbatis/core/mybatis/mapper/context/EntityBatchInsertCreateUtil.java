@@ -40,6 +40,9 @@ public class EntityBatchInsertCreateUtil {
     private static Set<String> getAllSaveField(TableInfo tableInfo, DbType dbType, Object entity) {
         Set<String> saveFieldSet = new HashSet<>();
         for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
+            if (!tableFieldInfo.getTableFieldAnnotation().exists()) {
+                continue;
+            }
             if (!tableFieldInfo.getTableFieldAnnotation().insert()) {
                 continue;
             }

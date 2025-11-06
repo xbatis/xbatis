@@ -54,7 +54,7 @@ public final class ReturningClassUtil {
             TableInfo tableInfo = Tables.get(clazz);
             for (int i = 0; i < tableInfo.getFieldSize(); i++) {
                 TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
-                if (tableFieldInfo.getTableFieldAnnotation().select()) {
+                if (tableFieldInfo.getTableFieldAnnotation().select() && tableFieldInfo.getTableFieldAnnotation().exists()) {
                     cmdList.add(cmdFactory.field(clazz, tableFieldInfo.getField().getName(), storey));
                 }
             }

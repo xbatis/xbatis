@@ -212,7 +212,7 @@ public class TableInfo {
             }
         }
 
-        this.hasIgnoreField = tableFieldInfos.stream().anyMatch(item -> !item.getTableFieldAnnotation().select());
+        this.hasIgnoreField = tableFieldInfos.stream().anyMatch(item -> !item.getTableFieldAnnotation().select() && !item.getTableFieldAnnotation().exists());
 
         if (this.isSplitTable) {
             long splitTableSize = tableFieldInfos.stream().filter(i -> i.isTableSplitKey()).count();

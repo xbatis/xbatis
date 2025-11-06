@@ -219,6 +219,9 @@ public final class TableInfoUtil {
     }
 
     public static boolean isInsertDoBeforeTableField(TableFieldInfo tableFieldInfo) {
+        if (!tableFieldInfo.getTableFieldAnnotation().exists()) {
+            return false;
+        }
         if (!tableFieldInfo.getTableFieldAnnotation().insert()) {
             return false;
         }
@@ -243,6 +246,9 @@ public final class TableInfoUtil {
     }
 
     public static boolean isUpdateDoBeforeTableField(TableFieldInfo tableFieldInfo) {
+        if (!tableFieldInfo.getTableFieldAnnotation().exists()) {
+            return false;
+        }
         if (!tableFieldInfo.getTableFieldAnnotation().update()) {
             return false;
         }

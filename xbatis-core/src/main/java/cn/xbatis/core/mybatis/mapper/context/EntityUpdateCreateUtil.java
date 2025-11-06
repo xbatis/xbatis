@@ -129,7 +129,9 @@ public class EntityUpdateCreateUtil {
                 TableInfoUtil.setValue(tableFieldInfo, entity, version);
                 continue;
             }
-
+            if (!tableFieldInfo.getTableFieldAnnotation().exists()) {
+                continue;
+            }
             if (!isForceUpdate && !tableFieldInfo.getTableFieldAnnotation().update()) {
                 continue;
             }

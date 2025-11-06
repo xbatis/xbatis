@@ -133,6 +133,10 @@ public class ModelUpdateCreateUtil {
                 continue;
             }
 
+            if (!modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().exists()) {
+                continue;
+            }
+
             if (!isForceUpdate && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().update()) {
                 continue;
             }
