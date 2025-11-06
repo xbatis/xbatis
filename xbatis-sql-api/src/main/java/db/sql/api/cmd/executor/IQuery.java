@@ -49,6 +49,7 @@ public interface IQuery<SELF extends IQuery
         ORDERBY extends IOrderBy<ORDERBY>,
         LIMIT extends ILimit<LIMIT>,
         FORUPDATE extends IForUpdate<FORUPDATE>,
+        FORSHARE extends IForShare<FORSHARE>,
         IUNION extends IUnion
         >
         extends IWithMethod<SELF>,
@@ -61,6 +62,7 @@ public interface IQuery<SELF extends IQuery
         IOrderByMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         ILimitMethod<SELF>,
         IForUpdateMethod<SELF>,
+        IForShareMethod<SELF>,
         IUnionMethod<SELF>,
         IExecutor<SELF, TABLE, TABLE_FIELD> {
 
@@ -87,6 +89,8 @@ public interface IQuery<SELF extends IQuery
     LIMIT $limit();
 
     FORUPDATE $forUpdate();
+
+    FORSHARE $forShare();
 
     <T> SELF fetchEnable(Getter<T> getter, Boolean enable);
 
@@ -220,6 +224,32 @@ public interface IQuery<SELF extends IQuery
         return (SELF) this;
     }
 
+
+    //
+    @Override
+    default SELF forShare(boolean wait) {
+        $forShare().setWait(wait);
+        return (SELF) this;
+    }
+
+    @Override
+    default SELF forShareNoWait() {
+        $forShare().setWait(false);
+        return (SELF) this;
+    }
+
+    @Override
+    default SELF forShareSkipLocked() {
+        $forShare().setSkipLocked(true);
+        return (SELF) this;
+    }
+
+    @Override
+    default SELF forShare(String options) {
+        $forShare().setOptions(options);
+        return (SELF) this;
+    }
+
     SELECT getSelect();
 
     WHERE getWhere();
@@ -237,6 +267,8 @@ public interface IQuery<SELF extends IQuery
     LIMIT getLimit();
 
     FORUPDATE getForUpdate();
+
+    FORSHARE getForShare();
 
     Unions getUnions();
 

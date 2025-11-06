@@ -68,6 +68,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         OrderBy,
         Limit,
         ForUpdate,
+        ForShare,
         Union
         >, Cmd {
 
@@ -94,6 +95,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     protected Limit limit;
 
     protected ForUpdate forUpdate;
+
+    protected ForShare forShare;
 
     protected Unions unions;
 
@@ -675,6 +678,15 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
+    public ForShare $forShare() {
+        if (forShare == null) {
+            forShare = new ForShare();
+            this.append(forShare);
+        }
+        return forShare;
+    }
+
+    @Override
     public Limit $limit() {
         if (this.limit == null) {
             this.limit = new Limit(0, 0);
@@ -853,6 +865,11 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     @Override
     public ForUpdate getForUpdate() {
         return forUpdate;
+    }
+
+    @Override
+    public ForShare getForShare() {
+        return forShare;
     }
 
     @Override

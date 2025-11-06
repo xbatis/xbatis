@@ -48,7 +48,7 @@ import db.sql.api.cmd.struct.query.*;
  * @param <FORUPDATE>
  * @param <UNION>
  */
-public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WITH_QUERY_DATASET, DATASET_FIELD, COLUMN, V, CMD_FACTORY, CONDITION_CHAIN, WITH, RECURSIVE, SELECT, FROM, JOIN, ON, JOINS, WHERE, GROUPBY, HAVING, ORDERBY, LIMIT, FORUPDATE, UNION>,
+public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WITH_QUERY_DATASET, DATASET_FIELD, COLUMN, V, CMD_FACTORY, CONDITION_CHAIN, WITH, RECURSIVE, SELECT, FROM, JOIN, ON, JOINS, WHERE, GROUPBY, HAVING, ORDERBY, LIMIT, FORUPDATE, FORSHARE, UNION>,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
         TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
         WITH_QUERY_DATASET extends IDataset<WITH_QUERY_DATASET, DATASET_FIELD>,
@@ -72,6 +72,7 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WI
         ORDERBY extends IOrderBy<ORDERBY>,
         LIMIT extends ILimit<LIMIT>,
         FORUPDATE extends IForUpdate<FORUPDATE>,
+        FORSHARE extends IForShare<FORSHARE>,
         UNION extends IUnion
         > extends IQuery<
         SELF,
@@ -93,6 +94,7 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WI
         ORDERBY,
         LIMIT,
         FORUPDATE,
+        FORSHARE,
         UNION
         >, IDataset<SELF, DATASET_FIELD> {
 

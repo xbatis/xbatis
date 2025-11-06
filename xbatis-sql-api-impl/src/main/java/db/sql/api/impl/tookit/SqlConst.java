@@ -185,7 +185,9 @@ public final class SqlConst {
     public static final char[] ORDER_BY = " ORDER BY ".toCharArray();
     public static final char[] ASC = " ASC ".toCharArray();
     public static final char[] DESC = " DESC ".toCharArray();
-    public static final char[] FOR_UPDATE = " FOR UPDATE".toCharArray();
+    public static final char[] FOR = " FOR".toCharArray();
+    public static final char[] KEY = " KEY".toCharArray();
+    public static final char[] SHARE = " SHARE".toCharArray();
     public static final char[] NO_WAIT = " NOWAIT".toCharArray();
     public static final char[] SKIP_LOCKED = " SKIP LOCKED".toCharArray();
     public static final char[] DOUBLE_QUOT = "\"".toCharArray();

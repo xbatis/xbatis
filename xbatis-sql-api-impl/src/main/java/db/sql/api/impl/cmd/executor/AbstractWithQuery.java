@@ -53,6 +53,7 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
         OrderBy,
         Limit,
         ForUpdate,
+        ForShare,
         Union
         > {
 

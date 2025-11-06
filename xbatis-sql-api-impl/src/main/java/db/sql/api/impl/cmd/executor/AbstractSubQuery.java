@@ -56,6 +56,7 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
         OrderBy,
         Limit,
         ForUpdate,
+        ForShare,
         Union
         >,
         db.sql.api.cmd.basic.IDataset<SELF, DatasetField> {
