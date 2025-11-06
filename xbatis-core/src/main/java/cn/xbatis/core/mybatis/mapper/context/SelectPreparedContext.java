@@ -39,10 +39,6 @@ public class SelectPreparedContext<T> extends PreparedContext {
         this.returnType = returnType;
     }
 
-    public Class<T> getReturnType() {
-        return returnType;
-    }
-
     private static Object[] buildSqlAndArgsWithDbType(String originalSql, Object[] originalArgs, DbType dbType) {
         Object[] params = originalArgs;
         String[] sqls = originalSql.split("\\?");
@@ -90,6 +86,10 @@ public class SelectPreparedContext<T> extends PreparedContext {
         }
 
         return new Object[]{sql.toString(), args.toArray()};
+    }
+
+    public Class<T> getReturnType() {
+        return returnType;
     }
 
     public void initWithDbType(DbType dbType) {

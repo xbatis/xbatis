@@ -26,7 +26,7 @@ public class FALSE implements ICondition {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if(context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.ORACLE){
+        if (context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.ORACLE) {
             return sqlBuilder.append(SqlConst.NE_1_1);
         }
         return sqlBuilder.append(SqlConst.FALSE);

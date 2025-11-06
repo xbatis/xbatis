@@ -23,10 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class SQLImplGlobalConfig {
 
     private static final Object NULL = new Object();
-
-    private static volatile Object DATABASE_CASE_RULE = NULL;
-
     private final static Map<DbType, Object> DATABASE_CASE_RULES = new ConcurrentHashMap<>();
+    private static volatile Object DATABASE_CASE_RULE = NULL;
 
     /**
      * 数据库命名规则 默认 不处理
