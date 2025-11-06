@@ -16,8 +16,10 @@ package cn.xbatis.core.mybatis.mapper.context;
 
 import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
+import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.IdAutoType;
@@ -135,6 +137,9 @@ public class ModelBatchInsertCreateUtil {
         boolean containId = false;
 
         for (Model t : insertData) {
+            if (tableInfo.isSplitTable()) {
+                TableSplitUtil.splitHandle((MpTable) table, modelInfo.getSplitFieldInfo().getValue(insertData));
+            }
             List<Object> values = new ArrayList<>();
             doBefore(modelInfo, saveFieldInfoSet, t, saveBatchStrategy, dbType, defaultValueContext);
             for (int i = 0; i < fieldSize; i++) {

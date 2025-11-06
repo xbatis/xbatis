@@ -91,6 +91,11 @@ public class ModelInfo {
      */
     private final List<ModelFieldInfo> updateDoBeforeModelFieldInfos;
 
+    /**
+     * 分隔字段信息
+     */
+    private final ModelFieldInfo splitFieldInfo;
+
     public ModelInfo(Class<?> model) {
         this.type = model;
         Class<?> entity = GenericUtil.getGenericInterfaceClass(model).stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst().orElseThrow(() -> new RuntimeException(MessageFormat.format("class {0} have no generic type", model.getName())));
@@ -117,6 +122,12 @@ public class ModelInfo {
 
         this.insertDoBeforeModelFieldInfos = Collections.unmodifiableList(modelFieldInfos.stream().filter(ModelInfoUtil::isInsertDoBeforeTableField).collect(Collectors.toList()));
         this.updateDoBeforeModelFieldInfos = Collections.unmodifiableList(modelFieldInfos.stream().filter(ModelInfoUtil::isUpdateDoBeforeTableField).collect(Collectors.toList()));
+
+        if (tableInfo.isSplitTable()) {
+            this.splitFieldInfo = modelFieldInfos.stream().filter(item -> item.getTableFieldInfo() == tableInfo.getSplitFieldInfo()).findFirst().get();
+        } else {
+            this.splitFieldInfo = null;
+        }
     }
 
     public Class<?> getType() {
@@ -182,5 +193,9 @@ public class ModelInfo {
 
     public List<ModelFieldInfo> getUpdateDoBeforeModelFieldInfos() {
         return updateDoBeforeModelFieldInfos;
+    }
+
+    public ModelFieldInfo getSplitFieldInfo() {
+        return splitFieldInfo;
     }
 }

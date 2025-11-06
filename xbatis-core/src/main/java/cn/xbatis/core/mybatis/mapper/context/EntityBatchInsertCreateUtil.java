@@ -19,8 +19,10 @@ import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableIds;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
+import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.IdAutoType;
@@ -135,6 +137,9 @@ public class EntityBatchInsertCreateUtil {
         boolean containId = false;
 
         for (T t : insertData) {
+            if (tableInfo.isSplitTable()) {
+                TableSplitUtil.splitHandle((MpTable) table, tableInfo.getSplitFieldInfo().getValue(t));
+            }
             doBefore(tableInfo, saveFieldInfoSet, t, dbType, defaultValueContext);
             List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {

@@ -21,6 +21,7 @@ import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.incrementer.IdentifierGenerator;
 import cn.xbatis.core.incrementer.IdentifierGeneratorFactory;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
 import cn.xbatis.core.sql.executor.MpTable;
@@ -123,6 +124,10 @@ public class EntityInsertCreateUtil {
         insert.$().cacheTableInfo(tableInfo);
         MpTable table = (MpTable) insert.$().table(tableInfo.getType());
         insert.insert(table);
+
+        if (tableInfo.isSplitTable()) {
+            TableSplitUtil.splitHandle(table, tableInfo.getSplitFieldInfo().getValue(insertData));
+        }
 
         List<Object> values = new ArrayList<>();
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {

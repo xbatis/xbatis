@@ -66,6 +66,8 @@ public class TableInfo {
 
     private final TableSplitter tableSplitter;
 
+    private final TableFieldInfo splitFieldInfo;
+
     /**
      * 乐观锁字段
      */
@@ -219,6 +221,10 @@ public class TableInfo {
             } else if (splitTableSize != 1) {
                 throw new RuntimeException("Entity " + entity.getName() + " has multi @TableSplitKey");
             }
+
+            this.splitFieldInfo = tableFieldInfos.stream().filter(i -> i.isTableSplitKey()).findFirst().get();
+        } else {
+            this.splitFieldInfo = null;
         }
 
         this.insertDoBeforeTableFieldInfos = Collections.unmodifiableList(this.tableFieldInfos.stream().filter(TableInfoUtil::isInsertDoBeforeTableField).collect(Collectors.toList()));
@@ -346,5 +352,9 @@ public class TableInfo {
 
     public List<TableFieldInfo> getUpdateDoBeforeTableFieldInfos() {
         return updateDoBeforeTableFieldInfos;
+    }
+
+    public TableFieldInfo getSplitFieldInfo() {
+        return splitFieldInfo;
     }
 }
