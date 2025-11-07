@@ -21,14 +21,13 @@ import cn.xbatis.core.mybatis.mapper.context.ModelBatchInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.ModelInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
 import cn.xbatis.db.Model;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public final class SaveModelMethodUtil {
 
@@ -72,9 +71,7 @@ public final class SaveModelMethodUtil {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        M first = list.stream().findFirst().get();
-        ModelInfo modelInfo = Models.get(first.getClass());
-        return basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, list, saveBatchStrategy, new HashMap<>()));
+        return saveBatch(basicMapper, insert, list, saveBatchStrategy, new HashMap<>());
     }
 
     public static <M extends Model> int saveBatch(BasicMapper basicMapper, BaseInsert<?> insert, Collection<M> list, SaveBatchStrategy<M> saveBatchStrategy, Map<String, Object> defaultValueContext) {
@@ -83,6 +80,30 @@ public final class SaveModelMethodUtil {
         }
         M first = list.stream().findFirst().get();
         ModelInfo modelInfo = Models.get(first.getClass());
+
+        if (modelInfo.getTableInfo().isSplitTable()) {
+            final List<String> groups = new ArrayList<>();
+            Map<String, List<M>> groupedMap = list.stream()
+                    .collect(Collectors.groupingBy(m -> {
+                        String splitTableName = TableSplitUtil.getSplitTableName(modelInfo.getTableInfo(), modelInfo.getSplitFieldInfo().getValue(m));
+                        if (!groups.contains(splitTableName)) {
+                            groups.add(splitTableName);
+                        }
+                        return splitTableName;
+                    }));
+
+            int count = 0;
+            for (String key : groups) {
+                if (insert != null && insert.getInsertFields() != null && insert.getInsertFields().getFields() != null) {
+                    insert.getInsertFields().getFields().clear();
+                    insert.getInsertValues().getValues().clear();
+                    insert.getInsertTable().getTable().setName(key);
+                }
+                count += basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, groupedMap.get(key), saveBatchStrategy, defaultValueContext));
+            }
+            return count;
+        }
+
         return basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, list, saveBatchStrategy, defaultValueContext));
     }
 }

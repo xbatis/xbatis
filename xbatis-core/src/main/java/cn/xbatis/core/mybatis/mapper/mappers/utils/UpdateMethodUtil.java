@@ -22,6 +22,7 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
+import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.Methods;
@@ -133,43 +134,67 @@ public final class UpdateMethodUtil {
             tableFieldInfos.addAll(tableInfo.getIdFieldInfos());
         }
 
-        UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
 
+        List<TableFieldInfo> idFieldInfos = tableInfo.getIdFieldInfos();
+        if (idFieldInfos == null || idFieldInfos.isEmpty()) {
+            throw new IllegalArgumentException(tableInfo.getType() + " has no id field");
+        }
+
+        if (tableInfo.isSplitTable()) {
+            final List<String> groups = new ArrayList<>();
+            Map<String, List<T>> groupedMap = list.stream()
+                    .collect(Collectors.groupingBy(e -> {
+                        String splitTableName = TableSplitUtil.getSplitTableName(tableInfo, tableInfo.getSplitFieldInfo().getValue(e));
+                        if (!groups.contains(splitTableName)) {
+                            groups.add(splitTableName);
+                        }
+                        return splitTableName;
+                    }));
+
+            int count = 0;
+            for (String key : groups) {
+                UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
+                updateChain.update(tableInfo.getType(), table -> table.setName(key));
+                count += _updateBatch(updateChain, tableInfo, groupedMap.get(key), tableFieldInfos, idFieldInfos, batchFields == null || batchFields.length == 0);
+            }
+            return count;
+        }
+        UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
+        return _updateBatch(updateChain, tableInfo, list, tableFieldInfos, idFieldInfos, batchFields == null || batchFields.length == 0);
+    }
+
+    private static <T> int _updateBatch(UpdateChain updateChain, TableInfo tableInfo, Collection<T> list, Collection<TableFieldInfo> updateTableFieldInfos, List<TableFieldInfo> idFieldInfos, boolean allUpdate) {
         Map<String, List<Serializable>> columnUpdateValues = new HashMap<>();
         Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
-            if (batchFields == null || batchFields.length == 0) {
-                for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
+            if (allUpdate) {
+                for (TableFieldInfo tableFieldInfo : updateTableFieldInfos) {
                     EntityUpdateCreateUtil.initUpdateValue(tableFieldInfo, entity, Collections.EMPTY_SET, defaultValueContext);
                 }
             }
 
-            for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
+            for (TableFieldInfo tableFieldInfo : updateTableFieldInfos) {
                 List<Serializable> values = columnUpdateValues.get(tableFieldInfo.getColumnName());
                 if (values == null) {
                     values = new ArrayList<>();
                     columnUpdateValues.put(tableFieldInfo.getColumnName(), values);
                 }
 
-                if (batchFields != null && batchFields.length == 0) {
+                if (!allUpdate) {
                     EntityUpdateCreateUtil.initUpdateValue(tableFieldInfo, entity, Collections.EMPTY_SET, defaultValueContext);
                 }
 
                 values.add((Serializable) tableFieldInfo.getValue(entity));
             }
-
-            if (batchFields == null || batchFields.length == 0) {
-                //非局部修改 触发onUpdate操作
-                //更新动作通知
+        }
+        if (allUpdate) {
+            //非局部修改 触发onUpdate操作
+            //更新动作通知
+            for (T entity : list) {
                 OnListenerUtil.notifyUpdate(entity);
             }
         }
-
-        List<TableFieldInfo> idFieldInfos = tableInfo.getIdFieldInfos();
-        if (idFieldInfos == null || idFieldInfos.isEmpty()) {
-            throw new IllegalArgumentException(tableInfo.getType() + " has no id field");
-        }
-        for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
+        for (TableFieldInfo tableFieldInfo : updateTableFieldInfos) {
             TableField tableField = updateChain.$().field(tableInfo.getType(), tableFieldInfo.getField().getName());
             if (tableField.isId()) {
                 continue;

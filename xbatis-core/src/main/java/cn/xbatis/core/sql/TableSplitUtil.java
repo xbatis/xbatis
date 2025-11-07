@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.sql;
 
+import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.db.annotations.TableSplitter;
@@ -92,6 +93,22 @@ public class TableSplitUtil {
         return false;
     }
 
+    public static String getSplitTableName(TableInfo tableInfo, Object value) {
+        TableSplitter splitter = tableInfo.getTableSplitter();
+        Object v = getSplitValue(value, splitter);
+        if (v == null) {
+            return null;
+        }
+        String splitTableName = splitter.split(tableInfo.getTableName(), v);
+        if (splitTableName == null) {
+            return null;
+        }
+        if (!tableInfo.getSchema().isEmpty()) {
+            splitTableName = tableInfo.getSchema() + "." + splitTableName;
+        }
+        return splitTableName;
+    }
+
 
     public static void splitHandle(MpTable mpTable, Object value) {
         if (value == null) {
@@ -100,11 +117,10 @@ public class TableSplitUtil {
         if (!isNeedSplitHandle(mpTable)) {
             return;
         }
-        TableSplitter splitter = mpTable.getTableInfo().getTableSplitter();
-        Object v = getSplitValue(value, splitter);
-        if (v == null) {
+        String splitTableName = getSplitTableName(mpTable.getTableInfo(), value);
+        if (splitTableName == null) {
             return;
         }
-        mpTable.setName(splitter.split(mpTable.getName(), v));
+        mpTable.setName(splitTableName);
     }
 }

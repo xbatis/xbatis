@@ -21,13 +21,12 @@ import cn.xbatis.core.mybatis.mapper.context.EntityBatchInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.EntityInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public final class SaveMethodUtil {
 
@@ -92,13 +91,37 @@ public final class SaveMethodUtil {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        return basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, list, saveBatchStrategy, new HashMap<>()));
+        return saveBatch(basicMapper, insert, tableInfo, list, saveBatchStrategy, new HashMap<>());
     }
 
     public static <E> int saveBatch(BasicMapper basicMapper, BaseInsert<?> insert, TableInfo tableInfo, Collection<E> list, SaveBatchStrategy<E> saveBatchStrategy, Map<String, Object> defaultValueContext) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
+        if (tableInfo.isSplitTable()) {
+            final List<String> groups = new ArrayList<>();
+            Map<String, List<E>> groupedMap = list.stream()
+                    .collect(Collectors.groupingBy(e -> {
+                        String splitTableName = TableSplitUtil.getSplitTableName(tableInfo, tableInfo.getSplitFieldInfo().getValue(e));
+                        if (!groups.contains(splitTableName)) {
+                            groups.add(splitTableName);
+                        }
+                        return splitTableName;
+                    }));
+
+            int count = 0;
+            for (String key : groups) {
+                if (insert != null && insert.getInsertFields() != null && insert.getInsertFields().getFields() != null) {
+                    insert.getInsertFields().getFields().clear();
+                    insert.getInsertValues().getValues().clear();
+                    insert.getInsertTable().getTable().setName(key);
+                }
+                count += basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, groupedMap.get(key), saveBatchStrategy, defaultValueContext));
+            }
+            return count;
+        }
         return basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, list, saveBatchStrategy, defaultValueContext));
     }
+
+
 }
