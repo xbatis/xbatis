@@ -168,6 +168,41 @@ public class SplitTableCUDTest extends BaseTest {
         }
     }
 
+    @Test
+    public void testSplitTableEntityUpdate3() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
+            SplitTableTest splitTableTest = new SplitTableTest();
+            splitTableTest.setName("1245");
+            splitTableTest.setSplitId(1);
+            splitTableTest.setId(1);
+            int cnt = mapper.update(splitTableTest, where -> {
+                //where.eq(SplitTableTest::getSplitId, 1);
+            });
+
+            assertEquals(1, cnt);
+
+            splitTableTest = QueryChain.of(mapper).isNotNull(SplitTableTest::getName).andNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 1);
+            }).get();
+
+            assertNotNull(splitTableTest);
+            assertEquals(splitTableTest.getSplitId(), 1);
+            assertEquals(splitTableTest.getName(), "1245");
+
+            splitTableTest = QueryChain.of(mapper).isNotNull(SplitTableTest::getName).orNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 1);
+            }).get();
+
+            assertNotNull(splitTableTest);
+            assertEquals(splitTableTest.getSplitId(), 1);
+            assertEquals(splitTableTest.getName(), "1245");
+        }
+    }
+
 
     @Test
     public void testSplitTableInsert() {
