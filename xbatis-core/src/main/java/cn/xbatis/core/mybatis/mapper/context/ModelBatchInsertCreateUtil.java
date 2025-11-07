@@ -28,7 +28,6 @@ import cn.xbatis.db.annotations.TableField;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.basic.NULL;
-import db.sql.api.impl.cmd.basic.Table;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -82,7 +81,7 @@ public class ModelBatchInsertCreateUtil {
         TableInfo tableInfo = modelInfo.getTableInfo();
 
         insert.$().cacheTableInfo(tableInfo);
-        Table table = insert.$().table(tableInfo.getType());
+        MpTable table = (MpTable) insert.$().table(tableInfo.getType());
         insert.insert(table);
 
         Set<String> saveFieldSet;
@@ -136,10 +135,11 @@ public class ModelBatchInsertCreateUtil {
         int fieldSize = saveFieldInfoSet.size();
         boolean containId = false;
 
+        if (TableSplitUtil.isNeedSplitHandle(table)) {
+            TableSplitUtil.splitHandle(table, modelInfo.getSplitFieldInfo().getValue(Arrays.stream(insertData).findFirst().get()));
+        }
+
         for (Model t : insertData) {
-            if (tableInfo.isSplitTable()) {
-                TableSplitUtil.splitHandle((MpTable) table, modelInfo.getSplitFieldInfo().getValue(insertData));
-            }
             List<Object> values = new ArrayList<>();
             doBefore(modelInfo, saveFieldInfoSet, t, saveBatchStrategy, dbType, defaultValueContext);
             for (int i = 0; i < fieldSize; i++) {

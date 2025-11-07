@@ -73,14 +73,9 @@ public class MybatisConditionChain extends ConditionChain {
             return;
         }
         MpTable table = (MpTable) tableField.getTable();
-        if (!table.getTableInfo().isSplitTable()) {
-            return;
-        }
-        if (!table.getTableInfo().getTableName().equals(table.getName())) {
-            //这里已经修改过了
+        if (!TableSplitUtil.isNeedSplitHandle(table)) {
             return;
         }
         TableSplitUtil.splitHandle(table, c.getValue());
-
     }
 }

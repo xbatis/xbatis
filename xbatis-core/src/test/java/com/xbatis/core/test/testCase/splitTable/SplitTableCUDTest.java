@@ -27,6 +27,7 @@ import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,6 +63,108 @@ public class SplitTableCUDTest extends BaseTest {
             assertNotNull(splitTableTest);
             assertEquals(splitTableTest.getSplitId(), 1);
             assertEquals(splitTableTest.getName(), "123");
+        }
+    }
+
+
+    @Test
+    public void testSplitTableEntityUpdate() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
+            SplitTableTest splitTableTest = new SplitTableTest();
+            splitTableTest.setSplitId(1);
+            splitTableTest.setName("1245");
+            splitTableTest.setId(1);
+            int cnt = mapper.update(splitTableTest);
+
+            assertEquals(1, cnt);
+
+            splitTableTest = QueryChain.of(mapper).isNotNull(SplitTableTest::getName).andNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 1);
+            }).get();
+
+            assertNotNull(splitTableTest);
+            assertEquals(splitTableTest.getSplitId(), 1);
+            assertEquals(splitTableTest.getName(), "1245");
+
+            splitTableTest = QueryChain.of(mapper).isNotNull(SplitTableTest::getName).orNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 1);
+            }).get();
+
+            assertNotNull(splitTableTest);
+            assertEquals(splitTableTest.getSplitId(), 1);
+            assertEquals(splitTableTest.getName(), "1245");
+        }
+    }
+
+    @Test
+    public void testSplitTableEntityListUpdate() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
+            SplitTableTest splitTableTest = new SplitTableTest();
+            splitTableTest.setSplitId(1);
+            splitTableTest.setName("1245");
+            splitTableTest.setId(1);
+            int cnt = mapper.update(Arrays.asList(splitTableTest));
+
+            assertEquals(1, cnt);
+
+            splitTableTest = QueryChain.of(mapper).isNotNull(SplitTableTest::getName).andNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 1);
+            }).get();
+
+            assertNotNull(splitTableTest);
+            assertEquals(splitTableTest.getSplitId(), 1);
+            assertEquals(splitTableTest.getName(), "1245");
+
+            splitTableTest = QueryChain.of(mapper).isNotNull(SplitTableTest::getName).orNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 1);
+            }).get();
+
+            assertNotNull(splitTableTest);
+            assertEquals(splitTableTest.getSplitId(), 1);
+            assertEquals(splitTableTest.getName(), "1245");
+        }
+    }
+
+
+    @Test
+    public void testSplitTableEntityUpdate2() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
+            SplitTableTest splitTableTest = new SplitTableTest();
+            splitTableTest.setName("1245");
+            splitTableTest.setId(1);
+            int cnt = mapper.update(splitTableTest, where -> {
+                where.eq(SplitTableTest::getSplitId, 1);
+            });
+
+            assertEquals(1, cnt);
+
+            splitTableTest = QueryChain.of(mapper).isNotNull(SplitTableTest::getName).andNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 1);
+            }).get();
+
+            assertNotNull(splitTableTest);
+            assertEquals(splitTableTest.getSplitId(), 1);
+            assertEquals(splitTableTest.getName(), "1245");
+
+            splitTableTest = QueryChain.of(mapper).isNotNull(SplitTableTest::getName).orNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 1);
+            }).get();
+
+            assertNotNull(splitTableTest);
+            assertEquals(splitTableTest.getSplitId(), 1);
+            assertEquals(splitTableTest.getName(), "1245");
         }
     }
 
@@ -132,6 +235,68 @@ public class SplitTableCUDTest extends BaseTest {
             }).get();
 
             assertNull(splitTableTest);
+        }
+    }
+
+    @Test
+    public void testSplitTableEntityDelete() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
+            SplitTableTest splitTableTest = new SplitTableTest();
+            splitTableTest.setSplitId(3);
+            splitTableTest.setId(2);
+            int cnt = mapper.delete(splitTableTest);
+
+            assertEquals(1, cnt);
+
+            splitTableTest = QueryChain.of(mapper).isNull(SplitTableTest::getName).andNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 3);
+            }).get();
+
+            assertNull(splitTableTest);
+        }
+    }
+
+    @Test
+    public void testSplitTableEntityDeleteBatch() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
+            SplitTableTest splitTableTest = new SplitTableTest();
+            splitTableTest.setSplitId(3);
+            splitTableTest.setId(2);
+            int cnt = mapper.delete(Arrays.asList(splitTableTest, splitTableTest));
+
+            assertEquals(1, cnt);
+
+            splitTableTest = QueryChain.of(mapper).isNull(SplitTableTest::getName).andNested(conditionChain -> {
+                conditionChain.eq(SplitTableTest::getSplitId, 3);
+            }).get();
+
+            assertNull(splitTableTest);
+        }
+    }
+
+    @Test
+    public void testSplitTableInsertBatch() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
+            SplitTableTest splitTableTest = new SplitTableTest();
+            splitTableTest.setSplitId(3);
+            splitTableTest.setName("124");
+            mapper.saveBatch(Arrays.asList(splitTableTest));
+
+            assertNotNull(splitTableTest.getId());
+            assertEquals(splitTableTest.getSplitId(), 3);
+            assertEquals(splitTableTest.getName(), "124");
         }
     }
 }

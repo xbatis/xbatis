@@ -18,6 +18,7 @@ import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
+import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.Delete;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.util.WhereUtil;
@@ -62,6 +63,17 @@ public final class DeleteMethodUtil {
         }
 
         return delete(basicMapper, tableInfo, WhereUtil.create(tableInfo, w -> {
+            if (tableInfo.isSplitTable()) {
+                MpTable table = (MpTable) w.getConditionFactory().getCmdFactory().table(tableInfo.getType(), 1);
+                if (TableSplitUtil.isNeedSplitHandle(table)) {
+                    Object splitValue = tableInfo.getSplitFieldInfo().getValue(entity);
+                    if (Objects.isNull(splitValue)) {
+                        throw new RuntimeException("entity delete has no split value");
+                    }
+                    TableSplitUtil.splitHandle(table, splitValue);
+                }
+            }
+
             WhereUtil.appendIdWhereWithEntity(w, tableInfo, entity);
             WhereUtil.appendVersionWhere(w, tableInfo, entity);
         }), defaultValueContext);

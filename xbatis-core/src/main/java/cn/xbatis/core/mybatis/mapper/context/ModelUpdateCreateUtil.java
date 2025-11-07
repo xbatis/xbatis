@@ -19,6 +19,8 @@ import cn.xbatis.core.db.reflect.ModelInfo;
 import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.MybatisCmdFactory;
+import cn.xbatis.core.sql.TableSplitUtil;
+import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Update;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.tenant.TenantUtil;
@@ -29,7 +31,6 @@ import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
-import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
 
@@ -92,7 +93,16 @@ public class ModelUpdateCreateUtil {
         boolean hasPutConditionBefore = where.hasContent();
 
         MybatisCmdFactory $ = update.$();
-        Table table = $.table(modelInfo.getEntityType());
+        MpTable table = (MpTable) $.table(modelInfo.getEntityType());
+
+        if (TableSplitUtil.isNeedSplitHandle(table)) {
+            Object splitValue = modelInfo.getSplitFieldInfo().getValue(model);
+            if (Objects.isNull(splitValue)) {
+                throw new RuntimeException("model update has no table split value");
+            } else {
+                TableSplitUtil.splitHandle(table, splitValue);
+            }
+        }
 
         boolean hasIdCondition = false;
 

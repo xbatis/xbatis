@@ -75,11 +75,8 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
     /**************以上为去除警告************/
 
     private void splitTableHandle(MpTable table) {
-        if (!table.getTableInfo().isSplitTable()) {
-            return;
-        }
-        if (!table.getTableInfo().getTableName().equals(table.getName())) {
-            //这里已经修改过了
+        if (!TableSplitUtil.isNeedSplitHandle(table)) {
+            //无需处理分表操作 返回
             return;
         }
 
@@ -104,7 +101,7 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
             List<List<Cmd>> insertValuesList = getInsertValues().getValues();
             for (List<Cmd> cmdList : insertValuesList) {
                 TableSplitUtil.splitHandle(table, cmdList.get(splitTableKeyIndex));
-                if (!table.getTableInfo().getTableName().equals(table.getName())) {
+                if (!TableSplitUtil.isNeedSplitHandle(table)) {
                     break;
                 }
             }

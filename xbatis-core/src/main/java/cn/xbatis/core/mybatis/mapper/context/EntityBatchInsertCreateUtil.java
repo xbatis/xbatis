@@ -139,10 +139,11 @@ public class EntityBatchInsertCreateUtil {
 
         boolean containId = false;
 
+        if (tableInfo.isSplitTable()) {
+            TableSplitUtil.splitHandle((MpTable) table, tableInfo.getSplitFieldInfo().getValue(Arrays.stream(insertData).findFirst().get()));
+        }
+
         for (T t : insertData) {
-            if (tableInfo.isSplitTable()) {
-                TableSplitUtil.splitHandle((MpTable) table, tableInfo.getSplitFieldInfo().getValue(t));
-            }
             doBefore(tableInfo, saveFieldInfoSet, t, dbType, defaultValueContext);
             List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {

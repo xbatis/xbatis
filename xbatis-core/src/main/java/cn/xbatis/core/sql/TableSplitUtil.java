@@ -82,9 +82,22 @@ public class TableSplitUtil {
         return v;
     }
 
+    public static boolean isNeedSplitHandle(MpTable mpTable) {
+        if (!mpTable.getTableInfo().isSplitTable()) {
+            return false;
+        }
+        if (mpTable.getName().equals(mpTable.getTableInfo().getSchemaAndTableName())) {
+            return true;
+        }
+        return false;
+    }
+
 
     public static void splitHandle(MpTable mpTable, Object value) {
         if (value == null) {
+            return;
+        }
+        if (!isNeedSplitHandle(mpTable)) {
             return;
         }
         TableSplitter splitter = mpTable.getTableInfo().getTableSplitter();
