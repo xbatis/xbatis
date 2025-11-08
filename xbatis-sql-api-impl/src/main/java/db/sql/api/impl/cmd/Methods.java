@@ -32,7 +32,6 @@ import db.sql.api.impl.cmd.postgis.ST_DWithin;
 import db.sql.api.impl.cmd.postgis.ST_Distance;
 import db.sql.api.impl.cmd.postgis.ST_Point;
 import db.sql.api.impl.tookit.Objects;
-import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.impl.tookit.SqlUtil;
 
 import java.io.Serializable;
@@ -1461,28 +1460,6 @@ public final class Methods {
     public static IsNotNull isNotNull(Cmd column) {
         Objects.requireNonNull(column);
         return new IsNotNull(column);
-    }
-
-    /**
-     * column列 为空
-     *
-     * @param column 列
-     * @return Eq
-     */
-    public static Eq isEmpty(Cmd column) {
-        Objects.requireNonNull(column);
-        return new Eq(column, SqlConst.EMPTY);
-    }
-
-    /**
-     * column 列 不为空
-     *
-     * @param column 列
-     * @return Ne
-     */
-    public static Ne isNotEmpty(Cmd column) {
-        Objects.requireNonNull(column);
-        return new Ne(column, value(SqlConst.EMPTY));
     }
 
     /**

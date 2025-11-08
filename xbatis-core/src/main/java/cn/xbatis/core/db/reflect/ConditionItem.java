@@ -127,8 +127,13 @@ public class ConditionItem {
 
         if (value == null) {
             value = getDefaultValue(target);
-        } else if (value instanceof String && ((String) value).isEmpty()) {
-            value = getDefaultValue(target);
+        } else if (value instanceof String) {
+            String v = ((String) value).trim();
+            if (v.isEmpty()) {
+                value = getDefaultValue(target);
+            } else {
+                value = v;
+            }
         } else if (value instanceof Collection && ((Collection) value).isEmpty()) {
             value = getDefaultValue(target);
         } else if (value instanceof Object[] && ((Object[]) value).length < 1) {
