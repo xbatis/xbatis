@@ -39,6 +39,7 @@ public class ConditionObjectTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             QueryREQ queryReq = new QueryREQ();
             queryReq.setId(1);
+            queryReq.setKeyword(" ");
             Integer id = QueryChain.of(sysUserMapper)
                     .where(queryReq)
                     .select(SysUser::getId)
