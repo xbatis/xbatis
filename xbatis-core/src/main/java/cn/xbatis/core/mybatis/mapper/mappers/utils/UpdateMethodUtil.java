@@ -63,8 +63,10 @@ public final class UpdateMethodUtil {
             }
             return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));
         } catch (Throwable e) {
-            //恢复version初始值
-            TableInfoUtil.setValue(tableInfo.getVersionFieldInfo(), entity, version);
+            if (tableInfo.getVersionFieldInfo() != null) {
+                //恢复version初始值
+                TableInfoUtil.setValue(tableInfo.getVersionFieldInfo(), entity, version);
+            }
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }

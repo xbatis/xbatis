@@ -62,8 +62,10 @@ public final class UpdateModelMethodUtil {
             }
             return basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy, defaultValueContext));
         } catch (Throwable e) {
-            //恢复version初始值
-            ModelInfoUtil.setValue(modelInfo.getVersionFieldInfo(), model, version);
+            if (modelInfo.getVersionFieldInfo() != null) {
+                //恢复version初始值
+                ModelInfoUtil.setValue(modelInfo.getVersionFieldInfo(), model, version);
+            }
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
