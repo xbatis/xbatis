@@ -132,7 +132,7 @@ public class EntityUpdateCreateUtil {
                     continue;
                 }
                 //乐观锁+1
-                Object version = TypeConvertUtil.convert(Long.valueOf(1) + 1, tableFieldInfo.getField().getType());
+                Object version = TypeConvertUtil.convert(Long.valueOf(value.toString()) + 1, tableFieldInfo.getField().getType());
                 //乐观锁设置
                 update.set($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(version));
                 //乐观锁条件

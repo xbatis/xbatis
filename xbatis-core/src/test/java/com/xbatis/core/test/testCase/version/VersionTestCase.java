@@ -58,6 +58,14 @@ public class VersionTestCase extends BaseTest {
             System.out.println(versionTest);
             assertEquals(2, (int) versionTest.getVersion());
             assertEquals(2, (int) versionTestMapper.getById(versionTest.getId()).getVersion());
+
+            versionTest.setName("我是3");
+            versionTestMapper.update(versionTest);
+            versionTest = versionTestMapper.getById(versionTest.getId());
+
+            System.out.println(versionTest);
+            assertEquals(3, (int) versionTest.getVersion());
+            assertEquals(3, (int) versionTestMapper.getById(versionTest.getId()).getVersion());
         }
     }
 

@@ -133,7 +133,7 @@ public class ModelUpdateCreateUtil {
                     continue;
                 }
                 //乐观锁+1
-                Object version = TypeConvertUtil.convert(Long.valueOf(1) + 1, modelFieldInfo.getField().getType());
+                Object version = TypeConvertUtil.convert(Long.valueOf(value.toString()) + 1, modelFieldInfo.getField().getType());
                 //乐观锁设置
                 update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(version));
                 //乐观锁条件
