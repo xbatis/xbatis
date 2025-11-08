@@ -24,6 +24,7 @@ import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
+import cn.xbatis.core.util.TableInfoUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Condition;
@@ -55,7 +56,20 @@ public final class UpdateMethodUtil {
     }
 
     public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
-        return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));
+        Object version = null;
+        try {
+            if (tableInfo.getVersionFieldInfo() != null) {
+                version = tableInfo.getVersionFieldInfo().getValue(entity);
+            }
+            return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));
+        } catch (Throwable e) {
+            //恢复version初始值
+            TableInfoUtil.setValue(tableInfo.getVersionFieldInfo(), entity, version);
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new RuntimeException(e);
+        }
     }
 
     public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, Consumer<UpdateStrategy<T>> updateStrategy) {

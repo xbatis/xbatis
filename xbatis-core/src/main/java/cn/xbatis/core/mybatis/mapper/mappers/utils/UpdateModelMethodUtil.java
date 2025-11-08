@@ -20,6 +20,7 @@ import cn.xbatis.core.mybatis.mapper.context.ModelUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.ModelUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
+import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.Methods;
@@ -54,7 +55,20 @@ public final class UpdateModelMethodUtil {
     }
 
     public static <M extends Model> int update(BasicMapper basicMapper, ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
-        return basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy, defaultValueContext));
+        Object version = null;
+        try {
+            if (modelInfo.getVersionFieldInfo() != null) {
+                version = modelInfo.getVersionFieldInfo().getValue(model);
+            }
+            return basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy, defaultValueContext));
+        } catch (Throwable e) {
+            //恢复version初始值
+            ModelInfoUtil.setValue(modelInfo.getVersionFieldInfo(), model, version);
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new RuntimeException(e);
+        }
     }
 
     public static <M extends Model> int updateList(BasicMapper basicMapper, Collection<M> list, UpdateStrategy<M> updateStrategy) {
