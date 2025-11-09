@@ -1,4 +1,4 @@
-# English | [简体中文](README_zh-CN.md) 
+# English | [简体中文](README.zh-CN.md) 
 # Xbatis AI Agent Knowledge Base
 
 > Official site: https://xbatis.cn  
