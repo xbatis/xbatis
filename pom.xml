@@ -20,7 +20,7 @@
     <name>xbatis</name>
     <url>https://gitee.com/xbatis</url>
     <description>
-        一款基于mybatis的ORM框架
+        xbatis是一款基于mybatis的ORM框架
     </description>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis</artifactId>
