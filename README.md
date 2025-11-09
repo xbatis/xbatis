@@ -20,6 +20,8 @@
 	</a>
 </p>
 
+## AI构建参考文档：[xbatis-ai-knowledge](xbatis-ai-knowledge.md)
+
 ## 与众不同的 几大亮点：
 
 #### 1：xbatis - 亮点一：可自定义动态默认值
