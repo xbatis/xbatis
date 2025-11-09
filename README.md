@@ -1,3 +1,5 @@
+# AI构建参考文档：[xbatis-ai-knowledge](xbatis-ai-knowledge.md)
+
 # English wiki: [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/xbatis/xbatis)
 
 # 官网文档：<strong style="color:red">http://xbatis.cn </strong> !!!
@@ -19,8 +21,6 @@
 		<img src='https://gitee.com/xbatis/xbatis/badge/star.svg' alt='Gitee star'/>
 	</a>
 </p>
-
-## AI构建参考文档：[xbatis-ai-knowledge](xbatis-ai-knowledge.md)
 
 ## 与众不同的 几大亮点：
 
