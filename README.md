@@ -231,7 +231,7 @@ Configure globally during startup (via `ConfigurationCustomizer` or `@PostConstr
 - **Delete**: `deleteById`, `deleteByIds`, `delete(entity)`, `delete(where)`, `deleteAll`, `truncate`, `DeleteChain`.
 
 ### 6.1 Single-Mapper Mode (Xbatis-specific)
-1. **Define a Basic Mapper interface**
+1. **Users create their own interface called `MybatisBasicMapper`  and extends BasicMapper interface**
    ```java
    public interface MybatisBasicMapper extends BasicMapper {
    }

@@ -447,7 +447,7 @@ DTO 若实现 `ObjectConditionLifeCycle`（`cn.xbatis.core.sql.ObjectConditionLi
 - **更新**：`update`, `updateBatch`, `update(model, where)`, `update(list, forceFields)`, `saveOrUpdate`，并支持指定强制更新字段和批量 `CASE WHEN` 更新。
 - **删除**：`deleteById`, `deleteByIds`, `delete(entity)`, `delete(where)`, `deleteAll`，以及 `DeleteChain`。
 - **单 Mapper 模式**（适合实体众多、希望统一数据访问层的场景）：
-  1. **定义基础 Mapper 接口**  
+  1. **用户自己定义 MybatisBasicMapper Mapper 接口和 继承 BasicMapper **  
      ```java
      public interface MybatisBasicMapper extends BasicMapper {
      }
