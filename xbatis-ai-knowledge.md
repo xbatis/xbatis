@@ -28,18 +28,18 @@
 
 ## 2. 核心模块与包路径
 
-| 模块 | 典型包路径 | 核心类型 | 作用 |
-| --- | --- | --- | --- |
-| 核心 Mapper | `cn.xbatis.core.mybatis.mapper` | `MybatisMapper<T>`, `BasicMapper` | 提供基础 CRUD 与单 Mapper 能力 |
-| 链式 DSL | `cn.xbatis.core.chain` | `QueryChain`, `InsertChain`, `UpdateChain`, `DeleteChain` | 构建复杂 SQL、批量操作、返回值链路 |
-| 全局配置 | `cn.xbatis.core.config` | `XbatisGlobalConfig` | 统一配置命名规则、拦截器、动态值、分页等 |
-| 注解体系 | `cn.xbatis.db.annotations` | `@Table`, `@TableId`, `@TableField`, `@LogicDelete`, `@TenantId`, `@Version`, `@Condition`, `@Fetch` 等 | 实体映射、注入规则、对象条件、结果加工等 |
-| 数据库函数 | `db.sql.api.impl.cmd` | `Methods` | 提供跨库函数、SQL 模板、函数链式包装 |
-| 多租户 | `cn.xbatis.core.tenant` | `TenantContext`, `TenantId` | 全局租户 ID 注册与透传 |
-| 动态数据源 | `cn.xbatis.datasource.routing` | `@DS`, `JdbcConfigDecryptor` | 运行时切换数据源、加密配置、分组路由 |
-| 逻辑删除 | `cn.xbatis.core.logic` | `LogicDeleteSwitch`, `LogicDeleteUtil` | 动态开关与便捷关闭逻辑删除 |
-| 动态值 | `cn.xbatis.core.dynamic` | `XbatisGlobalConfig#setDynamicValue` | 定义 `{NOW}`、`{TODAY}` 等动态填充值 |
-| 代码生成 | `cn.xbatis.codegen` | `GeneratorConfig` 及子配置 | 一站式生成实体、Mapper、Service 等骨架 |
+| 模块 | 典型包路径 | 核心类型                                                                                                                      | 作用 |
+| --- | --- |---------------------------------------------------------------------------------------------------------------------------| --- |
+| 核心 Mapper | `cn.xbatis.core.mybatis.mapper` | `MybatisMapper<T>`, `BasicMapper`                                                                                         | 提供基础 CRUD 与单 Mapper 能力 |
+| 链式 DSL | `cn.xbatis.core.chain` | `QueryChain`, `InsertChain`, `UpdateChain`, `DeleteChain`                                                                 | 构建复杂 SQL、批量操作、返回值链路 |
+| 全局配置 | `cn.xbatis.core.config` | `XbatisGlobalConfig`                                                                                                      | 统一配置命名规则、拦截器、动态值、分页等 |
+| 注解体系 | `cn.xbatis.db.annotations` | `@Table`, `@TableId`, `@TableField`, `@LogicDelete`,`@LogicDeleteTime`, `@TenantId`, `@Version`, `@Condition`, `@Fetch` 等 | 实体映射、注入规则、对象条件、结果加工等 |
+| 数据库函数 | `db.sql.api.impl.cmd` | `Methods`                                                                                                                 | 提供跨库函数、SQL 模板、函数链式包装 |
+| 多租户 | `cn.xbatis.core.tenant` | `TenantContext`, `TenantId`                                                                                               | 全局租户 ID 注册与透传 |
+| 动态数据源 | `cn.xbatis.datasource.routing` | `@DS`, `JdbcConfigDecryptor`                                                                                              | 运行时切换数据源、加密配置、分组路由 |
+| 逻辑删除 | `cn.xbatis.core.logic` | `LogicDeleteSwitch`, `LogicDeleteUtil`                                                                                    | 动态开关与便捷关闭逻辑删除 |
+| 动态值 | `cn.xbatis.core.dynamic` | `XbatisGlobalConfig#setDynamicValue`                                                                                      | 定义 `{NOW}`、`{TODAY}` 等动态填充值 |
+| 代码生成 | `cn.xbatis.codegen` | `GeneratorConfig` 及子配置                                                                                                    | 一站式生成实体、Mapper、Service 等骨架 |
 
 ---
 
@@ -270,7 +270,7 @@ public class SysUser { }
 | `exists` | 是 | `true` | 是否真实存在于表中，`false` 可用于非持久化字段 |
 
 ### 5.4 `@LogicDelete`（`cn.xbatis.db.annotations.LogicDelete`）
-
+逻辑删除注解
 | 属性 | 是否可空 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `beforeValue` | 是 | – | 删除前的标识值；为空视为 `NULL` |
@@ -278,6 +278,9 @@ public class SysUser { }
 | `deleteTimeField` | 是 | – | 删除时间字段名，支持 `LocalDateTime`、`Date`、`Long`(毫秒)、`Integer`(秒) |
 
 结合 `XbatisGlobalConfig.setLogicDeleteInterceptor` 可额外填充删除人等字段。
+
+#### 5.4.2 `@LogicDeleteTime`（`cn.xbatis.db.annotations.LogicDeleteTime`）
+逻辑删除时间注解
 
 ### 5.5 `@TenantId`（`cn.xbatis.db.annotations.TenantId`）
 
