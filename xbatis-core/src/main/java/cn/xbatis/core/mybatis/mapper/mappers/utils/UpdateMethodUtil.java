@@ -24,6 +24,7 @@ import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
+import cn.xbatis.core.util.OptimisticLockUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.Methods;
@@ -138,14 +139,14 @@ public final class UpdateMethodUtil {
         if (batchFields == null || batchFields.length == 0) {
             tableFieldInfos = tableInfo.getTableFieldInfos()
                     .stream()
-                    .filter(i -> i.getTableFieldAnnotation().exists() && i.getTableFieldAnnotation().update())
+                    .filter(i -> i.getTableFieldAnnotation().exists() && i.getTableFieldAnnotation().update() && !i.isLogicDelete() && !i.isVersion())
                     .collect(Collectors.toSet());
             ;
         } else {
             tableFieldInfos = Arrays.stream(batchFields)
                     .map(i -> LambdaUtil.getName(i))
                     .map(i -> tableInfo.getFieldInfo(i))
-                    .filter(i -> !i.isTableId())
+                    .filter(i -> !i.isTableId() && !i.isLogicDelete() && !i.isVersion())
                     .collect(Collectors.toSet());
             tableFieldInfos.addAll(tableInfo.getIdFieldInfos());
         }
@@ -231,6 +232,8 @@ public final class UpdateMethodUtil {
             TableField tableField = updateChain.$().field(tableInfo.getType(), tableFieldInfo.getField().getName());
             updateChain.in(tableField, columnUpdateValues.get(tableField.getName()));
         });
+
+        OptimisticLockUtil.versionPlus1(tableInfo, updateChain);
 
         return updateChain
                 .execute();

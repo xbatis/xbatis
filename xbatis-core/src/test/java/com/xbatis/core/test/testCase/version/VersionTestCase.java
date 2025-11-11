@@ -22,6 +22,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,6 +67,43 @@ public class VersionTestCase extends BaseTest {
             System.out.println(versionTest);
             assertEquals(3, (int) versionTest.getVersion());
             assertEquals(3, (int) versionTestMapper.getById(versionTest.getId()).getVersion());
+        }
+    }
+
+    @Test
+    public void updateForceTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            VersionTestMapper versionTestMapper = session.getMapper(VersionTestMapper.class);
+            VersionTest versionTest = new VersionTest();
+            versionTest.setName("我是1");
+            versionTest.setCreateTime(LocalDateTime.now());
+            versionTestMapper.save(versionTest);
+
+            versionTest.setName("我是2");
+            versionTestMapper.update(versionTest);
+            versionTest = versionTestMapper.getById(versionTest.getId());
+
+            System.out.println(versionTest);
+            assertEquals(2, (int) versionTest.getVersion());
+            assertEquals(2, (int) versionTestMapper.getById(versionTest.getId()).getVersion());
+
+            versionTest.setName("我是3");
+            versionTest.setVersion(null);
+            versionTestMapper.update(versionTest, true);
+            versionTest = versionTestMapper.getById(versionTest.getId());
+
+            System.out.println(versionTest);
+            assertEquals(3, (int) versionTest.getVersion());
+            assertEquals(3, (int) versionTestMapper.getById(versionTest.getId()).getVersion());
+
+
+            versionTest.setName("我是4");
+            versionTestMapper.updateBatch(Arrays.asList(versionTest));
+            versionTest = versionTestMapper.getById(versionTest.getId());
+
+            System.out.println(versionTest);
+            assertEquals(4, (int) versionTest.getVersion());
+            assertEquals(4, (int) versionTestMapper.getById(versionTest.getId()).getVersion());
         }
     }
 
