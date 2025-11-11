@@ -279,13 +279,12 @@ Logical delete annotation.
 | --- | --- | --- | --- |
 | `beforeValue` | Yes | – | Value before deletion; null treated as `NULL` |
 | `afterValue` | No | – | Value after deletion; supports dynamic tokens `{NOW}`, etc. |
-| `deleteTimeField` | Yes | – | Field name for delete timestamp; supports `LocalDateTime`, `Date`, `Long` (ms), `Integer` (seconds) |
 
 Combine with `XbatisGlobalConfig.setLogicDeleteInterceptor` to fill deleter metadata.
 
 #### 5.4.2 `@LogicDeleteTime` (`cn.xbatis.db.annotations.LogicDeleteTime`)
 
-Marks logical delete timestamp.
+Field name for logic delete timestamp; supports `LocalDateTime`, `Date`, `Long` (ms), `Integer` (seconds)
 
 ### 5.5 `@TenantId` (`cn.xbatis.db.annotations.TenantId`)
 
@@ -745,7 +744,8 @@ QueryChain.of(sysUserMapper)
 
 ### 11.2 Logical delete
 
-- `@LogicDelete(beforeValue = "0", afterValue = "1", deleteTimeField = "deleteTime")` controls before/after markers and timestamp.
+- `@LogicDelete(beforeValue = "0", afterValue = "1")` controls before/after markers and timestamp.
+- `@LogicDeleteTime` controls logic delete time markers 
 - `XbatisGlobalConfig.setLogicDeleteInterceptor` can fill deleter info automatically.
 - Toggle globally via `setLogicDeleteSwitch(true/false)`; locally via:
 ```java

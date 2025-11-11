@@ -275,12 +275,11 @@ public class SysUser { }
 | --- | --- | --- | --- |
 | `beforeValue` | 是 | – | 删除前的标识值；为空视为 `NULL` |
 | `afterValue` | 否 | – | 删除后的标识值，可使用动态值 `{NOW}` 等 |
-| `deleteTimeField` | 是 | – | 删除时间字段名，支持 `LocalDateTime`、`Date`、`Long`(毫秒)、`Integer`(秒) |
 
 结合 `XbatisGlobalConfig.setLogicDeleteInterceptor` 可额外填充删除人等字段。
 
 #### 5.4.2 `@LogicDeleteTime`（`cn.xbatis.db.annotations.LogicDeleteTime`）
-逻辑删除时间注解
+逻辑删除时间字段名，支持 `LocalDateTime`、`Date`、`Long`(毫秒)、`Integer`(秒)
 
 ### 5.5 `@TenantId`（`cn.xbatis.db.annotations.TenantId`）
 
@@ -743,7 +742,8 @@ QueryChain.of(sysUserMapper)
 
 ### 11.2 逻辑删除
 
-- `@LogicDelete(beforeValue = "0", afterValue = "1", deleteTimeField = "deleteTime")` 控制删除前后值及删除时间字段。
+- `@LogicDelete(beforeValue = "0", afterValue = "1")` 控制删除前后值及删除时间字段。
+- `@LogicDeleteTime` 设置逻辑删除时间字段。
 - `XbatisGlobalConfig.setLogicDeleteInterceptor` 可在删除时自动填充操作人等字段。
 - 全局开关 `setLogicDeleteSwitch(true/false)`，局部可使用：
 ```java
