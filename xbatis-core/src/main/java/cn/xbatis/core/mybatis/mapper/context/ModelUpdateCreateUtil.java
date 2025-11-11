@@ -145,7 +145,10 @@ public class ModelUpdateCreateUtil {
 
             //普通修改且不强制修改 配置了@TableFiled(update=false)的不修改
             if (!modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().update() && !isForceUpdate && !updateStrategy.isAllFieldUpdate()) {
-                continue;
+                if (Objects.isNull(value)) {
+                    //有值的话 还是需要修改的
+                    continue;
+                }
             }
 
             if (isForceUpdate || updateStrategy.isAllFieldUpdate()) {
