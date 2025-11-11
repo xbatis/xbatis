@@ -15,6 +15,7 @@
 package com.xbatis.core.test.DO;
 
 import cn.xbatis.db.annotations.LogicDelete;
+import cn.xbatis.db.annotations.LogicDeleteTime;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableId;
 import lombok.Data;
@@ -32,9 +33,10 @@ public class LogicDeleteTest {
 
     private String name;
 
+    @LogicDeleteTime
     private LocalDateTime deleteTime;
 
-    @LogicDelete(beforeValue = "0", afterValue = "{LOGIC_DELETE_VALUE}", deleteTimeField = "deleteTime")
+    @LogicDelete(beforeValue = "0", afterValue = "{LOGIC_DELETE_VALUE}")
     private Byte deleted;
 
 //    @LogicDelete(  afterValue = "{NOW}" )

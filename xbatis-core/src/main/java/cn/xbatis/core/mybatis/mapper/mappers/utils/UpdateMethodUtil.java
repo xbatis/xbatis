@@ -131,30 +131,36 @@ public final class UpdateMethodUtil {
     }
 
     public static <T> int updateBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, Getter<T>[] batchFields) {
+        if (tableInfo.getIdFieldInfo() == null) {
+            throw new RuntimeException("The entity " + tableInfo.getType() + " has multi id field ,can't do batch update");
+        }
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
 
-        Collection<TableFieldInfo> tableFieldInfos;
+        List<TableFieldInfo> tableIdFieldInfos;
+        List<TableFieldInfo> tableFieldInfos;
         if (batchFields == null || batchFields.length == 0) {
+            tableIdFieldInfos = tableInfo.getIdFieldInfos();
             tableFieldInfos = tableInfo.getTableFieldInfos()
                     .stream()
-                    .filter(i -> i.getTableFieldAnnotation().exists() && i.getTableFieldAnnotation().update() && !i.isLogicDelete() && !i.isVersion())
-                    .collect(Collectors.toSet());
-            ;
+                    .filter(i -> i.isCanUpdateField())
+                    .distinct()
+                    .collect(Collectors.toList());
         } else {
             tableFieldInfos = Arrays.stream(batchFields)
                     .map(i -> LambdaUtil.getName(i))
                     .map(i -> tableInfo.getFieldInfo(i))
-                    .filter(i -> !i.isTableId() && !i.isLogicDelete() && !i.isVersion())
-                    .collect(Collectors.toSet());
-            tableFieldInfos.addAll(tableInfo.getIdFieldInfos());
+                    .filter(i -> i.isCanUpdateField())
+                    .collect(Collectors.toList());
+
+            tableIdFieldInfos = tableInfo.getIdFieldInfos();
         }
 
-
-        List<TableFieldInfo> idFieldInfos = tableInfo.getIdFieldInfos();
-        if (idFieldInfos == null || idFieldInfos.isEmpty()) {
-            throw new IllegalArgumentException(tableInfo.getType() + " has no id field");
+        if (tableIdFieldInfos.isEmpty()) {
+            if (tableInfo.getIdFieldInfos() == null || tableInfo.getIdFieldInfos().isEmpty()) {
+                throw new IllegalArgumentException(tableInfo.getType() + " has no id field");
+            }
         }
 
         if (tableInfo.isSplitTable()) {
@@ -172,12 +178,12 @@ public final class UpdateMethodUtil {
             for (String key : groups) {
                 UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
                 updateChain.update(tableInfo.getType(), table -> table.setName(key));
-                count += _updateBatch(updateChain, tableInfo, groupedMap.get(key), tableFieldInfos, idFieldInfos, batchFields == null || batchFields.length == 0);
+                count += _updateBatch(updateChain, tableInfo, groupedMap.get(key), tableFieldInfos, tableIdFieldInfos, batchFields == null || batchFields.length == 0);
             }
             return count;
         }
         UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
-        return _updateBatch(updateChain, tableInfo, list, tableFieldInfos, idFieldInfos, batchFields == null || batchFields.length == 0);
+        return _updateBatch(updateChain, tableInfo, list, tableFieldInfos, tableIdFieldInfos, batchFields == null || batchFields.length == 0);
     }
 
     private static <T> int _updateBatch(UpdateChain updateChain, TableInfo tableInfo, Collection<T> list, Collection<TableFieldInfo> updateTableFieldInfos, List<TableFieldInfo> idFieldInfos, boolean allUpdate) {
@@ -190,8 +196,20 @@ public final class UpdateMethodUtil {
                 }
             }
 
+            Object idValue = tableInfo.getIdFieldInfo().getValue(entity);
+            if (idValue == null) {
+                throw new IllegalArgumentException("the datas of batch update has some id no set");
+            }
+
+            List<Serializable> values = columnUpdateValues.get(tableInfo.getIdFieldInfo().getColumnName());
+            if (values == null) {
+                values = new ArrayList<>();
+                columnUpdateValues.put(tableInfo.getIdFieldInfo().getColumnName(), values);
+            }
+            values.add((Serializable) idValue);
+
             for (TableFieldInfo tableFieldInfo : updateTableFieldInfos) {
-                List<Serializable> values = columnUpdateValues.get(tableFieldInfo.getColumnName());
+                values = columnUpdateValues.get(tableFieldInfo.getColumnName());
                 if (values == null) {
                     values = new ArrayList<>();
                     columnUpdateValues.put(tableFieldInfo.getColumnName(), values);
@@ -222,32 +240,24 @@ public final class UpdateMethodUtil {
                 if (value == null) {
                     value = Methods.NULL();
                 }
-                sqlCase.when(buildIdCaseWhen(updateChain, tableInfo, idFieldInfos, columnUpdateValues, i), Methods.cmd(value));
+                sqlCase.when(buildIdCaseWhen(updateChain, tableInfo, columnUpdateValues.get(tableInfo.getIdFieldInfo().getColumnName()).get(i)), Methods.cmd(value));
             }
             sqlCase.else_(tableField);
             updateChain.set(tableField, sqlCase);
         }
 
-        idFieldInfos.stream().forEach(tableFieldInfo -> {
-            TableField tableField = updateChain.$().field(tableInfo.getType(), tableFieldInfo.getField().getName());
-            updateChain.in(tableField, columnUpdateValues.get(tableField.getName()));
-        });
-
         OptimisticLockUtil.versionPlus1(tableInfo, updateChain);
+
+        TableField tableField = updateChain.$().field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName());
+        updateChain.in(tableField, columnUpdateValues.get(tableField.getName()));
+
 
         return updateChain
                 .execute();
     }
 
-    private static Condition buildIdCaseWhen(UpdateChain updateChain, TableInfo tableInfo, List<TableFieldInfo> idFieldInfos, Map<String, List<Serializable>> columnUpdateValues, int index) {
-        Condition condition = null;
-        for (TableFieldInfo tableFieldInfo : idFieldInfos) {
-            List<Serializable> values = columnUpdateValues.get(tableFieldInfo.getColumnName());
-            TableField tableField = updateChain.$().field(tableInfo.getType(), tableFieldInfo.getField().getName());
-            if (condition == null) {
-                condition = tableField.eq(values.get(index));
-            }
-        }
-        return condition;
+    private static Condition buildIdCaseWhen(UpdateChain updateChain, TableInfo tableInfo, Object idValue) {
+        TableField tableField = updateChain.$().field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName());
+        return tableField.eq(idValue);
     }
 }

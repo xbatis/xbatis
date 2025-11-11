@@ -52,6 +52,9 @@ public class ModelFieldInfo {
         if (Objects.isNull(this.tableFieldInfo)) {
             throw new RuntimeException(MessageFormat.format("unable match field {0} in class {1} ,The field {2} can''t found in entity class {3}", field.getName(), model.getName(), entityFieldName, entity.getName()));
         }
+        if (!this.tableFieldInfo.isExists()) {
+            throw new RuntimeException(MessageFormat.format("unable match field {0} in class {1} ,The field {2} is not a table column in entity class {3}", field.getName(), model.getName(), entityFieldName, entity.getName()));
+        }
         this.field = field;
         this.fieldInfo = new FieldInfo(model, field);
         this.readFieldInvoker = new GetFieldInvoker(field);

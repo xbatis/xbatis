@@ -41,9 +41,10 @@ public class CompositeTest extends BaseEntity {
     @TenantId
     private Integer tenantId;
 
+    @LogicDeleteTime
     private LocalDateTime deleteTime;
 
     @TableField(defaultValue = "0")
-    @LogicDelete(beforeValue = "0", afterValue = "1", deleteTimeField = "deleteTime")
+    @LogicDelete(beforeValue = "0", afterValue = "1")
     private Byte deleted;
 }

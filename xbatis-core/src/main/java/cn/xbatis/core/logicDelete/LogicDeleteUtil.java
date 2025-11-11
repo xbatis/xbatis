@@ -21,7 +21,6 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.executor.BaseUpdate;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Update;
-import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.annotations.LogicDelete;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.ConditionChain;
@@ -102,12 +101,7 @@ public final class LogicDeleteUtil {
      * @return
      */
     public static Object getLogicDeleteTimeValue(TableInfo tableInfo) {
-        String deleteTimeFieldName = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteAnnotation().deleteTimeField();
-        TableFieldInfo deleteTimeField = tableInfo.getFieldInfo(deleteTimeFieldName);
-        if (Objects.isNull(deleteTimeField)) {
-            throw new RuntimeException("the attribute: " + deleteTimeFieldName + " in @LogicDelete is not found in class: " + tableInfo.getType().getName());
-        }
-
+        TableFieldInfo deleteTimeField = tableInfo.getLogicDeleteTimeFieldInfo();
         Class type = deleteTimeField.getFieldInfo().getTypeClass();
         if (type == LocalDateTime.class) {
             return LocalDateTime.now();
@@ -133,9 +127,9 @@ public final class LogicDeleteUtil {
         TableField logicDeleteTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteFieldInfo().getField().getName(), 1);
         baseUpdate.set(logicDeleteTableField, getLogicAfterValue(tableInfo.getLogicDeleteFieldInfo(), defaultValueContext));
 
-        String deleteTimeFieldName = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteAnnotation().deleteTimeField();
-        if (!StringPool.EMPTY.equals(deleteTimeFieldName)) {
-            TableField logicDeleteTimeTableField = baseUpdate.$().field(entityType, deleteTimeFieldName, 1);
+
+        if (tableInfo.getLogicDeleteTimeFieldInfo() != null) {
+            TableField logicDeleteTimeTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteTimeFieldInfo().getField().getName(), 1);
             baseUpdate.set(logicDeleteTimeTableField, getLogicDeleteTimeValue(tableInfo));
         }
     }

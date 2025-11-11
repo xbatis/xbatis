@@ -136,16 +136,15 @@ public class ModelUpdateCreateUtil {
                 //乐观锁回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, version);
                 continue;
-            } else if (modelFieldInfo.getTableFieldInfo().isLogicDelete()) {
-                //逻辑删除字段不修改
+            }
+
+            //如果是不能修改的字段(例如乐观锁、逻辑删除、主键、exists=false的字段等等)
+            if (!modelFieldInfo.getTableFieldInfo().isCanUpdateField()) {
                 continue;
             }
 
-            if (!modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().exists()) {
-                continue;
-            }
-
-            if (!isForceUpdate && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().update()) {
+            //普通修改且不强制修改 配置了@TableFiled(update=false)的不修改
+            if (!modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().update() && !isForceUpdate && !updateStrategy.isAllFieldUpdate()) {
                 continue;
             }
 

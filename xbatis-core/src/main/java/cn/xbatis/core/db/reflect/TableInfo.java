@@ -84,6 +84,11 @@ public class TableInfo {
     private final TableFieldInfo logicDeleteFieldInfo;
 
     /**
+     * 逻辑删除时间字段
+     */
+    private final TableFieldInfo logicDeleteTimeFieldInfo;
+
+    /**
      * 外键关系
      */
     private final Map<Class<?>, ForeignInfo> foreignInfoMap;
@@ -139,6 +144,7 @@ public class TableInfo {
         TableFieldInfo versionFieldInfo = null;
         TableFieldInfo tenantIdFieldInfo = null;
         TableFieldInfo logicDeleteFieldInfo = null;
+        TableFieldInfo logicDeleteTimeFieldInfo = null;
 
         List<TableFieldInfo> tableFieldInfos = new ArrayList<>();
         Map<String, TableFieldInfo> tableFieldInfoMap = new HashMap<>();
@@ -159,6 +165,7 @@ public class TableInfo {
                 ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
                 foreignInfoMap.put(foreignKey.value(), new ForeignInfo(foreignKey.value(), tableFieldInfo));
             }
+
             if (tableFieldInfo.isTableId()) {
                 idFieldInfos.add(tableFieldInfo);
                 if (Objects.isNull(idFieldInfo)) {
@@ -174,12 +181,14 @@ public class TableInfo {
                 }
                 versionFieldInfo = tableFieldInfo;
             }
+
             if (tableFieldInfo.isTenantId()) {
                 if (tenantIdFieldInfo != null) {
                     throw new RuntimeException("Entity " + entity.getName() + " has multi @TenantId");
                 }
                 tenantIdFieldInfo = tableFieldInfo;
             }
+
             if (tableFieldInfo.isLogicDelete()) {
                 if (logicDeleteFieldInfo != null) {
                     throw new RuntimeException("Entity " + entity.getName() + " has multi @LogicDelete");
@@ -189,6 +198,10 @@ public class TableInfo {
                 if (XbatisGlobalConfig.isDynamicValueKeyFormat(logicDeleteAnnotation.beforeValue())) {
                     throw new RuntimeException("the @LogicDelete of Entity " + entity.getName() + " has config error,the beforeValue can't be dynamic key");
                 }
+            }
+
+            if (tableFieldInfo.isLogicDeleteTime()) {
+                logicDeleteTimeFieldInfo = tableFieldInfo;
             }
         }
 
@@ -201,15 +214,13 @@ public class TableInfo {
         this.versionFieldInfo = versionFieldInfo;
         this.tenantIdFieldInfo = tenantIdFieldInfo;
         this.logicDeleteFieldInfo = logicDeleteFieldInfo;
+        this.logicDeleteTimeFieldInfo = logicDeleteTimeFieldInfo;
 
         this.tableFieldInfoMap = Collections.unmodifiableMap(tableFieldInfoMap);
         this.foreignInfoMap = Collections.unmodifiableMap(foreignInfoMap);
 
-        if (Objects.nonNull(this.logicDeleteFieldInfo)) {
-            String deleteTimeFieldName = this.logicDeleteFieldInfo.getLogicDeleteAnnotation().deleteTimeField();
-            if (!StringPool.EMPTY.equals(deleteTimeFieldName)) {
-                LogicDeleteUtil.getLogicDeleteTimeValue(this);
-            }
+        if (Objects.nonNull(this.logicDeleteTimeFieldInfo)) {
+            LogicDeleteUtil.getLogicDeleteTimeValue(this);
         }
 
         this.hasIgnoreField = tableFieldInfos.stream().anyMatch(item -> !item.getTableFieldAnnotation().select() && !item.getTableFieldAnnotation().exists());
@@ -356,5 +367,9 @@ public class TableInfo {
 
     public TableFieldInfo getSplitFieldInfo() {
         return splitFieldInfo;
+    }
+
+    public TableFieldInfo getLogicDeleteTimeFieldInfo() {
+        return logicDeleteTimeFieldInfo;
     }
 }

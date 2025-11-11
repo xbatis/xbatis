@@ -136,10 +136,14 @@ public class EntityUpdateCreateUtil {
                 TableInfoUtil.setValue(tableFieldInfo, entity, version);
                 continue;
             }
-            if (!tableFieldInfo.getTableFieldAnnotation().exists()) {
+
+            //如果是不能修改的字段(例如乐观锁、逻辑删除、主键、exists=false的字段等等)
+            if (!tableFieldInfo.isCanUpdateField()) {
                 continue;
             }
-            if (!isForceUpdate && !tableFieldInfo.getTableFieldAnnotation().update()) {
+
+            //普通修改且不强制修改 配置了@TableFiled(update=false)的不修改
+            if (!tableFieldInfo.getTableFieldAnnotation().update() && !isForceUpdate && !updateStrategy.isAllFieldUpdate()) {
                 continue;
             }
 

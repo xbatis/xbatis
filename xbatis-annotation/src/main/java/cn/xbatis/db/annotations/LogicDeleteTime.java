@@ -17,27 +17,11 @@ package cn.xbatis.db.annotations;
 import java.lang.annotation.*;
 
 /**
- * 逻辑删除
+ * 逻辑删除时间
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface LogicDelete {
-
-    /**
-     * 删除前的值
-     * 无法设置动态值，空时表示 初始值为NULL
-     *
-     * @return 初始值
-     */
-    String beforeValue() default "0";
-
-    /**
-     * 删除后的值
-     * 可设置动态值，动态值格式为 {key} 例如：当前时间-{NOW}
-     *
-     * @return 删除后的值
-     */
-    String afterValue() default "1";
+public @interface LogicDeleteTime {
 
 }

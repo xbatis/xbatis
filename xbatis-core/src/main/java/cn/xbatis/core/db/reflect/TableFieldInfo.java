@@ -37,6 +37,11 @@ public class TableFieldInfo {
     private final FieldInfo fieldInfo;
 
     /**
+     * 是否存在表中
+     */
+    private final boolean exists;
+
+    /**
      * 列名
      */
     private final String columnName;
@@ -62,6 +67,8 @@ public class TableFieldInfo {
 
     private final boolean logicDelete;
 
+    private final boolean logicDeleteTime;
+
     /**
      * 逻辑删除注解
      */
@@ -75,22 +82,27 @@ public class TableFieldInfo {
 
     private final boolean isTableSplitKey;
 
+    private final boolean canUpdateField;
+
     public TableFieldInfo(Class clazz, Table tableAnnotation, Field field) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.tableAnnotation = tableAnnotation;
         this.tableFieldAnnotation = TableInfoUtil.getTableFieldAnnotation(field);
+        this.exists = tableFieldAnnotation.exists();
         this.columnName = TableInfoUtil.getFieldColumnName(tableAnnotation, field);
         this.readFieldInvoker = new GetFieldInvoker(field);
         this.tableId = field.isAnnotationPresent(TableId.class) || field.isAnnotationPresent(TableId.List.class);
         this.version = field.isAnnotationPresent(Version.class);
         this.tenantId = field.isAnnotationPresent(TenantId.class);
         this.logicDelete = field.isAnnotationPresent(LogicDelete.class);
+        this.logicDeleteTime = field.isAnnotationPresent(LogicDeleteTime.class);
         this.logicDeleteAnnotation = this.logicDelete ? field.getAnnotation(LogicDelete.class) : null;
         this.logicDeleteInitValue = this.logicDelete ? TypeConvertUtil.convert(this.logicDeleteAnnotation.beforeValue(), fieldInfo.getTypeClass()) : null;
         this.writeFieldInvoker = new SetFieldInvoker(field);
         typeHandler = MybatisTypeHandlerUtil.createTypeHandler(this.fieldInfo, this.tableFieldAnnotation.typeHandler());
         this.isTableSplitKey = field.isAnnotationPresent(SplitTableKey.class);
+        this.canUpdateField = this.exists && !this.tableId && !this.logicDelete && !this.version && !this.logicDeleteTime;
     }
 
     public Object getValue(Object object) {
@@ -159,5 +171,17 @@ public class TableFieldInfo {
 
     public boolean isTableSplitKey() {
         return isTableSplitKey;
+    }
+
+    public boolean isLogicDeleteTime() {
+        return logicDeleteTime;
+    }
+
+    public boolean isCanUpdateField() {
+        return canUpdateField;
+    }
+
+    public boolean isExists() {
+        return exists;
     }
 }

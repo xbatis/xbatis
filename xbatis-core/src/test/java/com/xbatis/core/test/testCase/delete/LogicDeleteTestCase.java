@@ -29,6 +29,7 @@ import db.sql.api.impl.tookit.SQLPrinter;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -206,4 +207,25 @@ public class LogicDeleteTestCase extends BaseTest {
         }
     }
 
+    @Test
+    public void update() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+            LogicDeleteTest logicDeleteTest = logicDeleteTestMapper.getById(1L);
+            logicDeleteTest.setDeleted((byte) 1);
+            logicDeleteTestMapper.update(logicDeleteTest);
+            logicDeleteTest = logicDeleteTestMapper.getById(1L);
+            assertEquals(logicDeleteTest.getDeleted(), (byte) 0);
+
+            logicDeleteTest.setDeleted((byte) 1);
+            int cnt = logicDeleteTestMapper.updateBatch(Arrays.asList(logicDeleteTest));
+            assertEquals(cnt, 1);
+            logicDeleteTest = logicDeleteTestMapper.getById(1L);
+            assertEquals(logicDeleteTest.getDeleted(), (byte) 0);
+
+            logicDeleteTestMapper.deleteById(1);
+            cnt = logicDeleteTestMapper.updateBatch(Arrays.asList(logicDeleteTest));
+            assertEquals(cnt, 0);
+        }
+    }
 }
