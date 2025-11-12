@@ -88,7 +88,6 @@ public class VersionTestCase extends BaseTest {
             assertEquals(2, (int) versionTestMapper.getById(versionTest.getId()).getVersion());
 
             versionTest.setName("我是3");
-            versionTest.setVersion(null);
             versionTestMapper.update(versionTest, true);
             versionTest = versionTestMapper.getById(versionTest.getId());
 

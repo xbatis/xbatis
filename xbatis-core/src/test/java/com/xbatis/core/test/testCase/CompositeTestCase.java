@@ -69,16 +69,10 @@ public class CompositeTestCase extends BaseTest {
             assertEquals(compositeTest.getDeleted().intValue(), 0);
 
 
-            TenantContext.registerTenantGetter(() -> {
-                return 2;
-            });
             compositeTestMapper.update(compositeTest);
 
-            TenantContext.registerTenantGetter(() -> {
-                return 1;
-            });
             compositeTest = compositeTestMapper.getById(1);
-            assertEquals(compositeTest.getVersion(), 2);
+            assertEquals(compositeTest.getVersion(), 3);
             assertEquals(compositeTest.getTenantId(), 1);
             assertEquals(compositeTest.getDeleted().intValue(), 0);
 
@@ -107,17 +101,12 @@ public class CompositeTestCase extends BaseTest {
             assertEquals(compositeTest.getDeleted().intValue(), 0);
 
 
-            TenantContext.registerTenantGetter(() -> {
-                return 2;
-            });
+
             compositeTest.setId(null);
             compositeTestMapper.update(compositeTest, where -> where.eq(CompositeTest::getId, 1));
 
-            TenantContext.registerTenantGetter(() -> {
-                return 1;
-            });
             compositeTest = compositeTestMapper.getById(1);
-            assertEquals(compositeTest.getVersion(), 2);
+            assertEquals(compositeTest.getVersion(), 3);
             assertEquals(compositeTest.getTenantId(), 1);
             assertEquals(compositeTest.getDeleted().intValue(), 0);
 
