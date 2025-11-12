@@ -66,7 +66,7 @@ public final class UpdateMethodUtil {
                 }
             }
             int cnt = basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));
-            if (cnt == 0 && tableInfo.getVersionFieldInfo() != null) {
+            if (cnt == 0 && tableInfo.getVersionFieldInfo() != null && version != null) {
                 throw new OptimisticLockException(entity, "Row was updated or deleted by another transaction");
             }
             return cnt;

@@ -70,7 +70,7 @@ public final class UpdateModelMethodUtil {
             }
 
             int cnt = basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy, defaultValueContext));
-            if (cnt == 0 && modelInfo.getVersionFieldInfo() != null) {
+            if (cnt == 0 && modelInfo.getVersionFieldInfo() != null && version != null) {
                 throw new OptimisticLockException(model, "Row was updated or deleted by another transaction");
             }
             return cnt;
