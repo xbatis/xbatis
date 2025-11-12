@@ -30,8 +30,14 @@ public class UpdateStrategy<T> {
 
     private Where where;
 
+    /**
+     * 没有修改数据是否抛出异常
+     */
     private boolean throwExWhenNoRowUpdate;
 
+    /**
+     * 指定没有修改数据的异常信息
+     */
     private String noRowUpdateErrorMessage;
 
     public static <T> UpdateStrategy<T> create() {
