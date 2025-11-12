@@ -16,7 +16,6 @@ package cn.xbatis.core.sql.util;
 
 import cn.xbatis.core.db.reflect.Conditions;
 import cn.xbatis.core.db.reflect.ModelInfo;
-import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.executor.Where;
@@ -221,28 +220,5 @@ public final class WhereUtil {
         TableInfoUtil.checkId(tableInfo);
         consumer.accept(where.getConditionFactory().getCmdFactory().field(tableInfo.getType(), tableInfo.getSingleIdFieldInfo(true)
                 .getField().getName(), 1));
-    }
-
-    /**
-     * 添加version条件
-     *
-     * @param where
-     * @param tableInfo
-     * @param entity
-     * @param <T>
-     */
-    public static <T> void appendVersionWhere(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, T entity) {
-        TableFieldInfo versionFieldInfo = tableInfo.getVersionFieldInfo();
-        if (Objects.isNull(versionFieldInfo)) {
-            return;
-        }
-
-        Object version = versionFieldInfo.getValue(entity);
-        if (Objects.isNull(version)) {
-            return;
-        }
-
-        CmdFactory $ = where.getConditionFactory().getCmdFactory();
-        where.eq($.field(entity.getClass(), versionFieldInfo.getField().getName(), 1), version);
     }
 }

@@ -21,7 +21,6 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.executor.BaseUpdate;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Update;
-import cn.xbatis.core.util.OptimisticLockUtil;
 import cn.xbatis.db.annotations.LogicDelete;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.ConditionChain;
@@ -133,9 +132,6 @@ public final class LogicDeleteUtil {
             TableField logicDeleteTimeTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteTimeFieldInfo().getField().getName(), 1);
             baseUpdate.set(logicDeleteTimeTableField, getLogicDeleteTimeValue(tableInfo));
         }
-
-        //乐观锁也update + 1
-        OptimisticLockUtil.versionPlus1(tableInfo,baseUpdate);
     }
 
     /**

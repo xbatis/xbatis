@@ -24,7 +24,6 @@ import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
-import cn.xbatis.core.util.OptimisticLockUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.Methods;
@@ -246,11 +245,8 @@ public final class UpdateMethodUtil {
             updateChain.set(tableField, sqlCase);
         }
 
-        OptimisticLockUtil.versionPlus1(tableInfo, updateChain);
-
         TableField tableField = updateChain.$().field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName());
         updateChain.in(tableField, columnUpdateValues.get(tableField.getName()));
-
 
         return updateChain
                 .execute();

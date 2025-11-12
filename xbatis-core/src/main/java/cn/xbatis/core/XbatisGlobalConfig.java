@@ -23,6 +23,7 @@ import cn.xbatis.core.sql.XbatisSQLBuilder;
 import cn.xbatis.core.sql.executor.BaseUpdate;
 import cn.xbatis.core.sql.listener.ForeignKeySQLListener;
 import cn.xbatis.core.sql.listener.LogicDeleteSQLListener;
+import cn.xbatis.core.sql.listener.OptimisticLockSQLListener;
 import cn.xbatis.core.sql.listener.TenantSQLListener;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TypeConvertUtil;
@@ -71,6 +72,7 @@ public final class XbatisGlobalConfig {
         SQL_LISTENERS.add(new ForeignKeySQLListener());
         SQL_LISTENERS.add(new TenantSQLListener());
         SQL_LISTENERS.add(new LogicDeleteSQLListener());
+        SQL_LISTENERS.add(new OptimisticLockSQLListener());
     }
 
     private XbatisGlobalConfig() {

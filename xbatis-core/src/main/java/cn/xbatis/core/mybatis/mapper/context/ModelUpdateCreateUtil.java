@@ -24,7 +24,10 @@ import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Update;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.tenant.TenantUtil;
-import cn.xbatis.core.util.*;
+import cn.xbatis.core.util.DefaultValueUtil;
+import cn.xbatis.core.util.ModelInfoUtil;
+import cn.xbatis.core.util.StringPool;
+import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
@@ -166,8 +169,6 @@ public class ModelUpdateCreateUtil {
         if (!hasIdCondition && !hasPutConditionBefore) {
             throw new RuntimeException("update has no where condition content ");
         }
-
-        OptimisticLockUtil.versionPlus1(modelInfo.getTableInfo(), update);
 
         update.update(table);
         return update;

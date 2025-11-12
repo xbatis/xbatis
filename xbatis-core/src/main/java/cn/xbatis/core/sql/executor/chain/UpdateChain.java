@@ -30,7 +30,11 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
     protected BaseMapper mapper;
 
     protected Class<?> entityType;
-    private Class<?> returnType;
+
+    protected Class<?> returnType;
+
+    //是否开启乐观锁 默认开启
+    protected boolean optimisticLock = true;
 
     protected UpdateChain() {
 
@@ -129,6 +133,12 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
         return this;
     }
 
+
+    public UpdateChain optimisticLock(boolean enable) {
+        this.optimisticLock = enable;
+        return this;
+    }
+
     /**
      * 执行
      *
@@ -168,5 +178,9 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
 
     public Class<?> getReturnType() {
         return returnType;
+    }
+
+    public boolean isOptimisticLock() {
+        return optimisticLock;
     }
 }

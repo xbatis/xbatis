@@ -22,6 +22,7 @@ import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.Delete;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.util.WhereUtil;
+import cn.xbatis.core.util.OptimisticLockUtil;
 import db.sql.api.DbType;
 import db.sql.api.cmd.basic.SQL1;
 import db.sql.api.impl.cmd.struct.Where;
@@ -75,7 +76,7 @@ public final class DeleteMethodUtil {
             }
 
             WhereUtil.appendIdWhereWithEntity(w, tableInfo, entity);
-            WhereUtil.appendVersionWhere(w, tableInfo, entity);
+            OptimisticLockUtil.appendVersionWhere(w, tableInfo, entity);
         }), defaultValueContext);
     }
 

@@ -14,10 +14,14 @@
 
 package cn.xbatis.core.util;
 
+import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.sql.executor.BaseUpdate;
+import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
+
+import java.util.Objects;
 
 public class OptimisticLockUtil {
 
@@ -37,5 +41,29 @@ public class OptimisticLockUtil {
         db.sql.api.impl.cmd.basic.TableField versionField = update.$().field(table, tableInfo.getVersionFieldInfo().getColumnName());
         update.set(versionField,Methods.tpl("{0} + 1",versionField));
         return true;
+    }
+
+
+    /**
+     * 添加version条件
+     *
+     * @param where
+     * @param tableInfo
+     * @param entity
+     * @param <T>
+     */
+    public static <T> void appendVersionWhere(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, T entity) {
+        TableFieldInfo versionFieldInfo = tableInfo.getVersionFieldInfo();
+        if (Objects.isNull(versionFieldInfo)) {
+            return;
+        }
+
+        Object version = versionFieldInfo.getValue(entity);
+        if (Objects.isNull(version)) {
+            return;
+        }
+
+        CmdFactory $ = where.getConditionFactory().getCmdFactory();
+        where.eq($.field(entity.getClass(), versionFieldInfo.getField().getName(), 1), version);
     }
 }
