@@ -62,7 +62,7 @@ public final class UpdateMethodUtil {
             if (tableInfo.getVersionFieldInfo() != null) {
                 version = tableInfo.getVersionFieldInfo().getValue(entity);
                 if (version == null) {
-                    throw new OptimisticLockException(entity, "Data has no version value");
+                    throw new RuntimeException("Data has no version value");
                 }
             }
             int cnt = basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));

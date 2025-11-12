@@ -65,7 +65,7 @@ public final class UpdateModelMethodUtil {
                 }
                 version = modelInfo.getVersionFieldInfo().getValue(model);
                 if (version == null) {
-                    throw new OptimisticLockException(model, "Data has no version value");
+                    throw new RuntimeException("Data has no version value");
                 }
             }
 
