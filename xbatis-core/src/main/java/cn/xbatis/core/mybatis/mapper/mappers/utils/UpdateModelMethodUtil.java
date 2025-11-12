@@ -15,6 +15,7 @@
 package cn.xbatis.core.mybatis.mapper.mappers.utils;
 
 import cn.xbatis.core.db.reflect.*;
+import cn.xbatis.core.exception.OptimisticLockException;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.ModelUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.ModelUpdateCreateUtil;
@@ -60,7 +61,12 @@ public final class UpdateModelMethodUtil {
             if (modelInfo.getVersionFieldInfo() != null) {
                 version = modelInfo.getVersionFieldInfo().getValue(model);
             }
-            return basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy, defaultValueContext));
+
+            int cnt = basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy, defaultValueContext));
+            if (cnt == 0 && version != null) {
+                throw new OptimisticLockException(model, "Row was updated or deleted by another transaction");
+            }
+            return cnt;
         } catch (Throwable e) {
             if (modelInfo.getVersionFieldInfo() != null) {
                 //恢复version初始值

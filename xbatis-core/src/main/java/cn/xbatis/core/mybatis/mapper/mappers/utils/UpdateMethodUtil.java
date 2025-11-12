@@ -18,6 +18,7 @@ import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.db.reflect.Tables;
+import cn.xbatis.core.exception.OptimisticLockException;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
@@ -61,7 +62,11 @@ public final class UpdateMethodUtil {
             if (tableInfo.getVersionFieldInfo() != null) {
                 version = tableInfo.getVersionFieldInfo().getValue(entity);
             }
-            return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));
+            int cnt = basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));
+            if (cnt == 0 && version != null) {
+                throw new OptimisticLockException(entity, "Row was updated or deleted by another transaction");
+            }
+            return cnt;
         } catch (Throwable e) {
             if (tableInfo.getVersionFieldInfo() != null) {
                 //恢复version初始值
