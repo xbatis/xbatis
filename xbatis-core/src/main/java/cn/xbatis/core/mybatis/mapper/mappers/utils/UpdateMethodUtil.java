@@ -61,9 +61,12 @@ public final class UpdateMethodUtil {
         try {
             if (tableInfo.getVersionFieldInfo() != null) {
                 version = tableInfo.getVersionFieldInfo().getValue(entity);
+                if (version == null) {
+                    throw new OptimisticLockException(entity, "Data has no version value");
+                }
             }
             int cnt = basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));
-            if (cnt == 0 && version != null) {
+            if (cnt == 0 && tableInfo.getVersionFieldInfo() != null) {
                 throw new OptimisticLockException(entity, "Row was updated or deleted by another transaction");
             }
             return cnt;

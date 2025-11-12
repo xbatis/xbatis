@@ -31,6 +31,7 @@ import db.sql.api.impl.cmd.dbFun.Case;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -58,12 +59,18 @@ public final class UpdateModelMethodUtil {
     public static <M extends Model> int update(BasicMapper basicMapper, ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
         Object version = null;
         try {
-            if (modelInfo.getVersionFieldInfo() != null) {
+            if (modelInfo.getTableInfo().getVersionFieldInfo() != null) {
+                if (modelInfo.getVersionFieldInfo() == null) {
+                    throw new RuntimeException(MessageFormat.format("model class {0} , need a version field", modelInfo.getType().getName()));
+                }
                 version = modelInfo.getVersionFieldInfo().getValue(model);
+                if (version == null) {
+                    throw new OptimisticLockException(model, "Data has no version value");
+                }
             }
 
             int cnt = basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy, defaultValueContext));
-            if (cnt == 0 && version != null) {
+            if (cnt == 0 && modelInfo.getVersionFieldInfo() != null) {
                 throw new OptimisticLockException(model, "Row was updated or deleted by another transaction");
             }
             return cnt;
