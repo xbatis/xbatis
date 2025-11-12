@@ -23,7 +23,6 @@ import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Update;
 import cn.xbatis.core.sql.util.WhereUtil;
-import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TableInfoUtil;
@@ -41,23 +40,6 @@ import java.util.Set;
 public class EntityUpdateCreateUtil {
 
     public static void initUpdateValue(TableFieldInfo tableFieldInfo, Object insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
-        if (tableFieldInfo.isTenantId()) {
-            boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
-            Object value = tableFieldInfo.getValue(insertData);
-            if (isForceUpdate) {
-                if (Objects.isNull(value)) {
-                    value = TenantUtil.getTenantId();
-                    if (Objects.isNull(value)) {
-                        //虽然强制 但是租户ID没值 不修改
-                        return;
-                    }
-                    //租户ID 回填
-                    TenantUtil.setTenantId(tableFieldInfo, insertData, value);
-                }
-            }
-            return;
-        }
-
         if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
             Object value = tableFieldInfo.getValue(insertData);
             if (value != null && !tableFieldInfo.getTableFieldAnnotation().updateDefaultValueFillAlways()) {
@@ -121,11 +103,6 @@ public class EntityUpdateCreateUtil {
                     hasIdCondition = true;
                 }
                 continue;
-            } else if (tableFieldInfo.isTenantId()) {
-                if (!isForceUpdate || Objects.isNull(value)) {
-                    //租户ID不修改
-                    continue;
-                }
             } else if (tableFieldInfo.isVersion()) {
                 if (Objects.isNull(value)) {
                     //乐观锁字段无值 不增加乐观锁条件

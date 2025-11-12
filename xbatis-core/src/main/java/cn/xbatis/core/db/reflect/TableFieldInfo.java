@@ -102,7 +102,7 @@ public class TableFieldInfo {
         this.writeFieldInvoker = new SetFieldInvoker(field);
         typeHandler = MybatisTypeHandlerUtil.createTypeHandler(this.fieldInfo, this.tableFieldAnnotation.typeHandler());
         this.isTableSplitKey = field.isAnnotationPresent(SplitTableKey.class);
-        this.canUpdateField = this.exists && !this.tableId && !this.logicDelete && !this.version && !this.logicDeleteTime;
+        this.canUpdateField = this.exists && !this.tableId && !this.logicDelete && !this.version && !this.logicDeleteTime && !this.tenantId && !this.tableFieldAnnotation.neverUpdate();
     }
 
     public Object getValue(Object object) {

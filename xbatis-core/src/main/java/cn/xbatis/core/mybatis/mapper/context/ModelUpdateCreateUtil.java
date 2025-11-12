@@ -23,7 +23,6 @@ import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Update;
 import cn.xbatis.core.sql.util.WhereUtil;
-import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.core.util.StringPool;
@@ -40,23 +39,6 @@ import java.util.Set;
 
 public class ModelUpdateCreateUtil {
     public static <M extends Model<T>, T> void initUpdateValue(ModelFieldInfo modelFieldInfo, M insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
-        if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
-            boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName());
-            if (isForceUpdate) {
-                Object value = modelFieldInfo.getValue(insertData);
-                if (Objects.isNull(value)) {
-                    value = TenantUtil.getTenantId();
-                    if (Objects.isNull(value)) {
-                        //虽然强制 但是租户ID没值 不修改
-                        return;
-                    }
-                    //租户ID 回填
-                    TenantUtil.setTenantId(modelFieldInfo, insertData, value);
-                }
-            }
-            return;
-        }
-
         if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
             Object value = modelFieldInfo.getValue(insertData);
             if (value != null && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValueFillAlways()) {
@@ -122,11 +104,6 @@ public class ModelUpdateCreateUtil {
                     hasIdCondition = true;
                 }
                 continue;
-            } else if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
-                if (!isForceUpdate || Objects.isNull(value)) {
-                    //租户ID不修改
-                    continue;
-                }
             } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
                 if (Objects.isNull(value)) {
                     //乐观锁字段无值 不增加乐观锁条件
