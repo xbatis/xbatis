@@ -18,6 +18,7 @@ import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.db.reflect.Tables;
+import cn.xbatis.core.exception.NoUpdateRowException;
 import cn.xbatis.core.exception.OptimisticLockException;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 public final class UpdateMethodUtil {
 
     public static <T> UpdateStrategy<T> createUpdateStrategy() {
-        return new UpdateStrategy<>();
+        return UpdateStrategy.create();
     }
 
     public static <T> int update(BasicMapper basicMapper, T entity, UpdateStrategy<T> updateStrategy) {
@@ -79,9 +80,14 @@ public final class UpdateMethodUtil {
                     throw new RuntimeException("Data has no version value");
                 }
             }
+
             int cnt = basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy, defaultValueContext));
             if (cnt == 0 && tableInfo.getVersionFieldInfo() != null && version != null) {
                 throw new OptimisticLockException(entity, "Row was updated or deleted by another transaction");
+            }
+
+            if (cnt == 0 && updateStrategy.isThrowExWhenNoRowUpdate()) {
+                throw new NoUpdateRowException(updateStrategy.getNoRowUpdateErrorMessage());
             }
             return cnt;
         } catch (Throwable e) {

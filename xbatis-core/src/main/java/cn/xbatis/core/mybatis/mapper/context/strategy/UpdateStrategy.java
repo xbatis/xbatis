@@ -30,6 +30,18 @@ public class UpdateStrategy<T> {
 
     private Where where;
 
+    private boolean throwExWhenNoRowUpdate;
+
+    private String noRowUpdateErrorMessage;
+
+    public static <T> UpdateStrategy<T> create() {
+        return new UpdateStrategy<>();
+    }
+
+    public static <T> UpdateStrategy<T> of(Class<T> clazz) {
+        return new UpdateStrategy<>();
+    }
+
     /**
      * 设置是否所有字段 修改 - null值字段 将会被修改成NULL
      *
@@ -72,5 +84,19 @@ public class UpdateStrategy<T> {
     public UpdateStrategy<T> on(Consumer<Where> where) {
         this.on = where;
         return this;
+    }
+
+    public UpdateStrategy<T> throwExWhenNoRowUpdate(boolean throwExWhenNoRowUpdate) {
+        this.throwExWhenNoRowUpdate = throwExWhenNoRowUpdate;
+        return this;
+    }
+
+    public UpdateStrategy<T> noRowUpdateErrorMessage(String noRowUpdateErrorMessage) {
+        this.noRowUpdateErrorMessage = noRowUpdateErrorMessage;
+        return this;
+    }
+
+    public String getNoRowUpdateErrorMessage() {
+        return noRowUpdateErrorMessage;
     }
 }
