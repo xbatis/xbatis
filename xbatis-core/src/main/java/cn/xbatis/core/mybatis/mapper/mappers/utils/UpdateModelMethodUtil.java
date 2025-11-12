@@ -57,10 +57,23 @@ public final class UpdateModelMethodUtil {
     }
 
     public static <M extends Model> int update(BasicMapper basicMapper, ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
+        boolean isUpdateById = true;
+
+        if (modelInfo.getIdFieldInfos().isEmpty()) {
+            isUpdateById = false;
+        } else {
+            for (ModelFieldInfo idFieldInfo : modelInfo.getIdFieldInfos()) {
+                if (idFieldInfo.getValue(model) == null) {
+                    isUpdateById = false;
+                    break;
+                }
+            }
+        }
+
         Object version = null;
         try {
             if (modelInfo.getTableInfo().getVersionFieldInfo() != null) {
-                if (modelInfo.getVersionFieldInfo() == null) {
+                if (modelInfo.getVersionFieldInfo() == null && isUpdateById) {
                     throw new RuntimeException(MessageFormat.format("model class {0} , need a version field", modelInfo.getType().getName()));
                 }
                 version = modelInfo.getVersionFieldInfo().getValue(model);

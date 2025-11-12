@@ -57,11 +57,25 @@ public final class UpdateMethodUtil {
     }
 
     public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
+        boolean isUpdateById = true;
+
+        if (tableInfo.getIdFieldInfos().isEmpty()) {
+            isUpdateById = false;
+        } else {
+            for (TableFieldInfo idFieldInfo : tableInfo.getIdFieldInfos()) {
+                if (idFieldInfo.getValue(entity) == null) {
+                    isUpdateById = false;
+                    break;
+                }
+            }
+        }
+
+
         Object version = null;
         try {
             if (tableInfo.getVersionFieldInfo() != null) {
                 version = tableInfo.getVersionFieldInfo().getValue(entity);
-                if (version == null) {
+                if (version == null && isUpdateById) {
                     throw new RuntimeException("Data has no version value");
                 }
             }
