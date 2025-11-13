@@ -90,20 +90,26 @@ public class MybatisExecutor implements Executor {
         if (parameterObject instanceof SQLCmdQueryContext) {
             SQLCmdQueryContext context = (SQLCmdQueryContext) parameterObject;
             cacheKey.updateAll(context.getParameters());
-            cacheKey.update(context.getExecution().getReturnType().getName());
+            if (context.getExecution().getReturnType() != null) {
+                cacheKey.update(context.getExecution().getReturnType().getName());
+            }
         } else if (parameterObject instanceof ExecuteAndSelectPreparedContext) {
             ExecuteAndSelectPreparedContext context = (ExecuteAndSelectPreparedContext) parameterObject;
             if (context.getParameters() != null) {
                 cacheKey.updateAll(context.getParameters());
             }
-            cacheKey.update(context.getReturnType().getName());
+            if (context.getReturnType() != null) {
+                cacheKey.update(context.getReturnType().getName());
+            }
             cacheKey.update(System.currentTimeMillis());
         } else if (parameterObject instanceof SelectPreparedContext) {
             SelectPreparedContext context = (SelectPreparedContext) parameterObject;
             if (context.getParameters() != null) {
                 cacheKey.updateAll(context.getParameters());
             }
-            cacheKey.update(context.getReturnType().getName());
+            if (context.getReturnType() != null) {
+                cacheKey.update(context.getReturnType().getName());
+            }
         } else if (parameterObject instanceof SQLCmdUpdateContext) {
             SQLCmdUpdateContext context = (SQLCmdUpdateContext) parameterObject;
             cacheKey.updateAll(context.getParameters());
