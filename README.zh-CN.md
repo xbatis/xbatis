@@ -259,19 +259,20 @@ public class SysUser { }
 
 ### 5.3 `@TableField`（`cn.xbatis.db.annotations.TableField`）
 
-| 属性 | 是否可空 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `value` | 是 | – | 列名，遵循驼峰转下划线可省略 |
-| `select` | 是 | `true` | `select(Entity.class)` 时是否参与查询 |
-| `insert` | 是 | `true` | `save` 时是否写入 |
-| `update` | 是 | `true` | `update` 时是否更新 |
-| `jdbcType` | 是 | – | 指定 JDBC 类型 |
-| `typeHandler` | 是 | – | 指定类型处理器 |
-| `defaultValue` | 是 | – | 插入默认值，支持静态与动态（如 `{NOW}`） |
-| `updateDefaultValue` | 是 | – | 更新默认值 |
-| `defaultValueFillAlways` | 是 | `false` | 插入时是否始终填充 `defaultValue` |
-| `updateDefaultValueFillAlways` | 是 | `false` | 更新时是否始终填充 `updateDefaultValue` |
-| `exists` | 是 | `true` | 是否真实存在于表中，`false` 可用于非持久化字段 |
+| 属性                             | 是否可空 | 默认值     | 说明                                   |
+|--------------------------------| --- |---------|--------------------------------------|
+| `value`                        | 是 | –       | 列名，遵循驼峰转下划线可省略                       |
+| `select`                       | 是 | `true`  | `select(Entity.class)` 时是否参与查询       |
+| `insert`                       | 是 | `true`  | `save` 时是否写入                         |
+| `update`                       | 是 | `true`  | `update` 时是否更新，强制时会更新                |
+| `neverUpdate`                  | 是 | `false` | 永不update，除非用UpdateChain指定才会更新，强制也不更新 |
+| `jdbcType`                     | 是 | –       | 指定 JDBC 类型                           |
+| `typeHandler`                  | 是 | –       | 指定类型处理器                              |
+| `defaultValue`                 | 是 | –       | 插入默认值，支持静态与动态（如 `{NOW}`）             |
+| `updateDefaultValue`           | 是 | –       | 更新默认值                                |
+| `defaultValueFillAlways`       | 是 | `false` | 插入时是否始终填充 `defaultValue`             |
+| `updateDefaultValueFillAlways` | 是 | `false` | 更新时是否始终填充 `updateDefaultValue`       |
+| `exists`                       | 是 | `true`  | 是否真实存在于表中，`false` 可用于非持久化字段          |
 
 ### 5.4 `@LogicDelete`（`cn.xbatis.db.annotations.LogicDelete`）
 逻辑删除注解

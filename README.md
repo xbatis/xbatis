@@ -257,19 +257,20 @@ Repeatable to accommodate multiple database strategies.
 
 ### 5.3 `@TableField` (`cn.xbatis.db.annotations.TableField`)
 
-| Property | Nullable | Default | Description |
-| --- | --- | --- | --- |
-| `value` | Yes | – | Column name; can be omitted when camelCase-to-snake-case applies |
-| `select` | Yes | `true` | Whether to participate when calling `select(Entity.class)` |
-| `insert` | Yes | `true` | Whether to write during `save` |
-| `update` | Yes | `true` | Whether to update |
-| `jdbcType` | Yes | – | Explicit JDBC type |
-| `typeHandler` | Yes | – | Custom type handler |
-| `defaultValue` | Yes | – | Insert default; supports static values and dynamic tokens like `{NOW}` |
-| `updateDefaultValue` | Yes | – | Default during updates |
-| `defaultValueFillAlways` | Yes | `false` | Always apply `defaultValue` on insert |
-| `updateDefaultValueFillAlways` | Yes | `false` | Always apply `updateDefaultValue` |
-| `exists` | Yes | `true` | Whether the field physically exists (false for transient fields) |
+| Property                       | Nullable | Default | Description                                                                                                             |
+|--------------------------------|----------|---------|-------------------------------------------------------------------------------------------------------------------------|
+| `value`                        | Yes      | –       | Column name; can be omitted when camelCase-to-snake-case applies                                                        |
+| `select`                       | Yes      | `true`  | Whether to participate when calling `select(Entity.class)`                                                              |
+| `insert`                       | Yes      | `true`  | Whether to write during `save`                                                                                          |
+| `update`                       | Yes      | `true`  | Does it update when updating? It will update when forced                                                                |
+| `neverUpdate`                  | Yes      | `false` | Never update, unless specified with Updating Chain, it will only be updated, and it will not be forced to update either |
+| `jdbcType`                     | Yes      | –       | Explicit JDBC type                                                                                                      |
+| `typeHandler`                  | Yes      | –       | Custom type handler                                                                                                     |
+| `defaultValue`                 | Yes      | –       | Insert default; supports static values and dynamic tokens like `{NOW}`                                                  |
+| `updateDefaultValue`           | Yes      | –       | Default during updates                                                                                                  |
+| `defaultValueFillAlways`       | Yes      | `false` | Always apply `defaultValue` on insert                                                                                   |
+| `updateDefaultValueFillAlways` | Yes      | `false` | Always apply `updateDefaultValue`                                                                                       |
+| `exists`                       | Yes      | `true`  | Whether the field physically exists (false for transient fields)                                                        |
 
 ### 5.4 `@LogicDelete` (`cn.xbatis.db.annotations.LogicDelete`)
 
