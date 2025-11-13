@@ -101,7 +101,6 @@ public class CompositeTestCase extends BaseTest {
             assertEquals(compositeTest.getDeleted().intValue(), 0);
 
 
-
             compositeTest.setId(null);
             compositeTestMapper.update(compositeTest, where -> where.eq(CompositeTest::getId, 1));
 

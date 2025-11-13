@@ -18,7 +18,7 @@ public class OptimisticLockException extends RuntimeException {
 
     private final Object target;
 
-    public OptimisticLockException(Object target,String message) {
+    public OptimisticLockException(Object target, String message) {
         super(message);
         this.target = target;
     }

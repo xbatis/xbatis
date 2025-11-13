@@ -27,19 +27,20 @@ public class OptimisticLockUtil {
 
     /**
      * update set version = version + 1
+     *
      * @param tableInfo
      * @param update
      * @return
      */
     public static boolean versionPlus1(TableInfo tableInfo, BaseUpdate<?> update) {
         //不管有没有乐观锁，都加上set version +1
-        if(tableInfo.getVersionFieldInfo() == null){
+        if (tableInfo.getVersionFieldInfo() == null) {
             return false;
         }
 
         Table table = update.$().table(tableInfo.getType());
         db.sql.api.impl.cmd.basic.TableField versionField = update.$().field(table, tableInfo.getVersionFieldInfo().getColumnName());
-        update.set(versionField,Methods.tpl("{0} + 1",versionField));
+        update.set(versionField, Methods.tpl("{0} + 1", versionField));
         return true;
     }
 

@@ -51,6 +51,7 @@ public @interface TableField {
     /**
      * 是否进行 update
      * 只对实体类、Model类修改的方法生效；UpdateChain等不会生效；强制时生效
+     *
      * @return 默认 true
      */
     boolean update() default true;

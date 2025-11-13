@@ -16,7 +16,7 @@ package cn.xbatis.core.exception;
 
 public class NoEffectException extends RuntimeException {
 
-    public NoEffectException(){
+    public NoEffectException() {
 
     }
 

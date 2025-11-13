@@ -171,7 +171,7 @@ public final class UpdateMethodUtil {
             tableIdFieldInfos = tableInfo.getIdFieldInfos();
             tableFieldInfos = tableInfo.getTableFieldInfos()
                     .stream()
-                    .filter(i ->i.getTableFieldAnnotation().update() && i.isCanUpdateField())
+                    .filter(i -> i.getTableFieldAnnotation().update() && i.isCanUpdateField())
                     .distinct()
                     .collect(Collectors.toList());
         } else {

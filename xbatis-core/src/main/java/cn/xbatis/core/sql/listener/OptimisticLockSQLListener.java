@@ -19,8 +19,8 @@ import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.core.util.OptimisticLockUtil;
 import db.sql.api.cmd.basic.IDataset;
-import db.sql.api.cmd.executor.IExecutor;
 import db.sql.api.cmd.listener.SQLListener;
+
 /**
  * 乐观锁SQL监听器
  */
@@ -31,16 +31,16 @@ public class OptimisticLockSQLListener implements SQLListener {
         if (!(dataset instanceof MpTable) || !(source instanceof BaseUpdate)) {
             return;
         }
-        MpTable  mpTable = (MpTable) dataset;
+        MpTable mpTable = (MpTable) dataset;
 
-        if(source instanceof UpdateChain){
-            UpdateChain  update = (UpdateChain) source;
-            if(update.isOptimisticLock()){
-                OptimisticLockUtil.versionPlus1(mpTable.getTableInfo(),update);
+        if (source instanceof UpdateChain) {
+            UpdateChain update = (UpdateChain) source;
+            if (update.isOptimisticLock()) {
+                OptimisticLockUtil.versionPlus1(mpTable.getTableInfo(), update);
             }
-        }else {
-            BaseUpdate<?>  update = (BaseUpdate<?>) source;
-            OptimisticLockUtil.versionPlus1(mpTable.getTableInfo(),update);
+        } else {
+            BaseUpdate<?> update = (BaseUpdate<?>) source;
+            OptimisticLockUtil.versionPlus1(mpTable.getTableInfo(), update);
         }
 
     }
