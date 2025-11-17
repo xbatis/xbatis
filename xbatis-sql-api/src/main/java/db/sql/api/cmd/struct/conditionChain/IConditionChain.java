@@ -43,6 +43,13 @@ public interface IConditionChain<SELF extends IConditionChain,
 
     SELF newInstance();
 
+    /**
+     * 清空条件
+     *
+     * @return
+     */
+    SELF clearConditions();
+
     @Override
     default SELF andNested(Consumer<SELF> consumer) {
         SELF newSelf = newInstance();

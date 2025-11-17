@@ -106,6 +106,14 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
         return this.conditionFactory.newConditionChain(this);
     }
 
+    @Override
+    public ConditionChain clearConditions() {
+        if (this.conditionBlocks != null) {
+            this.conditionBlocks.clear();
+        }
+        return this;
+    }
+
     protected void appendCondition(Connector connector, ICondition condition) {
         if (condition == null) {
             return;
