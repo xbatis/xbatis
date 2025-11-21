@@ -17,6 +17,8 @@ package db.sql.api.impl.cmd;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.CmdConvert;
+import db.sql.api.cmd.GetterField;
+import db.sql.api.cmd.GetterFields;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IParamWrap;
@@ -2113,5 +2115,97 @@ public final class Methods {
     public static DistinctOn postgresDistinctOn(Cmd... onKeys) {
         Objects.requireNonNull(onKeys);
         return new DistinctOn(onKeys);
+    }
+
+    //-----------------------------构建getters----------------------------------------
+
+    @SafeVarargs
+    public static <T> GetterField[] getters(Getter<T>... getters) {
+        return GetterFields.of(getters);
+    }
+
+    @SafeVarargs
+    public static <T> GetterField[] getters(int storey, Getter<T>... getters) {
+        return GetterFields.of(storey, getters);
+    }
+
+    public static <T1> GetterField[] getters(Getter<T1> getter1) {
+        return GetterFields.of(getter1);
+    }
+
+    public static <T1> GetterField[] getters(Getter<T1> getter1, int storey1) {
+        return GetterFields.of(getter1, storey1);
+    }
+
+    public static <T1, T2> GetterField[] getters(Getter<T1> getter1, Getter<T2> getter2) {
+        return GetterFields.of(getter1, getter2);
+    }
+
+    public static <T1, T2> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2) {
+        return GetterFields.of(getter1, storey1, getter2, storey2);
+    }
+
+    public static <T1, T2, T3> GetterField[] getters(Getter<T1> getter1, Getter<T2> getter2, Getter<T3> getter3) {
+        return GetterFields.of(getter1, getter2, getter3);
+    }
+
+    public static <T1, T2, T3> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3) {
+        return GetterFields.of(getter1, storey1, getter2, storey2, getter3, storey3);
+    }
+
+    public static <T1, T2, T3, T4> GetterField[] getters(Getter<T1> getter1, Getter<T2> getter2, Getter<T3> getter3, Getter<T4> getter4) {
+        return GetterFields.of(getter1, getter2, getter3, getter4);
+    }
+
+    public static <T1, T2, T3, T4> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3, Getter<T4> getter4, int storey4) {
+        return GetterFields.of(getter1, storey1, getter2, storey2, getter3, storey3, getter4, storey4);
+    }
+
+    public static <T1, T2, T3, T4, T5> GetterField[] getters(Getter<T1> getter1, Getter<T2> getter2, Getter<T3> getter3, Getter<T4> getter4, Getter<T5> getter5) {
+        return GetterFields.of(getter1, getter2, getter3, getter4, getter5);
+    }
+
+    public static <T1, T2, T3, T4, T5> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3, Getter<T4> getter4, int storey4, Getter<T5> getter5, int storey5) {
+        return GetterFields.of(getter1, storey1, getter2, storey2, getter3, storey3, getter4, storey4, getter5, storey5);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6> GetterField[] getters(Getter<T1> getter1, Getter<T2> getter2, Getter<T3> getter3, Getter<T4> getter4, Getter<T5> getter5, Getter<T6> getter6) {
+        return GetterFields.of(getter1, getter2, getter3, getter4, getter5, getter6);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3, Getter<T4> getter4, int storey4, Getter<T5> getter5, int storey5, Getter<T6> getter6, int storey6) {
+        return GetterFields.of(getter1, storey1, getter2, storey2, getter3, storey3, getter4, storey4, getter5, storey5, getter6, storey6);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6, T7> GetterField[] getters(Getter<T1> getter1, Getter<T2> getter2, Getter<T3> getter3, Getter<T4> getter4, Getter<T5> getter5, Getter<T6> getter6, Getter<T7> getter7) {
+        return GetterFields.of(getter1, getter2, getter3, getter4, getter5, getter6, getter7);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6, T7> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3, Getter<T4> getter4, int storey4, Getter<T5> getter5, int storey5, Getter<T6> getter6, int storey6, Getter<T7> getter7, int storey7) {
+        return GetterFields.of(getter1, storey1, getter2, storey2, getter3, storey3, getter4, storey4, getter5, storey5, getter6, storey6, getter7, storey7);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6, T7, T8> GetterField[] getters(Getter<T1> getter1, Getter<T2> getter2, Getter<T3> getter3, Getter<T4> getter4, Getter<T5> getter5, Getter<T6> getter6, Getter<T7> getter7, Getter<T8> getter8) {
+        return GetterFields.of(getter1, getter2, getter3, getter4, getter5, getter6, getter7, getter8);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6, T7, T8> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3, Getter<T4> getter4, int storey4, Getter<T5> getter5, int storey5, Getter<T6> getter6, int storey6, Getter<T7> getter7, int storey7, Getter<T8> getter8, int storey8) {
+        return GetterFields.of(getter1, storey1, getter2, storey2, getter3, storey3, getter4, storey4, getter5, storey5, getter6, storey6, getter7, storey7, getter8, storey8);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> GetterField[] getters(Getter<T1> getter1, Getter<T2> getter2, Getter<T3> getter3, Getter<T4> getter4, Getter<T5> getter5, Getter<T6> getter6, Getter<T7> getter7, Getter<T8> getter8, Getter<T9> getter9) {
+        return GetterFields.of(getter1, getter2, getter3, getter4, getter5, getter6, getter7, getter8, getter9);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3, Getter<T4> getter4, int storey4, Getter<T5> getter5, int storey5, Getter<T6> getter6, int storey6, Getter<T7> getter7, int storey7, Getter<T8> getter8, int storey8, Getter<T9> getter9, int storey9) {
+        return GetterFields.of(getter1, storey1, getter2, storey2, getter3, storey3, getter4, storey4, getter5, storey5, getter6, storey6, getter7, storey7, getter8, storey8, getter9, storey9);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> GetterField[] getters(Getter<T1> getter1, Getter<T2> getter2, Getter<T3> getter3, Getter<T4> getter4, Getter<T5> getter5, Getter<T6> getter6, Getter<T7> getter7, Getter<T8> getter8, Getter<T9> getter9, Getter<T10> getter10) {
+        return GetterFields.of(getter1, getter2, getter3, getter4, getter5, getter6, getter7, getter8, getter9, getter10);
+    }
+
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3, Getter<T4> getter4, int storey4, Getter<T5> getter5, int storey5, Getter<T6> getter6, int storey6, Getter<T7> getter7, int storey7, Getter<T8> getter8, int storey8, Getter<T9> getter9, int storey9, Getter<T10> getter10, int storey10) {
+        return GetterFields.of(getter1, storey1, getter2, storey2, getter3, storey3, getter4, storey4, getter5, storey5, getter6, storey6, getter7, storey7, getter8, storey8, getter9, storey9, getter10, storey10);
     }
 }
