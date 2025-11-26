@@ -1,7 +1,7 @@
 # Xbatis AI Agent 知识库
 
 > 官方站点：https://xbatis.cn  
-> DeepWiki 文档：https://deepwiki.xbatis.cn
+> DeepWiki 文档：https://deepwiki.com/xbatis/xbatis
 
 # 支持作者，赏作者一盒盒饭（^o^）
 
@@ -56,7 +56,7 @@
     <dependency>
       <groupId>cn.xbatis</groupId>
       <artifactId>xbatis-bom</artifactId>
-      <version>1.9.2</version>
+      <version>1.9.3</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -100,7 +100,7 @@ public class XbatisApplication {
       <dependency>
         <groupId>cn.xbatis</groupId>
         <artifactId>xbatis-spring-boot-parent</artifactId>
-        <version>1.9.2</version>
+        <version>1.9.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -125,7 +125,7 @@ public class XbatisApplication {
   <dependency>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis-solon-plugin</artifactId>
-    <version>1.9.2</version>
+    <version>1.9.3</version>
   </dependency>
   <dependency>
     <groupId>org.noear</groupId>

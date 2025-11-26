@@ -1,7 +1,7 @@
 # Xbatis AI Agent Knowledge Base
 
 > Official site: https://xbatis.cn  
-> DeepWiki documentation: https://deepwiki.xbatis.cn
+> DeepWiki documentation: https://deepwiki.com/xbatis/xbatis
 
 Knowledge pack for AI agents working with the Xbatis framework. It distills the official Chinese materials into a self-contained explanation so that automated assistants can understand the framework capabilities, common patterns, and key APIs.
 
@@ -54,7 +54,7 @@ Knowledge pack for AI agents working with the Xbatis framework. It distills the 
     <dependency>
       <groupId>cn.xbatis</groupId>
       <artifactId>xbatis-bom</artifactId>
-      <version>1.9.2</version>
+      <version>1.9.3</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -98,7 +98,7 @@ public class XbatisApplication {
       <dependency>
         <groupId>cn.xbatis</groupId>
         <artifactId>xbatis-spring-boot-parent</artifactId>
-        <version>1.9.2</version>
+        <version>1.9.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -123,7 +123,7 @@ public class XbatisApplication {
   <dependency>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis-solon-plugin</artifactId>
-    <version>1.9.2</version>
+    <version>1.9.3</version>
   </dependency>
   <dependency>
     <groupId>org.noear</groupId>
