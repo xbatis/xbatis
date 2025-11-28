@@ -434,6 +434,25 @@ public class FetchTest extends BaseTest {
     }
 
     @Test
+    public void fetchLimit3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+
+            List<FetchSysRoleVo5> listResult = QueryChain.of(sysRoleMapper)
+                    .select(FetchSysRoleVo5.class)
+                    .from(SysRole.class)
+                    .returnType(FetchSysRoleVo5.class)
+                    .list();
+
+            System.out.println(listResult);
+
+            assertEquals(listResult.size(), 2);
+            assertEquals(listResult.get(0).getSysRole2().get(0).getId(), 3);
+
+        }
+    }
+
+    @Test
     public void fetchSameTargetTest() {
         if (TestDataSource.DB_TYPE != DbType.H2) {
             return;

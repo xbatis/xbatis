@@ -19,6 +19,7 @@ import cn.xbatis.db.annotations.ResultEntity;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Data
@@ -28,4 +29,15 @@ public class FetchSysRoleVo5 {
 
     @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, orderBy = "[{id} asc,{userName} desc]", limit = 1, memoryLimit = true)
     private List<FetchSysUserForRoleVo> sysRole;
+
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, limit = 1, memoryLimit = true, comparator = MyComparator.class)
+    private List<FetchSysUserForRoleVo> sysRole2;
+
+    public static class MyComparator implements Comparator<FetchSysUserForRoleVo> {
+        @Override
+        public int compare(FetchSysUserForRoleVo o1, FetchSysUserForRoleVo o2) {
+            System.out.println("compare ");
+            return o2.getId().compareTo(o1.getId());
+        }
+    }
 }

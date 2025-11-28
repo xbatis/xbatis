@@ -49,6 +49,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
@@ -586,14 +587,23 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 fetchInfo.setValue(rowValue, matchValues, defaultValueContext);
                 return;
             }
+
             if (matchValues.get(0) instanceof FetchTargetValue) {
                 matchValues = ((List<FetchTargetValue>) matchValues)
                         .stream().map(m -> TypeConvertUtil.convert(m.getTarget(), fetchInfo.getFieldInfo().getFinalClass()))
                         .collect(Collectors.toList());
             }
+
+            //内存排序
             if (fetchInfo.getFetch().limit() > 0 && fetchInfo.getFetch().memoryLimit() && matchValues.size() > fetchInfo.getFetch().limit()) {
-                matchValues = matchValues.stream().limit(fetchInfo.getFetch().limit()).collect(Collectors.toList());
+                Stream<?> stream = matchValues.stream();
+                if (fetchInfo.getTargetOrderBy() == null && fetchInfo.getFetch().comparator() != null) {
+                    Comparator comparator = fetchInfo.getComparator();
+                    stream = stream.sorted(comparator);
+                }
+                matchValues = stream.limit(fetchInfo.getFetch().limit()).collect(Collectors.toList());
             }
+
             fetchInfo.setValue(rowValue, matchValues, defaultValueContext);
         } else {
             if (Objects.isNull(matchValues) || matchValues.isEmpty()) {

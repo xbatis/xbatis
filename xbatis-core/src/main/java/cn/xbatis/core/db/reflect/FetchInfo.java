@@ -27,10 +27,7 @@ import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Data
 @EqualsAndHashCode
@@ -78,6 +75,8 @@ public class FetchInfo {
 
     private final Object nullFillValue;
 
+    private final Comparator<?> comparator;
+
     public FetchInfo(Class clazz, FieldInfo fieldInfo, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler) {
 
         this.fieldInfo = fieldInfo;
@@ -122,6 +121,14 @@ public class FetchInfo {
             nullFillValue = null;
         } else {
             nullFillValue = TypeConvertUtil.convert(fetch.nullFillValue(), this.fieldInfo.getTypeClass());
+        }
+
+        try {
+            comparator = this.fetch.comparator() == Void.class ? null : (Comparator<?>) this.fetch.comparator().newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -384,5 +391,9 @@ public class FetchInfo {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Comparator<?> getComparator() {
+        return comparator;
     }
 }

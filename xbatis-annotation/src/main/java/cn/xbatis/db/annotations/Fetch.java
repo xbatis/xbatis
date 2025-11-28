@@ -128,6 +128,14 @@ public @interface Fetch {
     boolean memoryLimit() default false;
 
     /**
+     * 排序类，需要继承 java.util.Comparator类
+     * 只有当 memoryLimit = true, 同时 orderBy 没有配置情况 才有效果
+     *
+     * @return
+     */
+    Class<?> comparator() default Void.class;
+
+    /**
      * 当值为null时，填充的值
      */
     String nullFillValue() default "";
