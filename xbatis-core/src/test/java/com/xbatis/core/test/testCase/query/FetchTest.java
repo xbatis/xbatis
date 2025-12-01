@@ -492,4 +492,42 @@ public class FetchTest extends BaseTest {
     }
 
 
+    @Test
+    public void fetchCacheTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            QueryChain<FetchSysRoleCacheVo> queryChain = QueryChain.of(sysRoleMapper)
+                    .fetchFilter(FetchSysRoleCacheVo::getSysRoleNames, where -> {
+
+                    })
+                    .returnType(FetchSysRoleCacheVo.class);
+
+            List<FetchSysRoleCacheVo> list = queryChain.list();
+            System.out.println(list);
+
+            assertEquals(list.get(0).getSysRoleNames().get(0), "test1");
+            assertEquals(list.get(0).getSysRoleNames().get(1), "test2");
+            assertEquals(list.get(0).getName(), "测试");
+            assertEquals(list.get(1).getName(), "运维");
+        }
+
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            QueryChain<FetchSysRoleCacheVo> queryChain = QueryChain.of(sysRoleMapper)
+                    .fetchFilter(FetchSysRoleCacheVo::getSysRoleNames, where -> {
+
+                    })
+                    .returnType(FetchSysRoleCacheVo.class);
+
+            List<FetchSysRoleCacheVo> list = queryChain.list();
+            System.out.println(list);
+
+            assertEquals(list.get(0).getSysRoleNames().get(0), "123444");
+            assertEquals(list.get(0).getSysRoleNames().get(1), "123444");
+            assertEquals(list.get(0).getName(), "测试");
+            assertEquals(list.get(1).getName(), "运维");
+
+        }
+    }
 }
