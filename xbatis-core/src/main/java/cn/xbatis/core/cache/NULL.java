@@ -12,25 +12,11 @@
  *
  */
 
-package cn.xbatis.core.mybatis.executor.resultset;
+package cn.xbatis.core.cache;
 
-import lombok.Data;
+import java.io.Serializable;
 
-@Data
-public class FetchObject {
+public class NULL implements Serializable {
 
-    private final String matchKey;
-
-    private final Object value;
-
-    private final Object sourceKey;
-
-    private final String cacheKey;
-
-    public FetchObject(Object sourceKey, String matchKey, Object value, String cacheKey) {
-        this.sourceKey = sourceKey;
-        this.matchKey = matchKey;
-        this.value = value;
-        this.cacheKey = cacheKey;
-    }
+    private static final long serialVersionUID = 1L;
 }

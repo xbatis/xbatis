@@ -15,6 +15,7 @@
 package cn.xbatis.core;
 
 
+import cn.xbatis.core.cache.FetchCache;
 import cn.xbatis.core.logicDelete.LogicDeleteSwitch;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
@@ -66,6 +67,7 @@ public final class XbatisGlobalConfig {
     private static volatile Object GLOBAL_ON_UPDATE_LISTENER = NULL;
     private static volatile Object INTERCEPT_OFFICIAL_MAPPER_METHOD = NULL;
     private static volatile Object FETCH_IN_BATCH_SIZE = NULL;
+    private static volatile Object FETCH_CACHE = NULL;
 
 
     static {
@@ -676,6 +678,33 @@ public final class XbatisGlobalConfig {
     public static boolean setFetchInBatchSize(int fetchInBatchSize) {
         if (FETCH_IN_BATCH_SIZE == NULL) {
             FETCH_IN_BATCH_SIZE = fetchInBatchSize;
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * 获取@Fetch的cache实现类
+     *
+     * @return
+     */
+    public static FetchCache getFetchCache() {
+        if (FETCH_CACHE == NULL) {
+            FETCH_CACHE = null;
+        }
+        return (FetchCache) FETCH_CACHE;
+    }
+
+    /**
+     * 设置@Fetch的cache实现类
+     *
+     * @param fetchCache
+     * @return 是否成功
+     */
+    public static boolean setFetchCache(FetchCache fetchCache) {
+        if (FETCH_CACHE == NULL) {
+            FETCH_CACHE = fetchCache;
             return true;
         }
         return false;
