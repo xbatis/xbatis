@@ -150,7 +150,8 @@ public @interface Fetch {
     /**
      * 缓存名称 设置了就是开启缓存
      * 开启缓存后，查询时不在使用in批量查询 而是一个一个去查询
-     * cacheKey 有 fetchFilter + fetch的targetProperty 组成
+     * cacheKey 由 targetProperty + 动态条件-fetchFilter 组成
+     * 注意 otherConditions 不参与cacheKey构建
      *
      * @return
      */
