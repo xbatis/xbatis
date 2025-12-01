@@ -1115,7 +1115,7 @@ public interface FunctionInterface extends Cmd {
      * @return Ne
      */
     @SuppressWarnings("unchecked")
-    default In in(Collection<? extends Serializable>... values) {
+    default In in(Collection<? extends Serializable> values) {
         return Methods.in(this, values);
     }
 
@@ -1136,7 +1136,7 @@ public interface FunctionInterface extends Cmd {
      * @return Ne
      */
     @SuppressWarnings("unchecked")
-    default NotIn notIn(Collection<? extends Serializable>... values) {
+    default NotIn notIn(Collection<? extends Serializable> values) {
         return Methods.notIn(this, values);
     }
 

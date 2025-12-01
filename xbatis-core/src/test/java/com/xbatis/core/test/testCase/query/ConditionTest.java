@@ -496,6 +496,7 @@ public class ConditionTest extends BaseTest {
                     .in(true, SysUser::getId, 1, 2)
                     .in(SysUser::getId, Arrays.asList(1, 2))
                     .in(SysUser::getId, Arrays.asList(1, 2).stream().collect(Collectors.toSet()))
+                    .and(SysUser::getId, c -> c.in(Arrays.asList(1, 2)))
                     .in(true, SysUser::getId, Arrays.asList(1, 2))
                     .returnType(Integer.class)
                     .list();
