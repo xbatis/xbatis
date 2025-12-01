@@ -18,6 +18,7 @@ import cn.xbatis.core.util.FieldUtil;
 import lombok.Data;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 
 
 @Data
@@ -29,6 +30,11 @@ public class FieldInfo {
      * 字段
      */
     private Field field;
+
+    /**
+     * 是否集合字段
+     */
+    private boolean collection;
 
     /**
      * 字段的类型
@@ -49,5 +55,6 @@ public class FieldInfo {
         this.field = field;
         this.typeClass = FieldUtil.getFieldType(clazz, field);
         this.finalClass = FieldUtil.getFieldFinalType(clazz, field);
+        this.collection = field.getType().isAssignableFrom(Collection.class);
     }
 }
