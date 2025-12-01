@@ -409,7 +409,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         if (fetchFilter != null) {
                             fetchFilter.accept(where);
                             if (where.hasContent()) {
-                                cacheKey = onValue + "-" + SQLPrinter.sql(dbType, where).replaceAll(" ", "");
+                                cacheKey = onValue + "-" + SQLPrinter.sql(dbType, where);
                             }
                         }
                     }
