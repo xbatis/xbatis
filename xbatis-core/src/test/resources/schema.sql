@@ -16,43 +16,47 @@ drop table if exists split_table_1;
 
 CREATE TABLE IF NOT EXISTS split_table_1
 (
-    id INTEGER PRIMARY KEY auto_increment,
+    id       INTEGER PRIMARY KEY auto_increment,
     split_id INTEGER not null,
-    name varchar(10)
+    name     varchar(10)
 );
 
 drop table if exists split_table_2;
 
 CREATE TABLE IF NOT EXISTS split_table_2
 (
-    id INTEGER PRIMARY KEY auto_increment,
+    id       INTEGER PRIMARY KEY auto_increment,
     split_id INTEGER not null,
-    name varchar(10)
+    name     varchar(10)
 );
 
 drop table if exists split_table_3;
 
 CREATE TABLE IF NOT EXISTS split_table_3
 (
-    id INTEGER PRIMARY KEY auto_increment,
+    id       INTEGER PRIMARY KEY auto_increment,
     split_id INTEGER not null,
-    name varchar(10)
+    name     varchar(10)
 );
 
-insert into split_table_1(split_id) values(1);
-insert into split_table_2(split_id) values(2);
-insert into split_table_2(split_id) values(3);
-insert into split_table_3(split_id) values(4);
+insert into split_table_1(split_id)
+values (1);
+insert into split_table_2(split_id)
+values (2);
+insert into split_table_2(split_id)
+values (3);
+insert into split_table_3(split_id)
+values (4);
 
 
 drop table if exists t_sys_user;
 
 CREATE TABLE IF NOT EXISTS t_sys_user
 (
-    id INTEGER PRIMARY KEY auto_increment,
-    user_name VARCHAR(100) default '123456',
-    password VARCHAR(100),
-    role_id INTEGER,
+    id          INTEGER PRIMARY KEY auto_increment,
+    user_name   VARCHAR(100)      default '123456',
+    password    VARCHAR(100),
+    role_id     INTEGER,
     create_time DATETIME NOT NULL DEFAULT NOW()
 );
 
@@ -64,15 +68,19 @@ CREATE TABLE IF NOT EXISTS sys_role_middle
     role_id INTEGER not null
 );
 
-INSERT INTO sys_role_middle VALUES(1,1),(1,2),(2,2),(2,3);
+INSERT INTO sys_role_middle
+VALUES (1, 1),
+       (1, 2),
+       (2, 2),
+       (2, 3);
 
 drop table if exists sys_role;
 
 CREATE TABLE IF NOT EXISTS sys_role
 (
-    id INTEGER PRIMARY KEY auto_increment,
-    name VARCHAR(100) not null,
-    create_time DATETIME NOT NULL DEFAULT NOW()
+    id          INTEGER PRIMARY KEY auto_increment,
+    name        VARCHAR(100) not null,
+    create_time DATETIME     NOT NULL DEFAULT NOW()
 );
 
 drop table if exists sys_user_score;
@@ -80,7 +88,7 @@ drop table if exists sys_user_score;
 CREATE TABLE IF NOT EXISTS sys_user_score
 (
     user_id INTEGER PRIMARY KEY,
-    score decimal(6, 2)
+    score   decimal(6, 2)
 );
 
 insert into t_sys_user
@@ -101,7 +109,7 @@ drop table if exists id_test;
 
 CREATE TABLE IF NOT EXISTS id_test
 (
-    id BIGINT PRIMARY KEY auto_increment,
+    id          BIGINT PRIMARY KEY auto_increment,
     create_time DATETIME NOT NULL DEFAULT NOW()
 );
 
@@ -109,7 +117,7 @@ drop table if exists uuid_test;
 
 CREATE TABLE IF NOT EXISTS uuid_test
 (
-    id varchar(64),
+    id          varchar(64),
     create_time DATETIME NOT NULL DEFAULT NOW()
 );
 
@@ -117,29 +125,29 @@ drop table if exists version_test;
 
 CREATE TABLE IF NOT EXISTS version_test
 (
-    id varchar(32) PRIMARY KEY,
-    version INT NOT NULL,
-    name VARCHAR(100) not null,
-    create_time DATETIME NOT NULL DEFAULT NOW()
+    id          varchar(32) PRIMARY KEY,
+    version     INT          NOT NULL,
+    name        VARCHAR(100) not null,
+    create_time DATETIME     NOT NULL DEFAULT NOW()
 );
 
 drop table if exists tenant_test;
 
 CREATE TABLE IF NOT EXISTS tenant_test
 (
-    id varchar(32) PRIMARY KEY,
-    tenant_id INT NOT NULL,
-    name VARCHAR(100) not null,
-    create_time DATETIME NOT NULL DEFAULT NOW()
+    id          varchar(32) PRIMARY KEY,
+    tenant_id   INT          NOT NULL,
+    name        VARCHAR(100) not null,
+    create_time DATETIME     NOT NULL DEFAULT NOW()
 );
 
 drop table if exists logic_delete_test;
 
 CREATE TABLE IF NOT EXISTS logic_delete_test
 (
-    id BIGINT PRIMARY KEY auto_increment,
-    name VARCHAR(100) not null,
-    deleted TINYINT not NULL default 0,
+    id          BIGINT PRIMARY KEY auto_increment,
+    name        VARCHAR(100) not null,
+    deleted     TINYINT      not NULL default 0,
     delete_time DATETIME
 );
 
@@ -152,23 +160,23 @@ drop table if exists default_value_test;
 
 CREATE TABLE IF NOT EXISTS default_value_test
 (
-    id INT PRIMARY KEY auto_increment,
-    value1 VARCHAR(100) not null,
-    value2 INT not NULL ,
-    value3 VARCHAR(100),
-    value4 INT ,
-    create_time DATETIME NOT NULL
+    id          INT PRIMARY KEY auto_increment,
+    value1      VARCHAR(100) not null,
+    value2      INT          not NULL,
+    value3      VARCHAR(100),
+    value4      INT,
+    create_time DATETIME     NOT NULL
 );
 
 drop table if exists composite_test;
 
 CREATE TABLE IF NOT EXISTS composite_test
 (
-    id BIGINT PRIMARY KEY auto_increment,
-     name varchar(20) ,
-    version int not null,
-    tenant_id int not null,
-    deleted TINYINT not NULL default 0,
+    id          BIGINT PRIMARY KEY auto_increment,
+    name        varchar(20),
+    version     int     not null,
+    tenant_id   int     not null,
+    deleted     TINYINT not NULL default 0,
     delete_time DATETIME
 );
 
@@ -176,7 +184,7 @@ drop table if exists nested_first;
 
 CREATE TABLE IF NOT EXISTS nested_first
 (
-    id INT PRIMARY KEY auto_increment,
+    id      INT PRIMARY KEY auto_increment,
     th_name VARCHAR(100) not null
 );
 
@@ -184,34 +192,31 @@ drop table if exists nested_second;
 
 CREATE TABLE IF NOT EXISTS nested_second
 (
-    id INT PRIMARY KEY auto_increment,
-    nested_one_id INT NOT NULL,
-    th_name VARCHAR(100) not null
+    id            INT PRIMARY KEY auto_increment,
+    nested_one_id INT          NOT NULL,
+    th_name       VARCHAR(100) not null
 );
 
 drop table if exists nested_third;
 
 CREATE TABLE IF NOT EXISTS nested_third
 (
-    id INT PRIMARY KEY auto_increment,
-    nested_second_id INT NOT NULL,
-    th_name VARCHAR(100) not null
+    id               INT PRIMARY KEY auto_increment,
+    nested_second_id INT          NOT NULL,
+    th_name          VARCHAR(100) not null
 );
 
-insert into nested_first(id,th_name)
-values
-    (1,'嵌套A'),
-    (2,'嵌套B');
+insert into nested_first(id, th_name)
+values (1, '嵌套A'),
+       (2, '嵌套B');
 
-insert into nested_second(id,nested_one_id,th_name)
-values
-    (1,1,'嵌套AA'),
-    (2,2,'嵌套BA');
+insert into nested_second(id, nested_one_id, th_name)
+values (1, 1, '嵌套AA'),
+       (2, 2, '嵌套BA');
 
-insert into nested_third(id,nested_second_id,th_name)
-values
-    (1,1,'嵌套AAA'),
-    (2,2,'嵌套BAA');
+insert into nested_third(id, nested_second_id, th_name)
+values (1, 1, '嵌套AAA'),
+       (2, 2, '嵌套BAA');
 
 
 
@@ -219,7 +224,7 @@ drop table if exists nested_muti_first;
 
 CREATE TABLE IF NOT EXISTS nested_muti_first
 (
-    id INT PRIMARY KEY auto_increment,
+    id      INT PRIMARY KEY auto_increment,
     th_name VARCHAR(100) not null
 );
 
@@ -227,45 +232,42 @@ drop table if exists nested_muti_second;
 
 CREATE TABLE IF NOT EXISTS nested_muti_second
 (
-    id INT PRIMARY KEY auto_increment,
-    nested_one_id INT NOT NULL,
-    th_name VARCHAR(100) not null
+    id            INT PRIMARY KEY auto_increment,
+    nested_one_id INT          NOT NULL,
+    th_name       VARCHAR(100) not null
 );
 
 drop table if exists nested_muti_third;
 
 CREATE TABLE IF NOT EXISTS nested_muti_third
 (
-    id INT PRIMARY KEY auto_increment,
-    nested_second_id INT NOT NULL,
-    th_name VARCHAR(100) not null
+    id               INT PRIMARY KEY auto_increment,
+    nested_second_id INT          NOT NULL,
+    th_name          VARCHAR(100) not null
 );
 
-insert into nested_muti_first(id,th_name)
-values
-    (1,'嵌套A'),
-    (2,'嵌套B');
+insert into nested_muti_first(id, th_name)
+values (1, '嵌套A'),
+       (2, '嵌套B');
 
-insert into nested_muti_second(id,nested_one_id,th_name)
-values
-    (1,1,'嵌套AA'),
-    (2,1,'嵌套AB'),
-    (3,2,'嵌套BA');
+insert into nested_muti_second(id, nested_one_id, th_name)
+values (1, 1, '嵌套AA'),
+       (2, 1, '嵌套AB'),
+       (3, 2, '嵌套BA');
 
-insert into nested_muti_third(id,nested_second_id,th_name)
-values
-    (1,2,'嵌套BAA'),
-    (2,2,'嵌套BAB');
+insert into nested_muti_third(id, nested_second_id, th_name)
+values (1, 2, '嵌套BAA'),
+       (2, 2, '嵌套BAB');
 
 
 drop table if exists multi_pk;
 
 CREATE TABLE IF NOT EXISTS multi_pk
 (
-    id1 INT NOT NULL,
-    id2 INT NOT NULL,
+    id1  INT          NOT NULL,
+    id2  INT          NOT NULL,
     name VARCHAR(100) not null,
-    PRIMARY KEY(id1,id2)
+    PRIMARY KEY (id1, id2)
 );
 
 
@@ -273,33 +275,31 @@ drop table if exists addr;
 
 CREATE TABLE IF NOT EXISTS addr
 (
-    id INTEGER PRIMARY KEY auto_increment,
+    id   INTEGER PRIMARY KEY auto_increment,
     name varchar(10)
 );
 
-insert into addr(id,name)
-values
-    (1,'江西'),
-    (2,'南昌'),
-    (3,'赣州'),
-    (4,'章贡区'),
-    (5,'瑞金市'),
-    (6,'兴国县'),
-    (7,'新建县');
+insert into addr(id, name)
+values (1, '江西'),
+       (2, '南昌'),
+       (3, '赣州'),
+       (4, '章贡区'),
+       (5, '瑞金市'),
+       (6, '兴国县'),
+       (7, '新建县');
 
 drop table if exists addr_archive;
 
 CREATE TABLE IF NOT EXISTS addr_archive
 (
-    id INTEGER PRIMARY KEY auto_increment,
+    id  INTEGER PRIMARY KEY auto_increment,
     pid int,
     cid int,
     did int
 );
 
-insert into addr_archive(pid,cid,did)
-values
-    (1,2,7),
-    (1,3,4),
-    (1,3,5),
-    (1,3,6);
+insert into addr_archive(pid, cid, did)
+values (1, 2, 7),
+       (1, 3, 4),
+       (1, 3, 5),
+       (1, 3, 6);

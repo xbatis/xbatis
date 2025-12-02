@@ -30,13 +30,12 @@
     </select>
 
     <select id="xmlPaging" resultType="com.xbatis.core.test.DO.SysRole">
-        select id,create_time
+        select id, create_time
         from sys_role
         where id >= #{id}
           and id &lt;= #{id2}
-        group by id,create_time
-        order by
-            id asc
+        group by id, create_time
+        order by id asc
     </select>
 
     <select id="xmlPaging2" resultMap="sysRole">
@@ -103,26 +102,32 @@
     </select>
 
     <select id="selectQueryCustomSql3">
-        select * from ( ${queryScript} ) t
+        select *
+        from (${queryScript}) t
     </select>
 
     <resultMap id="xmlNestedResultMap" type="com.xbatis.core.test.vo.XmlNestedResultMap" autoMapping="true">
         <id column="id" property="id"/>
-        <collection property="sysRoleList" ofType="com.xbatis.core.test.DO.SysRole" >
+        <collection property="sysRoleList" ofType="com.xbatis.core.test.DO.SysRole">
             <id column="r_id" property="id"/>
         </collection>
     </resultMap>
 
     <select id="selectXmlNestedResultMap" resultMap="xmlNestedResultMap">
-        select t.id  ,t.password  ,t2.id r_id from t_sys_user t left join sys_role t2 on t.role_id=t2.id where t.id=1
+        select t.id, t.password, t2.id r_id
+        from t_sys_user t
+                 left join sys_role t2 on t.role_id = t2.id
+        where t.id = 1
     </select>
 
     <select id="testSuperMapParams" resultType="Map">
-        select t.id from t_sys_user t where <if test="params.type == 1"> id=#{params.type} </if>
+        select t.id from t_sys_user t where
+        <if test="params.type == 1">id=#{params.type}</if>
     </select>
 
     <select id="selectAll2" resultType="Map">
-        select t.id from t_sys_user t
+        select t.id
+        from t_sys_user t
     </select>
 
 

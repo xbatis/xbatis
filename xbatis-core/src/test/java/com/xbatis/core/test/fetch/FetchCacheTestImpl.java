@@ -38,7 +38,7 @@ public class FetchCacheTestImpl implements FetchCache {
         }
 
         String value = CACHE.get(cacheName + cacheKey);
-        System.out.println("获取fetch cache value: "+cacheName+":"+cacheKey+" <<<<<<=== "+value);
+        System.out.println("获取fetch cache value: " + cacheName + ":" + cacheKey + " <<<<<<=== " + value);
         if (value == null) {
             return null;
         }
@@ -55,7 +55,7 @@ public class FetchCacheTestImpl implements FetchCache {
 
     @Override
     public void set(String cacheName, Fetch fetch, FieldInfo fieldInfo, String cacheKey, Object result) {
-        System.out.println("设置fetch cache value: "+cacheName+":"+cacheKey+"===>"+result);
+        System.out.println("设置fetch cache value: " + cacheName + ":" + cacheKey + "===>" + result);
         if (Objects.isNull(result)) {
             result = "NULL";
         }

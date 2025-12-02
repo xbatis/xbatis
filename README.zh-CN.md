@@ -7,7 +7,8 @@
 
 <img src="./doc/image/alipay.png" style="width:500px">
 
-面向 AI Agent 的 xbatis 框架知识库，整合官方中文资料中的核心信息，提供自足的说明，帮助自动化助手理解框架能力、常见模式与关键 API。
+面向 AI Agent 的 xbatis 框架知识库，整合官方中文资料中的核心信息，提供自足的说明，帮助自动化助手理解框架能力、常见模式与关键
+API。
 
 ---
 
@@ -32,24 +33,25 @@
 
 ## 2. 核心模块与包路径
 
-| 模块 | 典型包路径 | 核心类型                                                                                                                      | 作用 |
-| --- | --- |---------------------------------------------------------------------------------------------------------------------------| --- |
-| 核心 Mapper | `cn.xbatis.core.mybatis.mapper` | `MybatisMapper<T>`, `BasicMapper`                                                                                         | 提供基础 CRUD 与单 Mapper 能力 |
-| 链式 DSL | `cn.xbatis.core.chain` | `QueryChain`, `InsertChain`, `UpdateChain`, `DeleteChain`                                                                 | 构建复杂 SQL、批量操作、返回值链路 |
-| 全局配置 | `cn.xbatis.core.config` | `XbatisGlobalConfig`                                                                                                      | 统一配置命名规则、拦截器、动态值、分页等 |
-| 注解体系 | `cn.xbatis.db.annotations` | `@Table`, `@TableId`, `@TableField`, `@LogicDelete`,`@LogicDeleteTime`, `@TenantId`, `@Version`, `@Condition`, `@Fetch` 等 | 实体映射、注入规则、对象条件、结果加工等 |
-| 数据库函数 | `db.sql.api.impl.cmd` | `Methods`                                                                                                                 | 提供跨库函数、SQL 模板、函数链式包装 |
-| 多租户 | `cn.xbatis.core.tenant` | `TenantContext`, `TenantId`                                                                                               | 全局租户 ID 注册与透传 |
-| 动态数据源 | `cn.xbatis.datasource.routing` | `@DS`, `JdbcConfigDecryptor`                                                                                              | 运行时切换数据源、加密配置、分组路由 |
-| 逻辑删除 | `cn.xbatis.core.logic` | `LogicDeleteSwitch`, `LogicDeleteUtil`                                                                                    | 动态开关与便捷关闭逻辑删除 |
-| 动态值 | `cn.xbatis.core.dynamic` | `XbatisGlobalConfig#setDynamicValue`                                                                                      | 定义 `{NOW}`、`{TODAY}` 等动态填充值 |
-| 代码生成 | `cn.xbatis.codegen` | `GeneratorConfig` 及子配置                                                                                                    | 一站式生成实体、Mapper、Service 等骨架 |
+| 模块        | 典型包路径                           | 核心类型                                                                                                                      | 作用                          |
+|-----------|---------------------------------|---------------------------------------------------------------------------------------------------------------------------|-----------------------------|
+| 核心 Mapper | `cn.xbatis.core.mybatis.mapper` | `MybatisMapper<T>`, `BasicMapper`                                                                                         | 提供基础 CRUD 与单 Mapper 能力      |
+| 链式 DSL    | `cn.xbatis.core.chain`          | `QueryChain`, `InsertChain`, `UpdateChain`, `DeleteChain`                                                                 | 构建复杂 SQL、批量操作、返回值链路         |
+| 全局配置      | `cn.xbatis.core.config`         | `XbatisGlobalConfig`                                                                                                      | 统一配置命名规则、拦截器、动态值、分页等        |
+| 注解体系      | `cn.xbatis.db.annotations`      | `@Table`, `@TableId`, `@TableField`, `@LogicDelete`,`@LogicDeleteTime`, `@TenantId`, `@Version`, `@Condition`, `@Fetch` 等 | 实体映射、注入规则、对象条件、结果加工等        |
+| 数据库函数     | `db.sql.api.impl.cmd`           | `Methods`                                                                                                                 | 提供跨库函数、SQL 模板、函数链式包装        |
+| 多租户       | `cn.xbatis.core.tenant`         | `TenantContext`, `TenantId`                                                                                               | 全局租户 ID 注册与透传               |
+| 动态数据源     | `cn.xbatis.datasource.routing`  | `@DS`, `JdbcConfigDecryptor`                                                                                              | 运行时切换数据源、加密配置、分组路由          |
+| 逻辑删除      | `cn.xbatis.core.logic`          | `LogicDeleteSwitch`, `LogicDeleteUtil`                                                                                    | 动态开关与便捷关闭逻辑删除               |
+| 动态值       | `cn.xbatis.core.dynamic`        | `XbatisGlobalConfig#setDynamicValue`                                                                                      | 定义 `{NOW}`、`{TODAY}` 等动态填充值 |
+| 代码生成      | `cn.xbatis.codegen`             | `GeneratorConfig` 及子配置                                                                                                    | 一站式生成实体、Mapper、Service 等骨架  |
 
 ---
 
 ## 3. 快速入门与依赖
 
 ### 3.1 Maven 坐标示例
+
 ```xml
 <dependencyManagement>
   <dependencies>
@@ -72,6 +74,7 @@
 ```
 
 ### 3.2 数据源配置示例
+
 ```yaml
 spring:
   datasource:
@@ -81,6 +84,7 @@ spring:
 ```
 
 ### 3.3 启动骨架示例
+
 ```java
 @SpringBootApplication
 @MapperScan("com.xx.xxx.mapper")
@@ -179,6 +183,7 @@ public class XbatisApplication {
   ```
 - 更多配置与 `mybatis-solon-plugin` 保持一致，可继续使用链式 DSL、分表、多租户等特性。
   实体类、Mapper、Service 的典型写法：
+
 ```java
 @Data
 @Table
@@ -224,7 +229,8 @@ public class TestService {
     - `setDatabaseCaseRule(DatabaseCaseRule rule)` 或 `setDatabaseCaseRule(DbType, rule)`：设定大小写风格。
     - `setDynamicValue("{KEY}", (clazz, type) -> {...})` 与 `getDynamicValue(clazz, type, key)`：挂载并调用动态填充值。
     - `setLogicDeleteInterceptor((entity, update) -> {...})` 与 `setLogicDeleteSwitch(boolean)`：统一处理逻辑删除附加字段与开关。
-    - `addMapperMethodInterceptor(new MyInterceptor())`、`enableInterceptOfficialMapperMethod()`：注册自定义 Mapper 方法拦截器，并可扩展至框架默认方法。
+    - `addMapperMethodInterceptor(new MyInterceptor())`、`enableInterceptOfficialMapperMethod()`：注册自定义 Mapper
+      方法拦截器，并可扩展至框架默认方法。
     - `setPagingProcessor(DbType, PagingProcessor)`：自定义不同数据库的分页处理。
 
 ---
@@ -233,14 +239,15 @@ public class TestService {
 
 ### 5.1 `@Table`（`cn.xbatis.db.annotations.Table`）
 
-| 属性 | 是否可空 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `value` | 是 | – | 表名，默认按实体名驼峰转下划线，可覆盖 |
-| `schema` | 是 | – | 指定数据库 schema |
-| `columnNameRule` | 是 | `columnNameRule.IGNORE` | 定义列名规则，未显式配置列名时按规则生成 |
-| `databaseCaseRule` | 是 | `DatabaseCaseRule.DEFAULT` | 控制大小写，可结合 `XbatisGlobalConfig.setDatabaseCaseRule(...)` 全局/分库设置 |
+| 属性                 | 是否可空 | 默认值                        | 说明                                                              |
+|--------------------|------|----------------------------|-----------------------------------------------------------------|
+| `value`            | 是    | –                          | 表名，默认按实体名驼峰转下划线，可覆盖                                             |
+| `schema`           | 是    | –                          | 指定数据库 schema                                                    |
+| `columnNameRule`   | 是    | `columnNameRule.IGNORE`    | 定义列名规则，未显式配置列名时按规则生成                                            |
+| `databaseCaseRule` | 是    | `DatabaseCaseRule.DEFAULT` | 控制大小写，可结合 `XbatisGlobalConfig.setDatabaseCaseRule(...)` 全局/分库设置 |
 
 示例：
+
 ```java
 @Table(databaseCaseRule = DatabaseCaseRule.UPPERCASE)
 public class SysUser { }
@@ -248,33 +255,34 @@ public class SysUser { }
 
 ### 5.2 `@TableId`（`cn.xbatis.db.annotations.TableId`）
 
-| 属性 | 是否可空 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `value` | 是 | `IdAutoType.AUTO` | 主键策略，支持 `AUTO`, `NONE`, `SQL`, `GENERATOR` |
-| `dbType` | 是 | – | 目标数据库类型，便于多库差异化配置 |
-| `sql` | 是 | – | `value = SQL` 时必填，自定义取号语句 |
-| `generatorName` | 是 | – | `value = GENERATOR` 时必填，对应注册的 ID 生成器 |
+| 属性              | 是否可空 | 默认值               | 说明                                         |
+|-----------------|------|-------------------|--------------------------------------------|
+| `value`         | 是    | `IdAutoType.AUTO` | 主键策略，支持 `AUTO`, `NONE`, `SQL`, `GENERATOR` |
+| `dbType`        | 是    | –                 | 目标数据库类型，便于多库差异化配置                          |
+| `sql`           | 是    | –                 | `value = SQL` 时必填，自定义取号语句                  |
+| `generatorName` | 是    | –                 | `value = GENERATOR` 时必填，对应注册的 ID 生成器       |
 
 可重复标注适配多种数据库的主键策略。
 
 ### 5.3 `@TableField`（`cn.xbatis.db.annotations.TableField`）
 
 | 属性                             | 是否可空 | 默认值     | 说明                                   |
-|--------------------------------| --- |---------|--------------------------------------|
-| `value`                        | 是 | –       | 列名，遵循驼峰转下划线可省略                       |
-| `select`                       | 是 | `true`  | `select(Entity.class)` 时是否参与查询       |
-| `insert`                       | 是 | `true`  | `save` 时是否写入                         |
-| `update`                       | 是 | `true`  | `update` 时是否更新，强制时会更新                |
-| `neverUpdate`                  | 是 | `false` | 永不update，除非用UpdateChain指定才会更新，强制也不更新 |
-| `jdbcType`                     | 是 | –       | 指定 JDBC 类型                           |
-| `typeHandler`                  | 是 | –       | 指定类型处理器                              |
-| `defaultValue`                 | 是 | –       | 插入默认值，支持静态与动态（如 `{NOW}`）             |
-| `updateDefaultValue`           | 是 | –       | 更新默认值                                |
-| `defaultValueFillAlways`       | 是 | `false` | 插入时是否始终填充 `defaultValue`             |
-| `updateDefaultValueFillAlways` | 是 | `false` | 更新时是否始终填充 `updateDefaultValue`       |
-| `exists`                       | 是 | `true`  | 是否真实存在于表中，`false` 可用于非持久化字段          |
+|--------------------------------|------|---------|--------------------------------------|
+| `value`                        | 是    | –       | 列名，遵循驼峰转下划线可省略                       |
+| `select`                       | 是    | `true`  | `select(Entity.class)` 时是否参与查询       |
+| `insert`                       | 是    | `true`  | `save` 时是否写入                         |
+| `update`                       | 是    | `true`  | `update` 时是否更新，强制时会更新                |
+| `neverUpdate`                  | 是    | `false` | 永不update，除非用UpdateChain指定才会更新，强制也不更新 |
+| `jdbcType`                     | 是    | –       | 指定 JDBC 类型                           |
+| `typeHandler`                  | 是    | –       | 指定类型处理器                              |
+| `defaultValue`                 | 是    | –       | 插入默认值，支持静态与动态（如 `{NOW}`）             |
+| `updateDefaultValue`           | 是    | –       | 更新默认值                                |
+| `defaultValueFillAlways`       | 是    | `false` | 插入时是否始终填充 `defaultValue`             |
+| `updateDefaultValueFillAlways` | 是    | `false` | 更新时是否始终填充 `updateDefaultValue`       |
+| `exists`                       | 是    | `true`  | 是否真实存在于表中，`false` 可用于非持久化字段          |
 
 ### 5.4 `@LogicDelete`（`cn.xbatis.db.annotations.LogicDelete`）
+
 逻辑删除注解
 | 属性 | 是否可空 | 默认值 | 说明 |
 | --- | --- | --- | --- |
@@ -284,11 +292,13 @@ public class SysUser { }
 结合 `XbatisGlobalConfig.setLogicDeleteInterceptor` 可额外填充删除人等字段。
 
 #### 5.4.2 `@LogicDeleteTime`（`cn.xbatis.db.annotations.LogicDeleteTime`）
+
 逻辑删除时间字段名，支持 `LocalDateTime`、`Date`、`Long`(毫秒)、`Integer`(秒)
 
 ### 5.5 `@TenantId`（`cn.xbatis.db.annotations.TenantId`）
 
-无额外属性。用于标记实体字段为租户 ID，框架在 `save/update/delete` 时自动填充，并在查询条件中追加租户约束。通过 `TenantContext.registerTenantGetter`（`cn.xbatis.core.tenant.TenantContext`）指定租户来源。
+无额外属性。用于标记实体字段为租户 ID，框架在 `save/update/delete` 时自动填充，并在查询条件中追加租户约束。通过
+`TenantContext.registerTenantGetter`（`cn.xbatis.core.tenant.TenantContext`）指定租户来源。
 
 ### 5.6 `@Version`（`cn.xbatis.db.annotations.Version`）
 
@@ -296,10 +306,10 @@ public class SysUser { }
 
 ### 5.7 生命周期注解：`@OnInsert`（`cn.xbatis.db.annotations.OnInsert`）、`@OnUpdate`（`cn.xbatis.db.annotations.OnUpdate`）
 
-| 注解 | 属性 | 是否可空 | 默认值 | 说明 |
-| --- | --- | --- | --- | --- |
-| `@OnInsert` | `value` | 是 | – | 指定插入前监听器，实现 `OnInsertListener<T>` |
-| `@OnUpdate` | `value` | 是 | – | 指定更新前监听器，实现 `OnUpdateListener<T>` |
+| 注解          | 属性      | 是否可空 | 默认值 | 说明                                |
+|-------------|---------|------|-----|-----------------------------------|
+| `@OnInsert` | `value` | 是    | –   | 指定插入前监听器，实现 `OnInsertListener<T>` |
+| `@OnUpdate` | `value` | 是    | –   | 指定更新前监听器，实现 `OnUpdateListener<T>` |
 
 除局部监听外，可通过 `XbatisGlobalConfig.setGlobalOnInsertListener`、`setGlobalOnUpdateListener` 注册全局处理。
 
@@ -309,7 +319,7 @@ public class SysUser { }
 - `@ResultField`
 
   | 属性 | 是否可空 | 默认值 | 说明 |
-    | --- | --- | --- | --- |
+      | --- | --- | --- | --- |
   | `value` | 是 | – | 可指定一个或多个列名，支持从多个列取值 |
   | `jdbcType` | 是 | – | 指定 JDBC 类型 |
   | `typeHandler` | 是 | – | 指定类型处理器 |
@@ -317,7 +327,7 @@ public class SysUser { }
 - `@Fetch`
 
   | 属性 | 是否可空 | 默认值 | 说明 |
-    | --- | --- | --- | --- |
+      | --- | --- | --- | --- |
   | `column` | 是 | – | 指定列作为匹配条件；与 `property` 二选一，优先 `column` |
   | `property` | 否 | – | 源实体属性名 |
   | `source` | 否 | – | 源实体类型 |
@@ -335,7 +345,10 @@ public class SysUser { }
   | `nullFillValue` | 是 | `null` | 当结果为空时的填充值 |
   | `otherConditions` | 是 | – | 额外条件，格式如 `[{Type} = 2]` |
 
-- **AI 生成建议**：推荐直接使用 `@ResultEntity` 及其系列注解（`@ResultField`、`@NestedResultEntity`、`@NestedResultEntityField`、`@ResultCalcField`、`@Fetch`、`@PutEnumValue`、`@PutValue` 等）定义 VO，作为查询结果返回，可省去二次转换逻辑并保持结构稳定。注意这些注解仅适用于 VO/DTO，禁止标注在实体类上；类似的 `@TypeHandler`, `@Put***` 注解也应限定在返回对象中，以避免污染实体模型。
+- **AI 生成建议**：推荐直接使用 `@ResultEntity` 及其系列注解（`@ResultField`、`@NestedResultEntity`、
+  `@NestedResultEntityField`、`@ResultCalcField`、`@Fetch`、`@PutEnumValue`、`@PutValue` 等）定义
+  VO，作为查询结果返回，可省去二次转换逻辑并保持结构稳定。注意这些注解仅适用于 VO/DTO，禁止标注在实体类上；类似的
+  `@TypeHandler`, `@Put***` 注解也应限定在返回对象中，以避免污染实体模型。
 
 - `@NestedResultEntity`（`cn.xbatis.db.annotations.NestedResultEntity`）  
   | 属性 | 是否可空 | 默认值 | 说明 |
@@ -383,14 +396,15 @@ public class SysUser { }
   | `defaultValue` | 是 | – | 默认值 |
   支持基于多个字段注入动态值，方法返回结果会按照 `factory+method+参数` 做 session 级缓存。
 
-上述注解可组合使用：`@ResultEntity` 定义整体映射、`@NestedResultEntity` 构建嵌套结构、`@ResultCalcField` 生成聚合列、`@PutEnumValue`/`@PutValue` 注入附加信息，从而在 VO 中获得接近实体的自动装配体验。
+上述注解可组合使用：`@ResultEntity` 定义整体映射、`@NestedResultEntity` 构建嵌套结构、`@ResultCalcField` 生成聚合列、
+`@PutEnumValue`/`@PutValue` 注入附加信息，从而在 VO 中获得接近实体的自动装配体验。
 
 ### 5.9 分表注解（`@SplitTable`、`@SplitTableKey`、`TableSplitter` 均位于 `cn.xbatis.db.annotations` 包）
 
 - `@SplitTable`
 
   | 属性 | 是否可空 | 默认值 | 说明 |
-    | --- | --- | --- | --- |
+      | --- | --- | --- | --- |
   | `value` | 否 | – | 指定 `TableSplitter` 实现类，用来根据分表键计算真实表名 |
 
 - `@SplitTableKey`：标记实体中的分表字段，仅支持单列，用于在运行时传入分片值。
@@ -402,44 +416,46 @@ boolean support(Class<?> type);
 String split(String sourceTableName, Object splitValue);
 ```
 
-`support` 用于声明支持的分片键类型，`split` 根据原始表名和分片值生成真实表名（例如 `sys_user_0`~`sys_user_9`）。查询或更新时需包含分表键条件，框架才能定位具体表。
+`support` 用于声明支持的分片键类型，`split` 根据原始表名和分片值生成真实表名（例如 `sys_user_0`~`sys_user_9`
+）。查询或更新时需包含分表键条件，框架才能定位具体表。
 
 ### 5.10 条件注解组合
 
 #### `@ConditionTarget`（`cn.xbatis.db.annotations.ConditionTarget`）
 
-| 属性 | 是否可空 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `value` | 否 | – | 目标实体类，未指定时默认取当前类 |
-| `logic` | 是 | `Logic.AND` | 全局默认逻辑，可切换为 `Logic.OR` 实现顶层 OR 组合 |
+| 属性      | 是否可空 | 默认值         | 说明                                |
+|---------|------|-------------|-----------------------------------|
+| `value` | 否    | –           | 目标实体类，未指定时默认取当前类                  |
+| `logic` | 是    | `Logic.AND` | 全局默认逻辑，可切换为 `Logic.OR` 实现顶层 OR 组合 |
 
 #### `@Condition`（`cn.xbatis.db.annotations.Condition`）
 
-| 属性 | 是否可空 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `value` | 是 | `Condition.Type.EQ` | 条件类型，如 `LIKE`、`GT`、`BETWEEN`、`EXISTS` 等 |
-| `target` | 是 | – | 目标实体类，默认继承 `@ConditionTarget` 或当前类 |
-| `property` | 是 | – | 目标实体属性名，默认与字段同名 |
-| `storey` | 是 | – | 源实体存储层级，用于嵌套对象 |
-| `likeMode` | 是 | – | `LEFT`、`RIGHT`、`BOTH` 等模糊匹配模式 |
-| `toEndDayTime` | 是 | `false` | 当类型为 `LTE` 或 `BETWEEN` 第二个参数时，自动补齐到当天末秒 |
-| `defaultValue` | 是 | – | 默认值，可为基础类型或动态键（如 `{NOW}`、`{TODAY}`、自定义值） |
+| 属性             | 是否可空 | 默认值                 | 说明                                       |
+|----------------|------|---------------------|------------------------------------------|
+| `value`        | 是    | `Condition.Type.EQ` | 条件类型，如 `LIKE`、`GT`、`BETWEEN`、`EXISTS` 等  |
+| `target`       | 是    | –                   | 目标实体类，默认继承 `@ConditionTarget` 或当前类       |
+| `property`     | 是    | –                   | 目标实体属性名，默认与字段同名                          |
+| `storey`       | 是    | –                   | 源实体存储层级，用于嵌套对象                           |
+| `likeMode`     | 是    | –                   | `LEFT`、`RIGHT`、`BOTH` 等模糊匹配模式            |
+| `toEndDayTime` | 是    | `false`             | 当类型为 `LTE` 或 `BETWEEN` 第二个参数时，自动补齐到当天末秒  |
+| `defaultValue` | 是    | –                   | 默认值，可为基础类型或动态键（如 `{NOW}`、`{TODAY}`、自定义值） |
 
 #### `@Conditions`（`cn.xbatis.db.annotations.Conditions`）
 
-| 属性 | 是否可空 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `value` | 是 | – | 多个 `@Condition` 组合，常用于关键字多列搜索 |
-| `logic` | 是 | `Logic.OR` | 组合条件间的逻辑运算符 |
+| 属性      | 是否可空 | 默认值        | 说明                            |
+|---------|------|------------|-------------------------------|
+| `value` | 是    | –          | 多个 `@Condition` 组合，常用于关键字多列搜索 |
+| `logic` | 是    | `Logic.OR` | 组合条件间的逻辑运算符                   |
 
 #### `@ConditionGroup`（`cn.xbatis.db.annotations.ConditionGroup`）
 
-| 属性 | 是否可空 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `value` | 是 | – | 同组字段集合 |
-| `logic` | 是 | `Logic.AND` | 组内条件的逻辑关系，可改为 `Logic.OR` |
+| 属性      | 是否可空 | 默认值         | 说明                       |
+|---------|------|-------------|--------------------------|
+| `value` | 是    | –           | 同组字段集合                   |
+| `logic` | 是    | `Logic.AND` | 组内条件的逻辑关系，可改为 `Logic.OR` |
 
-DTO 若实现 `ObjectConditionLifeCycle`（`cn.xbatis.core.sql.ObjectConditionLifeCycle`），可在 `beforeBuildCondition()` 中做预处理（如根据 `timeType` 注入近 7 天区间），与上述注解协作构建多层嵌套条件。
+DTO 若实现 `ObjectConditionLifeCycle`（`cn.xbatis.core.sql.ObjectConditionLifeCycle`），可在 `beforeBuildCondition()`
+中做预处理（如根据 `timeType` 注入近 7 天区间），与上述注解协作构建多层嵌套条件。
 
 ---
 
@@ -449,9 +465,12 @@ DTO 若实现 `ObjectConditionLifeCycle`（`cn.xbatis.core.sql.ObjectConditionLi
 
 `MybatisMapper<T>`（`cn.xbatis.core.mybatis.mapper.MybatisMapper`）默认提供：
 
-- **查询**：`get`, `list`, `listAll`, `listByIds`, `cursor`, `exists`, `count`, `mapWithKey`, `page` 等，可直接接收 Lambda `Where` 闭包。
-- **新增**：`save`, `saveOrUpdate`, `saveBatch`, `saveModel`, `saveModelBatch`, `saveBatch(list, fields)` 等，支持实体和 `Model`。
-- **更新**：`update`, `updateBatch`, `update(model, where)`, `update(list, forceFields)`, `saveOrUpdate`，并支持指定强制更新字段和批量 `CASE WHEN` 更新。
+- **查询**：`get`, `list`, `listAll`, `listByIds`, `cursor`, `exists`, `count`, `mapWithKey`, `page` 等，可直接接收 Lambda
+  `Where` 闭包。
+- **新增**：`save`, `saveOrUpdate`, `saveBatch`, `saveModel`, `saveModelBatch`, `saveBatch(list, fields)` 等，支持实体和
+  `Model`。
+- **更新**：`update`, `updateBatch`, `update(model, where)`, `update(list, forceFields)`, `saveOrUpdate`，并支持指定强制更新字段和批量
+  `CASE WHEN` 更新。
 - **删除**：`deleteById`, `deleteByIds`, `delete(entity)`, `delete(where)`, `deleteAll`，以及 `DeleteChain`。
 - **单 Mapper 模式**（适合实体众多、希望统一数据访问层的场景）：
     1. **用户自己定义 MybatisBasicMapper Mapper 接口和 继承 BasicMapper **
@@ -510,18 +529,19 @@ DTO 若实现 `ObjectConditionLifeCycle`（`cn.xbatis.core.sql.ObjectConditionLi
 
 xbatis 的 `save`/`saveBatch`/`InsertChain` 支持跨数据库的重复键策略，允许在主键或唯一约束冲突时选择“忽略”或“更新”。
 
-| 数据库       | 重复时忽略 | 重复时修改 |
-|-------------|------------|------------|
-| MySQL       | ✅          | ✅          |
-| MariaDB     | ✅          | ✅          |
-| Oracle      | ✅          | ❌          |
-| H2          | ✅          | ✅          |
-| PostgreSQL  | ✅          | ✅          |
-| Kingbase    | ✅          | ✅          |
-| SQLite      | ✅          | ✅          |
-| openGauss   | ✅          | ✅          |
+| 数据库        | 重复时忽略 | 重复时修改 |
+|------------|-------|-------|
+| MySQL      | ✅     | ✅     |
+| MariaDB    | ✅     | ✅     |
+| Oracle     | ✅     | ❌     |
+| H2         | ✅     | ✅     |
+| PostgreSQL | ✅     | ✅     |
+| Kingbase   | ✅     | ✅     |
+| SQLite     | ✅     | ✅     |
+| openGauss  | ✅     | ✅     |
 
-`onConflict` 接口位于 `cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy`/`SaveBatchStrategy` 以及链式 SQL 的 `db.sql.api.cmd.executor.IInsert`，内部基于 `IConflictAction` 构建数据库兼容语句。
+`onConflict` 接口位于 `cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy`/`SaveBatchStrategy` 以及链式 SQL 的
+`db.sql.api.cmd.executor.IInsert`，内部基于 `IConflictAction` 构建数据库兼容语句。
 
 #### 单条写入
 
@@ -574,11 +594,14 @@ InsertChain.of(sysUserMapper)
 
 ### 7.1 QueryChain
 
-链式查询引擎 `cn.xbatis.core.chain.QueryChain`，可自由组合 `select`, `from`, `join`, `where`, `groupBy`, `having`, `orderBy`、分页、嵌套条件、子查询等。
+链式查询引擎 `cn.xbatis.core.chain.QueryChain`，可自由组合 `select`, `from`, `join`, `where`, `groupBy`, `having`,
+`orderBy`、分页、嵌套条件、子查询等。
 
-- **AI 生成建议**：在自动生成的业务代码中，应优先使用 xbatis 内置的条件忽略能力（如 `.forSearch(true)` 或 `eq(field, value, predicate)`或 `eq(boolean,field, value)`）替代手写 `if/else` 去拼接 `WHERE` 条件，既能保持代码整洁，又可避免遗漏校验。
+- **AI 生成建议**：在自动生成的业务代码中，应优先使用 xbatis 内置的条件忽略能力（如 `.forSearch(true)` 或
+  `eq(field, value, predicate)`或 `eq(boolean,field, value)`）替代手写 `if/else` 去拼接 `WHERE` 条件，既能保持代码整洁，又可避免遗漏校验。
 
 典型片段：
+
 ```java
 SysUserRoleVo vo = QueryChain.of(sysUserMapper)
     .select(SysUser.class, SysRole.class)
@@ -594,6 +617,7 @@ SysUserRoleVo vo = QueryChain.of(sysUserMapper)
 ```
 
 关键能力：
+
 - `select` 支持实体、VO、Lambda 字段、函数包装、忽略字段。
 - `join` 支持 `inner`, `left`, `right` 多种模式，可利用 `@ForeignKey` 自动识别关联条件。
 - `andNested` / `orNested` 可构造括号条件；`and()` 与 `or()` 控制后续拼接逻辑。
@@ -607,7 +631,8 @@ SysUserRoleVo vo = QueryChain.of(sysUserMapper)
     - `isNull` / `isNotNull`：为空 / 非空
     - `empty` / `notEmpty`：空字符串 / 非空字符串
     - `exists` / `notExists`：子查询存在 / 不存在
-      可结合第三个参数传入 Predicate 控制是否拼接（如 `eq(SysUser::getId, id, Objects::nonNull)`），也可在链式上使用 `.ignoreNullValueInCondition(true)` 等全局开关。
+      可结合第三个参数传入 Predicate 控制是否拼接（如 `eq(SysUser::getId, id, Objects::nonNull)`），也可在链式上使用
+      `.ignoreNullValueInCondition(true)` 等全局开关。
 - `forSearch(true)` 一次性启用忽略 `null`、空字符串、`trim` 行为，适合搜索表单。
 - `returnType(...)` 建议放在条件、limit构建后面、`get`/`list`/`paging`/`count` 终止方法前立即调用 returnType，形成统一的调用规范。
 - `where(queryObject)` 将带注解的对象转换成条件。
@@ -617,6 +642,7 @@ SysUserRoleVo vo = QueryChain.of(sysUserMapper)
 ### 7.2 InsertChain
 
 插入链 `cn.xbatis.core.chain.InsertChain` 支持 `INSERT ... VALUES` 与 `INSERT ... SELECT` 混合构建：
+
 ```java
 InsertChain.of(sysUserMapper)
     .insert(SysUser.class)
@@ -627,11 +653,13 @@ InsertChain.of(sysUserMapper)
     )
     .execute();
 ```
+
 也可通过 `values` 多次追加批量数据。
 
 ### 7.3 UpdateChain
 
 更新链 `cn.xbatis.core.chain.UpdateChain` 支持动态 `set`、函数自增、`RETURNING`、条件构建：
+
 ```java
 SysUser user = UpdateChain.of(sysUserMapper)
     .update(SysUser.class)
@@ -646,6 +674,7 @@ SysUser user = UpdateChain.of(sysUserMapper)
 ### 7.4 DeleteChain
 
 删除链 `cn.xbatis.core.chain.DeleteChain` 构建删除条件并支持 `RETURNING` 查看被删除数据：
+
 ```java
 List<SysUser> removed = DeleteChain.of(sysUserMapper)
     .in(SysUser::getId, 1, 2)
@@ -665,6 +694,7 @@ List<SysUser> removed = DeleteChain.of(sysUserMapper)
 - 若实现 `ObjectConditionLifeCycle`，可通过 `beforeBuildCondition()` 在拼接前处理入参（例如根据枚举生成日期区间）；
 - 排序同理，使用 `@Condition` 的排序类型结合 `objToOrderBy` 工具即可自动生成 `ORDER BY`;
 - 示例：
+
 ```java
 @Data
 @ConditionTarget(SysUser.class)
@@ -690,13 +720,17 @@ public class QueryREQ {
 ## 9. 数据库函数与 SQL 模板
 
 - 通过 `import static db.sql.api.impl.cmd.Methods.*;` 引入统一函数。
-- 支持的函数涵盖 `count`, `sum`, `avg`, `min`, `max`, `abs`, `ceil`, `floor`, `rand`, `sign`, `pi`, `truncate`, `round`, `pow`, `sqrt`, `exp`, `mod`, `log`, `sin`, `cos`, `tan`, `charLength`, `concat`, `upper`, `lower`, `substring`, `currentDate`, `dateDiff`, `dateAdd`, `inetAton` 等，以及 MySQL 专属 `findInSet`, `md5`, `jsonExtract`, `groupConcat` 等。
+- 支持的函数涵盖 `count`, `sum`, `avg`, `min`, `max`, `abs`, `ceil`, `floor`, `rand`, `sign`, `pi`, `truncate`, `round`,
+  `pow`, `sqrt`, `exp`, `mod`, `log`, `sin`, `cos`, `tan`, `charLength`, `concat`, `upper`, `lower`, `substring`,
+  `currentDate`, `dateDiff`, `dateAdd`, `inetAton` 等，以及 MySQL 专属 `findInSet`, `md5`, `jsonExtract`, `groupConcat`
+  等。
 - SQL 模板体系：
     - `Methods.tpl`：普通 SQL，占位 `{0}`、`{1}` 并自动替换。
     - `Methods.fTpl`：函数模板，可继续链式调用框架函数。
     - `Methods.cTpl`：条件模板，适合构造复杂 `WHERE` 片段。
     - 模板兼容单引号自动转义，可使用 `Methods.cTpl(true, "...", ...)` 让模板自动替换 `'`。
 - 示例：
+
 ```java
 QueryChain.of(sysUserMapper)
     .select(SysUser::getRoleId, c -> Methods.tpl("count({0})+{1}", c, "1"))
@@ -711,6 +745,7 @@ QueryChain.of(sysUserMapper)
 ### 10.1 多数据库差异化
 
 - `QueryChain`、`UpdateChain`、`DeleteChain`、`InsertChain` 均可调用 `dbAdapt`：
+
 ```java
 QueryChain.of(sysUserMapper)
     .select(SysUser::getId)
@@ -721,6 +756,7 @@ QueryChain.of(sysUserMapper)
     )
     .get();
 ```
+
 - 也可直接在 Mapper 层使用 `mapper.dbAdapt(selector -> {...})` 编写完全不同流程。
 
 ### 10.2 动态数据源路由
@@ -729,7 +765,8 @@ QueryChain.of(sysUserMapper)
 - `spring.ds.routing.*` 可定义多数据源、主从、副本分组、连接池属性（支持 Hikari、Druid、自定义）。
 - 使用 `@DS("master")`、`@DS("slave")` 注解在类或方法上切换数据源。
 - 注意事项：
-    - 事务传播：在主从切换方法间需使用 `@Transactional(propagation = Propagation.NOT_SUPPORTED)` 或 `REQUIRES_NEW` 避免事务锁定数据源。
+    - 事务传播：在主从切换方法间需使用 `@Transactional(propagation = Propagation.NOT_SUPPORTED)` 或 `REQUIRES_NEW`
+      避免事务锁定数据源。
     - 同类内部调用需通过 `AopContext.currentProxy()` 或拆分类。
     - 可通过 `spring.ds.jdbc-config-decrypt=true` 与 `JdbcConfigDecryptor` 接口实现 JDBC 配置加密。
     - 支持分布式事务（如 Seata）集成：`spring.ds.seata=true`。
@@ -741,7 +778,8 @@ QueryChain.of(sysUserMapper)
 ### 11.1 多租户
 
 - 实体字段使用 `@TenantId`，自动在写入时填充租户 ID，查询/更新/删除自动附加租户条件。
-- 通过 `TenantContext.registerTenantGetter(() -> tenantId)`（`cn.xbatis.core.tenant.TenantContext`）注册租户获取器，支持返回单个 ID 或 `TenantId`（多租户集合）。
+- 通过 `TenantContext.registerTenantGetter(() -> tenantId)`（`cn.xbatis.core.tenant.TenantContext`）注册租户获取器，支持返回单个
+  ID 或 `TenantId`（多租户集合）。
 - 若需要临时关闭租户限制，可让注册函数返回 `null`。
 - 支持 ThreadLocal 自定义：可封装 `TenantTLUtil`，在拦截器或过滤器中 `set` 或 `clear`，再在 `TenantContext` 回调中返回。
 
@@ -751,6 +789,7 @@ QueryChain.of(sysUserMapper)
 - `@LogicDeleteTime` 设置逻辑删除时间字段。
 - `XbatisGlobalConfig.setLogicDeleteInterceptor` 可在删除时自动填充操作人等字段。
 - 全局开关 `setLogicDeleteSwitch(true/false)`，局部可使用：
+
 ```java
 try (LogicDeleteSwitch ignored = LogicDeleteSwitch.with(false)) {
     mapper.getById(1);
@@ -758,6 +797,7 @@ try (LogicDeleteSwitch ignored = LogicDeleteSwitch.with(false)) {
 // 或
 LogicDeleteUtil.execute(false, () -> mapper.getById(1));
 ```
+
 - 注意：`DeleteChain` 默认执行物理删除，只有 `Mapper` 的删除方法受逻辑删除控制。
 
 ### 11.3 乐观锁
@@ -769,7 +809,8 @@ LogicDeleteUtil.execute(false, () -> mapper.getById(1));
 
 - 在实体上使用 `@SplitTable(TableSplitterClass.class)` 声明分表实体；`value` 指向实现了 `TableSplitter` 接口的分隔器。
 - 使用 `@SplitTableKey` 标记分表键字段，当前仅支持单列分片。
-- `TableSplitter#support(Class<?>)` 用于声明可接受的分片键类型；`TableSplitter#split(String table, Object key)` 根据原始表名与键值返回真实表名，例如 `sys_user_3`。
+- `TableSplitter#support(Class<?>)` 用于声明可接受的分片键类型；`TableSplitter#split(String table, Object key)`
+  根据原始表名与键值返回真实表名，例如 `sys_user_3`。
 - 链式查询、更新、删除与普通实体无差异，但必须在条件中包含分表键，否则无法定位真实表。
 - 可结合 `QueryChain`, `UpdateChain` 等链式 API，传入分表键并复用多数据库、租户、逻辑删除等特性。
 
@@ -779,13 +820,16 @@ LogicDeleteUtil.execute(false, () -> mapper.getById(1));
 
 - 内置动态值：`{BLANK}`、`{NOW}`（支持 `LocalDateTime`, `LocalDate`, `Date`, `Long`, `Integer`, `String`）、`{TODAY}`（日期区间）。
 - 自定义动态值示例：
+
 ```java
 XbatisGlobalConfig.setDynamicValue("{day7}", (clazz, type) -> new LocalDate[]{
     LocalDate.now().minusDays(7), LocalDate.now()
 });
 ```
+
 - 在对象条件中可通过 `XbatisGlobalConfig.getDynamicValue(clazz, LocalDate[].class, "{day7}")` 获取并赋值。
 - 全局监听：
+
 ```java
 XbatisGlobalConfig.setGlobalOnInsertListener(entity -> {
     // 统一填充创建人等
@@ -801,6 +845,7 @@ XbatisGlobalConfig.setGlobalOnUpdateListener(entity -> {
 
 - 模板机制允许重用 SQL 片段、函数包装、条件组合，避免字符串硬编码。
 - 框架仍兼容传统 MyBatis XML，可通过命名约定在单 Mapper 模式下调用：
+
 ```xml
 <mapper namespace="xxx.MybatisBasicMapper">
   <select id="SysRole:selectByIds" resultType="com.xbatis.core.test.DO.SysRole">
@@ -810,13 +855,16 @@ XbatisGlobalConfig.setGlobalOnUpdateListener(entity -> {
   </select>
 </mapper>
 ```
+
 调用方式：
+
 ```java
 List<SysRole> roleList = mybatisBasicMapper.withSqlSession(
     SysRole.class, "selectByIds", params,
     (statement, p, sqlSession) -> sqlSession.selectList(statement, p)
 );
 ```
+
 - XML 可与链式 DSL 协同使用，按需在链式查询中引用模板或在 XML 中传递动态参数。
 
 ---
@@ -843,7 +891,9 @@ List<SysRole> roleList = mybatisBasicMapper.withSqlSession(
 
 ## 16. 启动时安全检查（AI 项目必选）
 
-无论是手工接入还是 AI 自动生成项目骨架，都强烈建议在开发阶段开启 POJO 安全检查：xbatis 会在启动时对 VO（`@ResultEntity`）、Model（实现 `cn.xbatis.core.mvc.Model`）、条件/排序对象（`@ConditionTarget`、`@OrderByTarget`）进行结构校验，提前发现字段映射或注解遗漏。AI Agent 在生成代码时，务必同步生成以下配置，避免遗漏：
+无论是手工接入还是 AI 自动生成项目骨架，都强烈建议在开发阶段开启 POJO 安全检查：xbatis 会在启动时对 VO（`@ResultEntity`
+）、Model（实现 `cn.xbatis.core.mvc.Model`）、条件/排序对象（`@ConditionTarget`、`@OrderByTarget`）进行结构校验，提前发现字段映射或注解遗漏。AI
+Agent 在生成代码时，务必同步生成以下配置，避免遗漏：
 
 ```java
 // 必选：主应用入口启用 POJO 检查
@@ -874,7 +924,7 @@ public class XbatisSafeCheckConfig {
 - 注解属性说明（`org.mybatis.spring.boot.autoconfigure.XbatisPojoCheckScan`）：
 
   | 属性名 | 说明 |
-    | --- | --- |
+      | --- | --- |
   | `basePackages` | 基础包扫描路径 |
   | `modelPackages` | Model 实现所在包，缺省时使用 `basePackages` |
   | `resultEntityPackages` | VO（`@ResultEntity`）包路径，缺省时使用 `basePackages` |
@@ -902,7 +952,8 @@ public class XbatisSafeCheckConfig {
 ## 17. 常见排查与实践技巧
 
 - **日志调试**：在日志配置中添加 `<logger name="cn.xbatis" level="trace"/>` 可打印生成 SQL 与链路信息。
-- **忽略空值条件**：`QueryChain` 提供 `.ignoreNullValueInCondition(true)`, `.ignoreEmptyInCondition(true)`, `.trimStringInCondition(true)` 或直接 `.forSearch(true)`.
+- **忽略空值条件**：`QueryChain` 提供 `.ignoreNullValueInCondition(true)`, `.ignoreEmptyInCondition(true)`,
+  `.trimStringInCondition(true)` 或直接 `.forSearch(true)`.
 - **安全更新**：`UpdateChain.set` 支持传入函数 `c -> c.plus(1)` 等，用于自增版本或计数字段。
 - **批量能力**：通过 `saveBatch`, `updateBatch`, `InsertChain.values` 等高性能批量 API，或 `batchOpt` 模块进一步优化批处理。
 - **枚举与字典**：`@PutEnumValue` 可在返回结果中注入枚举文本，`@ResultField` 支持字段级结果映射，`@Fetch` 可自动级联查询。
@@ -913,7 +964,8 @@ public class XbatisSafeCheckConfig {
 
 ## 17. 面向 AI Agent 的实用建议
 
-- **检索策略**：优先考虑 `QueryChain`、`InsertChain`、`UpdateChain`、`DeleteChain` 与注解组合的解决方案，覆盖绝大多数 CRUD 与统计场景。
+- **检索策略**：优先考虑 `QueryChain`、`InsertChain`、`UpdateChain`、`DeleteChain` 与注解组合的解决方案，覆盖绝大多数 CRUD
+  与统计场景。
 - **代码生成建议**：
     - 统一使用方法引用，如 `SysUser::getId`，避免硬编码列名。
     - 搜索接口调用 `.forSearch(true)` 或使用带注解的 DTO，以减少手动判断空值。
@@ -930,7 +982,9 @@ public class XbatisSafeCheckConfig {
 ## 附录：开发提效速查（源自 `fast-dev.md`，AI 项目必须考虑）
 
 ### 指定数据库类型
+
 为减少自动识别的开销，可在配置中显式声明 `databaseId`：
+
 ```yaml
 mybatis:
   configuration:
@@ -938,16 +992,20 @@ mybatis:
 ```
 
 ### 链式 API 的省略写法（AI 代码生成务必采用）
+
 - 若查询、`from`、`returnType` 都针对当前 Mapper 的实体类，可省略 `select`/`from`/`returnType`：
+
 ```java
 SysUser user = QueryChain.of(sysUserMapper)
         .eq(SysUser::getId, 1)
         .get();
 ```
+
 - `select(VO.class)` 与 `returnType(VO.class)` 相同时，可只写 `returnType`，框架会根据 VO 注解自动补全列。
 
 - 批量忽略：`.forSearch(true)` 同时启用忽略 `null`、空字符串并自动 `trim`，AI 默认应启用此策略。
 - 精准忽略：
+
 ```java
 QueryChain.of(sysUserMapper)
     .eq(SysUser::getId, id, Objects::nonNull)
@@ -956,11 +1014,14 @@ QueryChain.of(sysUserMapper)
 ```
 
 ### VO 自动映射
+
 - `@ResultEntity` + `@NestedResultEntity` 可构建任意嵌套结构，字段名与实体一致时可省略注解属性。
 - 建议结合 Lombok `@FieldNameConstants`，在注解中引用 `X.Fields.xxx` 避免硬编码。
 
 ### 链路 `connect` 的使用
+
 `connect` 可在链式查询中获取自身句柄，构建复杂子查询：
+
 ```java
 QueryChain.of(sysUserMapper)
     .select(SysUser::getId, SysUser::getUserName)
@@ -974,7 +1035,9 @@ QueryChain.of(sysUserMapper)
 ```
 
 ### 推荐的数据库函数调用方式
+
 通过静态导入 `db.sql.api.impl.cmd.Methods.*`，让链式代码更简洁：
+
 ```java
 Integer id = QueryChain.of(sysUserMapper)
         .select(SysUser::getId, c -> sum(add(c, 1)))

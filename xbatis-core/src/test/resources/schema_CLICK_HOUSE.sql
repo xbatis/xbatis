@@ -16,14 +16,13 @@ drop table if exists t_sys_user;
 
 CREATE TABLE IF NOT EXISTS t_sys_user
 (
-    id UInt32 ,
+    id UInt32,
     user_name String,
     password String,
     role_id UInt32,
     create_time DATETIME NOT NULL DEFAULT NOW()
 )
-ENGINE = MergeTree()
-PRIMARY KEY (id);
+    ENGINE = MergeTree() PRIMARY KEY (id);
 
 drop table if exists sys_role;
 
@@ -60,7 +59,7 @@ drop table if exists id_test;
 
 CREATE TABLE IF NOT EXISTS id_test
 (
-    id BIGINT PRIMARY KEY auto_increment,
+    id          BIGINT PRIMARY KEY auto_increment,
     create_time DATETIME NOT NULL DEFAULT NOW()
 );
 
@@ -69,7 +68,7 @@ drop table if exists version_test;
 CREATE TABLE IF NOT EXISTS version_test
 (
     id String PRIMARY KEY,
-    version INT NOT NULL,
+    version     INT      NOT NULL,
     name String not null,
     create_time DATETIME NOT NULL DEFAULT NOW()
 );
@@ -79,7 +78,7 @@ drop table if exists tenant_test;
 CREATE TABLE IF NOT EXISTS tenant_test
 (
     id String PRIMARY KEY,
-    tenant_id INT NOT NULL,
+    tenant_id   INT      NOT NULL,
     name String not null,
     create_time DATETIME NOT NULL DEFAULT NOW()
 );
@@ -88,9 +87,9 @@ drop table if exists logic_delete_test;
 
 CREATE TABLE IF NOT EXISTS logic_delete_test
 (
-    id BIGINT PRIMARY KEY auto_increment,
+    id          BIGINT PRIMARY KEY auto_increment,
     name String not null,
-    deleted TINYINT not NULL default 0,
+    deleted     TINYINT not NULL default 0,
     delete_time DATETIME
 );
 
@@ -103,9 +102,9 @@ drop table if exists default_value_test;
 
 CREATE TABLE IF NOT EXISTS default_value_test
 (
-    id INT PRIMARY KEY auto_increment,
+    id          INT PRIMARY KEY auto_increment,
     value1 String not null,
-    value2 INT not NULL ,
+    value2      INT      not NULL,
     value3 String,
     create_time DATETIME NOT NULL
 );
@@ -114,11 +113,11 @@ drop table if exists composite_test;
 
 CREATE TABLE IF NOT EXISTS composite_test
 (
-    id BIGINT PRIMARY KEY auto_increment,
-    name String ,
-    version int not null,
-    tenant_id int not null,
-    deleted TINYINT not NULL default 0,
+    id          BIGINT PRIMARY KEY auto_increment,
+    name String,
+    version     int     not null,
+    tenant_id   int     not null,
+    deleted     TINYINT not NULL default 0,
     delete_time DATETIME
 );
 
@@ -134,7 +133,7 @@ drop table if exists nested_second;
 
 CREATE TABLE IF NOT EXISTS nested_second
 (
-    id INT PRIMARY KEY auto_increment,
+    id            INT PRIMARY KEY auto_increment,
     nested_one_id INT NOT NULL,
     th_name String not null
 );
@@ -143,25 +142,22 @@ drop table if exists nested_third;
 
 CREATE TABLE IF NOT EXISTS nested_third
 (
-    id INT PRIMARY KEY auto_increment,
+    id               INT PRIMARY KEY auto_increment,
     nested_second_id INT NOT NULL,
     th_name String not null
 );
 
-insert into nested_first(id,th_name)
-values
-    (1,'嵌套A'),
-    (2,'嵌套B');
+insert into nested_first(id, th_name)
+values (1, '嵌套A'),
+       (2, '嵌套B');
 
-insert into nested_second(id,nested_one_id,th_name)
-values
-    (1,1,'嵌套AA'),
-    (2,2,'嵌套BA');
+insert into nested_second(id, nested_one_id, th_name)
+values (1, 1, '嵌套AA'),
+       (2, 2, '嵌套BA');
 
-insert into nested_third(id,nested_second_id,th_name)
-values
-    (1,1,'嵌套AAA'),
-    (2,2,'嵌套BAA');
+insert into nested_third(id, nested_second_id, th_name)
+values (1, 1, '嵌套AAA'),
+       (2, 2, '嵌套BAA');
 
 
 
@@ -177,7 +173,7 @@ drop table if exists nested_muti_second;
 
 CREATE TABLE IF NOT EXISTS nested_muti_second
 (
-    id INT PRIMARY KEY auto_increment,
+    id            INT PRIMARY KEY auto_increment,
     nested_one_id INT NOT NULL,
     th_name String not null
 );
@@ -186,23 +182,20 @@ drop table if exists nested_muti_third;
 
 CREATE TABLE IF NOT EXISTS nested_muti_third
 (
-    id INT PRIMARY KEY auto_increment,
+    id               INT PRIMARY KEY auto_increment,
     nested_second_id INT NOT NULL,
     th_name String not null
 );
 
-insert into nested_muti_first(id,th_name)
-values
-    (1,'嵌套A'),
-    (2,'嵌套B');
+insert into nested_muti_first(id, th_name)
+values (1, '嵌套A'),
+       (2, '嵌套B');
 
-insert into nested_muti_second(id,nested_one_id,th_name)
-values
-    (1,1,'嵌套AA'),
-    (2,1,'嵌套AB'),
-    (3,2,'嵌套BA');
+insert into nested_muti_second(id, nested_one_id, th_name)
+values (1, 1, '嵌套AA'),
+       (2, 1, '嵌套AB'),
+       (3, 2, '嵌套BA');
 
-insert into nested_muti_third(id,nested_second_id,th_name)
-values
-    (1,2,'嵌套BAA'),
-    (2,2,'嵌套BAB');
+insert into nested_muti_third(id, nested_second_id, th_name)
+values (1, 2, '嵌套BAA'),
+       (2, 2, '嵌套BAB');
