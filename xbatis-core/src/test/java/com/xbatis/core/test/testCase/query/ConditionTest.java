@@ -14,13 +14,16 @@
 
 package com.xbatis.core.test.testCase.query;
 
+import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
+import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
+import db.sql.api.Getter;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.exception.ConditionValueNullException;
@@ -691,6 +694,31 @@ public class ConditionTest extends BaseTest {
                         });
                     })
                     .count();
+            assertEquals(count, 2);
+
+            count = UpdateChain.of(sysUserMapper)
+                    .set(SysUser::getId, (Getter<SysUser>) SysUser::getId)
+                    .exists(SysUser::getRole_id, SysRole::getId)
+                    .exists(SysRole.class, (chain, subquery) -> {
+                        subquery.eq(SysRole::getId, chain.$(SysUser::getRole_id));
+                        subquery.in(SysRole::getId, new Integer[]{1, 2});
+                    })
+                    .exists(SysUser::getRole_id, SysRole::getId, (chain, subquery) -> {
+                        subquery.in(SysRole::getId, new Integer[]{1, 2});
+                    })
+                    .execute();
+            assertEquals(count, 2);
+
+            count = DeleteChain.of(sysUserMapper)
+                    .exists(SysUser::getRole_id, SysRole::getId)
+                    .exists(SysRole.class, (chain, subquery) -> {
+                        subquery.eq(SysRole::getId, chain.$(SysUser::getRole_id));
+                        subquery.in(SysRole::getId, new Integer[]{1, 2});
+                    })
+                    .exists(SysUser::getRole_id, SysRole::getId, (chain, subquery) -> {
+                        subquery.in(SysRole::getId, new Integer[]{1, 2});
+                    })
+                    .execute();
 
             assertEquals(count, 2);
         }
