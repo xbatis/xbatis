@@ -507,8 +507,11 @@ public class FetchTest extends BaseTest {
 
             assertEquals(list.get(0).getSysRoleNames().get(0), "test1");
             assertEquals(list.get(0).getSysRoleNames().get(1), "test2");
+            assertEquals(list.get(1).getSysRoleNames().get(0), "写死的缓存ID2");
             assertEquals(list.get(0).getName(), "测试");
             assertEquals(list.get(1).getName(), "运维");
+            assertEquals(list.get(0).getSysUsers().get(0).getId(), 2);
+            assertEquals(list.get(0).getSysUsers().get(1).getId(), 3);
         }
 
 
@@ -525,9 +528,32 @@ public class FetchTest extends BaseTest {
 
             assertEquals(list.get(0).getSysRoleNames().get(0), "123444");
             assertEquals(list.get(0).getSysRoleNames().get(1), "123444");
+            assertEquals(list.get(1).getSysRoleNames().get(0), "写死的缓存ID2");
             assertEquals(list.get(0).getName(), "测试");
             assertEquals(list.get(1).getName(), "运维");
+            assertEquals(list.get(0).getSysUsers().get(0).getId(), 2);
+            assertEquals(list.get(0).getSysUsers().get(1).getId(), 3);
+        }
 
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            QueryChain<FetchSysRoleCacheVo> queryChain = QueryChain.of(sysRoleMapper)
+                    .fetchFilter(FetchSysRoleCacheVo::getSysRoleNames, where -> {
+
+                    })
+                    .fetchEnable(FetchSysRoleCacheVo::getSysRoleNames, false)
+                    .returnType(FetchSysRoleCacheVo.class);
+
+            List<FetchSysRoleCacheVo> list = queryChain.list();
+            System.out.println(list);
+
+
+            assertEquals(list.get(0).getSysRoleNames().isEmpty(), true);
+            assertEquals(list.get(1).getSysRoleNames().isEmpty(), true);
+            assertEquals(list.get(0).getName(), "测试");
+            assertEquals(list.get(1).getName(), "运维");
+            assertEquals(list.get(0).getSysUsers().get(0).getId(), 2);
+            assertEquals(list.get(0).getSysUsers().get(1).getId(), 3);
         }
     }
 }

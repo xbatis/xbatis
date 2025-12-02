@@ -100,6 +100,21 @@ public final class XbatisGlobalConfig {
             throw new RuntimeException("Inconsistent types：" + type);
         });
 
+        setDynamicValue("{EMPTY}", (source, type) -> {
+            if (type == String.class) {
+                return StringPool.EMPTY;
+            } else if (type.isArray()) {
+                return Array.newInstance(type, 0);
+            } else if (List.class.isAssignableFrom(type)) {
+                return new ArrayList<>();
+            } else if (Set.class.isAssignableFrom(type)) {
+                return new HashSet<>();
+            } else if (Map.class.isAssignableFrom(type)) {
+                return new HashMap<>();
+            }
+            throw new RuntimeException("Inconsistent types：" + type);
+        });
+
         setDynamicValue("{NOW}", (source, type) -> {
             if (type == LocalDateTime.class) {
                 return LocalDateTime.now();

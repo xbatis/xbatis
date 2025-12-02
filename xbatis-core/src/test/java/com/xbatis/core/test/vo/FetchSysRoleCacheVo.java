@@ -30,6 +30,9 @@ public class FetchSysRoleCacheVo {
 
     private String name;
 
-    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id asc" ,cacheName = "FetchSysRoleCacheVo.sysRoleNames")
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id asc", cacheName = "FetchSysRoleCacheVo.sysRoleNames")
     private List<String> sysRoleNames;
+
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, orderBy = "id asc", cacheName = "FetchSysRoleCacheVo.sysUsers")
+    private List<SysUser> sysUsers;
 }

@@ -38,12 +38,10 @@ public class FetchMiddleTest extends BaseTest {
 
             assertEquals(list.get(0).getCnts(), 2);
 
-
             assertEquals(list.get(1).getSysRoleList().size(), 1);
             assertEquals(list.get(1).getSysRoleList().get(0), sysRole2);
 
             assertEquals(list.get(1).getCnts(), 1);
-
         }
     }
 }

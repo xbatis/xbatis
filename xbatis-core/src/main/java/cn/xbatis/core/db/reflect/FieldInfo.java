@@ -55,6 +55,6 @@ public class FieldInfo {
         this.field = field;
         this.typeClass = FieldUtil.getFieldType(clazz, field);
         this.finalClass = FieldUtil.getFieldFinalType(clazz, field);
-        this.collection = field.getType().isAssignableFrom(Collection.class);
+        this.collection = Collection.class.isAssignableFrom(field.getType());
     }
 }

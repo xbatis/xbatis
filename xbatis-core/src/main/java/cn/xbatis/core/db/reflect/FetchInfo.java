@@ -59,7 +59,7 @@ public class FetchInfo {
 
     private final SetFieldInvoker writeFieldInvoker;
 
-    private final boolean multiple;
+    private final GetFieldInvoker readFieldInvoker;
 
     private final Class<?> returnType;
 
@@ -82,6 +82,7 @@ public class FetchInfo {
         this.fieldInfo = fieldInfo;
         this.fetch = fetch;
         this.writeFieldInvoker = new SetFieldInvoker(fieldInfo.getField());
+        this.readFieldInvoker = new GetFieldInvoker(fieldInfo.getField());
         this.valueColumn = valueColumn;
         this.valueTypeHandler = valueTypeHandler;
 
@@ -101,7 +102,6 @@ public class FetchInfo {
 
         String otherConditions = parseDynamicColumn(clazz, fieldInfo.getField(), middleTableInfo, targetTableInfo, "@Fetch", "otherConditions", fetch.otherConditions());
 
-        this.multiple = Collection.class.isAssignableFrom(this.fieldInfo.getTypeClass());
         this.returnType = returnType;
 
         this.otherConditions = otherConditions;
@@ -377,9 +377,11 @@ public class FetchInfo {
     }
 
     public void setValue(Object object, Object value, Map<String, Object> defaultValueContext) {
-        if (value == null) {
+        if (value == null || value instanceof Collection && ((Collection) value).isEmpty()) {
             if (this.fetch.nullFillValue().isEmpty()) {
-                return;
+                if (value == null && this.getFieldInfo().isCollection()) {
+                    value = new ArrayList<>();
+                }
             } else if (this.nullFillValue != null) {
                 value = this.nullFillValue;
             } else {
@@ -388,6 +390,14 @@ public class FetchInfo {
         }
         try {
             writeFieldInvoker.invoke(object, new Object[]{value});
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Object getFieldValue(Object object) {
+        try {
+            return this.readFieldInvoker.invoke(object, null);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }

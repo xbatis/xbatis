@@ -368,14 +368,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             Boolean fetchEnable = Objects.isNull(fetchEnables) || !fetchEnables.containsKey(fetchKey) || fetchEnables.get(fetchKey);
             fetchEnable = fetchEnable == null || fetchEnable;
             if (!fetchEnable) {
-                if (fetchInfo.getFieldInfo().getTypeClass().isAssignableFrom(Collections.class)) {
-                    try {
-                        fetchInfo.getWriteFieldInvoker().invoke(rowValue, new Object[]{new ArrayList()});
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                return rowValue;
+                fetchInfo.setValue(rowValue, null, this.defaultValueContext);
+                continue;
             }
 
             Object onValue;
@@ -403,8 +397,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             if (!fetchInfo.getFetch().cacheName().isEmpty()) {
                 FetchCache fetchCache = XbatisGlobalConfig.getFetchCache();
                 if (fetchCache != null) {
-                    Where where = WhereUtil.create();
                     if (fetchFilters != null) {
+                        Where where = WhereUtil.create();
                         Consumer<Where> fetchFilter = this.fetchFilters.get(fetchKey);
                         if (fetchFilter != null) {
                             fetchFilter.accept(where);
@@ -413,7 +407,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                             }
                         }
                     }
-                    if (cacheKey == null) {
+                    if (cacheKey == null && onValue != null) {
                         cacheKey = onValue.toString();
                     }
 
@@ -423,7 +417,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                             fetchResult = null;
                         }
                         fetchInfo.setValue(rowValue, fetchResult, this.defaultValueContext);
-                        return rowValue;
+                        continue;
                     }
                 }
             }
@@ -495,7 +489,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     public void fillFetchData(FetchInfo fetchInfo, List<FetchObject> values, List<?> fetchData) {
         if (Objects.isNull(fetchData) || fetchData.isEmpty()) {
             //需要Fetch数据是空的 则直接设置null
-            values.stream().forEach(i -> setValue(i.getValue(), null, fetchInfo, i.getCacheKey()));
+            values.stream().forEach(i -> {
+                setValue(i.getValue(), null, fetchInfo, i.getCacheKey());
+            });
             return;
         }
 
@@ -618,9 +614,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     }
 
     protected void setValue(Object rowValue, List<?> matchValues, FetchInfo fetchInfo, String cacheKey) {
-        if (fetchInfo.isMultiple()) {
-            matchValues = Objects.isNull(matchValues) ? new ArrayList<>() : matchValues;
-            if (matchValues.isEmpty()) {
+        if (fetchInfo.getFieldInfo().isCollection()) {
+            if (Objects.isNull(matchValues) || matchValues.isEmpty()) {
                 fetchInfo.setValue(rowValue, matchValues, defaultValueContext);
                 return;
             }
