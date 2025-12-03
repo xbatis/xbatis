@@ -23,6 +23,7 @@ import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.REQ.SysUserOrderBys;
 import com.xbatis.core.test.REQ.SysUserOrderBys2;
+import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
@@ -546,6 +548,47 @@ public class QueryTest extends BaseTest {
             eqSysUser.setUserName("test1");
             eqSysUser.setRole_id(1);
             assertEquals(list.get(1), eqSysUser, "inSubQuery");
+        }
+    }
+
+
+    @Test
+    public void inSubQueryTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            List<SysRole> list = QueryChain.of(sysRoleMapper)
+                    .in(SysRole::getId, SysUser::getRole_id)
+                    .in(SysRole::getId, SysUser::getRole_id, (query, inQuery) -> {
+                        inQuery.like(SysUser::getPassword, "123456");
+                    })
+                    .list();
+
+
+            SysRole eqSysRole = new SysRole();
+            eqSysRole.setId(1);
+            eqSysRole.setName("测试");
+            eqSysRole.setCreateTime(LocalDateTime.parse("2022-10-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            assertEquals(list.get(0), eqSysRole, "inSubQuery2");
+        }
+    }
+
+    @Test
+    public void inSubQueryTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            List<SysRole> list = QueryChain.of(sysRoleMapper)
+                    .in(SysRole::getId, SysUser::getRole_id, SysRole::getId, SysUser::getRole_id)
+                    .in(SysRole::getId, SysUser::getRole_id, SysRole::getId, SysUser::getRole_id, (query, inQuery) -> {
+                        inQuery.like(SysUser::getPassword, "123456");
+                    })
+                    .list();
+
+
+            SysRole eqSysRole = new SysRole();
+            eqSysRole.setId(1);
+            eqSysRole.setName("测试");
+            eqSysRole.setCreateTime(LocalDateTime.parse("2022-10-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            assertEquals(list.get(0), eqSysRole, "inSubQuery2");
         }
     }
 
