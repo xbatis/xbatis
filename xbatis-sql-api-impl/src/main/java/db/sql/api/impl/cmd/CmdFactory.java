@@ -21,6 +21,7 @@ import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
+import db.sql.api.cmd.executor.ISubQuery;
 import db.sql.api.impl.cmd.basic.AllField;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
@@ -31,6 +32,7 @@ import db.sql.api.tookit.LambdaUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 
@@ -162,6 +164,65 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
     public AbstractSubQuery<?, ?> createSubQuery() {
         return new SubQuery();
     }
+
+    @Override
+    public <T, E> ISubQuery createExistsOrNotExistsSubQuery(T executor, Class<E> entity, BiConsumer<T, ISubQuery> consumer) {
+        ISubQuery subQuery = this.createSubQuery();
+        subQuery.from(entity);
+
+        if (consumer != null) {
+            consumer.accept(executor, subQuery);
+        }
+
+        if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
+            subQuery.select1();
+        }
+        return subQuery;
+    }
+
+
+    @Override
+    public <T, E1, E2> ISubQuery createExistsOrNotExistsSubQuery(T executor, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, ISubQuery> consumer) {
+        ISubQuery subQuery = this.createSubQuery();
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
+        subQuery.from(lambdaFieldInfo.getType());
+        subQuery.eq(targetGetter, this.field(sourceGetter, sourceStorey));
+
+        if (consumer != null) {
+            consumer.accept(executor, subQuery);
+        }
+
+        if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
+            subQuery.select1();
+        }
+        return subQuery;
+    }
+
+    @Override
+    public <T, E> ISubQuery createInOrNotInSubQuery(T executor, Getter<E> selectGetter, BiConsumer<T, ISubQuery> consumer) {
+        ISubQuery subQuery = this.createSubQuery();
+        subQuery.select(selectGetter);
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(selectGetter);
+        subQuery.from(lambdaFieldInfo.getType());
+        if (consumer != null) {
+            consumer.accept(executor, subQuery);
+        }
+        return subQuery;
+    }
+
+    @Override
+    public <T, E1, E2> Object createInOrNotInSubQuery(T executor, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<T, ISubQuery> consumer) {
+        ISubQuery subQuery = this.createSubQuery();
+        subQuery.select(selectGetter);
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(selectGetter);
+        subQuery.from(lambdaFieldInfo.getType());
+        subQuery.eq(targetEqGetter, this.field(sourceEqGetter, sourceStorey));
+        if (consumer != null) {
+            consumer.accept(executor, subQuery);
+        }
+        return subQuery;
+    }
+
 
     protected TableField field(Class<?> clazz, int storey, String filedName) {
         Table table = table(clazz, storey);

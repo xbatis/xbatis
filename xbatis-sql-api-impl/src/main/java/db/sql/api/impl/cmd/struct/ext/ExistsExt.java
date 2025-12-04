@@ -12,44 +12,44 @@
  *
  */
 
-package cn.xbatis.core.sql.executor.baseExt;
+package db.sql.api.impl.cmd.struct.ext;
 
-import cn.xbatis.core.sql.executor.SubQuery;
 import db.sql.api.Getter;
 import db.sql.api.cmd.executor.method.condition.IExistsMethod;
+import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 
 import java.util.function.BiConsumer;
 
-public interface ExistsExt<T> extends IExistsMethod<T> {
+public interface ExistsExt<T,SUBQUERY extends AbstractSubQuery<?,?>> extends IExistsMethod<T> {
 
-    <E> SubQuery buildExistsOrNotExistsSubQuery(Class<E> entity, BiConsumer<T, SubQuery> consumer);
+    <E> SUBQUERY buildExistsOrNotExistsSubQuery(Class<E> entity, BiConsumer<T, SUBQUERY> consumer);
 
-    <E1, E2> SubQuery buildExistsOrNotExistsSubQuery(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer);
+    <E1, E2> SUBQUERY buildExistsOrNotExistsSubQuery(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer);
 
-    default  <E> T exists(Class<E> entity, BiConsumer<T, SubQuery> consumer) {
+    default  <E> T exists(Class<E> entity, BiConsumer<T, SUBQUERY> consumer) {
         return this.exists(true, entity, consumer);
     }
 
-    default <E> T exists(boolean when, Class<E> entity, BiConsumer<T, SubQuery> consumer) {
+    default <E> T exists(boolean when, Class<E> entity, BiConsumer<T, SUBQUERY> consumer) {
         if (!when) {
             return (T) this;
         }
         return this.exists(this.buildExistsOrNotExistsSubQuery(entity, consumer));
     }
 
-    default <E1, E2> T exists(Getter<E1> sourceGetter, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T exists(Getter<E1> sourceGetter, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.exists(sourceGetter, 1, targetGetter, consumer);
     }
 
-    default <E1, E2> T exists(boolean when, Getter<E1> sourceGetter, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T exists(boolean when, Getter<E1> sourceGetter, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.exists(when, sourceGetter, 1, targetGetter, consumer);
     }
 
-    default <E1, E2> T exists(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T exists(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.exists(true, sourceGetter, sourceStorey, targetGetter, consumer);
     }
 
-    default <E1, E2> T exists(boolean when, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T exists(boolean when, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer) {
         if (!when) {
             return (T) this;
         }

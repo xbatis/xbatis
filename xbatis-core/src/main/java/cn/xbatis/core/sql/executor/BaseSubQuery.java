@@ -16,10 +16,6 @@ package cn.xbatis.core.sql.executor;
 
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.sql.MybatisCmdFactory;
-import cn.xbatis.core.sql.executor.baseExt.ExistsExt;
-import cn.xbatis.core.sql.executor.baseExt.InExt;
-import cn.xbatis.core.sql.executor.baseExt.NotExistsExt;
-import cn.xbatis.core.sql.executor.baseExt.NotInExt;
 import cn.xbatis.core.sql.util.SelectClassUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
 import db.sql.api.Cmd;
@@ -30,13 +26,11 @@ import db.sql.api.cmd.basic.IOrderByDirection;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 import db.sql.api.impl.cmd.struct.Where;
-import db.sql.api.tookit.LambdaUtil;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
-public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSubQuery<Q, MybatisCmdFactory> implements ExistsExt<Q>, NotExistsExt<Q>, InExt<Q>, NotInExt<Q> {
+public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSubQuery<Q, MybatisCmdFactory> {
 
     protected String alias;
 
@@ -120,87 +114,6 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
     public <T> Q tableAs(Class<T> entity, int storey, String as) {
         conditionFactory.getCmdFactory().table(entity, storey).as(as);
         return (Q) this;
-    }
-
-    @Override
-    public <T2> SubQuery buildExistsOrNotExistsSubQuery(Class<T2> entity, BiConsumer<Q, SubQuery> consumer) {
-        SubQuery subQuery = this.$().createSubQuery();
-        subQuery.ignoreNullValueInCondition(this.conditionFactory.isIgnoreNull());
-        subQuery.ignoreEmptyInCondition(this.conditionFactory.isIgnoreEmpty());
-        subQuery.trimStringInCondition(this.conditionFactory.isStringTrim());
-        if (consumer != null) {
-            consumer.accept((Q) this, subQuery);
-        }
-        if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
-            subQuery.select1();
-        }
-        if (subQuery.getFrom() == null) {
-            subQuery.from(entity);
-        }
-        return subQuery;
-    }
-
-    @Override
-    public <T1, T2> SubQuery buildExistsOrNotExistsSubQuery(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, BiConsumer<Q, SubQuery> consumer) {
-        SubQuery subQuery = this.$().createSubQuery();
-        subQuery.ignoreNullValueInCondition(this.conditionFactory.isIgnoreNull());
-        subQuery.ignoreEmptyInCondition(this.conditionFactory.isIgnoreEmpty());
-        subQuery.trimStringInCondition(this.conditionFactory.isStringTrim());
-
-        subQuery.eq(targetGetter, this.$(sourceGetter, sourceStorey));
-        if (consumer != null) {
-            consumer.accept((Q) this, subQuery);
-        }
-
-        if (subQuery.getSelect() == null || subQuery.getSelect().getSelectField().isEmpty()) {
-            subQuery.select1();
-        }
-
-        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
-        if (subQuery.getFrom() == null) {
-            subQuery.from(lambdaFieldInfo.getType());
-        }
-        return subQuery;
-    }
-
-    @Override
-    public <T> SubQuery buildInOrNotInSubQuery(Getter<T> selectGetter, BiConsumer<Q, SubQuery> consumer) {
-        SubQuery subQuery = this.$().createSubQuery();
-        subQuery.ignoreNullValueInCondition(this.conditionFactory.isIgnoreNull());
-        subQuery.ignoreEmptyInCondition(this.conditionFactory.isIgnoreEmpty());
-        subQuery.trimStringInCondition(this.conditionFactory.isStringTrim());
-
-        subQuery.select(selectGetter);
-        if (consumer != null) {
-            consumer.accept((Q) this, subQuery);
-        }
-
-        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(selectGetter);
-        if (subQuery.getFrom() == null) {
-            subQuery.from(lambdaFieldInfo.getType());
-        }
-        return subQuery;
-    }
-
-    @Override
-    public <T1, T2> SubQuery buildInOrNotInSubQuery(Getter<T2> selectGetter, Getter<T1> sourceEqGetter, int sourceStorey, Getter<T2> targetEqGetter, BiConsumer<Q, SubQuery> consumer) {
-        SubQuery subQuery = this.$().createSubQuery();
-        subQuery.ignoreNullValueInCondition(this.conditionFactory.isIgnoreNull());
-        subQuery.ignoreEmptyInCondition(this.conditionFactory.isIgnoreEmpty());
-        subQuery.trimStringInCondition(this.conditionFactory.isStringTrim());
-
-        subQuery.select(selectGetter);
-        subQuery.eq(targetEqGetter, this.$(sourceEqGetter, sourceStorey));
-        if (consumer != null) {
-            consumer.accept((Q) this, subQuery);
-        }
-
-        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(selectGetter);
-        if (subQuery.getFrom() == null) {
-            subQuery.from(lambdaFieldInfo.getType());
-        }
-
-        return subQuery;
     }
 
     /**************以下为去除警告************/

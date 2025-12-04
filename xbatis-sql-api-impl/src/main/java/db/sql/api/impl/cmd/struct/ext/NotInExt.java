@@ -12,41 +12,40 @@
  *
  */
 
-package cn.xbatis.core.sql.executor.baseExt;
+package db.sql.api.impl.cmd.struct.ext;
 
-
-import cn.xbatis.core.sql.executor.SubQuery;
 import db.sql.api.Getter;
 import db.sql.api.cmd.executor.method.condition.compare.INotInGetterCompare;
+import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 
 import java.util.function.BiConsumer;
 
-public interface NotInExt<T> extends INotInGetterCompare<T> {
+public interface NotInExt<T, SUBQUERY extends AbstractSubQuery<?, ?>> extends INotInGetterCompare<T> {
 
-    <E> SubQuery buildInOrNotInSubQuery(Getter<E> selectGetter, BiConsumer<T, SubQuery> consumer);
+    <E> SUBQUERY buildInOrNotInSubQuery(Getter<E> selectGetter, BiConsumer<T, SUBQUERY> consumer);
 
-    <E1, E2> SubQuery buildInOrNotInSubQuery(Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<T, SubQuery> consumer);
+    <E1, E2> SUBQUERY buildInOrNotInSubQuery(Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<T, SUBQUERY> consumer);
 
     default <E1, E2> T notIn(Getter<E1> sourceGetter, Getter<E2> selectGetter) {
         return this.notIn(true, sourceGetter, selectGetter, null);
     }
 
-    default <E1, E2> T notIn(Getter<E1> sourceGetter, Getter<E2> selectGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notIn(Getter<E1> sourceGetter, Getter<E2> selectGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.notIn(true, sourceGetter, selectGetter, consumer);
     }
 
-    default <E1, E2> T notIn(boolean when, Getter<E1> sourceGetter, Getter<E2> selectGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notIn(boolean when, Getter<E1> sourceGetter, Getter<E2> selectGetter, BiConsumer<T, SUBQUERY> consumer) {
         if (!when) {
             return (T) this;
         }
         return this.notIn(sourceGetter, this.buildInOrNotInSubQuery(selectGetter, consumer));
     }
 
-    default <E1, E2> T notIn(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> selectGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notIn(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> selectGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.notIn(true, sourceGetter, sourceStorey, selectGetter, consumer);
     }
 
-    default <E1, E2> T notIn(boolean when, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> selectGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notIn(boolean when, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> selectGetter, BiConsumer<T, SUBQUERY> consumer) {
         if (!when) {
             return (T) this;
         }
@@ -58,22 +57,22 @@ public interface NotInExt<T> extends INotInGetterCompare<T> {
         return this.notIn(true, sourceGetter, selectGetter, sourceEqGetter, targetEqGetter, null);
     }
 
-    default <E1, E2> T notIn(Getter<E1> sourceGetter, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, Getter<E2> targetEqGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notIn(Getter<E1> sourceGetter, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, Getter<E2> targetEqGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.notIn(true, sourceGetter, selectGetter, sourceEqGetter, targetEqGetter, consumer);
     }
 
-    default <E1, E2> T notIn(boolean when, Getter<E1> sourceGetter, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, Getter<E2> targetEqGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notIn(boolean when, Getter<E1> sourceGetter, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, Getter<E2> targetEqGetter, BiConsumer<T, SUBQUERY> consumer) {
         if (!when) {
             return (T) this;
         }
         return this.notIn(sourceGetter, this.buildInOrNotInSubQuery(selectGetter, sourceEqGetter, 1, targetEqGetter, consumer));
     }
 
-    default <E1, E2> T notIn(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, Getter<E2> targetEqGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notIn(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, Getter<E2> targetEqGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.notIn(true, sourceGetter, sourceStorey, selectGetter, sourceEqGetter, targetEqGetter, consumer);
     }
 
-    default <E1, E2> T notIn(boolean when, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, Getter<E2> targetEqGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notIn(boolean when, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, Getter<E2> targetEqGetter, BiConsumer<T, SUBQUERY> consumer) {
         if (!when) {
             return (T) this;
         }

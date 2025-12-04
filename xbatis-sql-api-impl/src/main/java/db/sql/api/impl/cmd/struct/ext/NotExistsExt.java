@@ -12,44 +12,44 @@
  *
  */
 
-package cn.xbatis.core.sql.executor.baseExt;
+package db.sql.api.impl.cmd.struct.ext;
 
-import cn.xbatis.core.sql.executor.SubQuery;
 import db.sql.api.Getter;
 import db.sql.api.cmd.executor.method.condition.IExistsMethod;
+import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 
 import java.util.function.BiConsumer;
 
-public interface NotExistsExt<T> extends IExistsMethod<T> {
+public interface NotExistsExt<T, SUBQUERY extends AbstractSubQuery<?, ?>> extends IExistsMethod<T> {
 
-    <E> SubQuery buildExistsOrNotExistsSubQuery(Class<E> entity, BiConsumer<T, SubQuery> consumer);
+    <E> SUBQUERY buildExistsOrNotExistsSubQuery(Class<E> entity, BiConsumer<T, SUBQUERY> consumer);
 
-    <E1, E2> SubQuery buildExistsOrNotExistsSubQuery(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer);
+    <E1, E2> SUBQUERY buildExistsOrNotExistsSubQuery(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer);
 
-    default  <E> T notExists(Class<E> entity, BiConsumer<T, SubQuery> consumer) {
+    default <E> T notExists(Class<E> entity, BiConsumer<T, SUBQUERY> consumer) {
         return this.notExists(true, entity, consumer);
     }
 
-    default <E> T notExists(boolean when, Class<E> entity, BiConsumer<T, SubQuery> consumer) {
+    default <E> T notExists(boolean when, Class<E> entity, BiConsumer<T, SUBQUERY> consumer) {
         if (!when) {
             return (T) this;
         }
         return this.notExists(this.buildExistsOrNotExistsSubQuery(entity, consumer));
     }
 
-    default <E1, E2> T notExists(Getter<E1> sourceGetter, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notExists(Getter<E1> sourceGetter, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.notExists(sourceGetter, 1, targetGetter, consumer);
     }
 
-    default <E1, E2> T notExists(boolean when, Getter<E1> sourceGetter, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notExists(boolean when, Getter<E1> sourceGetter, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.notExists(when, sourceGetter, 1, targetGetter, consumer);
     }
 
-    default <E1, E2> T notExists(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notExists(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer) {
         return this.notExists(true, sourceGetter, sourceStorey, targetGetter, consumer);
     }
 
-    default <E1, E2> T notExists(boolean when, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SubQuery> consumer) {
+    default <E1, E2> T notExists(boolean when, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, SUBQUERY> consumer) {
         if (!when) {
             return (T) this;
         }

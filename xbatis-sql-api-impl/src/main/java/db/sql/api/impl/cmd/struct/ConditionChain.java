@@ -28,6 +28,10 @@ import db.sql.api.impl.cmd.basic.ConditionBlock;
 import db.sql.api.impl.cmd.basic.Connector;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
+import db.sql.api.impl.cmd.struct.ext.ExistsExt;
+import db.sql.api.impl.cmd.struct.ext.InExt;
+import db.sql.api.impl.cmd.struct.ext.NotExistsExt;
+import db.sql.api.impl.cmd.struct.ext.NotInExt;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -36,10 +40,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class ConditionChain implements IConditionChain<ConditionChain, TableField, Cmd, Object>, ICondition {
+public class ConditionChain implements IConditionChain<ConditionChain, TableField, Cmd, Object>
+        , ExistsExt<ConditionChain, AbstractSubQuery<?, ?>>
+        , NotExistsExt<ConditionChain, AbstractSubQuery<?, ?>>
+        , InExt<ConditionChain, AbstractSubQuery<?, ?>>
+        , NotInExt<ConditionChain, AbstractSubQuery<?, ?>>
+        , ICondition {
 
     private final ConditionFactory conditionFactory;
 
@@ -590,26 +599,6 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
         return this;
     }
 
-    public <T1, T2> ConditionChain exists(Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        return exists(true, sourceGetter, targetGetter, consumer);
-    }
-
-    public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        return exists(when, sourceGetter, 1, targetGetter, consumer);
-    }
-
-    public <T1, T2> ConditionChain exists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        return exists(true, sourceGetter, sourceStorey, targetGetter, consumer);
-    }
-
-    public <T1, T2> ConditionChain exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        ICondition condition = conditionFactory.exists(when, sourceGetter, sourceStorey, targetGetter, consumer);
-        if (condition != null) {
-            this.appendCondition(this.connector, condition);
-        }
-        return this;
-    }
-
     @Override
     public ConditionChain notExists(boolean when, IQuery query) {
         ICondition condition = conditionFactory.notExists(when, query);
@@ -622,26 +611,6 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     @Override
     public <T1, T2> ConditionChain notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
         ICondition condition = conditionFactory.notExists(when, sourceGetter, sourceStorey, targetGetter);
-        if (condition != null) {
-            this.appendCondition(this.connector, condition);
-        }
-        return this;
-    }
-
-    public <T1, T2> ConditionChain notExists(Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        return notExists(true, sourceGetter, targetGetter, consumer);
-    }
-
-    public <T1, T2> ConditionChain notExists(boolean when, Getter<T1> sourceGetter, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        return notExists(when, sourceGetter, 1, targetGetter, consumer);
-    }
-
-    public <T1, T2> ConditionChain notExists(Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        return notExists(true, sourceGetter, sourceStorey, targetGetter, consumer);
-    }
-
-    public <T1, T2> ConditionChain notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        ICondition condition = conditionFactory.notExists(when, sourceGetter, sourceStorey, targetGetter, consumer);
         if (condition != null) {
             this.appendCondition(this.connector, condition);
         }
@@ -734,5 +703,25 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     @Override
     public boolean contain(Cmd cmd) {
         return CmdUtils.contain(cmd, this.conditionBlocks);
+    }
+
+    @Override
+    public <E> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Class<E> entity, BiConsumer<ConditionChain, AbstractSubQuery<?, ?>> consumer) {
+        return this.getConditionFactory().buildExistsOrNotExistsSubQuery(this, entity, consumer);
+    }
+
+    @Override
+    public <E1, E2> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<ConditionChain, AbstractSubQuery<?, ?>> consumer) {
+        return this.getConditionFactory().buildExistsOrNotExistsSubQuery(this, sourceGetter, sourceStorey, targetGetter, consumer);
+    }
+
+    @Override
+    public <E> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E> selectGetter, BiConsumer<ConditionChain, AbstractSubQuery<?, ?>> consumer) {
+        return this.getConditionFactory().buildInOrNotInSubQuery(this, selectGetter, consumer);
+    }
+
+    @Override
+    public <E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<ConditionChain, AbstractSubQuery<?, ?>> consumer) {
+        return this.getConditionFactory().buildInOrNotInSubQuery(this, selectGetter, sourceEqGetter, sourceStorey, targetEqGetter, consumer);
     }
 }

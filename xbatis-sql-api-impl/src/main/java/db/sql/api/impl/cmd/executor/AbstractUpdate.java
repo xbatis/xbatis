@@ -32,6 +32,10 @@ import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.*;
+import db.sql.api.impl.cmd.struct.ext.ExistsExt;
+import db.sql.api.impl.cmd.struct.ext.InExt;
+import db.sql.api.impl.cmd.struct.ext.NotExistsExt;
+import db.sql.api.impl.cmd.struct.ext.NotInExt;
 import db.sql.api.impl.cmd.struct.query.Returning;
 import db.sql.api.impl.cmd.struct.update.UpdateSets;
 import db.sql.api.impl.cmd.struct.update.UpdateTable;
@@ -39,10 +43,7 @@ import db.sql.api.impl.cmd.struct.update.UpdateTable;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTORY>,
         CMD_FACTORY extends CmdFactory
@@ -60,7 +61,10 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         On,
         Where,
         Returning
-        > {
+        >, ExistsExt<SELF, AbstractSubQuery<?, ?>>,
+        NotExistsExt<SELF, AbstractSubQuery<?, ?>>,
+        InExt<SELF, AbstractSubQuery<?, ?>>,
+        NotInExt<SELF, AbstractSubQuery<?, ?>> {
 
     protected final ConditionFactory conditionFactory;
     protected final CMD_FACTORY $;
@@ -276,6 +280,26 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     @Override
     public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, IDataset<?, ?> secondTable, Consumer<On> consumer) {
         return this.join(mode, this.$.table(mainTable, mainTableStorey), secondTable, consumer);
+    }
+
+    @Override
+    public <E> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Class<E> entity, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.conditionFactory.buildExistsOrNotExistsSubQuery(this, entity, (BiConsumer) consumer);
+    }
+
+    @Override
+    public <E1, E2> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.conditionFactory.buildExistsOrNotExistsSubQuery(this, sourceGetter, sourceStorey, targetGetter, (BiConsumer) consumer);
+    }
+
+    @Override
+    public <E> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E> selectGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.conditionFactory.buildInOrNotInSubQuery(this, selectGetter, (BiConsumer) consumer);
+    }
+
+    @Override
+    public <E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.conditionFactory.buildInOrNotInSubQuery(this, selectGetter, sourceEqGetter, sourceStorey, targetEqGetter, (BiConsumer) consumer);
     }
 
 

@@ -22,6 +22,7 @@ import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.cmd.executor.ISubQuery;
 
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
@@ -153,4 +154,59 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      * @return
      */
     ISubQuery createSubQuery();
+
+    /**
+     * 创建 Exists Or NotExists 的 子查询
+     *
+     * @param executor
+     * @param entity
+     * @param consumer
+     * @param <T>
+     * @param <E>
+     * @return
+     */
+    <T, E> ISubQuery createExistsOrNotExistsSubQuery(T executor, Class<E> entity, BiConsumer<T, ISubQuery> consumer);
+
+    /**
+     * 创建 Exists Or NotExists 的 子查询
+     *
+     * @param executor
+     * @param sourceGetter
+     * @param sourceStorey
+     * @param targetGetter
+     * @param consumer
+     * @param <T>
+     * @param <E1>
+     * @param <E2>
+     * @return
+     */
+    <T, E1, E2> ISubQuery createExistsOrNotExistsSubQuery(T executor, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, ISubQuery> consumer);
+
+    /**
+     * 创建 IN Or NOT IN 的 子查询
+     *
+     * @param executor
+     * @param selectGetter
+     * @param consumer
+     * @param <T>
+     * @param <E>
+     * @return
+     */
+    <T, E> ISubQuery createInOrNotInSubQuery(T executor, Getter<E> selectGetter, BiConsumer<T, ISubQuery> consumer);
+
+    /**
+     * 创建 IN Or NOT IN 的 子查询
+     *
+     * @param executor
+     * @param selectGetter
+     * @param sourceEqGetter
+     * @param sourceStorey
+     * @param targetEqGetter
+     * @param consumer
+     * @param <T>
+     * @param <E1>
+     * @param <E2>
+     * @return
+     */
+    <T, E1, E2> Object createInOrNotInSubQuery(T executor, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<T, ISubQuery> consumer);
 }

@@ -689,8 +689,8 @@ public class ConditionTest extends BaseTest {
                         subquery.in(SysRole::getId, new Integer[]{});
                     })
                     .andNested(c -> {
-                        c.exists(SysUser::getRole_id, SysRole::getId, subquery -> {
-                            subquery.isNotNull(SysRole::getId);
+                        c.exists(SysUser::getRole_id, SysRole::getId, (chain, existsQuery) -> {
+                            existsQuery.isNotNull(SysRole::getId);
                         });
                     })
                     .count();
@@ -734,8 +734,8 @@ public class ConditionTest extends BaseTest {
                         subquery.in(SysRole::getId, new Integer[]{});
                     })
                     .andNested(c -> {
-                        c.exists(SysUser::getRole_id, SysRole::getId, subquery -> {
-                            subquery.isNotNull(SysRole::getId);
+                        c.exists(SysUser::getRole_id, SysRole::getId, (chain, existsQuery) -> {
+                            existsQuery.isNotNull(SysRole::getId);
                         });
                     })
                     .count();

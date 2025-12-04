@@ -969,6 +969,11 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserRoleMiddleMapper sysUserRoleMiddleMapper = session.getMapper(SysUserRoleMiddleMapper.class);
             List<SysUserRoleMiddleVo> list = QueryChain.of(sysUserRoleMiddleMapper)
+                    .andNested(c -> {
+                        c.exists(SysUserRoleMiddle::getUserId, SysUser::getId, (chain, existsQuery) -> {
+
+                        });
+                    })
                     .leftJoin(SysUserRoleMiddle::getUserId, SysUser::getId)
                     .leftJoin(SysUserRoleMiddle::getRoleId, SysRole::getId)
                     .returnType(SysUserRoleMiddleVo.class)

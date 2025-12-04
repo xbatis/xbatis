@@ -32,6 +32,10 @@ import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.struct.*;
+import db.sql.api.impl.cmd.struct.ext.ExistsExt;
+import db.sql.api.impl.cmd.struct.ext.InExt;
+import db.sql.api.impl.cmd.struct.ext.NotExistsExt;
+import db.sql.api.impl.cmd.struct.ext.NotInExt;
 import db.sql.api.impl.cmd.struct.query.*;
 import db.sql.api.impl.tookit.QuerySQLUtil;
 import db.sql.api.impl.tookit.SqlConst;
@@ -42,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -70,7 +75,10 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         ForUpdate,
         ForShare,
         Union
-        >, Cmd {
+        >, ExistsExt<SELF, AbstractSubQuery<?, ?>>,
+        NotExistsExt<SELF, AbstractSubQuery<?, ?>>,
+        InExt<SELF, AbstractSubQuery<?, ?>>,
+        NotInExt<SELF, AbstractSubQuery<?, ?>> {
 
     protected final ConditionFactory conditionFactory;
 
@@ -787,6 +795,25 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.orderBy(orderByDirection, this.$(dataset, columnName));
     }
 
+    @Override
+    public <E> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Class<E> entity, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.conditionFactory.buildExistsOrNotExistsSubQuery(this, entity, (BiConsumer) consumer);
+    }
+
+    @Override
+    public <E1, E2> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.conditionFactory.buildExistsOrNotExistsSubQuery(this, sourceGetter, sourceStorey, targetGetter, (BiConsumer) consumer);
+    }
+
+    @Override
+    public <E> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E> selectGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.conditionFactory.buildInOrNotInSubQuery(this, selectGetter, (BiConsumer) consumer);
+    }
+
+    @Override
+    public <E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.conditionFactory.buildInOrNotInSubQuery(this, selectGetter, sourceEqGetter, sourceStorey, targetEqGetter, (BiConsumer) consumer);
+    }
 
     public Unions $unions() {
         if (this.unions == null) {

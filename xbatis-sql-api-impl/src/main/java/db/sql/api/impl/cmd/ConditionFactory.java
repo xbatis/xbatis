@@ -19,6 +19,7 @@ import db.sql.api.Getter;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.executor.IQuery;
+import db.sql.api.cmd.executor.ISubQuery;
 import db.sql.api.cmd.executor.method.condition.IConditionMethods;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 import db.sql.api.impl.cmd.struct.ConditionChain;
@@ -30,7 +31,7 @@ import db.sql.api.tookit.LambdaUtil;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Object> {
 
@@ -789,31 +790,30 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         return Methods.notIn(createTableField(column, storey), values);
     }
 
-    public <T1, T2> ICondition exists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        if (!when) {
-            return null;
-        }
-        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
-
-        return Methods.exists(cmdFactory.createSubQuery()
-                .select1()
-                .from(lambdaFieldInfo.getType())
-                .eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey))
-                .connect(consumer != null, q -> consumer.accept(q))
-        );
+    private <T> BiConsumer<T, ISubQuery> createBiConsumer(T executor, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+        return (t, existQuery) -> {
+            existQuery.ignoreNullValueInCondition(this.isIgnoreNull());
+            existQuery.ignoreEmptyInCondition(this.isIgnoreEmpty());
+            existQuery.trimStringInCondition(this.isStringTrim());
+            if (consumer != null) {
+                consumer.accept(t, (AbstractSubQuery<?, ?>) existQuery);
+            }
+        };
     }
 
-    public <T1, T2> ICondition notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
-        if (!when) {
-            return null;
-        }
-        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
+    public <T, E> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(T executor, Class<E> entity, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+        return (AbstractSubQuery<?, ?>) this.getCmdFactory().createExistsOrNotExistsSubQuery(executor, entity, createBiConsumer(executor, consumer));
+    }
 
-        return Methods.notExists(cmdFactory.createSubQuery()
-                .select1()
-                .from(lambdaFieldInfo.getType())
-                .eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey))
-                .connect(consumer != null, q -> consumer.accept(q))
-        );
+    public <T, E1, E2> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(T executor, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+        return (AbstractSubQuery<?, ?>) this.getCmdFactory().createExistsOrNotExistsSubQuery(executor, sourceGetter, sourceStorey, targetGetter, createBiConsumer(executor, consumer));
+    }
+
+    public <T, E> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(T executor, Getter<E> selectGetter, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+        return (AbstractSubQuery<?, ?>) this.getCmdFactory().createInOrNotInSubQuery(executor, selectGetter, createBiConsumer(executor, consumer));
+    }
+
+    public <T, E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(T executor, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+        return (AbstractSubQuery<?, ?>) this.getCmdFactory().createInOrNotInSubQuery(executor, selectGetter, sourceEqGetter, sourceStorey, targetEqGetter, createBiConsumer(executor, consumer));
     }
 }
