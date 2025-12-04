@@ -21,14 +21,17 @@ import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.util.WhereUtil;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.DO.SysUserRoleMiddle;
 import com.xbatis.core.test.REQ.SysUserOrderBys;
 import com.xbatis.core.test.REQ.SysUserOrderBys2;
 import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
+import com.xbatis.core.test.mapper.SysUserRoleMiddleMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import com.xbatis.core.test.vo.SysUserCalcSelectVo;
 import com.xbatis.core.test.vo.SysUserHandlerVo;
+import com.xbatis.core.test.vo.SysUserRoleMiddleVo;
 import db.sql.api.DbType;
 import db.sql.api.Getters;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
@@ -958,6 +961,32 @@ public class QueryTest extends BaseTest {
             assertEquals(list.get(0).getCount2(), list.get(0).getId() + 1);
             assertEquals(list.get(1).getCount2(), list.get(1).getId() + 1);
             assertEquals(list.get(2).getCount2(), list.get(2).getId() + 1);
+        }
+    }
+
+    @Test
+    public void queryManyToMany() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserRoleMiddleMapper sysUserRoleMiddleMapper = session.getMapper(SysUserRoleMiddleMapper.class);
+            List<SysUserRoleMiddleVo> list = QueryChain.of(sysUserRoleMiddleMapper)
+                    .leftJoin(SysUserRoleMiddle::getUserId, SysUser::getId)
+                    .leftJoin(SysUserRoleMiddle::getRoleId, SysRole::getId)
+                    .returnType(SysUserRoleMiddleVo.class)
+                    .orderBy(SysUserRoleMiddle::getUserId, SysUserRoleMiddle::getRoleId)
+                    .list();
+
+            System.out.println(list);
+            assertEquals(list.size(), 4);
+
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 1);
+            assertEquals(list.get(2).getId(), 2);
+            assertEquals(list.get(3).getId(), 2);
+
+            assertEquals(list.get(0).getRoleId(), 1);
+            assertEquals(list.get(1).getRoleId(), 2);
+            assertEquals(list.get(2).getRoleId(), 2);
+            assertEquals(list.get(3).getRoleId(), null);
         }
     }
 }

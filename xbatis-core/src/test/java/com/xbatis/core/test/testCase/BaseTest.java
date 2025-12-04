@@ -124,6 +124,7 @@ public class BaseTest {
         configuration.addMapper(SysUserIDMapper.class);
         configuration.addMapper(SplitTableTestMapper.class);
         configuration.addMapper(AddrArchiveMapper.class);
+        configuration.addMapper(SysUserRoleMiddleMapper.class);
 
 
         String mapperLocations = "classpath:/mappers/**.xml";
