@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Object> {
 
@@ -790,30 +791,36 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         return Methods.notIn(createTableField(column, storey), values);
     }
 
-    private <T> BiConsumer<T, ISubQuery> createBiConsumer(T executor, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+    private <T> BiConsumer<T, ISubQuery> createBiConsumer(T executor, Object consumer) {
         return (t, existQuery) -> {
             existQuery.ignoreNullValueInCondition(this.isIgnoreNull());
             existQuery.ignoreEmptyInCondition(this.isIgnoreEmpty());
             existQuery.trimStringInCondition(this.isStringTrim());
             if (consumer != null) {
-                consumer.accept(t, (AbstractSubQuery<?, ?>) existQuery);
+                if (consumer instanceof Consumer) {
+                    Consumer tmp = (Consumer) consumer;
+                    tmp.accept((AbstractSubQuery<?, ?>) existQuery);
+                } else {
+                    BiConsumer tmp = (BiConsumer) consumer;
+                    tmp.accept(t, (AbstractSubQuery<?, ?>) existQuery);
+                }
             }
         };
     }
 
-    public <T, E> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(T executor, Class<E> entity, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+    public <T, E> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(T executor, Class<E> entity, Object consumer) {
         return (AbstractSubQuery<?, ?>) this.getCmdFactory().createExistsOrNotExistsSubQuery(executor, entity, createBiConsumer(executor, consumer));
     }
 
-    public <T, E1, E2> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(T executor, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+    public <T, E1, E2> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(T executor, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, Object consumer) {
         return (AbstractSubQuery<?, ?>) this.getCmdFactory().createExistsOrNotExistsSubQuery(executor, sourceGetter, sourceStorey, targetGetter, createBiConsumer(executor, consumer));
     }
 
-    public <T, E> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(T executor, Getter<E> selectGetter, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+    public <T, E> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(T executor, Getter<E> selectGetter, Object consumer) {
         return (AbstractSubQuery<?, ?>) this.getCmdFactory().createInOrNotInSubQuery(executor, selectGetter, createBiConsumer(executor, consumer));
     }
 
-    public <T, E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(T executor, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<T, AbstractSubQuery<?, ?>> consumer) {
+    public <T, E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(T executor, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, Object consumer) {
         return (AbstractSubQuery<?, ?>) this.getCmdFactory().createInOrNotInSubQuery(executor, selectGetter, sourceEqGetter, sourceStorey, targetEqGetter, createBiConsumer(executor, consumer));
     }
 }

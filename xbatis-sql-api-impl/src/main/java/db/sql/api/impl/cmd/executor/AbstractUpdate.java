@@ -32,10 +32,10 @@ import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.*;
-import db.sql.api.impl.cmd.struct.ext.ExistsExt;
-import db.sql.api.impl.cmd.struct.ext.InExt;
-import db.sql.api.impl.cmd.struct.ext.NotExistsExt;
-import db.sql.api.impl.cmd.struct.ext.NotInExt;
+import db.sql.api.impl.cmd.struct.ext.Exists;
+import db.sql.api.impl.cmd.struct.ext.In;
+import db.sql.api.impl.cmd.struct.ext.NotExists;
+import db.sql.api.impl.cmd.struct.ext.NotIn;
 import db.sql.api.impl.cmd.struct.query.Returning;
 import db.sql.api.impl.cmd.struct.update.UpdateSets;
 import db.sql.api.impl.cmd.struct.update.UpdateTable;
@@ -61,10 +61,10 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         On,
         Where,
         Returning
-        >, ExistsExt<SELF, AbstractSubQuery<?, ?>>,
-        NotExistsExt<SELF, AbstractSubQuery<?, ?>>,
-        InExt<SELF, AbstractSubQuery<?, ?>>,
-        NotInExt<SELF, AbstractSubQuery<?, ?>> {
+        >, Exists<SELF, AbstractSubQuery<?, ?>, BiConsumer<SELF, AbstractSubQuery<?, ?>>>,
+        NotExists<SELF, AbstractSubQuery<?, ?>, BiConsumer<SELF, AbstractSubQuery<?, ?>>>,
+        In<SELF, AbstractSubQuery<?, ?>, BiConsumer<SELF, AbstractSubQuery<?, ?>>>,
+        NotIn<SELF, AbstractSubQuery<?, ?>, BiConsumer<SELF, AbstractSubQuery<?, ?>>> {
 
     protected final ConditionFactory conditionFactory;
     protected final CMD_FACTORY $;

@@ -27,10 +27,10 @@ import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.delete.DeleteTable;
-import db.sql.api.impl.cmd.struct.ext.ExistsExt;
-import db.sql.api.impl.cmd.struct.ext.InExt;
-import db.sql.api.impl.cmd.struct.ext.NotExistsExt;
-import db.sql.api.impl.cmd.struct.ext.NotInExt;
+import db.sql.api.impl.cmd.struct.ext.Exists;
+import db.sql.api.impl.cmd.struct.ext.In;
+import db.sql.api.impl.cmd.struct.ext.NotExists;
+import db.sql.api.impl.cmd.struct.ext.NotIn;
 import db.sql.api.impl.cmd.struct.query.Returning;
 
 import java.util.Map;
@@ -49,10 +49,10 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
         ConditionChain,
         DeleteTable,
         From, Join, On, Where, Returning>
-        , ExistsExt<SELF, AbstractSubQuery<?, ?>>,
-        NotExistsExt<SELF, AbstractSubQuery<?, ?>>,
-        InExt<SELF, AbstractSubQuery<?, ?>>,
-        NotInExt<SELF, AbstractSubQuery<?, ?>> {
+        , Exists<SELF, AbstractSubQuery<?, ?>, BiConsumer<SELF, AbstractSubQuery<?, ?>>>,
+        NotExists<SELF, AbstractSubQuery<?, ?>, BiConsumer<SELF, AbstractSubQuery<?, ?>>>,
+        In<SELF, AbstractSubQuery<?, ?>, BiConsumer<SELF, AbstractSubQuery<?, ?>>>,
+        NotIn<SELF, AbstractSubQuery<?, ?>, BiConsumer<SELF, AbstractSubQuery<?, ?>>> {
 
     protected final ConditionFactory conditionFactory;
     protected final CMD_FACTORY $;

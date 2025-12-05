@@ -28,10 +28,10 @@ import db.sql.api.impl.cmd.basic.ConditionBlock;
 import db.sql.api.impl.cmd.basic.Connector;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
-import db.sql.api.impl.cmd.struct.ext.ExistsExt;
-import db.sql.api.impl.cmd.struct.ext.InExt;
-import db.sql.api.impl.cmd.struct.ext.NotExistsExt;
-import db.sql.api.impl.cmd.struct.ext.NotInExt;
+import db.sql.api.impl.cmd.struct.ext.Exists;
+import db.sql.api.impl.cmd.struct.ext.In;
+import db.sql.api.impl.cmd.struct.ext.NotExists;
+import db.sql.api.impl.cmd.struct.ext.NotIn;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -40,14 +40,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ConditionChain implements IConditionChain<ConditionChain, TableField, Cmd, Object>
-        , ExistsExt<ConditionChain, AbstractSubQuery<?, ?>>
-        , NotExistsExt<ConditionChain, AbstractSubQuery<?, ?>>
-        , InExt<ConditionChain, AbstractSubQuery<?, ?>>
-        , NotInExt<ConditionChain, AbstractSubQuery<?, ?>>
+        , Exists<ConditionChain, AbstractSubQuery<?, ?>, Consumer<AbstractSubQuery<?, ?>>>
+        , NotExists<ConditionChain, AbstractSubQuery<?, ?>, Consumer<AbstractSubQuery<?, ?>>>
+        , In<ConditionChain, AbstractSubQuery<?, ?>, Consumer<AbstractSubQuery<?, ?>>>
+        , NotIn<ConditionChain, AbstractSubQuery<?, ?>, Consumer<AbstractSubQuery<?, ?>>>
         , ICondition {
 
     private final ConditionFactory conditionFactory;
@@ -706,22 +706,22 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public <E> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Class<E> entity, BiConsumer<ConditionChain, AbstractSubQuery<?, ?>> consumer) {
+    public <E> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Class<E> entity, Consumer<AbstractSubQuery<?, ?>> consumer) {
         return this.getConditionFactory().buildExistsOrNotExistsSubQuery(this, entity, consumer);
     }
 
     @Override
-    public <E1, E2> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<ConditionChain, AbstractSubQuery<?, ?>> consumer) {
+    public <E1, E2> AbstractSubQuery<?, ?> buildExistsOrNotExistsSubQuery(Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
         return this.getConditionFactory().buildExistsOrNotExistsSubQuery(this, sourceGetter, sourceStorey, targetGetter, consumer);
     }
 
     @Override
-    public <E> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E> selectGetter, BiConsumer<ConditionChain, AbstractSubQuery<?, ?>> consumer) {
+    public <E> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E> selectGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
         return this.getConditionFactory().buildInOrNotInSubQuery(this, selectGetter, consumer);
     }
 
     @Override
-    public <E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<ConditionChain, AbstractSubQuery<?, ?>> consumer) {
+    public <E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, Consumer<AbstractSubQuery<?, ?>> consumer) {
         return this.getConditionFactory().buildInOrNotInSubQuery(this, selectGetter, sourceEqGetter, sourceStorey, targetEqGetter, consumer);
     }
 }
