@@ -95,7 +95,7 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         return entityType;
     }
 
-    private void setDefault() {
+    public void setDefault() {
         if (this.getDeleteTable() == null && this.getFrom() == null) {
             //自动设置实体类
             this.delete(getEntityType());

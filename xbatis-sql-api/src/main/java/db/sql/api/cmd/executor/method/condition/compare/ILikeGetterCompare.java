@@ -17,35 +17,35 @@ package db.sql.api.cmd.executor.method.condition.compare;
 import db.sql.api.Getter;
 import db.sql.api.cmd.LikeMode;
 
-public interface ILikeGetterCompare<RV> {
+public interface ILikeGetterCompare<RV, V> {
 
-    default <T> RV like(Getter<T> column, String value) {
+    default <T> RV like(Getter<T> column, V value) {
         return like(true, LikeMode.DEFAULT, column, 1, value);
     }
 
-    default <T> RV like(boolean when, Getter<T> column, String value) {
+    default <T> RV like(boolean when, Getter<T> column, V value) {
         return this.like(when, LikeMode.DEFAULT, column, 1, value);
     }
 
-    default <T> RV like(Getter<T> column, String value, int storey) {
+    default <T> RV like(Getter<T> column, V value, int storey) {
         return like(true, column, storey, value);
     }
 
-    default <T> RV like(boolean when, Getter<T> column, int storey, String value) {
+    default <T> RV like(boolean when, Getter<T> column, int storey, V value) {
         return this.like(when, LikeMode.DEFAULT, column, storey, value);
     }
 
-    default <T> RV like(LikeMode mode, Getter<T> column, String value) {
+    default <T> RV like(LikeMode mode, Getter<T> column, V value) {
         return like(mode, column, 1, value);
     }
 
-    default <T> RV like(boolean when, LikeMode mode, Getter<T> column, String value) {
+    default <T> RV like(boolean when, LikeMode mode, Getter<T> column, V value) {
         return this.like(when, mode, column, 1, value);
     }
 
-    default <T> RV like(LikeMode mode, Getter<T> column, int storey, String value) {
+    default <T> RV like(LikeMode mode, Getter<T> column, int storey, V value) {
         return this.like(true, mode, column, storey, value);
     }
 
-    <T> RV like(boolean when, LikeMode mode, Getter<T> column, int storey, String value);
+    <T> RV like(boolean when, LikeMode mode, Getter<T> column, int storey, V value);
 }

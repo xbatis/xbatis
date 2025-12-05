@@ -239,25 +239,25 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     }
 
     @Override
-    default SELF like(LikeMode mode, COLUMN column, String value) {
+    default SELF like(LikeMode mode, COLUMN column, V value) {
         conditionChain().like(mode, column, value);
         return (SELF) this;
     }
 
     @Override
-    default SELF notLike(LikeMode mode, COLUMN column, String value) {
+    default SELF notLike(LikeMode mode, COLUMN column, V value) {
         conditionChain().notLike(mode, column, value);
         return (SELF) this;
     }
 
     @Override
-    default SELF iLike(LikeMode mode, COLUMN column, String value) {
+    default SELF iLike(LikeMode mode, COLUMN column, V value) {
         conditionChain().iLike(mode, column, value);
         return (SELF) this;
     }
 
     @Override
-    default SELF notILike(LikeMode mode, COLUMN column, String value) {
+    default SELF notILike(LikeMode mode, COLUMN column, V value) {
         conditionChain().notILike(mode, column, value);
         return (SELF) this;
     }
@@ -372,25 +372,25 @@ public interface IConditionMethod<SELF extends IConditionMethod,
 
 
     @Override
-    default <T> SELF like(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+    default <T> SELF like(boolean when, LikeMode mode, Getter<T> column, int storey, V value) {
         conditionChain().like(when, mode, column, storey, value);
         return (SELF) this;
     }
 
     @Override
-    default <T> SELF notLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+    default <T> SELF notLike(boolean when, LikeMode mode, Getter<T> column, int storey, V value) {
         conditionChain().notLike(when, mode, column, storey, value);
         return (SELF) this;
     }
 
     @Override
-    default <T> SELF iLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+    default <T> SELF iLike(boolean when, LikeMode mode, Getter<T> column, int storey, V value) {
         conditionChain().iLike(when, mode, column, storey, value);
         return (SELF) this;
     }
 
     @Override
-    default <T> SELF notILike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+    default <T> SELF notILike(boolean when, LikeMode mode, Getter<T> column, int storey, V value) {
         conditionChain().notILike(when, mode, column, storey, value);
         return (SELF) this;
     }

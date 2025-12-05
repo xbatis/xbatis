@@ -579,19 +579,38 @@ public class QueryTest extends BaseTest {
     public void inSubQueryTest3() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
-            List<SysRole> list = QueryChain.of(sysRoleMapper)
-                    .in(SysRole::getId, SysUser::getRole_id, SysRole::getId, SysUser::getRole_id)
-                    .in(SysRole::getId, SysUser::getRole_id, SysRole::getId, SysUser::getRole_id, (query, inQuery) -> {
-                        inQuery.like(SysUser::getPassword, "123456");
-                    })
-                    .list();
+            QueryChain<SysRole> queryChain = QueryChain.of(sysRoleMapper)
+                    .in(SysRole::getId, SysUser::getRole_id, SysRole::getId, SysUser::getRole_id);
 
+            queryChain.setDefault();
+
+            check("检测in subquery sql", "select t.id,t.name,t.create_time from sys_role t where t.id in (select st.role_id from t_sys_user st where st.role_id = t.id)", queryChain);
+
+            List<SysRole> list = queryChain.list();
 
             SysRole eqSysRole = new SysRole();
             eqSysRole.setId(1);
             eqSysRole.setName("测试");
             eqSysRole.setCreateTime(LocalDateTime.parse("2022-10-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             assertEquals(list.get(0), eqSysRole, "inSubQuery2");
+
+
+            queryChain = QueryChain.of(sysRoleMapper)
+                    .in(SysRole::getId, SysUser::getRole_id, SysRole::getId, SysUser::getRole_id, (query, inQuery) -> {
+                        inQuery.eq(SysUser::getPassword, "123456");
+                    });
+
+            queryChain.setDefault();
+
+            check("检测in subquery sql", "select t.id,t.name,t.create_time from sys_role t where t.id in (select st.role_id from t_sys_user st where st.role_id = t.id and st.password = '123456')", queryChain);
+
+            list = queryChain.list();
+
+            eqSysRole = new SysRole();
+            eqSysRole.setId(1);
+            eqSysRole.setName("测试");
+            eqSysRole.setCreateTime(LocalDateTime.parse("2022-10-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            assertEquals(list.get(0), eqSysRole, "inSubQuery3");
         }
     }
 

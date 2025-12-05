@@ -129,11 +129,11 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         return (QueryChain) super.setReturnType(Map.class);
     }
 
-    private void setDefault() {
+    public void setDefault() {
         this.setDefault(false);
     }
 
-    private void setDefault(boolean forCount) {
+    public void setDefault(boolean forCount) {
         if (autoSelect && (Objects.isNull(this.select) || this.select.getSelectField().isEmpty())) {
             if (forCount) {
                 this.selectCountAll();

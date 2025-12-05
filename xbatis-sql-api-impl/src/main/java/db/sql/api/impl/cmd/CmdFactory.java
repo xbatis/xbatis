@@ -210,20 +210,6 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
         return subQuery;
     }
 
-    @Override
-    public <T, E1, E2> Object createInOrNotInSubQuery(T executor, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, BiConsumer<T, ISubQuery> consumer) {
-        ISubQuery subQuery = this.createSubQuery();
-        subQuery.select(selectGetter);
-        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(selectGetter);
-        subQuery.from(lambdaFieldInfo.getType());
-        subQuery.eq(targetEqGetter, this.field(sourceEqGetter, sourceStorey));
-        if (consumer != null) {
-            consumer.accept(executor, subQuery);
-        }
-        return subQuery;
-    }
-
-
     protected TableField field(Class<?> clazz, int storey, String filedName) {
         Table table = table(clazz, storey);
         return new TableField(table, filedName);

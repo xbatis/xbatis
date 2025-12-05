@@ -39,14 +39,14 @@ public interface ICompare<RV, COLUMN, V> extends
         ILtGetterPredicateCompare<RV, V>,
         ILteGetterCompare<RV, V>,
         ILteGetterPredicateCompare<RV, V>,
-        ILikeGetterCompare<RV>,
-        ILikeGetterPredicateCompare<RV>,
-        INotLikeGetterCompare<RV>,
-        INotLikeGetterPredicateCompare<RV>,
-        IILikeGetterCompare<RV>,
-        IILikeGetterPredicateCompare<RV>,
-        INotILikeGetterCompare<RV>,
-        INotILikeGetterPredicateCompare<RV>,
+        ILikeGetterCompare<RV, V>,
+        ILikeGetterPredicateCompare<RV, V>,
+        INotLikeGetterCompare<RV, V>,
+        INotLikeGetterPredicateCompare<RV, V>,
+        IILikeGetterCompare<RV, V>,
+        IILikeGetterPredicateCompare<RV, V>,
+        INotILikeGetterCompare<RV, V>,
+        INotILikeGetterPredicateCompare<RV, V>,
         IBetweenGetterCompare<RV, V>,
         IBetweenGetterPredicateCompare<RV, V>,
         INotBetweenGetterCompare<RV, V>,
@@ -162,80 +162,80 @@ public interface ICompare<RV, COLUMN, V> extends
         return this.lte(column, value);
     }
 
-    default RV like(COLUMN column, String value) {
+    default RV like(COLUMN column, V value) {
         return this.like(LikeMode.DEFAULT, column, value);
     }
 
-    default RV like(boolean when, COLUMN column, String value) {
+    default RV like(boolean when, COLUMN column, V value) {
         if (!when) {
             return $conditionWhenFalseRV();
         }
         return this.like(column, value);
     }
 
-    RV like(LikeMode mode, COLUMN column, String value);
+    RV like(LikeMode mode, COLUMN column, V value);
 
-    default RV like(boolean when, LikeMode mode, COLUMN column, String value) {
+    default RV like(boolean when, LikeMode mode, COLUMN column, V value) {
         if (!when) {
             return $conditionWhenFalseRV();
         }
         return this.like(mode, column, value);
     }
 
-    default RV notLike(COLUMN column, String value) {
+    default RV notLike(COLUMN column, V value) {
         return this.notLike(LikeMode.DEFAULT, column, value);
     }
 
-    default RV notLike(boolean when, COLUMN column, String value) {
+    default RV notLike(boolean when, COLUMN column, V value) {
         if (!when) {
             return $conditionWhenFalseRV();
         }
         return this.notLike(column, value);
     }
 
-    RV notLike(LikeMode mode, COLUMN column, String value);
+    RV notLike(LikeMode mode, COLUMN column, V value);
 
-    default RV notLike(boolean when, LikeMode mode, COLUMN column, String value) {
+    default RV notLike(boolean when, LikeMode mode, COLUMN column, V value) {
         if (!when) {
             return $conditionWhenFalseRV();
         }
         return this.notLike(mode, column, value);
     }
 
-    default RV iLike(COLUMN column, String value) {
+    default RV iLike(COLUMN column, V value) {
         return this.iLike(LikeMode.DEFAULT, column, value);
     }
 
-    default RV iLike(boolean when, COLUMN column, String value) {
+    default RV iLike(boolean when, COLUMN column, V value) {
         if (!when) {
             return $conditionWhenFalseRV();
         }
         return this.iLike(column, value);
     }
 
-    RV iLike(LikeMode mode, COLUMN column, String value);
+    RV iLike(LikeMode mode, COLUMN column, V value);
 
-    default RV iLike(boolean when, LikeMode mode, COLUMN column, String value) {
+    default RV iLike(boolean when, LikeMode mode, COLUMN column, V value) {
         if (!when) {
             return $conditionWhenFalseRV();
         }
         return this.iLike(mode, column, value);
     }
 
-    default RV notILike(COLUMN column, String value) {
+    default RV notILike(COLUMN column, V value) {
         return this.notILike(LikeMode.DEFAULT, column, value);
     }
 
-    default RV notILike(boolean when, COLUMN column, String value) {
+    default RV notILike(boolean when, COLUMN column, V value) {
         if (!when) {
             return $conditionWhenFalseRV();
         }
         return this.notILike(column, value);
     }
 
-    RV notILike(LikeMode mode, COLUMN column, String value);
+    RV notILike(LikeMode mode, COLUMN column, V value);
 
-    default RV notILike(boolean when, LikeMode mode, COLUMN column, String value) {
+    default RV notILike(boolean when, LikeMode mode, COLUMN column, V value) {
         if (!when) {
             return $conditionWhenFalseRV();
         }

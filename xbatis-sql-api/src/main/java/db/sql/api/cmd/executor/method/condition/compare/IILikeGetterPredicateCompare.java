@@ -19,23 +19,23 @@ import db.sql.api.cmd.LikeMode;
 
 import java.util.function.Predicate;
 
-public interface IILikeGetterPredicateCompare<RV> {
+public interface IILikeGetterPredicateCompare<RV, V> {
 
-    default <T> RV iLike(Getter<T> column, String value, Predicate<String> predicate) {
+    default <T> RV iLike(Getter<T> column, V value, Predicate<V> predicate) {
         return this.iLike(column, 1, value, predicate);
     }
 
-    default <T> RV iLike(Getter<T> column, int storey, String value, Predicate<String> predicate) {
+    default <T> RV iLike(Getter<T> column, int storey, V value, Predicate<V> predicate) {
         return iLike(LikeMode.DEFAULT, column, storey, value, predicate);
     }
 
-    default <T> RV iLike(LikeMode mode, Getter<T> column, String value, Predicate<String> predicate) {
+    default <T> RV iLike(LikeMode mode, Getter<T> column, V value, Predicate<V> predicate) {
         return iLike(mode, column, 1, value, predicate);
     }
 
-    default <T> RV iLike(LikeMode mode, Getter<T> column, int storey, String value, Predicate<String> predicate) {
+    default <T> RV iLike(LikeMode mode, Getter<T> column, int storey, V value, Predicate<V> predicate) {
         return iLike(predicate.test(value), mode, column, storey, value);
     }
 
-    <T> RV iLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value);
+    <T> RV iLike(boolean when, LikeMode mode, Getter<T> column, int storey, V value);
 }

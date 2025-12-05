@@ -286,11 +286,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public ICondition like(LikeMode mode, Cmd column, String value) {
+    public ICondition like(LikeMode mode, Cmd column, Object value) {
         if (!isKeyValid(column)) {
             return null;
         }
-        value = (String) checkAndGetValidValue(value);
+        value = checkAndGetValidValue(value);
         if (Objects.isNull(value)) {
             return null;
         }
@@ -298,11 +298,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public <T> ICondition like(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+    public <T> ICondition like(boolean when, LikeMode mode, Getter<T> column, int storey, Object value) {
         if (!when) {
             return null;
         }
-        value = (String) checkAndGetValidValue(value);
+        value = checkAndGetValidValue(value);
         if (Objects.isNull(value)) {
             return null;
         }
@@ -310,11 +310,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public ICondition notLike(LikeMode mode, Cmd column, String value) {
+    public ICondition notLike(LikeMode mode, Cmd column, Object value) {
         if (!isKeyValid(column)) {
             return null;
         }
-        value = (String) checkAndGetValidValue(value);
+        value = checkAndGetValidValue(value);
         if (Objects.isNull(value)) {
             return null;
         }
@@ -322,11 +322,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public <T> ICondition notLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+    public <T> ICondition notLike(boolean when, LikeMode mode, Getter<T> column, int storey, Object value) {
         if (!when) {
             return null;
         }
-        value = (String) checkAndGetValidValue(value);
+        value = checkAndGetValidValue(value);
         if (Objects.isNull(value)) {
             return null;
         }
@@ -335,11 +335,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
 
     @Override
-    public ICondition iLike(LikeMode mode, Cmd column, String value) {
+    public ICondition iLike(LikeMode mode, Cmd column, Object value) {
         if (!isKeyValid(column)) {
             return null;
         }
-        value = (String) checkAndGetValidValue(value);
+        value = checkAndGetValidValue(value);
         if (Objects.isNull(value)) {
             return null;
         }
@@ -347,11 +347,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public <T> ICondition iLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+    public <T> ICondition iLike(boolean when, LikeMode mode, Getter<T> column, int storey, Object value) {
         if (!when) {
             return null;
         }
-        value = (String) checkAndGetValidValue(value);
+        value = checkAndGetValidValue(value);
         if (Objects.isNull(value)) {
             return null;
         }
@@ -359,11 +359,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public ICondition notILike(LikeMode mode, Cmd column, String value) {
+    public ICondition notILike(LikeMode mode, Cmd column, Object value) {
         if (!isKeyValid(column)) {
             return null;
         }
-        value = (String) checkAndGetValidValue(value);
+        value = checkAndGetValidValue(value);
         if (Objects.isNull(value)) {
             return null;
         }
@@ -371,11 +371,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public <T> ICondition notILike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+    public <T> ICondition notILike(boolean when, LikeMode mode, Getter<T> column, int storey, Object value) {
         if (!when) {
             return null;
         }
-        value = (String) checkAndGetValidValue(value);
+        value = checkAndGetValidValue(value);
         if (Objects.isNull(value)) {
             return null;
         }
@@ -802,7 +802,25 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
                     tmp.accept((AbstractSubQuery<?, ?>) existQuery);
                 } else {
                     BiConsumer tmp = (BiConsumer) consumer;
-                    tmp.accept(t, (AbstractSubQuery<?, ?>) existQuery);
+                    tmp.accept(executor, (AbstractSubQuery<?, ?>) existQuery);
+                }
+            }
+        };
+    }
+
+    private <T, E1, E2> BiConsumer<T, ISubQuery> createBiConsumer(T executor, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, Object consumer) {
+        return (t, existQuery) -> {
+            existQuery.ignoreNullValueInCondition(this.isIgnoreNull());
+            existQuery.ignoreEmptyInCondition(this.isIgnoreEmpty());
+            existQuery.trimStringInCondition(this.isStringTrim());
+            existQuery.eq(targetEqGetter, getCmdFactory().field(sourceEqGetter, sourceStorey));
+            if (consumer != null) {
+                if (consumer instanceof Consumer) {
+                    Consumer tmp = (Consumer) consumer;
+                    tmp.accept((AbstractSubQuery<?, ?>) existQuery);
+                } else {
+                    BiConsumer tmp = (BiConsumer) consumer;
+                    tmp.accept(executor, (AbstractSubQuery<?, ?>) existQuery);
                 }
             }
         };
@@ -821,6 +839,6 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     public <T, E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(T executor, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, Object consumer) {
-        return (AbstractSubQuery<?, ?>) this.getCmdFactory().createInOrNotInSubQuery(executor, selectGetter, sourceEqGetter, sourceStorey, targetEqGetter, createBiConsumer(executor, consumer));
+        return (AbstractSubQuery<?, ?>) this.getCmdFactory().createInOrNotInSubQuery(executor, selectGetter, createBiConsumer(executor, sourceEqGetter, sourceStorey, targetEqGetter, consumer));
     }
 }
