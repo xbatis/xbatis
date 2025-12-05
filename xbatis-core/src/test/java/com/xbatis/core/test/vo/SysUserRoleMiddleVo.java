@@ -30,9 +30,9 @@ public class SysUserRoleMiddleVo {
 
     private String role_id;
 
-    @ResultEntityField(target = SysRole.class,property = "id")
+    @ResultEntityField(target = SysRole.class, property = "id")
     private Integer roleId;
 
-    @ResultEntityField(target = SysRole.class,property = "name")
+    @ResultEntityField(target = SysRole.class, property = "name")
     private String roleName;
 }
