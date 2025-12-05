@@ -69,6 +69,15 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
         return conditionFactory;
     }
 
+    public <T> TableField $(Getter<T> getter) {
+        return this.$(getter, 1);
+    }
+
+    public <T> TableField $(Getter<T> getter, int storey) {
+        return this.conditionFactory.getCmdFactory().field(getter, storey);
+    }
+
+
     @Override
     public ConditionChain setIgnoreNull(boolean bool) {
         conditionFactory.setIgnoreNull(bool);

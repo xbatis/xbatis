@@ -580,11 +580,14 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             QueryChain<SysRole> queryChain = QueryChain.of(sysRoleMapper)
+                    .in(SysRole::getId, SysUser::getRole_id, (query, inQuery) -> {
+                        inQuery.eq(SysUser::getRole_id, query.$(SysRole::getId));
+                    })
                     .in(SysRole::getId, SysUser::getRole_id, SysRole::getId, SysUser::getRole_id);
 
             queryChain.setDefault();
 
-            check("检测in subquery sql", "select t.id,t.name,t.create_time from sys_role t where t.id in (select st.role_id from t_sys_user st where st.role_id = t.id)", queryChain);
+            check("检测in subquery sql", "select t.id,t.name,t.create_time from sys_role t where t.id in (select st.role_id from t_sys_user st where st.role_id = t.id) and t.id in (select st.role_id from t_sys_user st where st.role_id = t.id)", queryChain);
 
             List<SysRole> list = queryChain.list();
 
@@ -592,7 +595,7 @@ public class QueryTest extends BaseTest {
             eqSysRole.setId(1);
             eqSysRole.setName("测试");
             eqSysRole.setCreateTime(LocalDateTime.parse("2022-10-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            assertEquals(list.get(0), eqSysRole, "inSubQuery2");
+            assertEquals(list.get(0), eqSysRole, "inSubQuery3");
 
 
             queryChain = QueryChain.of(sysRoleMapper)
@@ -610,7 +613,7 @@ public class QueryTest extends BaseTest {
             eqSysRole.setId(1);
             eqSysRole.setName("测试");
             eqSysRole.setCreateTime(LocalDateTime.parse("2022-10-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            assertEquals(list.get(0), eqSysRole, "inSubQuery3");
+            assertEquals(list.get(0), eqSysRole, "inSubQuery3-2");
         }
     }
 
