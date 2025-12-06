@@ -43,7 +43,7 @@ public final class TablePrefixUtil {
                 entry.getValue().forEach((storey, prefix) -> {
                     if (storey == -1) {
                         for (int i = 0; i < 5; i++) {
-                            Table table = cmdFactory.cacheTable(entityType, storey);
+                            Table table = cmdFactory.cacheTable(entityType, i);
                             if (Objects.nonNull(table) && Objects.isNull(table.getPrefix())) {
                                 table.setPrefix(prefix);
                                 break;

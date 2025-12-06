@@ -73,7 +73,7 @@ public class TenantContext {
             return null;
         }
         Serializable id = TENANT_INFO_GETTER.get();
-        if (id != null && id instanceof TenantId) {
+        if (id instanceof TenantId) {
             TenantId tenantId = (TenantId) id;
             if (tenantId.getValues() == null || tenantId.getValues().length == 0) {
                 return null;
