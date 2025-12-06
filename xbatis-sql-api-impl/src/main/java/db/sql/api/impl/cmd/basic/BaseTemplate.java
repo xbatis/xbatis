@@ -68,7 +68,6 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
         for (int i = 0; i < template.length(); i++) {
             boolean hasPre = i > 0;
             boolean hasNext = i < template.length() - 1;
-            System.out.println(i);
             char c = template.charAt(i);
             if (c != '\'') {
                 tsb.append(c);
