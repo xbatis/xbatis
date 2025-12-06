@@ -40,8 +40,11 @@ public class GroupBy implements IGroupBy<GroupBy, Cmd> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(SqlConst.GROUP_BY);
-        CmdUtils.join(module, this, context, sqlBuilder, this.groupByFields, SqlConst.DELIMITER);
+        if (groupByFields.isEmpty()) {
+            return sqlBuilder;
+        }
+        sqlBuilder = sqlBuilder.append(SqlConst.GROUP_BY);
+        sqlBuilder = CmdUtils.join(module, this, context, sqlBuilder, this.groupByFields, SqlConst.DELIMITER);
         return sqlBuilder;
     }
 

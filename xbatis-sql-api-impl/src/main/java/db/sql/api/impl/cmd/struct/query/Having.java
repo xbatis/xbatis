@@ -70,7 +70,7 @@ public class Having implements IHaving<Having> {
         }
         boolean isFirst = true;
 
-        sqlBuilder.append(SqlConst.HAVING);
+        sqlBuilder = sqlBuilder.append(SqlConst.HAVING);
         for (ConditionBlock conditionBlock : this.conditionBlocks) {
             if (conditionBlock.getCondition() instanceof ConditionChain) {
                 ConditionChain conditionChain = (ConditionChain) conditionBlock.getCondition();
@@ -81,7 +81,7 @@ public class Having implements IHaving<Having> {
             if (!isFirst) {
                 sqlBuilder.append(SqlConst.BLANK).append(conditionBlock.getConnector()).append(SqlConst.BLANK);
             }
-            conditionBlock.getCondition().sql(module, this, context, sqlBuilder);
+            sqlBuilder = conditionBlock.getCondition().sql(module, this, context, sqlBuilder);
             isFirst = false;
         }
         return sqlBuilder;
