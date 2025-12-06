@@ -183,7 +183,7 @@ public final class UpdateModelMethodUtil {
             }
             Case sqlCase = Methods.case_();
             for (int i = 0; i < list.size(); i++) {
-                Object value = columnUpdateValues.get(tableField.getName()).get(i);
+                Object value = columnUpdateValues.get(modelFieldInfo.getTableFieldInfo().getColumnName()).get(i);
                 if (value == null) {
                     value = Methods.NULL();
                 }
@@ -195,7 +195,7 @@ public final class UpdateModelMethodUtil {
 
         idFieldInfos.stream().forEach(tableFieldInfo -> {
             TableField tableField = updateChain.$().field(modelInfo.getEntityType(), tableFieldInfo.getField().getName());
-            updateChain.in(tableField, columnUpdateValues.get(tableField.getName()));
+            updateChain.in(tableField, columnUpdateValues.get(tableFieldInfo.getTableFieldInfo().getColumnName()));
         });
 
         return updateChain
