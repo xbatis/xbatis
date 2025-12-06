@@ -74,16 +74,15 @@ public final class UpdateModelMethodUtil {
         Object version = null;
         try {
             if (modelInfo.getTableInfo().getVersionFieldInfo() != null) {
-                if (modelInfo.getVersionFieldInfo() == null && isUpdateById) {
-                    throw new RuntimeException(MessageFormat.format("model class {0} , need a version field", modelInfo.getType().getName()));
-                }
-
-                if (modelInfo.getVersionFieldInfo() != null) {
+                if (modelInfo.getVersionFieldInfo() == null) {
+                    if (isUpdateById) {
+                        throw new RuntimeException(MessageFormat.format("model class {0} , need a version field", modelInfo.getType().getName()));
+                    }
+                } else {
                     version = modelInfo.getVersionFieldInfo().getValue(model);
-                }
-
-                if (version == null && isUpdateById) {
-                    throw new RuntimeException("Data has no version value");
+                    if (version == null && isUpdateById) {
+                        throw new RuntimeException("Data has no version value");
+                    }
                 }
             }
 
