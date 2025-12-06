@@ -685,9 +685,8 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
         if (conditionBlocks == null || conditionBlocks.isEmpty()) {
             return sqlBuilder;
         }
-        if ((!(parent instanceof Where) && !(parent instanceof On)) || this.parent != null) {
-            sqlBuilder.append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
-        }
+
+        StringBuilder sb = new StringBuilder();
         boolean isFirst = true;
         for (ConditionBlock conditionBlock : this.conditionBlocks) {
             if (conditionBlock.getCondition() instanceof ConditionChain) {
@@ -697,15 +696,22 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
                 }
             }
             if (!isFirst) {
-                sqlBuilder.append(SqlConst.BLANK).append(conditionBlock.getConnector()).append(SqlConst.BLANK);
+                sb = sb.append(SqlConst.BLANK).append(conditionBlock.getConnector()).append(SqlConst.BLANK);
             }
-            conditionBlock.getCondition().sql(module, this, context, sqlBuilder);
+            sb = conditionBlock.getCondition().sql(module, this, context, sb);
             isFirst = false;
         }
-        if ((!(parent instanceof Where) && !(parent instanceof On)) || this.parent != null) {
-            sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
-        }
 
+        if (sb.length() > 0) {
+            boolean appendBracket = (!(parent instanceof Where) && !(parent instanceof On)) || this.parent != null;
+            if (appendBracket) {
+                sqlBuilder = sqlBuilder.append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
+            }
+            sqlBuilder = sqlBuilder.append(sb);
+            if (appendBracket) {
+                sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
+            }
+        }
         return sqlBuilder;
     }
 
