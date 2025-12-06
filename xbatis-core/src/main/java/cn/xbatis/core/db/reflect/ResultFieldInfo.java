@@ -56,9 +56,9 @@ public class ResultFieldInfo {
     public ResultFieldInfo(Class clazz, Field field, ResultField resultField) {
         this(true, clazz, field, getColumnName(clazz, field, resultField), getTypeHandler(field, resultField), resultField.jdbcType());
         if (resultField.value().length > 1) {
-            String[] otherMappingColumnNames = new String[resultField.value().length - 1];
+            this.otherMappingColumnNames = new String[resultField.value().length - 1];
             for (int i = 1; i < resultField.value().length; i++) {
-                otherMappingColumnNames[i - 1] = resultField.value()[i];
+                this.otherMappingColumnNames[i - 1] = resultField.value()[i];
             }
         }
     }
