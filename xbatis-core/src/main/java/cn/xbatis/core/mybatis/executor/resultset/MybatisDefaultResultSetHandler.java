@@ -626,13 +626,16 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         .collect(Collectors.toList());
             }
 
-            if (fetchInfo.getFetch().limit() > 0 && matchValues.size() > fetchInfo.getFetch().limit() || fetchInfo.getFetch().comparator() != Void.class) {
+            // 需要处理的情况：1. 有排序器；2. limit > 0 且需要限制大小
+            boolean needSort = fetchInfo.getFetch().comparator() != Void.class;
+            boolean needLimit = fetchInfo.getFetch().limit() > 0 && matchValues.size() > fetchInfo.getFetch().limit();
+            if (needSort || needLimit) {
                 Stream<?> stream = matchValues.stream();
-                if (fetchInfo.getFetch().comparator() != Void.class) {
+                if (needSort) {
                     Comparator comparator = fetchInfo.getComparator();
                     stream = stream.sorted(comparator);
                 }
-                if (matchValues.size() > fetchInfo.getFetch().limit()) {
+                if (needLimit) {
                     stream = stream.limit(fetchInfo.getFetch().limit());
                 }
                 matchValues = stream.collect(Collectors.toList());
