@@ -150,7 +150,7 @@ public class EntityBatchInsertCreateUtil {
                 TableFieldInfo tableFieldInfo = saveFieldInfoSet.get(i);
                 Object value = tableFieldInfo.getValue(t);
 
-                if (tableFieldInfo.isTableId()) {
+                if (tableFieldInfo.isTableId() && Objects.nonNull(value)) {
                     containId = true;
                 }
 
@@ -167,7 +167,10 @@ public class EntityBatchInsertCreateUtil {
         if (dbType == DbType.SQL_SERVER && insert.getInsertValues().getValues().size() > 0) {
             TableId tableId = TableIds.get(tableInfo.getType(), dbType);
             if (!useBatchExecutor && !containId && Objects.nonNull(tableId) && tableId.value() == IdAutoType.AUTO) {
-                insert.getInsertFields().setOutput("OUTPUT INSERTED." + tableInfo.getIdFieldInfo().getColumnName());
+                TableFieldInfo idFieldInfo = tableInfo.getSingleIdFieldInfo(false);
+                if (idFieldInfo != null) {
+                    insert.getInsertFields().setOutput("OUTPUT INSERTED." + idFieldInfo.getColumnName());
+                }
             }
         }
         if (saveBatchStrategy.getConflictAction() != null) {
