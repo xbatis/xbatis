@@ -582,8 +582,11 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             queryValueList.add(conditionList.get(i));
             if ((i + 1) % batchSize == 0) {
                 //达到单次查询
-                resultList.addAll(fetchData(fetchInfo, query, (List<Serializable>) queryValueList));
+                List<Object> list = fetchData(fetchInfo, query, (List<Serializable>) queryValueList);
                 queryValueList.clear();
+                if (!list.isEmpty()) {
+                    resultList.addAll(list);
+                }
             }
         }
 
