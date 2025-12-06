@@ -85,8 +85,6 @@ public final class TypeConvertUtil {
                 return (T) Boolean.FALSE;
             }
             throw new RuntimeException("value : " + value + " can't convert to a boolean");
-        } else if (targetType == Character.class || targetType == char.class) {
-            newValue = value.toString().charAt(0);
         } else if (targetType == Byte.class || targetType == byte.class) {
             newValue = Byte.valueOf(value.toString());
         } else if (targetType == Short.class || targetType == short.class) {
@@ -95,12 +93,14 @@ public final class TypeConvertUtil {
             newValue = Integer.valueOf(value.toString());
         } else if (targetType == Long.class || targetType == long.class) {
             newValue = Long.valueOf(value.toString());
+        } else if (targetType == BigDecimal.class) {
+            newValue = new BigDecimal(value.toString());
+        } else if (targetType == Character.class || targetType == char.class) {
+            newValue = value.toString().charAt(0);
         } else if (targetType == Float.class || targetType == float.class) {
             newValue = Float.valueOf(value.toString());
         } else if (targetType == Double.class || targetType == double.class) {
             newValue = Double.valueOf(value.toString());
-        } else if (targetType == BigDecimal.class) {
-            newValue = new BigDecimal(value.toString());
         } else if (targetType == BigInteger.class) {
             newValue = new BigInteger(value.toString());
         } else {
