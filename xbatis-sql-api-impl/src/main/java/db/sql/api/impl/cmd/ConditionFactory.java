@@ -159,7 +159,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             if (!isIgnoreNull() && objectList.isEmpty()) {
                 throw new ConditionArrayValueEmptyException("collection can't be empty");
             }
-            return collection;
+            return objectList;
         }
         return getSingleValue(value);
     }
