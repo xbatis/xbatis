@@ -84,22 +84,26 @@ public class Where implements IWhere<Where, TableField, Cmd, Object, ConditionCh
         if ((extConditionChain == null || !extConditionChain.hasContent()) && (this.conditionChain == null || !conditionChain.hasContent())) {
             return sqlBuilder;
         }
-        sqlBuilder.append(SqlConst.WHERE);
 
+        StringBuilder sb = new StringBuilder();
         if (extConditionChain != null && extConditionChain.hasContent() && this.conditionChain != null && conditionChain.hasContent()) {
             //2的 ConditionChain 都不为空 分别一括号包裹
-            sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.conditionChain.sql(module, this, context, sqlBuilder);
-            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
-            sqlBuilder.append(SqlConst.AND);
-            sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.extConditionChain.sql(module, this, context, sqlBuilder);
-            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            sb = sb.append(SqlConst.BRACKET_LEFT);
+            this.conditionChain.sql(module, this, context, sb);
+            sb = sb.append(SqlConst.BRACKET_RIGHT);
+            sb = sb.append(SqlConst.AND);
+            sb = sb.append(SqlConst.BRACKET_LEFT);
+            sb = this.extConditionChain.sql(module, this, context, sb);
+            sb = sb.append(SqlConst.BRACKET_RIGHT);
 
         } else if (extConditionChain != null && extConditionChain.hasContent()) {
-            this.extConditionChain.sql(module, this, context, sqlBuilder);
+            this.extConditionChain.sql(module, this, context, sb);
         } else {
-            this.conditionChain.sql(module, this, context, sqlBuilder);
+            this.conditionChain.sql(module, this, context, sb);
+        }
+        if (sb.length() > 0) {
+            sqlBuilder = sqlBuilder.append(SqlConst.WHERE);
+            sqlBuilder = sqlBuilder.append(sb);
         }
         return sqlBuilder;
     }
