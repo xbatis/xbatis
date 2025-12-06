@@ -20,20 +20,20 @@ import db.sql.api.cmd.LikeMode;
 import java.util.function.Predicate;
 
 public interface INotLikeGetterPredicateCompare<RV, V> {
-    default <T> RV notLike(Getter<T> column, V value, Predicate<V> predicate) {
+    default <T, V2> RV notLike(Getter<T> column, V2 value, Predicate<V2> predicate) {
         return this.notLike(column, 1, value, predicate);
     }
 
-    default <T> RV notLike(Getter<T> column, int storey, V value, Predicate<V> predicate) {
+    default <T, V2> RV notLike(Getter<T> column, int storey, V2 value, Predicate<V2> predicate) {
         return notLike(LikeMode.DEFAULT, column, storey, value, predicate);
     }
 
-    default <T> RV notLike(LikeMode mode, Getter<T> column, V value, Predicate<V> predicate) {
+    default <T, V2> RV notLike(LikeMode mode, Getter<T> column, V2 value, Predicate<V2> predicate) {
         return notLike(mode, column, 1, value, predicate);
     }
 
-    default <T> RV notLike(LikeMode mode, Getter<T> column, int storey, V value, Predicate<V> predicate) {
-        return notLike(predicate.test(value), mode, column, storey, value);
+    default <T, V2> RV notLike(LikeMode mode, Getter<T> column, int storey, V2 value, Predicate<V2> predicate) {
+        return notLike(predicate.test(value), mode, column, storey, (V) value);
     }
 
     <T> RV notLike(boolean when, LikeMode mode, Getter<T> column, int storey, V value);

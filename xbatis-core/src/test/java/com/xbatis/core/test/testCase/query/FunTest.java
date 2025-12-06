@@ -30,6 +30,7 @@ import db.sql.api.cmd.GetterFields;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.DatePattern;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +52,8 @@ public class FunTest extends BaseTest {
                     .select(SysUser::getId, c -> c.count())
                     .select(GetterFields.of(SysUser::getId, SysRole::getId), cs -> cs[0].concat(cs[1]).as("item_name"))
                     .from(SysUser.class)
-                    .like(LikeMode.RIGHT, SysUser::getUserName, "test")
+                    .like(SysUser::getUserName, "test", StringUtils::isNotBlank)
+                    .eq(SysUser::getUserName, "test", StringUtils::isNotBlank)
                     .and()
                     .and(Methods.TRUE())
                     .or(Methods.FALSE())

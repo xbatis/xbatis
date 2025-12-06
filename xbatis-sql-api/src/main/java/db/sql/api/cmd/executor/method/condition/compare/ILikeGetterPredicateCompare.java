@@ -21,20 +21,20 @@ import java.util.function.Predicate;
 
 public interface ILikeGetterPredicateCompare<RV, V> {
 
-    default <T> RV like(Getter<T> column, V value, Predicate<V> predicate) {
+    default <T, V2> RV like(Getter<T> column, V2 value, Predicate<V2> predicate) {
         return this.like(column, 1, value, predicate);
     }
 
-    default <T> RV like(Getter<T> column, int storey, V value, Predicate<V> predicate) {
+    default <T, V2> RV like(Getter<T> column, int storey, V2 value, Predicate<V2> predicate) {
         return like(LikeMode.DEFAULT, column, storey, value, predicate);
     }
 
-    default <T> RV like(LikeMode mode, Getter<T> column, V value, Predicate<V> predicate) {
+    default <T, V2> RV like(LikeMode mode, Getter<T> column, V2 value, Predicate<V2> predicate) {
         return like(mode, column, 1, value, predicate);
     }
 
-    default <T> RV like(LikeMode mode, Getter<T> column, int storey, V value, Predicate<V> predicate) {
-        return like(predicate.test(value), mode, column, storey, value);
+    default <T, V2> RV like(LikeMode mode, Getter<T> column, int storey, V2 value, Predicate<V2> predicate) {
+        return like(predicate.test(value), mode, column, storey, (V) value);
     }
 
     <T> RV like(boolean when, LikeMode mode, Getter<T> column, int storey, V value);
