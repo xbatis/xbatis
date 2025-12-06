@@ -45,7 +45,7 @@ public final class PutValueUtil {
             return null;
         }
 
-        Class<?>[] paramTypes = Arrays.stream(values).map(Object::getClass).toArray(Class[]::new);
+        Class<?>[] paramTypes = Arrays.stream(values).map(v -> v == null ? Object.class : v.getClass()).toArray(Class[]::new);
         try {
             Method putValueMethod = annotation.factory().getMethod(annotation.method(), paramTypes);
             putValueMethod.setAccessible(true);
