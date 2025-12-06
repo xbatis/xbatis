@@ -53,7 +53,6 @@ public class FunTest extends BaseTest {
                     .select(GetterFields.of(SysUser::getId, SysRole::getId), cs -> cs[0].concat(cs[1]).as("item_name"))
                     .from(SysUser.class)
                     .like(SysUser::getUserName, "test", StringUtils::isNotBlank)
-                    .eq(SysUser::getUserName, "test", StringUtils::isNotBlank)
                     .and()
                     .and(Methods.TRUE())
                     .or(Methods.FALSE())
