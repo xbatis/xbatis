@@ -104,7 +104,7 @@ public final class DeleteMethodUtil {
 
     public static int delete(BasicMapper basicMapper, TableInfo tableInfo, Where where, Map<String, Object> defaultValueContext) {
         if (!where.hasContent()) {
-            throw new RuntimeException("delete has no where condition content ");
+            throw new RuntimeException("delete has no where condition content");
         }
         if (LogicDeleteUtil.isNeedLogicDelete(tableInfo)) {
             //逻辑删除处理

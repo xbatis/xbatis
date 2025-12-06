@@ -51,7 +51,7 @@ public class MybatisSQLProvider {
         String sql = updateContext.sql(dbType);
         db.sql.api.impl.cmd.struct.Where where = updateContext.getExecution().getWhere();
         if (where == null || (!where.hasContent() && !where.extConditionChain().hasContent())) {
-            throw new RuntimeException("update has no where condition content ");
+            throw new RuntimeException("update has no where condition content");
         }
         return sql;
     }
@@ -74,7 +74,7 @@ public class MybatisSQLProvider {
         String sql = deleteContext.sql(dbType);
         db.sql.api.impl.cmd.struct.Where where = deleteContext.getExecution().getWhere();
         if (where == null || !where.hasContent()) {
-            throw new RuntimeException("delete has no where condition content ");
+            throw new RuntimeException("delete has no where condition content");
         }
         return sql;
     }

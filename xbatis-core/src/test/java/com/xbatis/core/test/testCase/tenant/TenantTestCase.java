@@ -237,4 +237,38 @@ public class TenantTestCase extends BaseTest {
             assertEquals(list.size(), 2);
         }
     }
+
+    @Test
+    public void deleteEntityWithNoId() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            TenantTestMapper tenantTestMapper = session.getMapper(TenantTestMapper.class);
+            TenantTest tenantTest = new TenantTest();
+            try {
+                tenantTestMapper.delete(where -> {
+                });
+            } catch (RuntimeException e) {
+                if ("delete has no where condition content".equals(e.getMessage())) {
+                    return;
+                }
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Test
+    public void updateEntityWithNoId() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            TenantTestMapper tenantTestMapper = session.getMapper(TenantTestMapper.class);
+            TenantTest tenantTest = new TenantTest();
+            try {
+                tenantTestMapper.update(tenantTest, where -> {
+                });
+            } catch (RuntimeException e) {
+                if ("update has no where condition content".equals(e.getMessage())) {
+                    return;
+                }
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

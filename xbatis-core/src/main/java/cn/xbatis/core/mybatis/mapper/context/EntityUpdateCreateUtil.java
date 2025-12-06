@@ -141,7 +141,7 @@ public class EntityUpdateCreateUtil {
         }
 
         if (!hasIdCondition && !hasPutConditionBefore) {
-            throw new RuntimeException("update has no where condition content ");
+            throw new RuntimeException("update has no where condition content");
         }
         update.update(table);
         return update;
