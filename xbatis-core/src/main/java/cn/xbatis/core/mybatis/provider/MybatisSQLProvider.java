@@ -49,7 +49,8 @@ public class MybatisSQLProvider {
     public static String update(SQLCmdUpdateContext updateContext, ProviderContext providerContext, DbType dbType) {
         updateContext.init(dbType);
         String sql = updateContext.sql(dbType);
-        if ((updateContext.getExecution().getWhere() == null || !updateContext.getExecution().getWhere().hasContent()) && (!updateContext.getExecution().getWhere().extConditionChain().hasContent())) {
+        db.sql.api.impl.cmd.struct.Where where = updateContext.getExecution().getWhere();
+        if (where == null || (!where.hasContent() && !where.extConditionChain().hasContent())) {
             throw new RuntimeException("update has no where condition content ");
         }
         return sql;
