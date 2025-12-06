@@ -73,7 +73,7 @@ public class MybatisSQLProvider {
         deleteContext.init(dbType);
         String sql = deleteContext.sql(dbType);
         db.sql.api.impl.cmd.struct.Where where = deleteContext.getExecution().getWhere();
-        if (where == null || (!where.hasContent() && !where.extConditionChain().hasContent())) {
+        if (where == null || !where.hasContent()) {
             throw new RuntimeException("delete has no where condition content ");
         }
         return sql;
