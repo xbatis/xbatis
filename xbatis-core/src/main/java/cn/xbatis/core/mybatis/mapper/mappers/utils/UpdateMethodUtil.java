@@ -263,7 +263,7 @@ public final class UpdateMethodUtil {
             }
             Case sqlCase = Methods.case_();
             for (int i = 0; i < list.size(); i++) {
-                Object value = columnUpdateValues.get(tableField.getName()).get(i);
+                Object value = columnUpdateValues.get(tableFieldInfo.getColumnName()).get(i);
                 if (value == null) {
                     value = Methods.NULL();
                 }

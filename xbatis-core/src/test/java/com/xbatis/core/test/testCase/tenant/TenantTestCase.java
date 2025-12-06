@@ -246,6 +246,7 @@ public class TenantTestCase extends BaseTest {
             try {
                 tenantTestMapper.delete(where -> {
                 });
+                throw new RuntimeException("到这就是有问题");
             } catch (RuntimeException e) {
                 if ("delete has no where condition content".equals(e.getMessage())) {
                     return;
@@ -263,6 +264,7 @@ public class TenantTestCase extends BaseTest {
             try {
                 tenantTestMapper.update(tenantTest, where -> {
                 });
+                throw new RuntimeException("到这就是有问题");
             } catch (RuntimeException e) {
                 if ("update has no where condition content".equals(e.getMessage())) {
                     return;
