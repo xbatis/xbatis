@@ -20,10 +20,11 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
+import cn.xbatis.core.sql.TableSplitUtil;
+import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.TableInfoUtil;
-import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.Collection;
@@ -70,7 +71,16 @@ public class SaveOrUpdateMethodUtil {
 
         Query<T> query = new Query<>(checkWhere);
         query.$().cacheTableInfo(tableInfo);
-        Table table = query.$(entityType);
+        MpTable table = (MpTable) query.$(entityType);
+
+        if (tableInfo.isSplitTable()) {
+            Object splitValue = tableInfo.getSplitFieldInfo().getValue(entity);
+            if (Objects.isNull(splitValue)) {
+                throw new RuntimeException("entity saveOrUpdate has no table split value");
+            } else {
+                TableSplitUtil.splitHandle(table, splitValue);
+            }
+        }
 
         if (saveOrUpdateStrategy.isIgnoreLogicDeleteWhenCheck()) {
             LogicDeleteUtil.execute(false, () -> {
