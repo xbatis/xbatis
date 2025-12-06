@@ -281,12 +281,12 @@ public class MybatisConfiguration extends Configuration {
         this.dbTypeConvert = dbTypeConvert;
     }
 
-    public void setDefaultDbType(DbType defaultDbType) {
-        this.defaultDbType = defaultDbType;
-    }
-
     public DbType getDefaultDbType() {
         return defaultDbType;
+    }
+
+    public void setDefaultDbType(DbType defaultDbType) {
+        this.defaultDbType = defaultDbType;
     }
 
 }
