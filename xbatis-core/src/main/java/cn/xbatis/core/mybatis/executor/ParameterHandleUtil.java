@@ -80,9 +80,6 @@ public class ParameterHandleUtil {
             if (realValue == null) {
                 return setParameters(configuration, ps, index, null, null, null);
             }
-            if (parameter.getTypeHandler() == null) {
-                return setParameters(configuration, ps, index, parameter.getValue(), null, parameter.getJdbcType());
-            }
             if (parameter.getTypeHandler() == null || parameter.getTypeHandler() == UnknownTypeHandler.class) {
                 return setParameters(configuration, ps, index, parameter.getValue(), null, parameter.getJdbcType());
             }
