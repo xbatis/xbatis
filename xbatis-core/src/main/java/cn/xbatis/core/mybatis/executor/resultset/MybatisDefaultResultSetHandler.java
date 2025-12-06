@@ -594,10 +594,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         //还有没查询的 继续查询
         List<Object> list = fetchData(fetchInfo, query, (List<Serializable>) queryValueList);
         queryValueList.clear();
-        if (!resultList.isEmpty()) {
+        if (!list.isEmpty()) {
             resultList.addAll(list);
         }
-
         return resultList;
     }
 
