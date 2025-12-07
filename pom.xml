@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis</artifactId>
-    <version>1.9.3-M5</version>
+    <version>1.9.3</version>
     <packaging>pom</packaging>
     <modules>
         <module>xbatis-annotation</module>
@@ -62,8 +62,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <xbatis.version>1.9.3-M5</xbatis.version>
-        <xbatis-generator-core.version>1.1.3</xbatis-generator-core.version>
+        <xbatis.version>1.9.3</xbatis.version>
 
         <!-- mybatis version -->
         <mybatis.version>3.5.19</mybatis.version>
@@ -101,26 +100,17 @@
                 <artifactId>xbatis-sql-api</artifactId>
                 <version>${xbatis.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>cn.xbatis</groupId>
                 <artifactId>xbatis-sql-api-impl</artifactId>
                 <version>${xbatis.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>cn.xbatis</groupId>
                 <artifactId>xbatis-annotation</artifactId>
                 <version>${xbatis.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.xbatis</groupId>
-                <artifactId>xbatis-core</artifactId>
-                <version>${xbatis.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.xbatis</groupId>
-                <artifactId>xbatis-generator-core</artifactId>
-                <version>${xbatis-generator-core.version}</version>
             </dependency>
 
             <dependency>
