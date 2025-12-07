@@ -709,7 +709,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
             }
             sqlBuilder = sqlBuilder.append(sb);
             if (appendBracket) {
-                sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
+                sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
             }
         }
         return sqlBuilder;
