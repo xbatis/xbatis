@@ -25,9 +25,11 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Data
 public class ConditionItem {
@@ -116,6 +118,10 @@ public class ConditionItem {
         }
     }
 
+    private Object cast(Object value, Class<?> type) {
+        return TypeConvertUtil.convert(value, tableFieldInfo.getFieldInfo().getTypeClass());
+    }
+
     public void appendCondition(ConditionChain conditionChain, Object target) {
         Object value;
         try {
@@ -143,13 +149,23 @@ public class ConditionItem {
             return;
         }
 
-        if (this.annotation != null && this.annotation.cast()) {
-            value = TypeConvertUtil.convert(value, tableFieldInfo.getFieldInfo().getTypeClass());
+        if (this.annotation != null) {
+            if (this.annotation.cast()) {
+                if (value instanceof Collection) {
+                    Collection collection = (Collection) value;
+                    value = collection.stream().map(i -> cast(i, tableFieldInfo.getFieldInfo().getTypeClass())).collect(Collectors.toList());
+                } else if (value instanceof Object[]) {
+                    Object[] values = (Object[]) value;
+                    value = Arrays.stream(values).map(i -> cast(i, tableFieldInfo.getFieldInfo().getTypeClass())).collect(Collectors.toList());
+                } else {
+                    value = cast(value, tableFieldInfo.getFieldInfo().getTypeClass());
+                }
+            }
+            if (annotation.toEndDayTime()) {
+                value = toEndDayTime(value);
+            }
         }
 
-        if (annotation.toEndDayTime()) {
-            value = toEndDayTime(value);
-        }
 
         CmdFactory cmdFactory = conditionChain.getConditionFactory().getCmdFactory();
         FieldInfo fieldInfo = this.tableFieldInfo.getFieldInfo();
