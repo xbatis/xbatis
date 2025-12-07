@@ -584,7 +584,7 @@ public class ResultInfo {
         TypeHandler<?> valueTypeHandler = fetchFieldInfo.getTypeHandler();
 
 
-        parseResult.putEnumValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutEnumValueInfo(field, putEnumValue, fetchFieldInfo.getFieldInfo().getTypeClass(), valueColumn, valueTypeHandler));
+        parseResult.putEnumValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutEnumValueInfo(new FieldInfo(clazz, field), putEnumValue, fetchFieldInfo.getFieldInfo().getTypeClass(), valueColumn, valueTypeHandler));
         return tableCount;
     }
 

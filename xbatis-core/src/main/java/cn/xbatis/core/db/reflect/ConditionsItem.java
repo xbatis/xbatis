@@ -17,20 +17,19 @@ package cn.xbatis.core.db.reflect;
 import cn.xbatis.db.annotations.Conditions;
 import lombok.Data;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 @Data
 public class ConditionsItem {
 
-    private final Field field;
+    private final FieldInfo fieldInfo;
 
     private final Conditions annotation;
 
     private final List<ConditionItem> conditionItemList;
 
-    public ConditionsItem(Field field, Conditions annotation, List<ConditionItem> conditionItemList) {
-        this.field = field;
+    public ConditionsItem(FieldInfo fieldInfo, Conditions annotation, List<ConditionItem> conditionItemList) {
+        this.fieldInfo = fieldInfo;
         this.annotation = annotation;
         this.conditionItemList = conditionItemList;
     }

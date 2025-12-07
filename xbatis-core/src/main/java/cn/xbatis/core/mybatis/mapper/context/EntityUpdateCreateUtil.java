@@ -26,7 +26,6 @@ import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TableInfoUtil;
-import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.annotations.TableField;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
@@ -109,7 +108,7 @@ public class EntityUpdateCreateUtil {
                     continue;
                 }
                 //乐观锁+1
-                Object version = TypeConvertUtil.convert(Long.valueOf(value.toString()) + 1, tableFieldInfo.getField().getType());
+                Object version = VersionUtil.plus(value);
                 //乐观锁条件
                 update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(value));
                 //乐观锁回写

@@ -27,6 +27,14 @@ public final class PutValueUtil {
     private static final Object NULL_VALUE = new Object();
 
     public static Object getPutValue(Object[] values, PutValueInfo putValueInfo, Map<String, Object> sessionCache) {
+        if (values != null && values.length > 1) {
+            try {
+                Arrays.sort(values);
+            } catch (Exception ignored) {
+
+            }
+        }
+
         String cacheKey = putValueInfo.getAnnotation().method() + "." + Arrays.toString(values) + "." + putValueInfo.getAnnotation().factory().getName();
         Object v = sessionCache.computeIfAbsent(cacheKey, key -> {
             Object value = getPutValue(values, putValueInfo);

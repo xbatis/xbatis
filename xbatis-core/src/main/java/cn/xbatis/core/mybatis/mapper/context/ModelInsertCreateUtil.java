@@ -27,7 +27,6 @@ import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.core.util.StringPool;
-import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.Model;
 import cn.xbatis.db.annotations.TableId;
@@ -91,8 +90,8 @@ public class ModelInsertCreateUtil {
             if (value != null) {
                 return;
             }
-            //乐观锁设置 默认值1
-            value = TypeConvertUtil.convert(Integer.valueOf(1), modelFieldInfo.getField().getType());
+            //设置 乐观锁设置 默认值
+            value = VersionUtil.getInitValue(modelFieldInfo.getFieldInfo().getTypeClass());
             //乐观锁回写
             ModelInfoUtil.setValue(modelFieldInfo, insertData, value);
             return;

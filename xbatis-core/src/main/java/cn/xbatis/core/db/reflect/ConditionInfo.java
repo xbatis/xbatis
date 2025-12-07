@@ -52,7 +52,7 @@ public class ConditionInfo {
             if (conditions != null) {
                 List<ConditionItem> subList = new ArrayList<>();
                 for (Condition condition : conditions.value()) {
-                    ConditionItem conditionItem = this.parseConditionAnnotation(field, condition, targetTable, tableInfoMap);
+                    ConditionItem conditionItem = this.parseConditionAnnotation(clazz, field, condition, targetTable, tableInfoMap);
                     if (conditionItem != null) {
                         subList.add(conditionItem);
                     }
@@ -60,11 +60,11 @@ public class ConditionInfo {
                 if (subList.isEmpty()) {
                     continue;
                 }
-                ConditionsItem conditionsItem = new ConditionsItem(field, conditions, subList);
+                ConditionsItem conditionsItem = new ConditionsItem(new FieldInfo(clazz, field), conditions, subList);
                 conditionList.add(conditionsItem);
             } else {
                 Condition condition = field.getAnnotation(Condition.class);
-                ConditionItem conditionItem = this.parseConditionAnnotation(field, condition, targetTable, tableInfoMap);
+                ConditionItem conditionItem = this.parseConditionAnnotation(clazz, field, condition, targetTable, tableInfoMap);
                 if (conditionItem != null) {
                     conditionList.add(conditionItem);
                 }
@@ -73,9 +73,9 @@ public class ConditionInfo {
 
         Map<String, Object> conditionItemMap = conditionList.stream().collect(Collectors.toMap(i -> {
             if (i instanceof ConditionItem) {
-                return ((ConditionItem) i).getField().getName();
+                return ((ConditionItem) i).getFieldInfo().getField().getName();
             } else {
-                return ((ConditionsItem) i).getField().getName();
+                return ((ConditionsItem) i).getFieldInfo().getField().getName();
             }
         }, i -> i));
 
@@ -101,9 +101,9 @@ public class ConditionInfo {
         for (Object i : conditionList) {
             String fieldName;
             if (i instanceof ConditionItem) {
-                fieldName = ((ConditionItem) i).getField().getName();
+                fieldName = ((ConditionItem) i).getFieldInfo().getField().getName();
             } else {
-                fieldName = ((ConditionsItem) i).getField().getName();
+                fieldName = ((ConditionsItem) i).getFieldInfo().getField().getName();
             }
             if (usedConditionFields.contains(fieldName)) {
                 continue;
@@ -118,7 +118,7 @@ public class ConditionInfo {
         this.conditionItemGroups = itemGroups;
     }
 
-    private ConditionItem parseConditionAnnotation(Field field, Condition condition, Class<?> targetTable, Map<Class<?>, TableInfo> tableInfoMap) {
+    private ConditionItem parseConditionAnnotation(Class<?> clazz, Field field, Condition condition, Class<?> targetTable, Map<Class<?>, TableInfo> tableInfoMap) {
         if (condition != null && condition.value() == Condition.Type.IGNORE) {
             return null;
         }
@@ -138,7 +138,7 @@ public class ConditionInfo {
         if (tableFieldInfo == null) {
             throw new RuntimeException("can not find entity property " + property + " in entity " + tableInfo.getType());
         }
-        return new ConditionItem(field, tableFieldInfo, condition);
+        return new ConditionItem(new FieldInfo(clazz, field), tableFieldInfo, condition);
     }
 
     public void appendCondition(ConditionChain conditionChain, Object target) {

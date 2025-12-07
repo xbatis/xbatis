@@ -23,7 +23,6 @@ import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 import lombok.Data;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -33,7 +32,7 @@ import java.util.Date;
 @Data
 public class ConditionItem {
 
-    private final Field field;
+    private final FieldInfo fieldInfo;
 
     private final TableFieldInfo tableFieldInfo;
 
@@ -47,9 +46,9 @@ public class ConditionItem {
 
     private final Object defaultValue;
 
-    public ConditionItem(Field field, TableFieldInfo tableFieldInfo, Condition annotation) {
-        field.setAccessible(true);
-        this.field = field;
+    public ConditionItem(FieldInfo fieldInfo, TableFieldInfo tableFieldInfo, Condition annotation) {
+        fieldInfo.getField().setAccessible(true);
+        this.fieldInfo = fieldInfo;
         this.tableFieldInfo = tableFieldInfo;
         this.annotation = annotation;
         if (annotation == null) {
@@ -66,7 +65,7 @@ public class ConditionItem {
             if (annotation.defaultValue().isEmpty()) {
                 this.defaultValue = null;
             } else if (!annotation.defaultValue().contains("{")) {
-                this.defaultValue = TypeConvertUtil.convert(annotation.defaultValue(), field.getType());
+                this.defaultValue = TypeConvertUtil.convert(annotation.defaultValue(), fieldInfo.getTypeClass());
             } else {
                 this.defaultValue = null;
             }
@@ -111,7 +110,7 @@ public class ConditionItem {
         if (this.defaultValue != null) {
             return this.defaultValue;
         } else if (annotation != null && annotation.defaultValue().contains("{")) {
-            return XbatisGlobalConfig.getDefaultValue(target.getClass(), field.getType(), annotation.defaultValue());
+            return XbatisGlobalConfig.getDefaultValue(target.getClass(), fieldInfo.getTypeClass(), annotation.defaultValue());
         } else {
             return null;
         }
@@ -120,7 +119,7 @@ public class ConditionItem {
     public void appendCondition(ConditionChain conditionChain, Object target) {
         Object value;
         try {
-            value = this.field.get(target);
+            value = this.fieldInfo.getField().get(target);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }

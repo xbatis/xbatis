@@ -30,7 +30,6 @@ import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TableInfoUtil;
-import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
@@ -95,8 +94,8 @@ public class EntityInsertCreateUtil {
             if (value != null) {
                 return;
             }
-            //乐观锁设置 默认值1
-            value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
+            //设置 乐观锁设置 默认值
+            value = VersionUtil.getInitValue(tableFieldInfo.getFieldInfo().getTypeClass());
             //乐观锁回写
             TableInfoUtil.setValue(tableFieldInfo, insertData, value);
             return;

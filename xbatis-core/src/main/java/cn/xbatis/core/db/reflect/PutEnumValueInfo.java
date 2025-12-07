@@ -20,12 +20,10 @@ import lombok.Getter;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.type.TypeHandler;
 
-import java.lang.reflect.Field;
-
 @Getter
 public class PutEnumValueInfo {
 
-    private final Field field;
+    private final FieldInfo fieldInfo;
 
     private final String valueColumn;
 
@@ -39,15 +37,15 @@ public class PutEnumValueInfo {
 
     private final Object defaultValue;
 
-    public PutEnumValueInfo(Field field, PutEnumValue annotation, Class<?> valueType, String valueColumn, TypeHandler<?> valueTypeHandler) {
-        this.field = field;
+    public PutEnumValueInfo(FieldInfo fieldInfo, PutEnumValue annotation, Class<?> valueType, String valueColumn, TypeHandler<?> valueTypeHandler) {
+        this.fieldInfo = fieldInfo;
         this.valueType = valueType;
         this.valueColumn = valueColumn;
         this.valueTypeHandler = valueTypeHandler;
-        this.writeFieldInvoker = new SetFieldInvoker(field);
+        this.writeFieldInvoker = new SetFieldInvoker(fieldInfo.getField());
         this.annotation = annotation;
         if (!annotation.defaultValue().isEmpty()) {
-            this.defaultValue = TypeConvertUtil.convert(annotation.defaultValue(), field.getType());
+            this.defaultValue = TypeConvertUtil.convert(annotation.defaultValue(), fieldInfo.getTypeClass());
         } else {
             this.defaultValue = null;
         }

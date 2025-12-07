@@ -204,7 +204,7 @@ public final class PagingUtil {
                     //后面有 ), 不进行 order by剔除
                     return sql;
                 }
-                sql = sql.substring(0, orderByIndex + (sql.length() - upperCaseSql.length()));
+                sql = sql.substring(0, orderByIndex);
             }
         }
         return sql;

@@ -59,7 +59,7 @@ public final class PutEnumValueUtil {
             try {
                 for (Object e : enums) {
                     if (codeString.equals(codeField.get(e).toString())) {
-                        return TypeConvertUtil.convert(valueField.get(e), putEnumValueInfo.getField().getType());
+                        return TypeConvertUtil.convert(valueField.get(e), putEnumValueInfo.getFieldInfo().getTypeClass());
                     }
                 }
             } catch (IllegalAccessException ex) {
