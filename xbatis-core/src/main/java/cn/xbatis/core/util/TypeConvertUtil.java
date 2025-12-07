@@ -18,7 +18,13 @@ import cn.xbatis.core.mybatis.typeHandler.EnumSupport;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +33,22 @@ import java.util.List;
 public final class TypeConvertUtil {
 
     private TypeConvertUtil() {
+    }
+
+    private static final DateTimeFormatter DEFAULT_DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private static final DateTimeFormatter DATE_DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    private static long getMilli(LocalDateTime localDateTime) {
+        return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
+    private static LocalDateTime toLocalDateTime(long millis) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
+    }
+
+    private static LocalDateTime toLocalDateTime(int seconds) {
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.systemDefault());
     }
 
     /**
@@ -96,13 +118,56 @@ public final class TypeConvertUtil {
         } else if (targetType == BigDecimal.class) {
             newValue = new BigDecimal(value.toString());
         } else if (targetType == Character.class || targetType == char.class) {
-            newValue = value.toString().charAt(0);
+            String s = value.toString();
+            newValue = s.isEmpty() ? '\u0000' : value.toString().charAt(0);
         } else if (targetType == Float.class || targetType == float.class) {
             newValue = Float.valueOf(value.toString());
         } else if (targetType == Double.class || targetType == double.class) {
             newValue = Double.valueOf(value.toString());
         } else if (targetType == BigInteger.class) {
             newValue = new BigInteger(value.toString());
+        } else if (LocalDateTime.class.isAssignableFrom(targetType)) {
+            if (value instanceof Date) {
+                newValue = toLocalDateTime(((Date) value).getTime());
+            } else if (value instanceof String) {
+                newValue = LocalDateTime.parse(value.toString(), DEFAULT_DTF);
+            } else if (value instanceof Long || value.getClass() == long.class) {
+                newValue = toLocalDateTime(((Long) value));
+            } else if (value instanceof Integer || value.getClass() == int.class) {
+                newValue = toLocalDateTime(((Integer) value));
+            } else if (value instanceof LocalDate) {
+                newValue = ((LocalDate) value).atStartOfDay();
+            } else {
+                throw new RuntimeException("Inconsistent types value : " + value + " can't convert to a " + targetType);
+            }
+        } else if (Date.class.isAssignableFrom(targetType)) {
+            if (value instanceof LocalDate) {
+                newValue = new Date(((LocalDate) value).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+            } else if (value instanceof LocalDateTime) {
+                newValue = new Date(((LocalDateTime) value).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+            } else if (value instanceof String) {
+                newValue = new Date(getMilli(LocalDateTime.parse(value.toString(), DEFAULT_DTF)));
+            } else if (value instanceof Long || value.getClass() == long.class) {
+                newValue = new Date((Long) value);
+            } else if (value instanceof Integer || value.getClass() == int.class) {
+                newValue = new Date(((Integer) value) * 1000);
+            } else {
+                throw new RuntimeException("Inconsistent types value : " + value + " can't convert to a " + targetType);
+            }
+        } else if (LocalDate.class.isAssignableFrom(targetType)) {
+            if (value instanceof LocalDateTime) {
+                newValue = ((LocalDateTime) value).toLocalDate();
+            } else if (value instanceof Date) {
+                newValue = toLocalDateTime(((Date) value).getTime()).toLocalDate();
+            } else if (value instanceof String) {
+                newValue = LocalDate.parse(value.toString(), DATE_DTF);
+            } else if (value instanceof Long || value.getClass() == long.class) {
+                newValue = toLocalDateTime(((Long) value)).toLocalDate();
+            } else if (value instanceof Integer || value.getClass() == int.class) {
+                newValue = toLocalDateTime(((Integer) value)).toLocalDate();
+            } else {
+                throw new RuntimeException("Inconsistent types value : " + value + " can't convert to a " + targetType);
+            }
         } else {
             throw new RuntimeException("Inconsistent types value : " + value + " can't convert to a " + targetType);
         }

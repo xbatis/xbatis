@@ -143,6 +143,10 @@ public class ConditionItem {
             return;
         }
 
+        if (this.annotation != null && this.annotation.cast()) {
+            value = TypeConvertUtil.convert(value, tableFieldInfo.getFieldInfo().getTypeClass());
+        }
+
         CmdFactory cmdFactory = conditionChain.getConditionFactory().getCmdFactory();
         FieldInfo fieldInfo = this.tableFieldInfo.getFieldInfo();
         TableField tableField = cmdFactory.field(fieldInfo.getClazz(), fieldInfo.getField().getName(), this.storey);

@@ -57,7 +57,7 @@ public class ConditionObjectTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             QueryREQ queryReq = new QueryREQ();
             queryReq.setId(2);
-            queryReq.setRoleId(1);
+            queryReq.setRoleId("1");
             Integer roleId = QueryChain.of(sysUserMapper)
                     .leftJoin(SysUser::getRole_id, SysRole::getId)
                     .where(queryReq)

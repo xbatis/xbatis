@@ -35,8 +35,8 @@ public class QueryREQ implements ObjectConditionLifeCycle {
 
     private Integer id;
 
-    @Condition(target = SysRole.class, property = SysRole.Fields.id)
-    private Integer roleId;
+    @Condition(target = SysRole.class, property = SysRole.Fields.id, cast = true)
+    private String roleId;
 
     @Condition(value = LIKE)
     private String userName;

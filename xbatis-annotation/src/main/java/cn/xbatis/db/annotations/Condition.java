@@ -77,6 +77,13 @@ public @interface Condition {
      */
     String defaultValue() default "";
 
+    /**
+     * 转换成实体类字段的类型
+     *
+     * @return
+     */
+    boolean cast() default false;
+
     enum Type {
         IGNORE,
         EQ,
