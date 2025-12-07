@@ -697,7 +697,7 @@ public class ConditionTest extends BaseTest {
             assertEquals(count, 2);
 
             count = UpdateChain.of(sysUserMapper)
-                    .set(SysUser::getId, (Getter<SysUser>) SysUser::getId)
+                    .set(SysUser::getUserName, (Getter<SysUser>) SysUser::getId)
                     .exists(SysUser::getRole_id, SysRole::getId)
                     .exists(SysRole.class, (chain, subquery) -> {
                         subquery.eq(SysRole::getId, chain.$(SysUser::getRole_id));
