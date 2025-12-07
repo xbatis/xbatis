@@ -147,6 +147,10 @@ public class ConditionItem {
             value = TypeConvertUtil.convert(value, tableFieldInfo.getFieldInfo().getTypeClass());
         }
 
+        if (annotation.toEndDayTime()) {
+            value = toEndDayTime(value);
+        }
+
         CmdFactory cmdFactory = conditionChain.getConditionFactory().getCmdFactory();
         FieldInfo fieldInfo = this.tableFieldInfo.getFieldInfo();
         TableField tableField = cmdFactory.field(fieldInfo.getClazz(), fieldInfo.getField().getName(), this.storey);
@@ -173,7 +177,7 @@ public class ConditionItem {
             }
 
             case LTE: {
-                conditionChain.lte(tableField, annotation != null && annotation.toEndDayTime() ? toEndDayTime(value) : value);
+                conditionChain.lte(tableField, value);
                 break;
             }
 
@@ -191,7 +195,7 @@ public class ConditionItem {
                 if (!(value instanceof String)) {
                     throw new RuntimeException("Like value must be String");
                 }
-                conditionChain.like(this.likeMode, tableField, (String) value);
+                conditionChain.like(this.likeMode, tableField, value);
                 break;
             }
 
@@ -199,7 +203,23 @@ public class ConditionItem {
                 if (!(value instanceof String)) {
                     throw new RuntimeException("Not like value must be String");
                 }
-                conditionChain.notLike(this.likeMode, tableField, (String) value);
+                conditionChain.notLike(this.likeMode, tableField, value);
+                break;
+            }
+
+            case ILIKE: {
+                if (!(value instanceof String)) {
+                    throw new RuntimeException("Like value must be String");
+                }
+                conditionChain.iLike(this.likeMode, tableField, value);
+                break;
+            }
+
+            case NOT_ILIKE: {
+                if (!(value instanceof String)) {
+                    throw new RuntimeException("Not like value must be String");
+                }
+                conditionChain.notILike(this.likeMode, tableField, value);
                 break;
             }
 

@@ -95,6 +95,8 @@ public @interface Condition {
         GTE,
         LIKE,
         NOT_LIKE,
+        ILIKE,
+        NOT_ILIKE,
         BETWEEN,
         // boolean 或 0 1表达
         NULL,
