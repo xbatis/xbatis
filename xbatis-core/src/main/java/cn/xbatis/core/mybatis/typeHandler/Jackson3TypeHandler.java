@@ -15,7 +15,7 @@
 package cn.xbatis.core.mybatis.typeHandler;
 
 import tools.jackson.databind.JavaType;
-import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.type.TypeFactory;
 
 import java.lang.reflect.Type;
@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class Jackson3TypeHandler extends AbstractJsonTypeHandler {
 
-    private static volatile JsonMapper OBJECT_MAPPER;
+    private static volatile ObjectMapper OBJECT_MAPPER;
 
     public Jackson3TypeHandler(Class<?> type) {
         super(type);
@@ -33,22 +33,22 @@ public class Jackson3TypeHandler extends AbstractJsonTypeHandler {
         super(type, genericType);
     }
 
-    private JsonMapper getJsonMapper() {
+    private ObjectMapper getObjectMapper() {
         if (Objects.isNull(OBJECT_MAPPER)) {
-            OBJECT_MAPPER = new JsonMapper();
+            OBJECT_MAPPER = new ObjectMapper();
         }
         return OBJECT_MAPPER;
     }
 
-    public static void setJsonMapper(JsonMapper jsonMapper) {
-        Objects.requireNonNull(jsonMapper);
-        OBJECT_MAPPER = jsonMapper;
+    public static void setObjectMapper(ObjectMapper objectMapper) {
+        Objects.requireNonNull(objectMapper);
+        OBJECT_MAPPER = objectMapper;
     }
 
     @Override
     protected String toJson(Object obj) {
         try {
-            return getJsonMapper().writeValueAsString(obj);
+            return getObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -56,11 +56,11 @@ public class Jackson3TypeHandler extends AbstractJsonTypeHandler {
 
     @Override
     protected Object parseJson(String json) {
-        JsonMapper jsonMapper = getJsonMapper();
-        TypeFactory typeFactory = jsonMapper.getTypeFactory();
+        ObjectMapper objectMapper = getObjectMapper();
+        TypeFactory typeFactory = objectMapper.getTypeFactory();
         JavaType javaType = typeFactory.constructType(this.getDeserializeType());
         try {
-            return jsonMapper.readValue(json, javaType);
+            return objectMapper.readValue(json, javaType);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
