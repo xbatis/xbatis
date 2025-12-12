@@ -89,10 +89,19 @@ public final class LambdaUtil {
     private static <T> Class<T> getClass(SerializedLambda lambda, ClassLoader classLoader) {
         String classNamePath = getClassNamePath(lambda);
         return (Class<T>) CLASS_MAP.computeIfAbsent(classNamePath, key -> {
+            String className = getClassName(key);
             try {
-                return Class.forName(getClassName(key), false, classLoader);
+                return Class.forName(className, false, classLoader);
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                try {
+                    return classLoader.loadClass(className);
+                } catch (ClassNotFoundException ex) {
+                    try {
+                        return Class.forName(className, false, LambdaUtil.class.getClassLoader());
+                    } catch (ClassNotFoundException exc) {
+                        throw new RuntimeException(exc);
+                    }
+                }
             }
         });
     }
