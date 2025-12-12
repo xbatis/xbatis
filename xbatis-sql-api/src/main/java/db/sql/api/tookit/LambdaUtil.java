@@ -94,13 +94,13 @@ public final class LambdaUtil {
                 return classLoader.loadClass(className);
             } catch (ClassNotFoundException e) {
                 try {
-                    Thread.sleep(50);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
-                try {
                     return Class.forName(className, false, GetterFun.class.getClassLoader());
                 } catch (ClassNotFoundException ex) {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException exc) {
+                        throw new RuntimeException(exc);
+                    }
                     try {
                         return Class.forName(className, false, classLoader);
                     } catch (ClassNotFoundException exc) {
