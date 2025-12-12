@@ -91,13 +91,18 @@ public final class LambdaUtil {
         return (Class<T>) CLASS_MAP.computeIfAbsent(classNamePath, key -> {
             String className = getClassName(key);
             try {
-                return Class.forName(className, false, classLoader);
+                return classLoader.loadClass(className);
             } catch (ClassNotFoundException e) {
                 try {
-                    return classLoader.loadClass(className);
+                    Thread.sleep(50);
+                } catch (InterruptedException exc) {
+                    throw new RuntimeException(exc);
+                }
+                try {
+                    return Class.forName(className, false, LambdaUtil.class.getClassLoader());
                 } catch (ClassNotFoundException ex) {
                     try {
-                        return Class.forName(className, false, LambdaUtil.class.getClassLoader());
+                        return Class.forName(className, false, classLoader);
                     } catch (ClassNotFoundException exc) {
                         throw new RuntimeException(exc);
                     }
