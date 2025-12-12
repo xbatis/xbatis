@@ -99,7 +99,7 @@ public final class LambdaUtil {
                     throw new RuntimeException(exc);
                 }
                 try {
-                    return Class.forName(className, false, LambdaUtil.class.getClassLoader());
+                    return Class.forName(className, false, GetterFun.class.getClassLoader());
                 } catch (ClassNotFoundException ex) {
                     try {
                         return Class.forName(className, false, classLoader);
