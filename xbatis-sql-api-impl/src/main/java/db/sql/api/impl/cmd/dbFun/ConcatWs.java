@@ -60,7 +60,7 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
             Cmd value = cmds[i];
             builder = cmds[i].sql(module, parent, context, builder);
 
-            if (value.getClass() == BasicValue.class && (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS)) {
+            if (value.getClass() == BasicValue.class && (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS)) {
                 builder.append(SqlConst.CAST_TEXT);
 
             }

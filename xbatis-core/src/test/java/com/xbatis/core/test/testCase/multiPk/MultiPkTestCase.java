@@ -214,7 +214,7 @@ public class MultiPkTestCase extends BaseTest {
         if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB
                 && TestDataSource.DB_TYPE != DbType.PGSQL
                 && TestDataSource.DB_TYPE != DbType.KING_BASE
-                && TestDataSource.DB_TYPE != DbType.OPEN_GAUSS
+                && TestDataSource.DB_TYPE != DbType.GAUSS
                 && TestDataSource.DB_TYPE != DbType.SQLITE
                 && TestDataSource.DB_TYPE != DbType.ORACLE
         ) {

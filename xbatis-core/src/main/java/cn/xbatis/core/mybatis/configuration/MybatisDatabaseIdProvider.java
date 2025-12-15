@@ -61,7 +61,7 @@ public class MybatisDatabaseIdProvider extends VendorDatabaseIdProvider {
         properties.put("Kingbase", DbType.KING_BASE.name());
         properties.put("SQLite", DbType.SQLITE.name());
         properties.put("DB2", DbType.DB2.name());
-        properties.put("openGauss", DbType.OPEN_GAUSS.name());
+        properties.put("openGauss", DbType.GAUSS.name());
         properties.put("click", DbType.CLICK_HOUSE.name());
         return properties;
     }

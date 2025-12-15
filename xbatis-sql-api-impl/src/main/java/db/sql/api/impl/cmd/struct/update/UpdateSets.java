@@ -52,7 +52,7 @@ public class UpdateSets implements IUpdateSets<TableField, Cmd, UpdateSet> {
         } else {
             if (module instanceof IInsert && (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2)) {
                 sqlBuilder.append(SqlConst.BLANK).append(SqlConst.UPDATE);
-            } else if (module instanceof IInsert && (context.getDbType() == DbType.OPEN_GAUSS)) {
+            } else if (module instanceof IInsert && (context.getDbType() == DbType.GAUSS)) {
                 sqlBuilder.append(SqlConst.BLANK);
             } else {
                 sqlBuilder.append(SqlConst.SET);

@@ -32,7 +32,7 @@ public class ConflictUpdateTableField extends TableField {
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.PGSQL
                 || context.getDbType() == DbType.KING_BASE
-                || context.getDbType() == DbType.OPEN_GAUSS
+                || context.getDbType() == DbType.GAUSS
                 || context.getDbType() == DbType.SQLITE
         ) {
             sqlBuilder.append(" EXCLUDED.").append(this.getName());

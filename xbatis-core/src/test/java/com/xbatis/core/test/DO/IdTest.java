@@ -32,7 +32,7 @@ public class IdTest {
     @TableId
     @TableId(dbType = DbType.H2, value = IdAutoType.AUTO)
     @TableId(dbType = DbType.SQL_SERVER, value = IdAutoType.AUTO)
-    @TableId(dbType = DbType.OPEN_GAUSS, value = IdAutoType.SQL, sql = "select nextval('id_test_id_seq')")
+    @TableId(dbType = DbType.GAUSS, value = IdAutoType.SQL, sql = "select nextval('id_test_id_seq')")
     @TableId(dbType = DbType.PGSQL, value = IdAutoType.SQL, sql = "select nextval('id_test_id_seq')")
     @TableId(dbType = DbType.ORACLE, value = IdAutoType.SQL, sql = "select id_test_seq.NEXTVAL FROM dual")
     @TableId(dbType = DbType.KING_BASE, value = IdAutoType.SQL, sql = "select id_test_seq.NEXTVAL FROM dual")

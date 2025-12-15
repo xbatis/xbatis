@@ -99,7 +99,7 @@ public class AbstractLike<T extends AbstractLike<T>> extends BasicCondition<T> {
         }
         sqlBuilder = getValue().sql(module, this, context, sqlBuilder);
 
-        if (getValue().getClass() == BasicValue.class && (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS)) {
+        if (getValue().getClass() == BasicValue.class && (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS)) {
             BasicValue basicValue = (BasicValue) getValue();
             if (Objects.nonNull(basicValue)) {
                 sqlBuilder.append(SqlConst.CAST_TEXT);

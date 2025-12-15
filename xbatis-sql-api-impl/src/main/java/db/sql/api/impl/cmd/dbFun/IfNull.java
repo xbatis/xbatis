@@ -42,7 +42,7 @@ public class IfNull extends BasicFunction<IfNull> {
             sqlBuilder.append(" ISNULL");
         } else if (context.getDbType() == DbType.ORACLE) {
             sqlBuilder.append(" NVL");
-        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
+        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
             sqlBuilder.append(" COALESCE");
         } else {
             sqlBuilder.append(operator);

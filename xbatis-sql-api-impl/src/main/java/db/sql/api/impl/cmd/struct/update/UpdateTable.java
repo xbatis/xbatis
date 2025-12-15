@@ -56,7 +56,7 @@ public class UpdateTable implements IUpdateTable<Table> {
                 sqlBuilder.append(SqlConst.DELIMITER);
             }
 
-            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
+            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
                 //只能修改一张
                 AbstractUpdate abstractUpdate = (AbstractUpdate) module;
                 if (Objects.nonNull(abstractUpdate.getFrom())) {

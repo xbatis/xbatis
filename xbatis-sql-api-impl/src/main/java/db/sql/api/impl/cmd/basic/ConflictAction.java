@@ -66,13 +66,13 @@ public class ConflictAction<T> implements IConflictAction<T>, Cmd {
         if (this.conflictUpdate == null) {
             if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
                 sqlBuilder.append(" DO NOTHING");
-            } else if (context.getDbType() == DbType.OPEN_GAUSS) {
+            } else if (context.getDbType() == DbType.GAUSS) {
                 sqlBuilder.append(" UPDATE NOTHING");
             }
         } else {
             if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
                 sqlBuilder.append(" DO UPDATE");
-            } else if (context.getDbType() == DbType.OPEN_GAUSS) {
+            } else if (context.getDbType() == DbType.GAUSS) {
                 sqlBuilder.append(" UPDATE");
             }
             this.conflictUpdate.sql(module, this, context, sqlBuilder);

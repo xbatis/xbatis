@@ -72,7 +72,7 @@ public class Conflict<T> implements IConflict<T>, Cmd {
 
         if (dbType == DbType.ORACLE
                 || ((dbType == DbType.PGSQL || dbType == DbType.KING_BASE) && !conflictAction.isDoNothing())
-                || ((dbType == DbType.OPEN_GAUSS || dbType == DbType.SQLITE) && conflictAction.getConflictUpdate() == null)) {
+                || ((dbType == DbType.GAUSS || dbType == DbType.SQLITE) && conflictAction.getConflictUpdate() == null)) {
             String[] conflictKeys = insert.getInsertTable().getTable().getIds();
             if (conflictKeys != null && conflictKeys.length > 0) {
                 this.conflictKeys = conflictKeys;
@@ -92,7 +92,7 @@ public class Conflict<T> implements IConflict<T>, Cmd {
             if (!conflictAction.isDoNothing()) {
                 sqlBuilder.append(" ON DUPLICATE KEY");
             }
-        } else if (context.getDbType() == DbType.OPEN_GAUSS) {
+        } else if (context.getDbType() == DbType.GAUSS) {
             sqlBuilder.append(" ON DUPLICATE KEY");
         } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(" ON CONFLICT");

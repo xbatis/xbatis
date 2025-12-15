@@ -50,7 +50,7 @@ public class UpdateSet implements IUpdateSet<TableField, Cmd> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.OPEN_GAUSS || module instanceof IInsert) {
+        if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.GAUSS || module instanceof IInsert) {
             //PG update set 列 不支持别名 直接拼接列名
             sqlBuilder.append(this.field.getName(context.getDbType()));
         } else if (context.getDbType() == DbType.SQL_SERVER) {

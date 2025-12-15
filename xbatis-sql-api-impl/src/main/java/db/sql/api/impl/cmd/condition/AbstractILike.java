@@ -30,7 +30,7 @@ public abstract class AbstractILike<T extends AbstractILike<T>> extends Abstract
     boolean notSupport(DbType dbType) {
         switch (dbType) {
             case PGSQL:
-            case OPEN_GAUSS:
+            case GAUSS:
             case H2:
             case KING_BASE:
                 return false;

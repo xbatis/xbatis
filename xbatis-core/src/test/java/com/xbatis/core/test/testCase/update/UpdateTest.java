@@ -233,7 +233,7 @@ public class UpdateTest extends BaseTest {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        } else if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.OPEN_GAUSS) {
+        } else if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.GAUSS) {
             int updateCnt = -1;
             // pg 只支持 修改单个表数据
 
@@ -508,7 +508,7 @@ public class UpdateTest extends BaseTest {
                         //.from(SysUser.class)
                         .eq(SysUser::getId, 2);
 
-                if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.OPEN_GAUSS || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+                if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.GAUSS || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                     updateChain.from(SysRole.class)
                             .eq(SysUser::getId, SysRole::getId);
                 } else if (TestDataSource.DB_TYPE == DbType.SQL_SERVER) {

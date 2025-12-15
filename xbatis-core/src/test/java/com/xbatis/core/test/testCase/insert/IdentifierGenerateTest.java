@@ -126,7 +126,7 @@ public class IdentifierGenerateTest extends BaseTest {
 
     @Test
     public void batchInsertWithSelectIdTest() {
-        if (TestDataSource.DB_TYPE != DbType.ORACLE && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE == DbType.OPEN_GAUSS) {
+        if (TestDataSource.DB_TYPE != DbType.ORACLE && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE == DbType.GAUSS) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

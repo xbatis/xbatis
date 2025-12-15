@@ -29,7 +29,7 @@ public class Month extends BasicFunction<Month> {
         sqlBuilder.append(SqlConst.MONTH(context.getDbType()));
         if (context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT).append("'%m'").append(SqlConst.DELIMITER);
-        } else if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.OPEN_GAUSS && context.getDbType() != DbType.ORACLE) {
+        } else if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.GAUSS && context.getDbType() != DbType.ORACLE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
         }
 

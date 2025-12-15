@@ -42,7 +42,7 @@ public enum DbType {
 
     SQLITE(new KeywordWrap("\"", "\""), Collections.emptySet()),
 
-    OPEN_GAUSS(new KeywordWrap("\"", "\""), Collections.emptySet());
+    GAUSS(new KeywordWrap("\"", "\""), Collections.emptySet());
 
     private final KeywordWrap keywordWrap;
     private Set<String> keywords;

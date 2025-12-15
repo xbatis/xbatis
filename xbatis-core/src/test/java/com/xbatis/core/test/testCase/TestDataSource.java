@@ -75,7 +75,7 @@ public class TestDataSource {
                 return createSqliteDataSource();
             }
 
-            case OPEN_GAUSS: {
+            case GAUSS: {
                 return createOpenGaussDataSource();
             }
 

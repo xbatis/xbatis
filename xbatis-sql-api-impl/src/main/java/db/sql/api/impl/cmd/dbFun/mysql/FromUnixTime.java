@@ -32,7 +32,7 @@ public class FromUnixTime extends BasicFunction<FromUnixTime> {
             this.key.sql(module, parent, context, sqlBuilder);
             sqlBuilder.append(", 'SECOND'))");
             return sqlBuilder;
-        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
+        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
             sqlBuilder.append("TO_TIMESTAMP(");
             this.key.sql(module, parent, context, sqlBuilder);
             sqlBuilder.append(")::TIMESTAMP");

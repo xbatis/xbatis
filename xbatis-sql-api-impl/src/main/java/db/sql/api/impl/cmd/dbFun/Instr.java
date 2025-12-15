@@ -40,7 +40,7 @@ public class Instr extends BasicFunction<Instr> {
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         }
-        if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
+        if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
             sqlBuilder.append("strpos");
         } else {
             sqlBuilder.append(operator);

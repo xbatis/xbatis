@@ -47,7 +47,9 @@ public class DefaultDbTypeParser implements DbTypeParser {
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
         } else if (jdbcUrl.contains(":opengauss:")) {
-            return DbType.OPEN_GAUSS;
+            return DbType.GAUSS;
+        } else if (jdbcUrl.contains(":gaussdb:")) {
+            return DbType.GAUSS;
         }
         return null;
     }

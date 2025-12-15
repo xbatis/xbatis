@@ -95,13 +95,13 @@ public class Select implements ISelect<Select> {
         }
         if (distinct) {
             Distinct.INSTANCE.sql(module, this, context, sqlBuilder);
-            if ((context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS || context.getDbType() == DbType.H2) && parent instanceof Count) {
+            if ((context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.H2) && parent instanceof Count) {
                 sqlBuilder.append(SqlConst.BRACKET_LEFT);
             }
         }
         sqlBuilder = CmdUtils.join(this, this, context, sqlBuilder, this.getSelectField(), SqlConst.DELIMITER);
         if (distinct) {
-            if ((context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS || context.getDbType() == DbType.H2) && parent instanceof Count) {
+            if ((context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.H2) && parent instanceof Count) {
                 sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             }
         }

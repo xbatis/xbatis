@@ -30,7 +30,7 @@ public class Year extends BasicFunction<Year> {
         sqlBuilder.append(SqlConst.YEAR(context.getDbType()));
         if (context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT).append("'%Y'").append(SqlConst.DELIMITER);
-        } else if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.OPEN_GAUSS && context.getDbType() != DbType.ORACLE) {
+        } else if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.GAUSS && context.getDbType() != DbType.ORACLE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
         }
 
