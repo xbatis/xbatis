@@ -16,6 +16,8 @@ package cn.xbatis.core;
 
 
 import cn.xbatis.core.cache.FetchCache;
+import cn.xbatis.core.dbType.DbTypeParser;
+import cn.xbatis.core.dbType.DefaultDbTypeParser;
 import cn.xbatis.core.logicDelete.LogicDeleteSwitch;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
@@ -68,7 +70,7 @@ public final class XbatisGlobalConfig {
     private static volatile Object INTERCEPT_OFFICIAL_MAPPER_METHOD = NULL;
     private static volatile Object FETCH_IN_BATCH_SIZE = NULL;
     private static volatile Object FETCH_CACHE = NULL;
-
+    private static volatile Object DB_TYPE_PARSER = NULL;
 
     static {
         SQL_LISTENERS.add(new ForeignKeySQLListener());
@@ -723,5 +725,28 @@ public final class XbatisGlobalConfig {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 获取DbTypeParser
+     *
+     * @return DbTypeParser
+     */
+    public static DbTypeParser getDbTypeParser() {
+        if (DB_TYPE_PARSER == NULL) {
+            DB_TYPE_PARSER = DefaultDbTypeParser.INSTANCE;
+        }
+        return (DbTypeParser) DB_TYPE_PARSER;
+    }
+
+    /**
+     * 设置DbTypeParser
+     *
+     * @param dbTypeParser DbType解析器
+     */
+    public static void setDbTypeParser(DbTypeParser dbTypeParser) {
+        if (DB_TYPE_PARSER == NULL) {
+            DB_TYPE_PARSER = dbTypeParser;
+        }
     }
 }

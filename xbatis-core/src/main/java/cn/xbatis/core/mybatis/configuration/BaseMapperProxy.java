@@ -15,6 +15,7 @@
 package cn.xbatis.core.mybatis.configuration;
 
 import cn.xbatis.core.XbatisGlobalConfig;
+import cn.xbatis.core.dbType.DbTypeUtil;
 import cn.xbatis.core.function.ThreeFunction;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
@@ -27,7 +28,6 @@ import cn.xbatis.core.mybatis.mapper.intercept.MethodInvocation;
 import cn.xbatis.core.mybatis.mapper.mappers.BaseMapper;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.Where;
-import cn.xbatis.core.util.DbTypeUtil;
 import cn.xbatis.db.annotations.Paging;
 import cn.xbatis.page.IPager;
 import cn.xbatis.page.PagerField;

@@ -14,9 +14,9 @@
 
 package cn.xbatis.core.mybatis.provider;
 
+import cn.xbatis.core.dbType.DbTypeUtil;
 import cn.xbatis.core.function.ThreeFunction;
 import cn.xbatis.core.mybatis.mapper.context.*;
-import cn.xbatis.core.util.DbTypeUtil;
 import db.sql.api.DbType;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.mapping.BoundSql;

@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.mybatis.configuration;
 
-import cn.xbatis.core.util.DbTypeUtil;
+import cn.xbatis.core.dbType.DbTypeUtil;
 import db.sql.api.DbType;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 

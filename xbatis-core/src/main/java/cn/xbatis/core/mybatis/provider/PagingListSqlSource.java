@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.mybatis.provider;
 
-import cn.xbatis.core.util.DbTypeUtil;
+import cn.xbatis.core.dbType.DbTypeUtil;
 import cn.xbatis.core.util.PagingUtil;
 import cn.xbatis.page.IPager;
 import db.sql.api.DbType;

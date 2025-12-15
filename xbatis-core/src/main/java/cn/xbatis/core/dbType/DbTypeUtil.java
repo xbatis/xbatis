@@ -12,8 +12,9 @@
  *
  */
 
-package cn.xbatis.core.util;
+package cn.xbatis.core.dbType;
 
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.Configuration;
@@ -54,35 +55,9 @@ public final class DbTypeUtil {
         return getDbType(getJdbcUrl(dataSource));
     }
 
-    public static DbType getDbType(String jdbcUrl) {
+    private static DbType getDbType(String jdbcUrl) {
         jdbcUrl = jdbcUrl.toLowerCase();
-        if (jdbcUrl.contains(":mysql:") || jdbcUrl.contains(":cobar:")) {
-            return DbType.MYSQL;
-        } else if (jdbcUrl.contains(":mariadb:")) {
-            return DbType.MARIA_DB;
-        } else if (jdbcUrl.contains(":oracle:")) {
-            return DbType.ORACLE;
-        } else if (jdbcUrl.contains(":postgresql:")) {
-            return DbType.PGSQL;
-        } else if (jdbcUrl.contains(":sqlserver:")) {
-            return DbType.SQL_SERVER;
-        } else if (jdbcUrl.contains(":h2:")) {
-            return DbType.H2;
-        } else if (jdbcUrl.contains(":dm:")) {
-            return DbType.DM;
-        } else if (jdbcUrl.contains(":db2:")) {
-            return DbType.DB2;
-        } else if (jdbcUrl.contains(":kingbase8:")) {
-            return DbType.KING_BASE;
-        } else if (jdbcUrl.contains(":sqlite:")) {
-            return DbType.SQLITE;
-        } else if (jdbcUrl.contains(":clickhouse:")) {
-            return DbType.CLICK_HOUSE;
-        } else if (jdbcUrl.contains(":opengauss:")) {
-            return DbType.OPEN_GAUSS;
-        } else {
-            throw new DbTypeParseException("Unrecognized database type:" + jdbcUrl);
-        }
+        return XbatisGlobalConfig.getDbTypeParser().getDbTypeByUrl(jdbcUrl);
     }
 
     public static String getJdbcUrl(DataSource dataSource) {
