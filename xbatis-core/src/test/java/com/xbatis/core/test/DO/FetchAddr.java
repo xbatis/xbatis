@@ -17,6 +17,7 @@ package com.xbatis.core.test.DO;
 import cn.xbatis.core.mybatis.typeHandler.JacksonTypeHandler;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableField;
+import cn.xbatis.db.annotations.TableId;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
@@ -27,6 +28,7 @@ import java.util.List;
 @FieldNameConstants
 public class FetchAddr {
 
+    @TableId
     private Integer id;
 
     private String addrs1;
@@ -34,5 +36,5 @@ public class FetchAddr {
     private String addrs2;
 
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<Integer> addrs3;
+    private List<String> addrs3;
 }

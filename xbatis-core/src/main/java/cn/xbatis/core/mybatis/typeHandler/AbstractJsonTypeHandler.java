@@ -38,7 +38,16 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
         if (Objects.isNull(parameter)) {
             ps.setNull(i, jdbcType.TYPE_CODE);
         } else {
-            ps.setString(i, toJson(parameter));
+            String json = toJson(parameter);
+            if (jdbcType == JdbcType.BINARY) {
+                ps.setBytes(i, json.getBytes());
+            } else {
+                try {
+                    ps.setString(i, json);
+                } catch (SQLException e) {
+                    ps.setBytes(i, json.getBytes());
+                }
+            }
         }
     }
 
@@ -57,8 +66,18 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
         return parse(cs.getString(columnIndex));
     }
 
-    private Object parse(String json) {
-        return Objects.isNull(json) ? null : parseJson(json);
+    protected Object parse(String json) {
+        if (Objects.isNull(json) || "".equals(json) || "\"\"".equals(json)) {
+            return null;
+        }
+        //此处主要是兼容H2数据库
+        if (json.startsWith("\"")) {
+            json = json.substring(1, json.length() - 1);
+            if (json.contains("\\\"")) {
+                json = json.replaceAll("\\\\\"", "\"");
+            }
+        }
+        return parseJson(json);
     }
 
     /**

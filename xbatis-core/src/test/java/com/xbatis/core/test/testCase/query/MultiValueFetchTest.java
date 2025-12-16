@@ -16,6 +16,7 @@ package com.xbatis.core.test.testCase.query;
 
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import com.xbatis.core.test.DO.Addr;
+import com.xbatis.core.test.DO.FetchAddr;
 import com.xbatis.core.test.mapper.FetchAddrMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
@@ -33,11 +34,12 @@ public class MultiValueFetchTest extends BaseTest {
 
     @Test
     public void fetchMulti() {
-        if (TestDataSource.DB_TYPE != DbType.H2) {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             FetchAddrMapper mapper = session.getMapper(FetchAddrMapper.class);
+
             List<FetchAddrVo> list = QueryChain.of(mapper)
                     .returnType(FetchAddrVo.class)
                     .list();
@@ -47,9 +49,9 @@ public class MultiValueFetchTest extends BaseTest {
             assertEquals(list.get(1).getId(), 2);
             assertEquals(list.get(2).getId(), 3);
 
-            assertEquals(list.get(0).getAddrs3(), Arrays.asList(1, 4, 1));
-            assertEquals(list.get(1).getAddrs3(), Arrays.asList(5, 1));
-            assertEquals(list.get(2).getAddrs3(), Arrays.asList(2));
+            assertEquals(list.get(0).getAddrs3(), Arrays.asList("1", "4", "1"));
+            assertEquals(list.get(1).getAddrs3(), Arrays.asList("5", "1"));
+            assertEquals(list.get(2).getAddrs3(), Arrays.asList("2"));
 
             assertEquals(3, list.size());
             assertEquals(list.get(0).getFaddrs1(), Arrays.asList("江西", "南昌"));
@@ -79,6 +81,25 @@ public class MultiValueFetchTest extends BaseTest {
             assertEquals(list.get(2).getFaddrs11(), Arrays.asList(Addr.of(1, "江西"), Addr.of(6, "兴国县")));
             assertEquals(list.get(2).getFaddrs21(), Arrays.asList(Addr.of(6, "兴国县")));
             assertEquals(list.get(2).getFaddrs31(), Arrays.asList(Addr.of(2, "南昌")));
+        }
+    }
+
+    @Test
+    public void fetchMulti2() {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            FetchAddrMapper mapper = session.getMapper(FetchAddrMapper.class);
+
+            List<FetchAddr> list = QueryChain.of(mapper)
+                    .list();
+            mapper.update(list);
+            session.commit();
+            list = QueryChain.of(mapper)
+                    .list();
+
+            System.out.println(list);
         }
     }
 }

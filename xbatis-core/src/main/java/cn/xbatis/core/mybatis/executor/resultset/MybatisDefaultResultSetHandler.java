@@ -738,15 +738,14 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (fetchInfo.getFetch().propertyType() == FetchPropertyType.SIMPLE) {
             return matchValue;
         }
-        if ("".equals(matchValue)) {
+        if ("".equals(matchValue) || "\"\"".equals(matchValue)) {
             return null;
         }
         if (fetchInfo.getFetch().propertyType() == FetchPropertyType.MULTI) {
-            List<?> list = Arrays.stream(matchValue.toString().split(","))
-                    .filter(i -> !"".equals(i) && !"\"\"".equals(i))
-                    .map(i -> i.replace("\"", ""))
+            List<?> list = Arrays.stream(matchValue.toString().replace("\"", "").split(","))
+                    .map(i -> i.trim())
+                    .filter(i -> !"".equals(i))
                     .map(i -> TypeConvertUtil.convert(i, fetchInfo.getTargetTableFieldInfo().getFieldInfo().getFinalClass()))
-                    .distinct()
                     .collect(Collectors.toList());
 
             if (list.isEmpty()) {
@@ -757,9 +756,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         if (fetchInfo.getFetch().propertyType() == FetchPropertyType.ARRAY) {
             String str = matchValue.toString();
-            List<?> list = Arrays.stream(str.substring(1, str.length() - 1).split(","))
+            List<?> list = Arrays.stream(str.substring(1, str.length() - 1).replace("\"", "").split(","))
                     .filter(i -> !"".equals(i) && !"\"\"".equals(i))
-                    .map(i -> i.replace("\"", ""))
+                    .map(i -> i.trim())
+                    .filter(i -> !"".equals(i))
                     .map(i -> TypeConvertUtil.convert(i, fetchInfo.getTargetTableFieldInfo().getFieldInfo().getFinalClass()))
                     .collect(Collectors.toList());
             if (list.isEmpty()) {
