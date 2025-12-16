@@ -25,7 +25,7 @@ import java.util.List;
 
 @Data
 @ResultEntity(FetchAddr.class)
-public class FetchAddrVo  extends FetchAddr{
+public class FetchAddrVo extends FetchAddr {
 
     @Fetch(property = FetchAddr.Fields.addrs1,
             propertyType = FetchPropertyType.MULTI,
@@ -43,14 +43,13 @@ public class FetchAddrVo  extends FetchAddr{
     )
     private List<String> faddrs2;
 
-    @Fetch(property =FetchAddr.Fields.addrs3,
+    @Fetch(property = FetchAddr.Fields.addrs3,
             propertyType = FetchPropertyType.ARRAY,
             target = Addr.class,
             targetProperty = Addr.Fields.id,
             targetSelectProperty = Addr.Fields.name
     )
     private List<String> faddrs3;
-
 
 
     @Fetch(property = FetchAddr.Fields.addrs1,
@@ -67,7 +66,7 @@ public class FetchAddrVo  extends FetchAddr{
     )
     private List<Addr> faddrs21;
 
-    @Fetch(property =FetchAddr.Fields.addrs3,
+    @Fetch(property = FetchAddr.Fields.addrs3,
             propertyType = FetchPropertyType.ARRAY,
             target = Addr.class,
             targetProperty = Addr.Fields.id

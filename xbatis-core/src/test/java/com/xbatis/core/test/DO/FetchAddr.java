@@ -17,7 +17,6 @@ package com.xbatis.core.test.DO;
 import cn.xbatis.core.mybatis.typeHandler.JacksonTypeHandler;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableField;
-import db.sql.api.impl.cmd.condition.In;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
