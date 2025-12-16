@@ -745,6 +745,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             List<?> list = Arrays.stream(matchValue.toString().split(","))
                     .filter(i -> !"".equals(i))
                     .map(i -> i.replace("\"", ""))
+                    .filter(i -> !"".equals(i))
                     .map(i -> TypeConvertUtil.convert(i, fetchInfo.getTargetTableFieldInfo().getFieldInfo().getFinalClass()))
                     .distinct()
                     .collect(Collectors.toList());
@@ -760,6 +761,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             List<?> list = Arrays.stream(str.substring(1, str.length() - 1).split(","))
                     .filter(i -> !"".equals(i))
                     .map(i -> i.replace("\"", ""))
+                    .filter(i -> !"".equals(i))
                     .map(i -> TypeConvertUtil.convert(i, fetchInfo.getTargetTableFieldInfo().getFieldInfo().getFinalClass()))
                     .collect(Collectors.toList());
             if (list.isEmpty()) {
