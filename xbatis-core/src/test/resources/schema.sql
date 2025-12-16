@@ -303,3 +303,18 @@ values (1, 2, 7),
        (1, 3, 4),
        (1, 3, 5),
        (1, 3, 6);
+
+drop table if exists fetch_addr;
+
+CREATE TABLE IF NOT EXISTS fetch_addr
+(
+    id     INTEGER PRIMARY KEY auto_increment,
+    addrs1 varchar(100),
+    addrs2 varchar(100),
+    addrs3 varchar(100)
+);
+
+insert into fetch_addr(addrs1, addrs2, addrs3)
+values ('1,2', '"1","2","3"', '["1","4","1"]'),
+       ('2,4', '"1","5"', '["5","1"]'),
+       ('1,6', '"6"', '["2"]')

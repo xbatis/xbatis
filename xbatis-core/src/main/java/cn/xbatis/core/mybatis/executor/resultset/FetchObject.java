@@ -19,17 +19,14 @@ import lombok.Data;
 @Data
 public class FetchObject {
 
-    private final String matchKey;
+    private final Object matchValue;
 
     private final Object value;
 
-    private final Object sourceKey;
-
     private final String cacheKey;
 
-    public FetchObject(Object sourceKey, String matchKey, Object value, String cacheKey) {
-        this.sourceKey = sourceKey;
-        this.matchKey = matchKey;
+    public FetchObject(Object matchValue, Object value, String cacheKey) {
+        this.matchValue = matchValue;
         this.value = value;
         this.cacheKey = cacheKey;
     }

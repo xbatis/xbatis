@@ -14,24 +14,26 @@
 
 package com.xbatis.core.test.DO;
 
+import cn.xbatis.core.mybatis.typeHandler.JacksonTypeHandler;
 import cn.xbatis.db.annotations.Table;
-import lombok.AllArgsConstructor;
+import cn.xbatis.db.annotations.TableField;
+import db.sql.api.impl.cmd.condition.In;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
+
+import java.util.List;
 
 @Data
 @Table
 @FieldNameConstants
-@AllArgsConstructor
-@NoArgsConstructor
-public class Addr {
+public class FetchAddr {
 
     private Integer id;
 
-    private String name;
+    private String addrs1;
 
-    public static Addr of(Integer id, String name) {
-        return new Addr(id, name);
-    }
+    private String addrs2;
+
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<Integer> addrs3;
 }

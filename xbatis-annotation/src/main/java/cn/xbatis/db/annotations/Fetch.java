@@ -14,6 +14,8 @@
 
 package cn.xbatis.db.annotations;
 
+import cn.xbatis.db.FetchPropertyType;
+
 import java.lang.annotation.*;
 
 @Documented
@@ -36,6 +38,13 @@ public @interface Fetch {
      * @return
      */
     String property() default "";
+
+    /**
+     * Fetch 源实体类的属性对应的数据类型 默认是简单的单个值
+     *
+     * @return
+     */
+    FetchPropertyType propertyType() default FetchPropertyType.SIMPLE;
 
     /**
      * Fetch property 对应的实体类

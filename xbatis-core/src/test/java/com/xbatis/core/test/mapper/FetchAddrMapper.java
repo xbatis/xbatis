@@ -12,26 +12,10 @@
  *
  */
 
-package com.xbatis.core.test.DO;
+package com.xbatis.core.test.mapper;
 
-import cn.xbatis.db.annotations.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.FieldNameConstants;
+import cn.xbatis.core.mybatis.mapper.MybatisMapper;
+import com.xbatis.core.test.DO.FetchAddr;
 
-@Data
-@Table
-@FieldNameConstants
-@AllArgsConstructor
-@NoArgsConstructor
-public class Addr {
-
-    private Integer id;
-
-    private String name;
-
-    public static Addr of(Integer id, String name) {
-        return new Addr(id, name);
-    }
+public interface FetchAddrMapper extends MybatisMapper<FetchAddr> {
 }

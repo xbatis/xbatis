@@ -12,26 +12,13 @@
  *
  */
 
-package com.xbatis.core.test.DO;
+package cn.xbatis.db;
 
-import cn.xbatis.db.annotations.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.FieldNameConstants;
-
-@Data
-@Table
-@FieldNameConstants
-@AllArgsConstructor
-@NoArgsConstructor
-public class Addr {
-
-    private Integer id;
-
-    private String name;
-
-    public static Addr of(Integer id, String name) {
-        return new Addr(id, name);
-    }
+public enum FetchPropertyType {
+    //简单：单个值
+    SIMPLE,
+    //多个值 例如1,2,3
+    MULTI,
+    //数组：例如 [1,2,3]
+    ARRAY
 }

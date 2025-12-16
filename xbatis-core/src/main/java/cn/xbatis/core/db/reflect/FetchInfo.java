@@ -376,7 +376,7 @@ public class FetchInfo {
         return columns.toString();
     }
 
-    public void setValue(Object object, Object value, Map<String, Object> defaultValueContext) {
+    public Object setValue(Object object, Object value, Map<String, Object> defaultValueContext) {
         if (value == null || value instanceof Collection && ((Collection) value).isEmpty()) {
             if (this.fetch.nullFillValue().isEmpty()) {
                 if (value == null && this.getFieldInfo().isCollection()) {
@@ -393,6 +393,7 @@ public class FetchInfo {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+        return value;
     }
 
     public Object getFieldValue(Object object) {
