@@ -59,8 +59,8 @@ key APIs.
   <dependencies>
     <dependency>
       <groupId>cn.xbatis</groupId>
-      <artifactId>xbatis-bom</artifactId>
-      <version>1.9.3</version>
+      <artifactId>xbatis-spring-boot-parent</artifactId>
+      <version>1.9.5-M1</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -106,7 +106,7 @@ public class XbatisApplication {
       <dependency>
         <groupId>cn.xbatis</groupId>
         <artifactId>xbatis-spring-boot-parent</artifactId>
-        <version>1.9.3</version>
+        <version>1.9.5-M1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -131,7 +131,7 @@ public class XbatisApplication {
   <dependency>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis-solon-plugin</artifactId>
-    <version>1.9.3</version>
+    <version>1.9.5-M1</version>
   </dependency>
   <dependency>
     <groupId>org.noear</groupId>
