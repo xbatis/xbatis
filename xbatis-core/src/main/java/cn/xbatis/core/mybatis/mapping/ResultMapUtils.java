@@ -18,7 +18,6 @@ import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import cn.xbatis.core.mybatis.executor.MybatisIdUtil;
 import cn.xbatis.core.util.FieldUtil;
-import cn.xbatis.core.util.GenericUtil;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.ResultField;
 import cn.xbatis.db.annotations.Table;
@@ -176,14 +175,7 @@ public final class ResultMapUtils {
 
         nestedMappings.addAll(createNestedResultMapping(configuration, nestedResultInfo.getNestedResultInfos(), nestedPath));
 
-        Class targetType = nestedResultInfo.getFieldInfo().getTypeClass();
-        //假如是集合类型
-        if (Collection.class.isAssignableFrom(targetType)) {
-            List<Class<?>> types = GenericUtil.getGeneric(nestedResultInfo.getField().getGenericType());
-            if (Objects.nonNull(types) && !types.isEmpty()) {
-                targetType = types.get(0);
-            }
-        }
+        Class targetType = nestedResultInfo.getFieldInfo().getFinalClass();
 
         //注册内嵌 ResultMap
         ResultMap resultMap = new ResultMap.Builder(configuration, nestedPath, targetType, nestedMappings, false).build();

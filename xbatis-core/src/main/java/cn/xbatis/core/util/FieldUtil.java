@@ -120,6 +120,11 @@ public final class FieldUtil {
                 }
             }
             return Object.class;
+        } else if (type instanceof Class) {
+            Class t = (Class) type;
+            if (t.isArray()) {
+                return t.getComponentType();
+            }
         }
         return field.getType();
     }

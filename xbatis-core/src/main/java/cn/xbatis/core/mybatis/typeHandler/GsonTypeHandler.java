@@ -15,27 +15,39 @@
 package cn.xbatis.core.mybatis.typeHandler;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Objects;
 
 public class GsonTypeHandler extends AbstractJsonTypeHandler {
 
     private volatile static Gson GSON;
 
+    protected final TypeToken typeToken;
+
     public GsonTypeHandler(Class<?> type) {
         super(type);
+        typeToken = TypeToken.get(type);
     }
 
-    public GsonTypeHandler(Class<?> type, Type genericType) {
+    public GsonTypeHandler(Class<?> type, Class<?> genericType) {
         super(type, genericType);
+        if (this.genericType == null) {
+            typeToken = TypeToken.get(type);
+        } else if (Collection.class.isAssignableFrom(this.type)) {
+            typeToken = TypeToken.getParameterized(this.type, this.genericType);
+        } else if (this.type.isArray()) {
+            typeToken = TypeToken.getArray(this.genericType);
+        } else {
+            typeToken = TypeToken.getParameterized(this.type, this.genericType);
+        }
     }
 
     public static Gson getGson() {
         if (null == GSON) {
             GSON = new Gson();
         }
-
         return GSON;
     }
 
@@ -51,6 +63,6 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler {
 
     @Override
     protected Object parseJson(String json) {
-        return getGson().fromJson(json, this.getDeserializeType());
+        return getGson().fromJson(json, typeToken);
     }
 }

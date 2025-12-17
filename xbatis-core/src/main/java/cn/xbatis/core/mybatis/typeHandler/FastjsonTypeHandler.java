@@ -16,26 +16,36 @@ package cn.xbatis.core.mybatis.typeHandler;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.util.ParameterizedTypeImpl;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 public class FastjsonTypeHandler extends AbstractJsonTypeHandler {
 
+    protected final ParameterizedType parameterizedType;
+
     public FastjsonTypeHandler(Class<?> type) {
         super(type);
+        parameterizedType = new ParameterizedTypeImpl(null, null, type);
     }
 
-    public FastjsonTypeHandler(Class<?> type, Type genericType) {
+    public FastjsonTypeHandler(Class<?> type, Class<?> genericType) {
         super(type, genericType);
+        if (genericType == null) {
+            parameterizedType = new ParameterizedTypeImpl(null, null, type);
+        } else {
+            parameterizedType = new ParameterizedTypeImpl(new Type[]{genericType}, null, type);
+        }
     }
 
     @Override
     protected String toJson(Object obj) {
-        return JSON.toJSONString(obj, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullListAsEmpty, SerializerFeature.WriteNullStringAsEmpty);
+        return JSON.toJSONString(obj, SerializerFeature.WriteMapNullValue);
     }
 
     @Override
     protected Object parseJson(String json) {
-        return JSON.parseObject(json, this.getDeserializeType());
+        return JSON.parseObject(json, parameterizedType);
     }
 }

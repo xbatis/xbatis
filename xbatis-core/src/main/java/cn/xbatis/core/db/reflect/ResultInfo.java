@@ -17,7 +17,6 @@ package cn.xbatis.core.db.reflect;
 import cn.xbatis.core.exception.NotTableClassException;
 import cn.xbatis.core.exception.NotTableFieldException;
 import cn.xbatis.core.util.FieldUtil;
-import cn.xbatis.core.util.GenericUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.annotations.*;
 import lombok.Data;
@@ -211,15 +210,7 @@ public class ResultInfo {
         //添加前缀
         tableCount = createPrefix(nestedResultEntity.target(), nestedResultEntity.storey(), parseResult.tablePrefixes, tableCount);
 
-        Class targetType = nestedResultInfo.getFieldInfo().getTypeClass();
-        //假如是集合类型
-        if (Collection.class.isAssignableFrom(targetType)) {
-            List<Class<?>> types = GenericUtil.getGeneric(nestedResultInfo.getField().getGenericType());
-            if (Objects.nonNull(types) && !types.isEmpty()) {
-                targetType = types.get(0);
-            }
-        }
-
+        Class targetType = nestedResultInfo.getFieldInfo().getFinalClass();
 
         //是否隐射的实体类
         boolean fieldTypeIsEntity = targetType.isAnnotationPresent(Table.class);

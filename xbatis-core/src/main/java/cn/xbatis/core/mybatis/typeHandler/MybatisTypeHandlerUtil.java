@@ -36,8 +36,11 @@ public final class MybatisTypeHandlerUtil {
         }
         ReflectiveOperationException exception;
         try {
-            Constructor constructor = typeHandlerClass.getConstructor(Class.class, Type.class);
-            return (TypeHandler<?>) constructor.newInstance(fieldInfo.getTypeClass(), fieldInfo.getField().getGenericType());
+            Constructor constructor = typeHandlerClass.getConstructor(Class.class, Class.class);
+            if (fieldInfo.getTypeClass() == fieldInfo.getFinalClass()) {
+                return (TypeHandler<?>) constructor.newInstance(fieldInfo.getTypeClass(), null);
+            }
+            return (TypeHandler<?>) constructor.newInstance(fieldInfo.getTypeClass(), fieldInfo.getFinalClass());
         } catch (ReflectiveOperationException e) {
             //exception = e;
         }
@@ -92,7 +95,10 @@ public final class MybatisTypeHandlerUtil {
     public static TypeHandler<?> getTypeHandler(Configuration cfg, FieldInfo fieldInfo, Class<? extends TypeHandler<?>> typeHandlerClass, JdbcType jdbcType) {
         //假如是泛型TypeHandler
         if (GenericTypeHandler.class.isAssignableFrom(typeHandlerClass)) {
-            return getGenericTypeHandler(typeHandlerClass, fieldInfo.getTypeClass(), fieldInfo.getField().getGenericType());
+            if (fieldInfo.getTypeClass() == fieldInfo.getFinalClass()) {
+                return getGenericTypeHandler(typeHandlerClass, fieldInfo.getTypeClass(), null);
+            }
+            return getGenericTypeHandler(typeHandlerClass, fieldInfo.getTypeClass(), fieldInfo.getFinalClass());
         }
 
         if (typeHandlerClass == UnknownTypeHandler.class) {
@@ -109,17 +115,17 @@ public final class MybatisTypeHandlerUtil {
         return typeHandler;
     }
 
-    private static TypeHandler<?> getGenericTypeHandler(Class<? extends TypeHandler<?>> typeHandlerClass, Class<?> type, Type genericType) {
+    private static TypeHandler<?> getGenericTypeHandler(Class<? extends TypeHandler<?>> typeHandlerClass, Class<?> type, Class<?> genericType) {
         return GENERIC_TYPE_HANDLERS
                 .computeIfAbsent(typeHandlerClass, key -> new ConcurrentHashMap<>())
-                .computeIfAbsent(genericType, key -> new ConcurrentHashMap<>())
+                .computeIfAbsent(genericType == null ? Object.class : genericType, key -> new ConcurrentHashMap<>())
                 .computeIfAbsent(type, key -> newGenericTypeHandler(typeHandlerClass, type, genericType))
                 ;
     }
 
-    private static TypeHandler<?> newGenericTypeHandler(Class<? extends TypeHandler<?>> typeHandlerClass, Class<?> type, Type genericType) {
+    private static TypeHandler<?> newGenericTypeHandler(Class<? extends TypeHandler<?>> typeHandlerClass, Class<?> type, Class<?> genericType) {
         try {
-            Constructor constructor = typeHandlerClass.getConstructor(Class.class, Type.class);
+            Constructor constructor = typeHandlerClass.getConstructor(Class.class, Class.class);
             return (TypeHandler<?>) constructor.newInstance(type, genericType);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);

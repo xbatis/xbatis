@@ -14,18 +14,22 @@
 
 package com.xbatis.core.test.DO;
 
-import cn.xbatis.db.annotations.Table;
-import cn.xbatis.db.annotations.TableId;
+import cn.xbatis.core.mybatis.typeHandler.FastjsonTypeHandler;
+import cn.xbatis.core.mybatis.typeHandler.MultiValueTypeHandler;
+import cn.xbatis.db.annotations.TableField;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
+import org.apache.ibatis.type.JdbcType;
+
+import java.util.List;
 
 @Data
-@Table
 @FieldNameConstants
-public class FetchAddr extends FetchAddrBase<Integer> {
+public class FetchAddrBase<T> {
 
-    @TableId
-    private Integer id;
+    @TableField(typeHandler = MultiValueTypeHandler.class)
+    private T[] addrs2;
 
-    private String addrs1;
+    @TableField(typeHandler = FastjsonTypeHandler.class, jdbcType = JdbcType.BINARY)
+    private List<T> addrs3;
 }

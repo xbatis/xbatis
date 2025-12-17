@@ -17,13 +17,16 @@ package com.xbatis.core.test.vo;
 import cn.xbatis.db.FetchPropertyType;
 import cn.xbatis.db.annotations.Fetch;
 import cn.xbatis.db.annotations.ResultEntity;
+import cn.xbatis.db.annotations.ResultEntityField;
 import com.xbatis.core.test.DO.Addr;
 import com.xbatis.core.test.DO.FetchAddr;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
 @Data
+@ToString(callSuper = true)
 @ResultEntity(FetchAddr.class)
 public class FetchAddrVo extends FetchAddr {
 
@@ -35,7 +38,7 @@ public class FetchAddrVo extends FetchAddr {
     )
     private List<String> faddrs1;
 
-    @Fetch(property = FetchAddr.Fields.addrs2,
+    @Fetch(property = "addrs2",
             propertyType = FetchPropertyType.MULTI,
             target = Addr.class,
             targetProperty = Addr.Fields.id,
@@ -43,7 +46,7 @@ public class FetchAddrVo extends FetchAddr {
     )
     private List<String> faddrs2;
 
-    @Fetch(property = FetchAddr.Fields.addrs3,
+    @Fetch(property = "addrs3",
             propertyType = FetchPropertyType.ARRAY,
             target = Addr.class,
             targetProperty = Addr.Fields.id,
@@ -59,18 +62,22 @@ public class FetchAddrVo extends FetchAddr {
     )
     private List<Addr> faddrs11;
 
-    @Fetch(property = FetchAddr.Fields.addrs2,
+    @Fetch(property = "addrs2",
             propertyType = FetchPropertyType.MULTI,
             target = Addr.class,
             targetProperty = Addr.Fields.id
     )
     private List<Addr> faddrs21;
 
-    @Fetch(property = FetchAddr.Fields.addrs3,
+    @Fetch(property = "addrs3",
             propertyType = FetchPropertyType.ARRAY,
             target = Addr.class,
             targetProperty = Addr.Fields.id
     )
     private List<Addr> faddrs31;
+
+
+    @ResultEntityField(property = "addrs3")
+    private List<Long> addrs33;
 
 }

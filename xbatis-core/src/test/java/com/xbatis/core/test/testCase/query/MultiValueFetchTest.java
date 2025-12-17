@@ -49,9 +49,13 @@ public class MultiValueFetchTest extends BaseTest {
             assertEquals(list.get(1).getId(), 2);
             assertEquals(list.get(2).getId(), 3);
 
-            assertEquals(list.get(0).getAddrs3(), Arrays.asList("1", "4", "1"));
-            assertEquals(list.get(1).getAddrs3(), Arrays.asList("5", "1"));
-            assertEquals(list.get(2).getAddrs3(), Arrays.asList("2"));
+            assertEquals(list.get(0).getAddrs3(), Arrays.asList(1, 4, 1));
+            assertEquals(list.get(1).getAddrs3(), Arrays.asList(5, 1));
+            assertEquals(list.get(2).getAddrs3(), Arrays.asList(2));
+
+            assertEquals(list.get(0).getAddrs33(), Arrays.asList(1L, 4L, 1L));
+            assertEquals(list.get(1).getAddrs33(), Arrays.asList(5L, 1L));
+            assertEquals(list.get(2).getAddrs33(), Arrays.asList(2L));
 
             assertEquals(3, list.size());
             assertEquals(list.get(0).getFaddrs1(), Arrays.asList("江西", "南昌"));
@@ -95,7 +99,7 @@ public class MultiValueFetchTest extends BaseTest {
             List<FetchAddr> list = QueryChain.of(mapper)
                     .list();
             mapper.update(list);
-            session.commit();
+            //session.commit();
             list = QueryChain.of(mapper)
                     .list();
 

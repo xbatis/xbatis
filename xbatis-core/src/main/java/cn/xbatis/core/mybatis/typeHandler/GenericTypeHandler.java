@@ -17,8 +17,6 @@ package cn.xbatis.core.mybatis.typeHandler;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 
-import java.lang.reflect.Type;
-
 
 /**
  * GenericTypeHandler，泛型基础 TypeHandler
@@ -35,13 +33,13 @@ public abstract class GenericTypeHandler<T> extends BaseTypeHandler<T> {
     /**
      * 目标字段上的泛型
      */
-    protected final Type genericType;
+    protected final Class<?> genericType;
 
     public GenericTypeHandler(Class<?> type) {
         this(type, null);
     }
 
-    public GenericTypeHandler(Class<?> type, Type genericType) {
+    public GenericTypeHandler(Class<?> type, Class<?> genericType) {
         this.type = type;
         this.genericType = genericType;
     }
@@ -50,7 +48,7 @@ public abstract class GenericTypeHandler<T> extends BaseTypeHandler<T> {
         return type;
     }
 
-    public Type getGenericType() {
+    public Class<?> getGenericType() {
         return genericType;
     }
 }

@@ -29,7 +29,7 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
         super(type);
     }
 
-    public AbstractJsonTypeHandler(Class<?> type, Type genericType) {
+    public AbstractJsonTypeHandler(Class<?> type, Class<?> genericType) {
         super(type, genericType);
     }
 
@@ -39,14 +39,10 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
             ps.setNull(i, jdbcType.TYPE_CODE);
         } else {
             String json = toJson(parameter);
-            if (jdbcType == JdbcType.BINARY) {
+            if (jdbcType == JdbcType.BINARY && ps.getConnection().getMetaData().getDatabaseProductName().equals("H2")) {
                 ps.setBytes(i, json.getBytes());
             } else {
-                try {
-                    ps.setString(i, json);
-                } catch (SQLException e) {
-                    ps.setBytes(i, json.getBytes());
-                }
+                ps.setString(i, json);
             }
         }
     }
