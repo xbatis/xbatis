@@ -30,7 +30,6 @@ import cn.xbatis.core.mybatis.typeHandler.EnumTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.xbatis.core.util.GenericUtil;
 import cn.xbatis.db.annotations.Table;
-import db.sql.api.DbType;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.executor.*;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
@@ -63,16 +62,6 @@ public class MybatisConfiguration extends Configuration {
      * 是否初始化
      */
     private boolean initialized;
-
-    /**
-     * DbType转换Map
-     */
-    private Map<DbType, DbType> dbTypeConvert = new HashMap<>();
-
-    /**
-     * 默认dbType
-     */
-    private DbType defaultDbType;
 
     public MybatisConfiguration() {
         super();
@@ -272,23 +261,6 @@ public class MybatisConfiguration extends Configuration {
     public void setBanner(boolean banner) {
         this.banner = banner;
     }
-
-    public Map<DbType, DbType> getDbTypeConvert() {
-        return dbTypeConvert;
-    }
-
-    public void setDbTypeConvert(Map<DbType, DbType> dbTypeConvert) {
-        this.dbTypeConvert = dbTypeConvert;
-    }
-
-    public DbType getDefaultDbType() {
-        return defaultDbType;
-    }
-
-    public void setDefaultDbType(DbType defaultDbType) {
-        this.defaultDbType = defaultDbType;
-    }
-
 }
 
 
