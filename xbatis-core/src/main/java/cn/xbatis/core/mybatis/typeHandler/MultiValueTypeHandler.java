@@ -77,7 +77,7 @@ public class MultiValueTypeHandler extends GenericTypeHandler<Object> {
     }
 
     protected Object parse(String values) {
-        if (Objects.isNull(values) || "".equals(values)) {
+        if (Objects.isNull(values) || values.isEmpty()) {
             return null;
         }
         String[] arr = values.split(",");
@@ -88,8 +88,13 @@ public class MultiValueTypeHandler extends GenericTypeHandler<Object> {
         if (this.type.isArray()) {
             Class componentType = this.genericType == null ? this.type.getComponentType() : this.genericType;
             Object[] newArr = (Object[]) Array.newInstance(componentType, arr.length);
-            for (int i = 0; i < arr.length; i++) {
+            int i = 0;
+            for (String s : arr) {
+                if (s.isEmpty()) {
+                    continue;
+                }
                 newArr[i] = TypeConvertUtil.convert(arr[i], componentType);
+                i++;
             }
             return newArr;
         }
