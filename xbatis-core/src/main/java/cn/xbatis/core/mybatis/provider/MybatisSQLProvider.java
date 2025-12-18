@@ -20,7 +20,6 @@ import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import db.sql.api.DbType;
-import org.apache.ibatis.builder.annotation.ProviderContext;
 
 import java.util.Objects;
 
@@ -36,17 +35,16 @@ public class MybatisSQLProvider {
     public static final String COUNT_NAME = "cmdCount";
     public static final String QUERY_COUNT_NAME = "countFromQuery";
 
-
     private MybatisSQLProvider() {
 
     }
 
-    public static String save(BaseSQLCmdContext insertContext, ProviderContext providerContext, DbType dbType) {
+    public static String save(BaseSQLCmdContext insertContext, DbType dbType) {
         insertContext.init(dbType);
         return insertContext.sql(dbType);
     }
 
-    public static String update(SQLCmdUpdateContext updateContext, ProviderContext providerContext, DbType dbType) {
+    public static String update(SQLCmdUpdateContext updateContext, DbType dbType) {
         updateContext.init(dbType);
         String sql = updateContext.sql(dbType);
         db.sql.api.impl.cmd.struct.Where where = updateContext.getExecution().getWhere();
@@ -56,20 +54,20 @@ public class MybatisSQLProvider {
         return sql;
     }
 
-    public static String updateAndReturning(SQLCmdUpdateContext updateContext, ProviderContext providerContext, DbType dbType) {
-        String sql = update(updateContext, providerContext, dbType);
+    public static String updateAndReturning(SQLCmdUpdateContext updateContext, DbType dbType) {
+        String sql = update(updateContext, dbType);
         handlerPrefixMapping(updateContext);
         return sql;
     }
 
-    public static String deleteAndReturning(SQLCmdDeleteContext deleteContext, ProviderContext providerContext, DbType dbType) {
-        String sql = delete(deleteContext, providerContext, dbType);
+    public static String deleteAndReturning(SQLCmdDeleteContext deleteContext, DbType dbType) {
+        String sql = delete(deleteContext, dbType);
         handlerPrefixMapping(deleteContext);
         return sql;
     }
 
 
-    public static String delete(SQLCmdDeleteContext deleteContext, ProviderContext providerContext, DbType dbType) {
+    public static String delete(SQLCmdDeleteContext deleteContext, DbType dbType) {
         deleteContext.init(dbType);
         String sql = deleteContext.sql(dbType);
         db.sql.api.impl.cmd.struct.Where where = deleteContext.getExecution().getWhere();
@@ -116,33 +114,33 @@ public class MybatisSQLProvider {
     }
 
 
-    public static String countFromQuery(SQLCmdCountFromQueryContext queryContext, ProviderContext providerContext, DbType dbType) {
+    public static String countFromQuery(SQLCmdCountFromQueryContext queryContext, DbType dbType) {
         queryContext.init(dbType);
         return queryContext.sql(dbType);
     }
 
-    public static String cmdQuery(SQLCmdQueryContext queryContext, ProviderContext providerContext, DbType dbType) {
+    public static String cmdQuery(SQLCmdQueryContext queryContext, DbType dbType) {
         queryContext.init(dbType);
         handlerPrefixMapping(queryContext);
         return queryContext.sql(dbType);
     }
 
-    public static String getByIdCmdQuery(SQLCmdQueryContext queryContext, ProviderContext providerContext, DbType dbType) {
+    public static String getByIdCmdQuery(SQLCmdQueryContext queryContext, DbType dbType) {
         queryContext.init(dbType);
         return queryContext.sql(dbType);
     }
 
-    public static String getCmdQuery(SQLCmdQueryContext queryContext, ProviderContext providerContext, DbType dbType) {
+    public static String getCmdQuery(SQLCmdQueryContext queryContext, DbType dbType) {
         //SQL_SERVER 需要order by 才能分页 所以不加
         if (dbType != DbType.SQL_SERVER) {
             if (Objects.isNull(queryContext.getExecution().getLimit())) {
                 queryContext.getExecution().limit(2);
             }
         }
-        return cmdQuery(queryContext, null, dbType);
+        return cmdQuery(queryContext, dbType);
     }
 
-    public static String cmdCount(SQLCmdCountQueryContext queryContext, ProviderContext providerContext, DbType dbType) {
+    public static String cmdCount(SQLCmdCountQueryContext queryContext, DbType dbType) {
         queryContext.init(dbType);
         return queryContext.sql(dbType);
     }

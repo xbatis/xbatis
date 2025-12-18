@@ -20,7 +20,6 @@ import db.sql.api.DbType;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
-import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.RowBounds;
 
@@ -47,12 +46,12 @@ public interface ProviderMapper {
      * @see MybatisSQLProvider#getByIdCmdQuery (SQLCmdQueryContext, ProviderContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.GET_BY_ID_QUERY_NAME)
-    <R> R $getById(SQLCmdQueryContext queryContext, RowBounds rowBounds);
+    <R> R $getById(SQLCmdQueryContext queryContext);
 
     /**
      * @param insertContext 上下文
      * @return 影响条数
-     * @see MybatisSQLProvider#save(BaseSQLCmdContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
+     * @see MybatisSQLProvider#save(BaseSQLCmdContext, DbType) (SQLCmdInsertContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $save(SQLCmdInsertContext insertContext);
@@ -61,7 +60,7 @@ public interface ProviderMapper {
     /**
      * @param insertContext 上下文
      * @return 影响条数
-     * @see MybatisSQLProvider#save(BaseSQLCmdContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
+     * @see MybatisSQLProvider#save(BaseSQLCmdContext, DbType) (SQLCmdInsertContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $saveEntity(EntityInsertContext insertContext);
@@ -70,7 +69,7 @@ public interface ProviderMapper {
     /**
      * @param insertContext 上下文
      * @return 影响条数
-     * @see MybatisSQLProvider#save(BaseSQLCmdContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
+     * @see MybatisSQLProvider#save(BaseSQLCmdContext, DbType) (SQLCmdInsertContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $saveModel(ModelInsertContext insertContext);
@@ -79,7 +78,7 @@ public interface ProviderMapper {
     /**
      * @param updateContext 上下文
      * @return 修改的条数
-     * @see MybatisSQLProvider#update(SQLCmdUpdateContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#update(SQLCmdUpdateContext, DbType)
      */
     @UpdateProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.UPDATE_NAME)
     int $update(SQLCmdUpdateContext updateContext);
@@ -87,7 +86,7 @@ public interface ProviderMapper {
     /**
      * @param deleteContext 上下文
      * @return 删除的条数
-     * @see MybatisSQLProvider#delete(SQLCmdDeleteContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#delete(SQLCmdDeleteContext, DbType)
      */
     @UpdateProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.DELETE_NAME)
     int $delete(SQLCmdDeleteContext deleteContext);
@@ -97,7 +96,7 @@ public interface ProviderMapper {
      *
      * @param queryContext 上下文
      * @return 返回查询的结果
-     * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
     <T> List<T> $list(SQLCmdQueryContext queryContext);
@@ -107,7 +106,7 @@ public interface ProviderMapper {
      *
      * @param queryContext 上下文
      * @return 返回游标
-     * @see MybatisSQLProvider#cmdQuery(SQLCmdQueryContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#cmdQuery(SQLCmdQueryContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
     <T> Cursor<T> $cursor(SQLCmdQueryContext queryContext);
@@ -117,7 +116,7 @@ public interface ProviderMapper {
      *
      * @param queryContext 上下文
      * @return 返回count数
-     * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.COUNT_NAME)
     Integer $count(SQLCmdCountQueryContext queryContext);
@@ -127,7 +126,7 @@ public interface ProviderMapper {
      *
      * @param queryContext 上下文
      * @return 返回count数
-     * @see MybatisSQLProvider#countFromQuery(SQLCmdCountFromQueryContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#countFromQuery(SQLCmdCountFromQueryContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_COUNT_NAME)
     Integer $countFromQuery(SQLCmdCountFromQueryContext queryContext);
@@ -149,7 +148,7 @@ public interface ProviderMapper {
      *
      * @param updateContext 上下文
      * @return 返回修改结果
-     * @see MybatisSQLProvider#updateAndReturning (SQLCmdQueryContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#updateAndReturning (SQLCmdQueryContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.UPDATE_AND_RETURNING_NAME, affectData = true)
     <R> R $updateAndGet(SQLCmdUpdateContext updateContext, RowBounds rowBounds);
@@ -159,7 +158,7 @@ public interface ProviderMapper {
      *
      * @param updateContext 上下文
      * @return 返回修改结果
-     * @see MybatisSQLProvider#updateAndReturning (SQLCmdQueryContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#updateAndReturning (SQLCmdQueryContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.UPDATE_AND_RETURNING_NAME, affectData = true)
     <R> List<R> $updateAndList(SQLCmdUpdateContext updateContext);
@@ -170,7 +169,7 @@ public interface ProviderMapper {
      *
      * @param deleteContext 上下文
      * @return 返回修改结果
-     * @see MybatisSQLProvider#deleteAndReturning (SQLCmdQueryContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#deleteAndReturning (SQLCmdQueryContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.DELETE_AND_RETURNING_NAME, affectData = true)
     <R> R $deleteAndReturning(SQLCmdDeleteContext deleteContext, RowBounds rowBounds);
@@ -180,7 +179,7 @@ public interface ProviderMapper {
      *
      * @param deleteContext 上下文
      * @return 返回修改结果
-     * @see MybatisSQLProvider#deleteAndReturning (SQLCmdQueryContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#deleteAndReturning (SQLCmdQueryContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.DELETE_AND_RETURNING_NAME, affectData = true)
     <R> List<R> $deleteAndReturningList(SQLCmdDeleteContext deleteContext);

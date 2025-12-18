@@ -15,10 +15,8 @@
 package cn.xbatis.core.mybatis.provider;
 
 import cn.xbatis.core.dbType.DbTypeUtil;
-import cn.xbatis.core.function.ThreeFunction;
 import cn.xbatis.core.mybatis.mapper.context.*;
 import db.sql.api.DbType;
-import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlSource;
@@ -29,43 +27,42 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 public class SQLCmdSqlSource implements SqlSource {
 
-    private final static Map<String, ThreeFunction<Object, ProviderContext, DbType, String>> SQL_GENERATOR_FUN_MAP = new HashMap<>();
+    private final static Map<String, BiFunction<Object, DbType, String>> SQL_GENERATOR_FUN_MAP = new HashMap<>();
 
     static {
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.QUERY_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.cmdQuery((SQLCmdQueryContext) context, providerContext, dbType));
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.GET_QUERY_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.getCmdQuery((SQLCmdQueryContext) context, providerContext, dbType));
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.GET_BY_ID_QUERY_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.getByIdCmdQuery((SQLCmdQueryContext) context, providerContext, dbType));
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.COUNT_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.cmdCount((SQLCmdCountQueryContext) context, providerContext, dbType));
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.QUERY_COUNT_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.countFromQuery((SQLCmdCountFromQueryContext) context, providerContext, dbType));
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.UPDATE_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.update((SQLCmdUpdateContext) context, providerContext, dbType));
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.DELETE_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.delete((SQLCmdDeleteContext) context, providerContext, dbType));
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.SAVE_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.save((BaseSQLCmdContext) context, providerContext, dbType));
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.UPDATE_AND_RETURNING_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.updateAndReturning((SQLCmdUpdateContext) context, providerContext, dbType));
-        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.DELETE_AND_RETURNING_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.deleteAndReturning((SQLCmdDeleteContext) context, providerContext, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.QUERY_NAME, (context, dbType) -> MybatisSQLProvider.cmdQuery((SQLCmdQueryContext) context, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.GET_QUERY_NAME, (context, dbType) -> MybatisSQLProvider.getCmdQuery((SQLCmdQueryContext) context, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.GET_BY_ID_QUERY_NAME, (context, dbType) -> MybatisSQLProvider.getByIdCmdQuery((SQLCmdQueryContext) context, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.COUNT_NAME, (context, dbType) -> MybatisSQLProvider.cmdCount((SQLCmdCountQueryContext) context, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.QUERY_COUNT_NAME, (context, dbType) -> MybatisSQLProvider.countFromQuery((SQLCmdCountFromQueryContext) context, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.UPDATE_NAME, (context, dbType) -> MybatisSQLProvider.update((SQLCmdUpdateContext) context, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.DELETE_NAME, (context, dbType) -> MybatisSQLProvider.delete((SQLCmdDeleteContext) context, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.SAVE_NAME, (context, dbType) -> MybatisSQLProvider.save((BaseSQLCmdContext) context, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.UPDATE_AND_RETURNING_NAME, (context, dbType) -> MybatisSQLProvider.updateAndReturning((SQLCmdUpdateContext) context, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.DELETE_AND_RETURNING_NAME, (context, dbType) -> MybatisSQLProvider.deleteAndReturning((SQLCmdDeleteContext) context, dbType));
     }
 
     private final Configuration configuration;
     private final Method providerMethod;
-    private final ProviderContext providerContext;
 
-    public SQLCmdSqlSource(Configuration configuration, Method providerMethod, ProviderContext providerContext) {
+    public SQLCmdSqlSource(Configuration configuration, Method providerMethod) {
         this.configuration = configuration;
         this.providerMethod = providerMethod;
-        this.providerContext = providerContext;
     }
 
 
     @Override
     public BoundSql getBoundSql(Object parameterObject) {
         String methodName = providerMethod.getName();
-        ThreeFunction<Object, ProviderContext, DbType, String> sqlGenerator = SQL_GENERATOR_FUN_MAP.get(methodName);
+        BiFunction<Object, DbType, String> sqlGenerator = SQL_GENERATOR_FUN_MAP.get(methodName);
         if (Objects.isNull(sqlGenerator)) {
             throw new RuntimeException("Unadapted: Unknown SQL method: " + methodName);
         }
-        String sql = sqlGenerator.apply(parameterObject, this.providerContext, getDbType());
+        String sql = sqlGenerator.apply(parameterObject, getDbType());
         return new BoundSql(this.configuration, sql, Collections.singletonList(new ParameterMapping
                 .Builder(configuration, "name", Object.class)
                 .build()), parameterObject);

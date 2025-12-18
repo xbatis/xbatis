@@ -59,6 +59,10 @@ public class Where implements IWhere<Where, TableField, Cmd, Object, ConditionCh
         return extConditionChain;
     }
 
+    public ConditionChain getExtConditionChain() {
+        return extConditionChain;
+    }
+
     public ConditionFactory getConditionFactory() {
         return conditionFactory;
     }
