@@ -6,6 +6,7 @@ import db.sql.api.cmd.CmdConvert;
 import db.sql.api.impl.cmd.basic.BasicValue;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 public final class CmdParamUtil {
 
@@ -18,6 +19,9 @@ public final class CmdParamUtil {
             return (Cmd) value;
         } else if (value instanceof CmdConvert) {
             return ((CmdConvert) value).convert();
+        }
+        if (typeHandler == UnknownTypeHandler.class && jdbcType == JdbcType.UNDEFINED) {
+            return new BasicValue(value);
         }
         return new BasicValue(new MybatisParameter(value, typeHandler, jdbcType));
     }
