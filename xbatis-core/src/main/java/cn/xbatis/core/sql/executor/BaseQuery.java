@@ -37,7 +37,7 @@ import java.util.function.Consumer;
 
 public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQuery<Q, MybatisCmdFactory> implements Timeoutable<Q>, Fetchable<Q> {
 
-    protected final OptimizeOptions optimizeOptions = new OptimizeOptions();
+    protected OptimizeOptions optimizeOptions;
     protected Class returnType;
     protected Consumer<T> onRowEvent;
     protected Integer timeout;
@@ -57,6 +57,9 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     }
 
     public Q optimizeOptions(Consumer<OptimizeOptions> consumer) {
+        if (this.optimizeOptions == null) {
+            this.optimizeOptions = new OptimizeOptions();
+        }
         consumer.accept(this.optimizeOptions);
         return (Q) this;
     }

@@ -36,12 +36,12 @@ public class CountFromQueryTest extends BaseTest {
         return getCountSql(query, true);
     }
 
-    private String getCountSql(Query query, boolean optimize) {
+    private String getCountSql(Query<?> query, boolean optimize) {
         //创建构建SQL的上下文 数据库:MYSQL SQL模式 打印
         SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(DbType.MYSQL, SQLMode.PRINT);
         String sql = SQLPrinter.sql(query);
-        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
-            query.getOptimizeOptions().optimizeJoin(optimize);
+        if (!optimize) {
+            query.optimizeOptions(i -> i.optimizeJoin(optimize));
         }
         String str = SQLOptimizeUtils.getCountSqlFromQuery(query, sqlBuilderContext, query.getOptimizeOptions()).toString();
         assertEquals(sql, SQLPrinter.sql(query), "sql count优化破坏了原来有query");

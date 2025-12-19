@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 
 public class Query<T> extends BaseQuery<Query<T>, T> {
 
-    private final Map<XmlScriptType, XmlScript> xmlScriptMap = new HashMap<>();
+    private Map<XmlScriptType, XmlScript> xmlScriptMap;
     private DbType dbType;
     private String mybatisParamNamespace;
 
@@ -68,13 +68,21 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
         }
     }
 
+
+    private Map<XmlScriptType, XmlScript> getXmlScriptMap() {
+        if (xmlScriptMap == null) {
+            xmlScriptMap = new HashMap<>();
+        }
+        return xmlScriptMap;
+    }
+
     /**
      * 只给 xml 生成动态sql 用
      *
      * @return
      */
     public List<Object> getQueryScriptParams() {
-        return xmlScriptMap.get(XmlScriptType.QUERY).getScriptParams();
+        return getXmlScriptMap().get(XmlScriptType.QUERY).getScriptParams();
     }
 
     /**
@@ -83,7 +91,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public String getQueryScript() {
-        return xmlScriptMap.computeIfAbsent(XmlScriptType.QUERY, key -> {
+        return getXmlScriptMap().computeIfAbsent(XmlScriptType.QUERY, key -> {
             return XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "queryScriptParams", this, this.dbType);
         }).getSql();
     }
@@ -94,7 +102,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public List<Object> getSelectScriptParams() {
-        return xmlScriptMap.get(XmlScriptType.SELECT).getScriptParams();
+        return getXmlScriptMap().get(XmlScriptType.SELECT).getScriptParams();
     }
 
     /**
@@ -103,7 +111,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public String getSelectScript() {
-        return xmlScriptMap.computeIfAbsent(XmlScriptType.SELECT, key -> {
+        return getXmlScriptMap().computeIfAbsent(XmlScriptType.SELECT, key -> {
             return XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "selectScriptParams", this.getSelect(), this.dbType, "SELECT");
         }).getSql();
     }
@@ -114,7 +122,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public List<Object> getFromScriptParams() {
-        return xmlScriptMap.get(XmlScriptType.FROM).getScriptParams();
+        return getXmlScriptMap().get(XmlScriptType.FROM).getScriptParams();
     }
 
     /**
@@ -123,7 +131,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public String getFromScript() {
-        return xmlScriptMap.computeIfAbsent(XmlScriptType.FROM, key -> {
+        return getXmlScriptMap().computeIfAbsent(XmlScriptType.FROM, key -> {
             return XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "fromScriptParams", this.getFrom(), this.dbType, "FROM");
         }).getSql();
     }
@@ -134,7 +142,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public List<Object> getWhereScriptParams() {
-        return xmlScriptMap.get(XmlScriptType.WHERE).getScriptParams();
+        return getXmlScriptMap().get(XmlScriptType.WHERE).getScriptParams();
     }
 
     /**
@@ -143,7 +151,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public String getWhereScript() {
-        return xmlScriptMap.computeIfAbsent(XmlScriptType.WHERE, key -> {
+        return getXmlScriptMap().computeIfAbsent(XmlScriptType.WHERE, key -> {
             return XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "whereScriptParams", this.getWhere(), this.dbType, "WHERE");
         }).getSql();
     }
@@ -155,7 +163,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public List<Object> getOrderByScriptParams() {
-        return xmlScriptMap.get(XmlScriptType.ORDER_BY).getScriptParams();
+        return getXmlScriptMap().get(XmlScriptType.ORDER_BY).getScriptParams();
     }
 
     /**
@@ -164,7 +172,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public String getOrderByScript() {
-        return xmlScriptMap.computeIfAbsent(XmlScriptType.ORDER_BY, key -> {
+        return getXmlScriptMap().computeIfAbsent(XmlScriptType.ORDER_BY, key -> {
             return XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "orderByScriptParams", this.getOrderBy(), this.dbType);
         }).getSql();
     }
@@ -175,7 +183,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public List<Object> getGroupByScriptParams() {
-        return xmlScriptMap.get(XmlScriptType.GROUP_BY).getScriptParams();
+        return getXmlScriptMap().get(XmlScriptType.GROUP_BY).getScriptParams();
     }
 
     /**
@@ -184,7 +192,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public String getGroupByScript() {
-        return xmlScriptMap.computeIfAbsent(XmlScriptType.GROUP_BY, key -> {
+        return getXmlScriptMap().computeIfAbsent(XmlScriptType.GROUP_BY, key -> {
             return XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "groupByScriptParams", this.getGroupBy(), this.dbType);
         }).getSql();
     }
@@ -195,7 +203,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public List<Object> getHavingScriptParams() {
-        return xmlScriptMap.get(XmlScriptType.HAVING).getScriptParams();
+        return getXmlScriptMap().get(XmlScriptType.HAVING).getScriptParams();
     }
 
     /**
@@ -204,7 +212,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
      * @return
      */
     public String getHavingScript() {
-        return xmlScriptMap.computeIfAbsent(XmlScriptType.HAVING, key -> {
+        return getXmlScriptMap().computeIfAbsent(XmlScriptType.HAVING, key -> {
             return XmlScriptUtil.buildXmlScript(this.mybatisParamNamespace, "havingScriptParams", this.getHaving(), this.dbType);
         }).getSql();
     }

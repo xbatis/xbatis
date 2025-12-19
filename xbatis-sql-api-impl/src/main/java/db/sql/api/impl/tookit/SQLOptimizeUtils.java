@@ -215,7 +215,7 @@ public final class SQLOptimizeUtils {
      * @return
      */
     public static StringBuilder getOptimizedSql(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
-        if (!optimizeOptions.isOptimizeJoin()) {
+        if (optimizeOptions != null && !optimizeOptions.isOptimizeJoin()) {
             return query.sql(null, null, context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
         }
         if (query.getJoins() == null) {
@@ -289,7 +289,7 @@ public final class SQLOptimizeUtils {
      * @return SQL StringBuilder
      */
     public static StringBuilder getCountSqlFromQuery(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
-        if (optimizeOptions.isAllDisable()) {
+        if (optimizeOptions != null && optimizeOptions.isAllDisable()) {
             if (context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.ORACLE) {
                 //需要去掉order by
                 return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false);
@@ -297,7 +297,9 @@ public final class SQLOptimizeUtils {
             //不优化直接包裹一层
             return new StringBuilder("SELECT COUNT(*) FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
         }
-        return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOptions.isOptimizeOrderBy(), optimizeOptions.isOptimizeJoin());
+        boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
+        boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
+        return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin);
     }
 
 
@@ -310,9 +312,11 @@ public final class SQLOptimizeUtils {
      * @return SQL StringBuilder
      */
     public static StringBuilder getOptimizedCountSql(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
-        if (optimizeOptions.isAllDisable()) {
+        if (optimizeOptions != null && optimizeOptions.isAllDisable()) {
             return query.sql(null, null, context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
         }
-        return getOptimizedCountSql(query, context, optimizeOptions.isOptimizeOrderBy(), optimizeOptions.isOptimizeJoin());
+        boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
+        boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
+        return getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin);
     }
 }
