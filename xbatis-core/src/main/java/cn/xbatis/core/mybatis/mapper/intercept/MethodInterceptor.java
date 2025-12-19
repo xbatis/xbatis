@@ -1,5 +1,6 @@
 package cn.xbatis.core.mybatis.mapper.intercept;
 
+@FunctionalInterface
 public interface MethodInterceptor {
 
     /**

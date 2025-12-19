@@ -14,6 +14,7 @@
 
 package cn.xbatis.listener;
 
+@FunctionalInterface
 public interface OnInsertListener<T> {
 
     void onInsert(T t);

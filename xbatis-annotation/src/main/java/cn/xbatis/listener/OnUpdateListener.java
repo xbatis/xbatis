@@ -14,6 +14,7 @@
 
 package cn.xbatis.listener;
 
+@FunctionalInterface
 public interface OnUpdateListener<T> {
 
     void onUpdate(T t);

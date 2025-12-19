@@ -16,6 +16,7 @@ package cn.xbatis.core.dbType;
 
 import db.sql.api.DbType;
 
+@FunctionalInterface
 public interface DbTypeParser {
 
     /**
