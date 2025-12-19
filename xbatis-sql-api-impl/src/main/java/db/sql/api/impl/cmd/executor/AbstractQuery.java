@@ -66,7 +66,6 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         From,
         Join,
         On,
-        Joins<Join>,
         Where,
         GroupBy,
         Having,
@@ -836,6 +835,10 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return (SELF) this;
     }
 
+    @Override
+    public Withs getWiths() {
+        return withs;
+    }
 
     @Override
     public Select getSelect() {

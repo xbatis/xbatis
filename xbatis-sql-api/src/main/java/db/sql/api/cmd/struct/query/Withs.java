@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Withs implements Cmd {
+public class Withs<WITH extends IWith<WITH>> implements Cmd {
 
-    private List<IWith> withs;
+    private List<WITH> withs;
 
-    public void add(IWith with) {
+    public void add(WITH with) {
         if (withs == null) {
             withs = new ArrayList<>(2);
         }
@@ -48,7 +48,7 @@ public class Withs implements Cmd {
         return CmdUtils.contain(cmd, this.withs);
     }
 
-    public List<IWith> getUnions() {
+    public List<WITH> getWiths() {
         return Collections.unmodifiableList(this.withs);
     }
 }

@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 public final class SQLOptimizeUtils {
 
     public static int getStringBuilderCapacity(List<Cmd> cmds) {
-        return 16;
+        return 300;
     }
 
     private static boolean isCanRemoveLeftJoin(Join current, List<Join> joinList, boolean forClass, Map<Class, Cmd> classCmdMap) {

@@ -38,11 +38,12 @@ public interface IQuery<SELF extends IQuery
         CONDITION_CHAIN extends IConditionChain<CONDITION_CHAIN, TABLE_FIELD, COLUMN, V>,
 
         WITH extends IWith<WITH>,
+
         SELECT extends ISelect<SELECT>,
         FROM extends IFrom,
         JOIN extends IJoin<JOIN, ON, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         ON extends IOn<ON, JOIN, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
-        JOINS extends Joins<JOIN>,
+
         WHERE extends IWhere<WHERE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         GROUPBY extends IGroupBy<GROUPBY, COLUMN>,
         HAVING extends IHaving<HAVING>,
@@ -250,13 +251,15 @@ public interface IQuery<SELF extends IQuery
         return (SELF) this;
     }
 
+    Withs<WITH> getWiths();
+
     SELECT getSelect();
 
     WHERE getWhere();
 
     FROM getFrom();
 
-    JOINS getJoins();
+    Joins<JOIN> getJoins();
 
     GROUPBY getGroupBy();
 

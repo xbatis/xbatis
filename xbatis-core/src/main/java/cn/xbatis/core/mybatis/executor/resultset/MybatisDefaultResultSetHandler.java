@@ -380,8 +380,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         onValue = fetchInfo.getValueTypeHandler().getResult(resultSet, fetchInfo.getValueColumn());
                     } else {
                         onValue = resultSet.getObject(fetchInfo.getValueColumn());
-                        if (!(onValue instanceof Number)) {
-                            onValue = resultSet.getString(fetchInfo.getValueColumn());
+                        if (onValue != null && !(onValue instanceof Number)) {
+                            onValue = onValue.toString();
                         }
                     }
                 } else {

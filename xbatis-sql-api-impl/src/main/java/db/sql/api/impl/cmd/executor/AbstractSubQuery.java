@@ -20,7 +20,6 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.executor.ISubQuery;
-import db.sql.api.cmd.struct.Joins;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
@@ -49,7 +48,6 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
         From,
         Join,
         On,
-        Joins<Join>,
         Where,
         GroupBy,
         Having,

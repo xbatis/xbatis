@@ -17,7 +17,6 @@ package db.sql.api.impl.cmd.executor;
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IWithQuery;
-import db.sql.api.cmd.struct.Joins;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
@@ -46,7 +45,6 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
         From,
         Join,
         On,
-        Joins<Join>,
         Where,
         GroupBy,
         Having,

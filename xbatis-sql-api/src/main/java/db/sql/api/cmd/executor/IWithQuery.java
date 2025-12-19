@@ -39,7 +39,6 @@ import db.sql.api.cmd.struct.query.*;
  * @param <FROM>
  * @param <JOIN>
  * @param <ON>
- * @param <JOINS>
  * @param <WHERE>
  * @param <GROUPBY>
  * @param <HAVING>
@@ -48,7 +47,7 @@ import db.sql.api.cmd.struct.query.*;
  * @param <FORUPDATE>
  * @param <UNION>
  */
-public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WITH_QUERY_DATASET, DATASET_FIELD, COLUMN, V, CMD_FACTORY, CONDITION_CHAIN, WITH, RECURSIVE, SELECT, FROM, JOIN, ON, JOINS, WHERE, GROUPBY, HAVING, ORDERBY, LIMIT, FORUPDATE, FORSHARE, UNION>,
+public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WITH_QUERY_DATASET, DATASET_FIELD, COLUMN, V, CMD_FACTORY, CONDITION_CHAIN, WITH, RECURSIVE, SELECT, FROM, JOIN, ON, WHERE, GROUPBY, HAVING, ORDERBY, LIMIT, FORUPDATE, FORSHARE, UNION>,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
         TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
         WITH_QUERY_DATASET extends IDataset<WITH_QUERY_DATASET, DATASET_FIELD>,
@@ -65,7 +64,7 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WI
         FROM extends IFrom,
         JOIN extends IJoin<JOIN, ON, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         ON extends IOn<ON, JOIN, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
-        JOINS extends Joins<JOIN>,
+
         WHERE extends IWhere<WHERE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         GROUPBY extends IGroupBy<GROUPBY, COLUMN>,
         HAVING extends IHaving<HAVING>,
@@ -87,7 +86,6 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WI
         FROM,
         JOIN,
         ON,
-        JOINS,
         WHERE,
         GROUPBY,
         HAVING,

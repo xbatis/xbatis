@@ -41,7 +41,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Mapper
-public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapper, cn.xbatis.core.mybatis.mapper.mappers.basic.BasicCountMapper, BasicListMapper, BasicCursorMapper,
+public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapper, BasicCountMapper, BasicListMapper, BasicCursorMapper,
         BasicPagingMapper, BasicMapWithKeyMapper, BasicSaveMapper, BasicSaveOrUpdateMapper, BasicSaveModelMapper, BasicSaveOrUpdateModelMapper,
         BasicUpdateMapper, BasicUpdateModelMapper, BasicDeleteMapper, DbRunner {
 
