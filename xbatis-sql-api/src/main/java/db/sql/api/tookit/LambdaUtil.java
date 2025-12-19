@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class LambdaUtil {
 
-    private static final Map<GetterFun, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
+    private static final Map<Class<?>, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
     private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap();
 
     private LambdaUtil() {
@@ -73,7 +73,7 @@ public final class LambdaUtil {
     }
 
     public static <T, R> LambdaFieldInfo<T> getFieldInfo(GetterFun<T, R> getter) {
-        return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), Thread.currentThread().getContextClassLoader()));
+        return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter.getClass(), (key) -> getLambdaFieldInfo(getSerializedLambda(getter), Thread.currentThread().getContextClassLoader()));
     }
 
     public static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
@@ -94,7 +94,7 @@ public final class LambdaUtil {
                 return classLoader.loadClass(className);
             } catch (ClassNotFoundException e) {
                 try {
-                    return Class.forName(className, false, GetterFun.class.getClassLoader());
+                    return Class.forName(className, false, lambda.getClass().getClassLoader());
                 } catch (ClassNotFoundException ex) {
                     try {
                         Thread.sleep(50);
