@@ -49,8 +49,8 @@ public final class LambdaUtil {
         return getFieldInfo(getter).getName();
     }
 
-    private static <T> LambdaFieldInfo<T> getLambdaFieldInfo(SerializedLambda serializedLambda, ClassLoader classLoader) {
-        Class type = getClass(serializedLambda, classLoader);
+    private static <T> LambdaFieldInfo<T> getLambdaFieldInfo(SerializedLambda serializedLambda, GetterFun<?, ?> getterFun) {
+        Class type = getClass(serializedLambda, getterFun);
 
         String fieldName = null;
         // 兼容 Kotlin KProperty 的 Lambda 解析
@@ -73,7 +73,7 @@ public final class LambdaUtil {
     }
 
     public static <T, R> LambdaFieldInfo<T> getFieldInfo(GetterFun<T, R> getter) {
-        return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), Thread.currentThread().getContextClassLoader()));
+        return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter));
     }
 
     public static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
@@ -86,23 +86,23 @@ public final class LambdaUtil {
         }
     }
 
-    private static <T> Class<T> getClass(SerializedLambda lambda, ClassLoader classLoader) {
+    private static <T> Class<T> getClass(SerializedLambda lambda, GetterFun<?, ?> getterFun) {
         String classNamePath = getClassNamePath(lambda);
         return (Class<T>) CLASS_MAP.computeIfAbsent(classNamePath, key -> {
             String className = getClassName(key);
             try {
-                return classLoader.loadClass(className);
+                return getterFun.getClass().getClassLoader().loadClass(className);
             } catch (ClassNotFoundException e) {
                 try {
-                    return Class.forName(className, false, lambda.getClass().getClassLoader());
+                    return Thread.currentThread().getContextClassLoader().loadClass(className);
                 } catch (ClassNotFoundException ex) {
                     try {
-                        Thread.sleep(50);
+                        Thread.sleep(100);
                     } catch (InterruptedException exc) {
                         throw new RuntimeException(exc);
                     }
                     try {
-                        return Class.forName(className, false, classLoader);
+                        return Class.forName(className, false, Thread.currentThread().getContextClassLoader());
                     } catch (ClassNotFoundException exc) {
                         throw new RuntimeException(exc);
                     }
