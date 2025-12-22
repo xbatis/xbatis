@@ -40,7 +40,7 @@ public final class DbTypeUtil {
         return getDbType(getJdbcUrl(dataSource));
     }
 
-    private static DbType getDbType(String jdbcUrl) {
+    public static DbType getDbType(String jdbcUrl) {
         jdbcUrl = jdbcUrl.toLowerCase();
         return XbatisGlobalConfig.getDbTypeParser().getDbTypeByUrl(jdbcUrl);
     }
