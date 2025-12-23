@@ -179,7 +179,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
                 continue;
             }
             TableField tableField = this.insertFields.getFields().get(i);
-            cmdValues.add(Methods.cmd(tableField.paramWrap(value)));
+            cmdValues.add(Methods.cmd(tableField.paramWrap(InsertValues.class, value)));
         }
         this.$values(cmdValues);
         return (SELF) this;

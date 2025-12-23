@@ -17,12 +17,14 @@ package cn.xbatis.core.sql.executor;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
+import cn.xbatis.core.mybatis.typeHandler.InvalidInCondition;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
 import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
+import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.basic.TableField;
 
 import java.util.Objects;
@@ -49,7 +51,7 @@ public class MpTableField extends TableField {
     }
 
     @Override
-    public Object paramWrap(Object param) {
+    public Object paramWrap(Class userType, Object param) {
         if (Objects.isNull(param)) {
             return null;
         } else if (param instanceof CmdConvert) {
@@ -59,6 +61,9 @@ public class MpTableField extends TableField {
             return param;
         }
         if (!tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
+            return param;
+        }
+        if (tableFieldInfo.getTypeHandler() instanceof InvalidInCondition && ICondition.class.isAssignableFrom(userType)) {
             return param;
         }
         return new MybatisParameter(param, tableFieldInfo.getTableFieldAnnotation().typeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
@@ -71,11 +76,17 @@ public class MpTableField extends TableField {
         } else if (param instanceof CmdConvert) {
             return ((CmdConvert) param).convert();
         }
+        if (Objects.isNull(this.tableFieldInfo.getTypeHandler())) {
+            return param;
+        }
         if (!tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
         Class typeHandler = tableFieldInfo.getTableFieldAnnotation().typeHandler();
         if (!LikeQuerySupport.class.isAssignableFrom(typeHandler)) {
+            return param;
+        }
+        if (tableFieldInfo.getTypeHandler() instanceof InvalidInCondition) {
             return param;
         }
         LikeQuerySupport likeQuerySupport = (LikeQuerySupport) tableFieldInfo.getTypeHandler();

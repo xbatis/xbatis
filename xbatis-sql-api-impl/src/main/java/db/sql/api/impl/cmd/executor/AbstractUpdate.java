@@ -37,6 +37,7 @@ import db.sql.api.impl.cmd.struct.ext.In;
 import db.sql.api.impl.cmd.struct.ext.NotExists;
 import db.sql.api.impl.cmd.struct.ext.NotIn;
 import db.sql.api.impl.cmd.struct.query.Returning;
+import db.sql.api.impl.cmd.struct.update.UpdateSet;
 import db.sql.api.impl.cmd.struct.update.UpdateSets;
 import db.sql.api.impl.cmd.struct.update.UpdateTable;
 
@@ -161,7 +162,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
 
     @Override
     public SELF set(TableField field, Object value) {
-        value = field.paramWrap(value);
+        value = field.paramWrap(UpdateSet.class, value);
         Cmd v = Methods.cmd(value);
         if (this.updateSets == null) {
             this.updateSets = new UpdateSets();

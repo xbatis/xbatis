@@ -163,12 +163,12 @@ public final class Methods {
 
     /**
      * 参数包装并转成CMD对象
-     *
+     * @param userType 使用者的类型
      * @param column 列
      * @param param  参数
      * @return Cmd
      */
-    public static Cmd paramWrapAndConvertToCmd(Cmd column, Object param) {
+    public static Cmd paramWrapAndConvertToCmd(Class userType, Cmd column, Object param) {
         if (java.util.Objects.isNull(param)) {
             return null;
         }
@@ -181,12 +181,11 @@ public final class Methods {
         }
 
         IParamWrap paramWrap = (IParamWrap) column;
-        return new BasicValue(paramWrap.paramWrap(param));
+        return new BasicValue(paramWrap.paramWrap(userType, param));
     }
 
     /**
      * LIKE 参数包装
-     *
      * @param column    列
      * @param param     参数
      * @param mode      like方式
@@ -1482,7 +1481,7 @@ public final class Methods {
     public static Eq eq(Cmd column, Object value) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
-        return new Eq(column, paramWrapAndConvertToCmd(column, value));
+        return new Eq(column, paramWrapAndConvertToCmd(Eq.class, column, value));
     }
 
     /**
@@ -1494,7 +1493,7 @@ public final class Methods {
     public static Ne ne(Cmd column, Object value) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
-        return new Ne(column, paramWrapAndConvertToCmd(column, value));
+        return new Ne(column, paramWrapAndConvertToCmd(Ne.class, column, value));
     }
 
     /**
@@ -1529,7 +1528,7 @@ public final class Methods {
     public static Gt gt(Cmd column, Object value) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
-        return new Gt(column, paramWrapAndConvertToCmd(column, value));
+        return new Gt(column, paramWrapAndConvertToCmd(Gt.class, column, value));
     }
 
     /**
@@ -1542,7 +1541,7 @@ public final class Methods {
     public static Gte gte(Cmd column, Object value) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
-        return new Gte(column, paramWrapAndConvertToCmd(column, value));
+        return new Gte(column, paramWrapAndConvertToCmd(Gte.class, column, value));
     }
 
     /**
@@ -1555,7 +1554,7 @@ public final class Methods {
     public static Lt lt(Cmd column, Object value) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
-        return new Lt(column, paramWrapAndConvertToCmd(column, value));
+        return new Lt(column, paramWrapAndConvertToCmd(Lt.class, column, value));
     }
 
     /**
@@ -1568,7 +1567,7 @@ public final class Methods {
     public static Lte lte(Cmd column, Object value) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
-        return new Lte(column, paramWrapAndConvertToCmd(column, value));
+        return new Lte(column, paramWrapAndConvertToCmd(Lte.class, column, value));
     }
 
     /**
@@ -1584,7 +1583,7 @@ public final class Methods {
         Objects.requireNonEmpty(values);
         Cmd[] cmds = new Cmd[values.length];
         for (int i = 0; i < values.length; i++) {
-            cmds[i] = paramWrapAndConvertToCmd(column, values[i]);
+            cmds[i] = paramWrapAndConvertToCmd(In.class, column, values[i]);
         }
         return new In(column).add(cmds);
     }
@@ -1599,7 +1598,7 @@ public final class Methods {
     public static In in(Cmd column, Collection<?> values) {
         Objects.requireNonNull(column);
         Objects.requireNonEmpty(values);
-        return new In(column).add(values.stream().map(item -> paramWrapAndConvertToCmd(column, item)).collect(Collectors.toList()));
+        return new In(column).add(values.stream().map(item -> paramWrapAndConvertToCmd(In.class, column, item)).collect(Collectors.toList()));
     }
 
     /**
@@ -1627,7 +1626,7 @@ public final class Methods {
         Objects.requireNonEmpty(values);
         Cmd[] cmds = new Cmd[values.length];
         for (int i = 0; i < values.length; i++) {
-            cmds[i] = paramWrapAndConvertToCmd(column, values[i]);
+            cmds[i] = paramWrapAndConvertToCmd(NotIn.class, column, values[i]);
         }
         return new NotIn(column).add(cmds);
     }
@@ -1641,7 +1640,7 @@ public final class Methods {
     public static NotIn notIn(Cmd column, Collection<?> values) {
         Objects.requireNonNull(column);
         Objects.requireNonEmpty(values);
-        return new NotIn(column).add(values.stream().map(item -> paramWrapAndConvertToCmd(column, item)).collect(Collectors.toList()));
+        return new NotIn(column).add(values.stream().map(item -> paramWrapAndConvertToCmd(NotIn.class, column, item)).collect(Collectors.toList()));
     }
 
     /**
@@ -1690,7 +1689,7 @@ public final class Methods {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
         Objects.requireNonNull(value2);
-        return new Between(column, paramWrapAndConvertToCmd(column, value), paramWrapAndConvertToCmd(column, value2));
+        return new Between(column, paramWrapAndConvertToCmd(Between.class, column, value), paramWrapAndConvertToCmd(Between.class, column, value2));
     }
 
     /**
@@ -1705,7 +1704,7 @@ public final class Methods {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
         Objects.requireNonNull(value2);
-        return new NotBetween(column, paramWrapAndConvertToCmd(column, value), paramWrapAndConvertToCmd(column, value2));
+        return new NotBetween(column, paramWrapAndConvertToCmd(NotBetween.class, column, value), paramWrapAndConvertToCmd(NotBetween.class, column, value2));
     }
 
     /**
