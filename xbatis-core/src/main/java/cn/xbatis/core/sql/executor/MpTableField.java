@@ -17,7 +17,7 @@ package cn.xbatis.core.sql.executor;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
-import cn.xbatis.core.mybatis.typeHandler.InvalidInCondition;
+import cn.xbatis.core.mybatis.typeHandler.InvalidInConditionTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
 import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
@@ -63,7 +63,7 @@ public class MpTableField extends TableField {
         if (!tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
-        if (tableFieldInfo.getTypeHandler() instanceof InvalidInCondition && ICondition.class.isAssignableFrom(userType)) {
+        if (tableFieldInfo.getTypeHandler() instanceof InvalidInConditionTypeHandler && ICondition.class.isAssignableFrom(userType)) {
             return param;
         }
         return new MybatisParameter(param, tableFieldInfo.getTableFieldAnnotation().typeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
@@ -86,7 +86,7 @@ public class MpTableField extends TableField {
         if (!LikeQuerySupport.class.isAssignableFrom(typeHandler)) {
             return param;
         }
-        if (tableFieldInfo.getTypeHandler() instanceof InvalidInCondition) {
+        if (tableFieldInfo.getTypeHandler() instanceof InvalidInConditionTypeHandler) {
             return param;
         }
         LikeQuerySupport likeQuerySupport = (LikeQuerySupport) tableFieldInfo.getTypeHandler();

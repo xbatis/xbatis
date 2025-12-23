@@ -15,7 +15,7 @@
 package cn.xbatis.core.mybatis.typeHandler;
 
 /**
- * 应对TypeHandler中 不想where 时生效 ；只需要 TypeHandler implements InvalidInCondition 即可
+ * 应对TypeHandler中 不想where 时生效 ；只需要 TypeHandler implements InvalidInConditionTypeHandler 即可
  */
-public interface InvalidInCondition {
+public interface InvalidInConditionTypeHandler {
 }
