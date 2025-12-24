@@ -17,7 +17,6 @@ package cn.xbatis.core.sql.executor;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
-import cn.xbatis.core.mybatis.typeHandler.InvalidInConditionTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
 import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
@@ -58,9 +57,9 @@ public class MpDatasetField extends DatasetField {
         if (Objects.isNull(this.tableFieldInfo.getTypeHandler())) {
             return param;
         }
-        if (tableFieldInfo.getTypeHandler() instanceof InvalidInConditionTypeHandler && ICondition.class.isAssignableFrom(userType)) {
-            return param;
-        }
+//        if (tableFieldInfo.getTypeHandler() instanceof InvalidInConditionTypeHandler && ICondition.class.isAssignableFrom(userType)) {
+//            return param;
+//        }
         return new MybatisParameter(param, (Class<? extends TypeHandler<?>>) this.tableFieldInfo.getTypeHandler().getClass(), this.tableFieldInfo.getTableFieldAnnotation().jdbcType());
     }
 
