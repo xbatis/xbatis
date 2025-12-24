@@ -496,16 +496,21 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getFieldInfo().getField().getName();
-        boolean hasFetchFilter = !Objects.isNull(fetchFilters) && fetchFilters.containsKey(fetchKey);
-        query.setFetchEnables(fetchEnables);
-        query.setFetchFilters(fetchFilters);
-        query.log(baseQuery.isEnableLog());
-        if (baseQuery.isEnableLog() && (baseQuery.getLogger() != null || !baseQuery.getLogger().isEmpty())) {
-            query.log(baseQuery.getLogger() + ".$" + fetchInfo.getFieldInfo().getField().getName());
+
+
+        if (baseQuery != null) {
+            query.setFetchEnables(fetchEnables);
+            query.setFetchFilters(fetchFilters);
+            query.log(baseQuery.isEnableLog());
+            if (baseQuery.isEnableLog() && (baseQuery.getLogger() != null && !baseQuery.getLogger().isEmpty())) {
+                query.log(baseQuery.getLogger() + ".$" + fetchInfo.getFieldInfo().getField().getName());
+            }
+
+            if (!Objects.isNull(fetchFilters) && fetchFilters.containsKey(fetchKey)) {
+                fetchFilters.get(fetchKey).accept(query.$where());
+            }
         }
-        if (hasFetchFilter) {
-            fetchFilters.get(fetchKey).accept(query.$where());
-        }
+
         query.optimizeOptions(OptimizeOptions::disableAll);
         //增加额外条件
         if (Objects.nonNull(fetchInfo.getOtherConditions()) && !StringPool.EMPTY.equals(fetchInfo.getOtherConditions())) {
