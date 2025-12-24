@@ -136,11 +136,12 @@ public class InsertChain extends BaseInsert<InsertChain> {
         return this;
     }
 
-    private void setDefault() {
+    private InsertChain setDefault() {
         if (this.getInsertTable() == null) {
             //自动设置实体类
             this.insert(getEntityType());
         }
+        return this;
     }
 
     private void checkAndSetMapper(BaseMapper mapper) {

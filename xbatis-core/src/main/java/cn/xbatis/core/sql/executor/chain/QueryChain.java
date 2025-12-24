@@ -129,11 +129,11 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         return (QueryChain) super.setReturnType(Map.class);
     }
 
-    public void setDefault() {
-        this.setDefault(false);
+    public QueryChain<T> setDefault() {
+        return this.setDefault(false);
     }
 
-    public void setDefault(boolean forCount) {
+    public QueryChain<T> setDefault(boolean forCount) {
         if (autoSelect && (Objects.isNull(this.select) || this.select.getSelectField().isEmpty())) {
             if (forCount) {
                 this.selectCountAll();
@@ -153,6 +153,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         if (Objects.isNull(this.returnType)) {
             this.returnType(getEntityType());
         }
+        return this;
     }
 
     private void checkAndSetMapper(BaseMapper mapper) {

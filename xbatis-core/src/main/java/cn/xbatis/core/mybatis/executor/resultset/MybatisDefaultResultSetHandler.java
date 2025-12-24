@@ -68,6 +68,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     //Fetch 信息
     private Map<Class, List<FetchInfo>> fetchInfosMap;
     private Map<String, Consumer<Where>> fetchFilters;
+    private BaseQuery<?, ?> baseQuery;
     private Map<String, Boolean> fetchEnables;
     private Consumer onRowEvent;
     private Class<?> returnType;
@@ -85,7 +86,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (mappedStatement.getResultMaps().size() == 1) {
             Class<?> returnType = mappedStatement.getResultMaps().get(0).getType();
             Object parameterObject = boundSql.getParameterObject();
-            BaseQuery<?, ?> baseQuery = XbatisContextUtil.getExecution(parameterObject);
+            baseQuery = XbatisContextUtil.getQueryExecution(parameterObject);
             this.dbType = XbatisContextUtil.getDbType(parameterObject);
             if (isNeedFetch(parameterObject, returnType)) {
                 ResultInfo resultInfo = ResultInfos.get(returnType);
@@ -121,7 +122,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             return false;
         }
 
-        if (parameterObject instanceof Map && XbatisContextUtil.getExecution(parameterObject) != null) {
+        if (parameterObject instanceof Map && XbatisContextUtil.getQueryExecution(parameterObject) != null) {
             return true;
         }
         return parameterObject instanceof SQLCmdQueryContext;
@@ -498,6 +499,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         boolean hasFetchFilter = !Objects.isNull(fetchFilters) && fetchFilters.containsKey(fetchKey);
         query.setFetchEnables(fetchEnables);
         query.setFetchFilters(fetchFilters);
+        query.log(baseQuery.isEnableLog());
+        if (baseQuery.isEnableLog() && (baseQuery.getLogger() != null || !baseQuery.getLogger().isEmpty())) {
+            query.log(baseQuery.getLogger() + ".$" + fetchInfo.getFieldInfo().getField().getName());
+        }
         if (hasFetchFilter) {
             fetchFilters.get(fetchKey).accept(query.$where());
         }

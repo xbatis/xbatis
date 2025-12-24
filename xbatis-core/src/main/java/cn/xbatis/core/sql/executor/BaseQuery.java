@@ -18,6 +18,7 @@ import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.OrderBys;
 import cn.xbatis.core.mybatis.executor.statement.Fetchable;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
+import cn.xbatis.core.mybatis.logging.Loggable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.util.SelectClassUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
@@ -35,9 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQuery<Q, MybatisCmdFactory> implements Timeoutable<Q>, Fetchable<Q> {
+public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQuery<Q, MybatisCmdFactory> implements Timeoutable<Q>, Fetchable<Q>, Loggable {
 
     protected OptimizeOptions optimizeOptions;
+    protected boolean enableLog = true;
+    protected String logger;
     protected Class returnType;
     protected Consumer<T> onRowEvent;
     protected Integer timeout;
@@ -56,11 +59,46 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
         super(where);
     }
 
+
     public Q optimizeOptions(Consumer<OptimizeOptions> consumer) {
         if (this.optimizeOptions == null) {
             this.optimizeOptions = new OptimizeOptions();
         }
         consumer.accept(this.optimizeOptions);
+        return (Q) this;
+    }
+
+    /**
+     * 开启或关闭log
+     *
+     * @param enable
+     * @return
+     */
+    public Q log(boolean enable) {
+        this.enableLog = enable;
+        return (Q) this;
+    }
+
+    /**
+     * 设置Log
+     *
+     * @param parent
+     * @param tag
+     * @return
+     */
+    public Q log(Class parent, String tag) {
+        this.logger = parent.getName() + "." + tag;
+        return (Q) this;
+    }
+
+    /**
+     * 设置Log
+     *
+     * @param logger
+     * @return
+     */
+    public Q log(String logger) {
+        this.logger = logger;
         return (Q) this;
     }
 
@@ -88,6 +126,16 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
 
     public Consumer<T> getOnRowEvent() {
         return onRowEvent;
+    }
+
+    @Override
+    public String getLogger() {
+        return logger;
+    }
+
+    @Override
+    public boolean isEnableLog() {
+        return enableLog;
     }
 
     @Override

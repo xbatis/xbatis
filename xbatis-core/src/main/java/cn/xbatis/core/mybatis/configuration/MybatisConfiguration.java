@@ -31,7 +31,8 @@ import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.xbatis.core.util.GenericUtil;
 import cn.xbatis.db.annotations.Table;
 import org.apache.ibatis.binding.MapperProxyFactory;
-import org.apache.ibatis.executor.*;
+import org.apache.ibatis.executor.CachingExecutor;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
@@ -54,7 +55,7 @@ public class MybatisConfiguration extends Configuration {
     private static boolean PRINTED_BANNER = false;
 
     /**
-     * 是否打印banner
+     * 是否打印 banner
      */
     private boolean banner = true;
 
@@ -120,7 +121,7 @@ public class MybatisConfiguration extends Configuration {
         if (parameterObject instanceof PreparedParameterContext) {
             return (ParameterHandler) interceptorChain.pluginAll(new PreparedParameterHandler(this, (PreparedParameterContext) parameterObject));
         }
-        if (parameterObject instanceof Map && XbatisContextUtil.getExecution(parameterObject) != null) {
+        if (parameterObject instanceof Map && XbatisContextUtil.getQueryExecution(parameterObject) != null) {
             //兼容 其他框架修改参数的情况 例如PageHelper
             return (ParameterHandler) interceptorChain.pluginAll(new OtherFrameworkPreparedParameterHandler(this, boundSql, (Map) parameterObject));
         }
@@ -241,13 +242,13 @@ public class MybatisConfiguration extends Configuration {
         executorType = executorType == null ? this.defaultExecutorType : executorType;
         Executor executor;
         if (ExecutorType.BATCH == executorType) {
-            executor = new BatchExecutor(this, transaction);
+            executor = new MybatisBatchExecutor(this, transaction);
         } else if (ExecutorType.REUSE == executorType) {
-            executor = new ReuseExecutor(this, transaction);
+            executor = new MybatisReuseExecutor(this, transaction);
         } else {
-            executor = new SimpleExecutor(this, transaction);
+            executor = new MybatisSimpleExecutor(this, transaction);
         }
-        executor = new MybatisExecutor(executor);
+
         if (this.cacheEnabled) {
             executor = new CachingExecutor(executor);
         }

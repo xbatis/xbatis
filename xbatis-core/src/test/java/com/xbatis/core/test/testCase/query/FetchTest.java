@@ -52,6 +52,8 @@ public class FetchTest extends BaseTest {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             LongAdder longAdder = new LongAdder();
             Map<Integer, FetchSysRoleVo2> map = QueryChain.of(sysRoleMapper)
+                    //.log(false)
+                    .log(getClass(), "fetchCnt")
                     .fetchFilter(FetchSysRoleVo2::getSysRoleNames, where -> {
                         longAdder.increment();
                     })

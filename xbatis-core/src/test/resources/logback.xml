@@ -27,7 +27,7 @@
         </filter>
         <encoder>
             <pattern>
-                %green(%logger{16}).%gray(%M)-%boldMagenta(%line) - %blue(%msg%n)
+                %green(%logger).%gray(%M)-%boldMagenta(%line) - %blue(%msg%n)
             </pattern>
             <!-- 设置字符集 -->
             <charset>UTF-8</charset>

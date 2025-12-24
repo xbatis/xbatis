@@ -30,6 +30,7 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
     protected BaseMapper mapper;
 
     protected Class<?> entityType;
+
     private Class<?> returnType;
 
     protected DeleteChain() {
@@ -95,12 +96,13 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         return entityType;
     }
 
-    public void setDefault() {
+    public DeleteChain setDefault() {
         if (this.getDeleteTable() == null && this.getFrom() == null) {
             //自动设置实体类
             this.delete(getEntityType());
             this.from(getEntityType());
         }
+        return this;
     }
 
     private void checkAndSetMapper(BaseMapper mapper) {

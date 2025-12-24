@@ -16,6 +16,7 @@ package cn.xbatis.core.sql.executor;
 
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
+import cn.xbatis.core.mybatis.logging.Loggable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.util.ReturningClassUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
@@ -28,7 +29,11 @@ import db.sql.api.impl.cmd.struct.Where;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate<T, MybatisCmdFactory> implements Timeoutable<T> {
+public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate<T, MybatisCmdFactory> implements Timeoutable<T>, Loggable {
+
+    protected boolean enableLog = true;
+
+    protected String logger;
 
     protected Integer timeout;
 
@@ -44,6 +49,40 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
         super(where);
     }
 
+    /**
+     * 开启或关闭log
+     *
+     * @param enable
+     * @return
+     */
+    public T log(boolean enable) {
+        this.enableLog = enable;
+        return (T) this;
+    }
+
+    /**
+     * 设置Log
+     *
+     * @param parent
+     * @param tag
+     * @return
+     */
+    public T log(Class parent, String tag) {
+        this.logger = parent.getName() + "." + tag;
+        return (T) this;
+    }
+
+    /**
+     * 设置Log
+     *
+     * @param logger
+     * @return
+     */
+    public T log(String logger) {
+        this.logger = logger;
+        return (T) this;
+    }
+
     @Override
     public T timeout(Integer timeout) {
         this.timeout = timeout;
@@ -53,6 +92,16 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
     @Override
     public Integer getTimeout() {
         return timeout;
+    }
+
+    @Override
+    public String getLogger() {
+        return logger;
+    }
+
+    @Override
+    public boolean isEnableLog() {
+        return enableLog;
     }
 
     @Override

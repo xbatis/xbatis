@@ -149,7 +149,7 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
         return mapper.update(this);
     }
 
-    public void setDefault() {
+    public UpdateChain setDefault() {
         if (Objects.isNull(this.getUpdateTable())) {
             //自动设置实体类
             this.update(getEntityType());
@@ -159,6 +159,7 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
                 this.returnType(this.entityType);
             }
         }
+        return this;
     }
 
     public UpdateChain returnType(Class<?> returnType) {

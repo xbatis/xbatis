@@ -17,21 +17,30 @@ package cn.xbatis.core.mybatis.mapper.context;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.executor.Executor;
 
 import java.util.Map;
 
 public class XbatisContextUtil {
 
-    public static BaseQuery<?, ?> getExecution(Object parameterObject) {
-        if (parameterObject instanceof SQLCmdQueryContext) {
-            return ((SQLCmdQueryContext) parameterObject).getExecution();
+    public static BaseQuery<?, ?> getQueryExecution(Object parameterObject) {
+        Executor executor = getExecution(parameterObject);
+        if (executor instanceof BaseQuery) {
+            return (BaseQuery) executor;
+        }
+        return null;
+    }
+
+    public static Executor getExecution(Object parameterObject) {
+        if (parameterObject instanceof SQLCmdContext) {
+            return ((SQLCmdContext) parameterObject).getExecution();
         }
         if (parameterObject instanceof Map) {
             Map parameterMap = (Map) parameterObject;
             if (parameterMap.containsKey("execution")) {
                 Object execution = parameterMap.get("execution");
-                if (execution != null && execution instanceof BaseQuery) {
-                    return (BaseQuery) execution;
+                if (execution != null && execution instanceof Executor) {
+                    return (Executor) execution;
                 }
             }
         }
