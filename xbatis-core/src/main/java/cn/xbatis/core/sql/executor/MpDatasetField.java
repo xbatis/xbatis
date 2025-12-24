@@ -77,9 +77,9 @@ public class MpDatasetField extends DatasetField {
         if (!(this.tableFieldInfo.getTypeHandler() instanceof LikeQuerySupport)) {
             return param;
         }
-        if (tableFieldInfo.getTypeHandler() instanceof InvalidInConditionTypeHandler) {
-            return param;
-        }
+//        if (tableFieldInfo.getTypeHandler() instanceof InvalidInConditionTypeHandler) {
+//            return param;
+//        }
         LikeQuerySupport likeQuerySupport = (LikeQuerySupport) this.tableFieldInfo.getTypeHandler();
         param = new MybatisLikeQueryParameter(param, isNotLike, likeMode, (Class<? extends TypeHandler<?>>) this.tableFieldInfo.getTypeHandler().getClass(), this.tableFieldInfo.getTableFieldAnnotation().jdbcType());
         likeMode = likeQuerySupport.convertLikeMode(likeMode, isNotLike);
