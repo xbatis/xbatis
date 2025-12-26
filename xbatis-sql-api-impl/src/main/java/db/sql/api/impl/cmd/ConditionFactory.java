@@ -103,14 +103,14 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     protected Object checkAndGetValidValue(Object value) {
-        if (value instanceof Supplier) {
-            value = ((Supplier) value).get();
-        }
         if (Objects.isNull(value)) {
             if (!isIgnoreNull()) {
                 throw new ConditionValueNullException("条件参数里包含null值");
             }
             return null;
+        }
+        if (value instanceof Supplier) {
+            value = ((Supplier) value).get();
         }
         if (value instanceof Object[]) {
             Object[] values = (Object[]) value;
