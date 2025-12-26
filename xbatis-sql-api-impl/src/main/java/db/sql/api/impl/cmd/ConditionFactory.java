@@ -33,6 +33,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Object> {
 
@@ -102,6 +103,9 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     protected Object checkAndGetValidValue(Object value) {
+        if (value instanceof Supplier) {
+            value = ((Supplier) value).get();
+        }
         if (Objects.isNull(value)) {
             if (!isIgnoreNull()) {
                 throw new ConditionValueNullException("条件参数里包含null值");
