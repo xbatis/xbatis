@@ -88,10 +88,6 @@ public class ParameterHandleUtil {
             return setParameters(configuration, ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
         }
 
-        if (jdbcType == JdbcType.UNDEFINED) {
-            jdbcType = null;
-        }
-
         if (typeHandler == null) {
             typeHandler = configuration.getTypeHandlerRegistry().getTypeHandler(value.getClass());
         }
@@ -99,6 +95,10 @@ public class ParameterHandleUtil {
         if (typeHandler == null) {
             ps.setObject(++index, value);
             return index;
+        }
+
+        if (jdbcType == JdbcType.UNDEFINED) {
+            jdbcType = null;
         }
 
         typeHandler.setParameter(ps, ++index, value, jdbcType);
