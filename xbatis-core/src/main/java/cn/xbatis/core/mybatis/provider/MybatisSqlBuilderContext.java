@@ -24,7 +24,7 @@ import java.util.List;
 
 public class MybatisSqlBuilderContext extends SqlBuilderContext {
 
-    private final List<Object> paramList = new ArrayList<>();
+    private final List<Object> paramList = new ArrayList<>(6);
 
     public MybatisSqlBuilderContext(DbType dbType, SQLMode sqlMode) {
         super(dbType, sqlMode);
