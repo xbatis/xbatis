@@ -20,9 +20,9 @@ public final class CmdParamUtil {
         } else if (value instanceof CmdConvert) {
             return ((CmdConvert) value).convert();
         }
-        if (typeHandler == UnknownTypeHandler.class && jdbcType == JdbcType.UNDEFINED) {
+        if ((typeHandler == null || typeHandler == UnknownTypeHandler.class) && (jdbcType == null || jdbcType == JdbcType.UNDEFINED)) {
             return new BasicValue(value);
         }
-        return new BasicValue(new MybatisParameter(value, typeHandler, jdbcType));
+        return new BasicValue(MybatisParameter.create(value, typeHandler, jdbcType));
     }
 }

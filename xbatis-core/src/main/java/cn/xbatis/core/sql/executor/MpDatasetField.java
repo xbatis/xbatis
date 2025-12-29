@@ -59,7 +59,7 @@ public class MpDatasetField extends DatasetField {
 //        if (tableFieldInfo.getTypeHandler() instanceof InvalidInConditionTypeHandler && ICondition.class.isAssignableFrom(userType)) {
 //            return param;
 //        }
-        return new MybatisParameter(param, (Class<? extends TypeHandler<?>>) this.tableFieldInfo.getTypeHandler().getClass(), this.tableFieldInfo.getTableFieldAnnotation().jdbcType());
+        return MybatisParameter.create(param, (Class<? extends TypeHandler<?>>) this.tableFieldInfo.getTypeHandler().getClass(), this.tableFieldInfo.getTableFieldAnnotation().jdbcType());
     }
 
     @Override
