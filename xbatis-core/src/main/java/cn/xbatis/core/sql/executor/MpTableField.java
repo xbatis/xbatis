@@ -23,7 +23,6 @@ import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
-import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.basic.TableField;
 
 import java.util.Objects;

@@ -24,6 +24,7 @@ public interface IParamWrap {
 
     /**
      * like 参数包裹
+     *
      * @param param
      * @param likeMode
      * @param isNotLike

@@ -163,9 +163,10 @@ public final class Methods {
 
     /**
      * 参数包装并转成CMD对象
+     *
      * @param userType 使用者的类型
-     * @param column 列
-     * @param param  参数
+     * @param column   列
+     * @param param    参数
      * @return Cmd
      */
     public static Cmd paramWrapAndConvertToCmd(Class userType, Cmd column, Object param) {
@@ -186,6 +187,7 @@ public final class Methods {
 
     /**
      * LIKE 参数包装
+     *
      * @param column    列
      * @param param     参数
      * @param mode      like方式

@@ -22,7 +22,6 @@ import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.cmd.LikeMode;
-import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import org.apache.ibatis.type.TypeHandler;
