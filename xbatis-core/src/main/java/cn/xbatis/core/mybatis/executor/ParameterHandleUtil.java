@@ -86,18 +86,6 @@ public class ParameterHandleUtil {
                 typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandler());
             }
             return setParameters(configuration, ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
-        } else if (value instanceof Collection) {
-            Collection values = (Collection) value;
-            for (Object v : values) {
-                index = setParameters(configuration, ps, index, v, typeHandler, jdbcType);
-            }
-            return index;
-        } else if (value instanceof Object[]) {
-            Object[] values = (Object[]) value;
-            for (Object v : values) {
-                index = setParameters(configuration, ps, index, v, typeHandler, jdbcType);
-            }
-            return index;
         }
 
         if (jdbcType == JdbcType.UNDEFINED) {
