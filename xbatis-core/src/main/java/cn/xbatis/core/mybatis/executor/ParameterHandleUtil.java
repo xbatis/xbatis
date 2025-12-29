@@ -26,7 +26,7 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -40,7 +40,7 @@ public class ParameterHandleUtil {
         return index;
     }
 
-    public static int setParameters(MybatisConfiguration configuration, PreparedStatement ps, List<Object> params) throws SQLException {
+    public static int setParameters(MybatisConfiguration configuration, PreparedStatement ps, Collection<Object> params) throws SQLException {
         int index = 0;
         for (Object value : params) {
             index = setParameters(configuration, ps, index, value, null, null);
@@ -86,6 +86,18 @@ public class ParameterHandleUtil {
                 typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandler());
             }
             return setParameters(configuration, ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
+        } else if (value instanceof Collection) {
+            Collection values = (Collection) value;
+            for (Object v : values) {
+                index = setParameters(configuration, ps, index, v, typeHandler, jdbcType);
+            }
+            return index;
+        } else if (value instanceof Object[]) {
+            Object[] values = (Object[]) value;
+            for (Object v : values) {
+                index = setParameters(configuration, ps, index, v, typeHandler, jdbcType);
+            }
+            return index;
         }
 
         if (jdbcType == JdbcType.UNDEFINED) {
