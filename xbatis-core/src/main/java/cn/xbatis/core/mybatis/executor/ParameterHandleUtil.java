@@ -47,15 +47,9 @@ public class ParameterHandleUtil {
             return index;
         }
 
-        if (jdbcType == JdbcType.UNDEFINED) {
-            jdbcType = null;
-        }
-
         if (value instanceof Supplier) {
             return setParameters(configuration, ps, index, ((Supplier<?>) value).get(), typeHandler, jdbcType);
-        }
-
-        if (value instanceof MybatisLikeQueryParameter) {
+        } else if (value instanceof MybatisLikeQueryParameter) {
             MybatisLikeQueryParameter parameter = (MybatisLikeQueryParameter) value;
             Object realValue = parameter.getValue();
             if (realValue == null) {
@@ -72,9 +66,7 @@ public class ParameterHandleUtil {
                 return index;
             }
             return setParameters(configuration, ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
-        }
-
-        if (value instanceof MybatisParameter) {
+        } else if (value instanceof MybatisParameter) {
             MybatisParameter parameter = (MybatisParameter) value;
             Object realValue = parameter.getValue();
             if (realValue == null) {
@@ -87,6 +79,10 @@ public class ParameterHandleUtil {
                 typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandler());
             }
             return setParameters(configuration, ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
+        }
+
+        if (jdbcType == JdbcType.UNDEFINED) {
+            jdbcType = null;
         }
 
         if (typeHandler == null) {
