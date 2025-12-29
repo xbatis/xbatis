@@ -14,15 +14,18 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PreparedContext implements PreparedParameterContext {
 
     private final String sql;
 
-    private final Object[] params;
+    private final List<Object> params;
 
     public PreparedContext(String sql, Object[] params) {
         this.sql = sql;
-        this.params = params;
+        this.params = Arrays.asList(params);
     }
 
     public String getSql() {
@@ -30,7 +33,7 @@ public class PreparedContext implements PreparedParameterContext {
     }
 
     @Override
-    public Object[] getParameters() {
+    public List<Object> getParameters() {
         return this.params;
     }
 }

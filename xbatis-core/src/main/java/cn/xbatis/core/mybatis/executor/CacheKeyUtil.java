@@ -19,19 +19,27 @@ import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import org.apache.ibatis.cache.CacheKey;
 
+import java.util.List;
+
 public final class CacheKeyUtil {
+
+    private static void updateAll(CacheKey cacheKey, List<Object> list) {
+        for (Object obj : list) {
+            cacheKey.update(obj);
+        }
+    }
 
     public static CacheKey wrap(CacheKey cacheKey, Object parameterObject) {
         if (parameterObject instanceof SQLCmdQueryContext) {
             SQLCmdQueryContext context = (SQLCmdQueryContext) parameterObject;
-            cacheKey.updateAll(context.getParameters());
+            updateAll(cacheKey, context.getParameters());
             if (context.getExecution().getReturnType() != null) {
                 cacheKey.update(context.getExecution().getReturnType().getName());
             }
         } else if (parameterObject instanceof ExecuteAndSelectPreparedContext) {
             ExecuteAndSelectPreparedContext context = (ExecuteAndSelectPreparedContext) parameterObject;
             if (context.getParameters() != null) {
-                cacheKey.updateAll(context.getParameters());
+                updateAll(cacheKey, context.getParameters());
             }
             if (context.getReturnType() != null) {
                 cacheKey.update(context.getReturnType().getName());
@@ -40,14 +48,14 @@ public final class CacheKeyUtil {
         } else if (parameterObject instanceof SelectPreparedContext) {
             SelectPreparedContext context = (SelectPreparedContext) parameterObject;
             if (context.getParameters() != null) {
-                cacheKey.updateAll(context.getParameters());
+                updateAll(cacheKey, context.getParameters());
             }
             if (context.getReturnType() != null) {
                 cacheKey.update(context.getReturnType().getName());
             }
         } else if (parameterObject instanceof SQLCmdUpdateContext) {
             SQLCmdUpdateContext context = (SQLCmdUpdateContext) parameterObject;
-            cacheKey.updateAll(context.getParameters());
+            updateAll(cacheKey, context.getParameters());
             if (context.getExecution() instanceof UpdateChain) {
                 UpdateChain updateChain = (UpdateChain) context.getExecution();
                 if (updateChain.getReturnType() != null) {
@@ -57,7 +65,7 @@ public final class CacheKeyUtil {
             cacheKey.update(System.currentTimeMillis());
         } else if (parameterObject instanceof SQLCmdDeleteContext) {
             SQLCmdDeleteContext context = (SQLCmdDeleteContext) parameterObject;
-            cacheKey.updateAll(context.getParameters());
+            updateAll(cacheKey, context.getParameters());
             if (context.getExecution() instanceof DeleteChain) {
                 DeleteChain deleteChain = (DeleteChain) context.getExecution();
                 if (deleteChain.getReturnType() != null) {

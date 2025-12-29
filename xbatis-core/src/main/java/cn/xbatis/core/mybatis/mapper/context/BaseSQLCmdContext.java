@@ -22,6 +22,7 @@ import db.sql.api.SQLMode;
 import db.sql.api.impl.cmd.executor.Executor;
 import db.sql.api.impl.tookit.SQLOptimizeUtils;
 
+import java.util.List;
 import java.util.Objects;
 
 public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdContext<E> {
@@ -62,7 +63,7 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
     }
 
     @Override
-    public Object[] getParameters() {
+    public List<Object> getParameters() {
         return sqlBuilderContext.getParams();
     }
 

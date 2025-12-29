@@ -19,6 +19,8 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.Executor;
 
+import java.util.List;
+
 public interface SQLCmdContext<E extends Executor> extends PreparedParameterContext {
 
     E getExecution();
@@ -29,7 +31,7 @@ public interface SQLCmdContext<E extends Executor> extends PreparedParameterCont
 
     String sql(DbType dbType);
 
-    Object[] getParameters();
+    List<Object> getParameters();
 
     BasicMapper $getBasicMapper();
 

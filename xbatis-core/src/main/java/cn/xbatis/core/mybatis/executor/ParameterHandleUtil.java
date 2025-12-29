@@ -26,16 +26,23 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ParameterHandleUtil {
 
     public static int setParameters(MybatisConfiguration configuration, PreparedStatement ps, Object[] params) throws SQLException {
-        int length = params.length;
         int index = 0;
-        for (int i = 0; i < length; i++) {
-            Object value = params[i];
+        for (Object value : params) {
+            index = setParameters(configuration, ps, index, value, null, null);
+        }
+        return index;
+    }
+
+    public static int setParameters(MybatisConfiguration configuration, PreparedStatement ps, List<Object> params) throws SQLException {
+        int index = 0;
+        for (Object value : params) {
             index = setParameters(configuration, ps, index, value, null, null);
         }
         return index;

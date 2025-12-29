@@ -23,7 +23,6 @@ import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.SqlConst;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SelectPreparedContext<T> extends PreparedContext {
@@ -32,23 +31,24 @@ public class SelectPreparedContext<T> extends PreparedContext {
 
     private String sql;
 
-    private Object[] parameters;
+    private List<Object> parameters;
 
     public SelectPreparedContext(Class<T> returnType, String sql, Object[] params) {
         super(sql, params);
         this.returnType = returnType;
     }
 
-    private static Object[] buildSqlAndArgsWithDbType(String originalSql, Object[] originalArgs, DbType dbType) {
-        Object[] params = originalArgs;
+    private static Object[] buildSqlAndArgsWithDbType(String originalSql, List<Object> originalArgs, DbType dbType) {
+        int paramSize = originalArgs.size();
         String[] sqls = originalSql.split("\\?");
-        if (sqls.length != params.length && sqls.length != params.length + 1) {
+        if (sqls.length != paramSize && sqls.length != paramSize + 1) {
             throw new IllegalArgumentException("The number of parameters does not match");
         }
         List<Object> args = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
-        for (int i = 0; i < params.length; i++) {
-            Object param = params[i];
+        int i = -1;
+        for (Object param : originalArgs) {
+            i++;
             sql.append(sqls[i]);
             if (param instanceof Cmd) {
                 SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(dbType, SQLMode.PREPARED) {
@@ -81,11 +81,11 @@ public class SelectPreparedContext<T> extends PreparedContext {
         }
 
         // 补充最后面的sql
-        if (sqls.length == params.length + 1) {
+        if (sqls.length == paramSize + 1) {
             sql.append(sqls[sqls.length - 1]);
         }
 
-        return new Object[]{sql.toString(), args.toArray()};
+        return new Object[]{sql.toString(), args};
     }
 
     public Class<T> getReturnType() {
@@ -97,12 +97,12 @@ public class SelectPreparedContext<T> extends PreparedContext {
             return;
         }
 
-        Object[] params = super.getParameters();
-        boolean existsCmd = Arrays.stream(params).anyMatch(i -> i instanceof Cmd);
+        List<Object> params = super.getParameters();
+        boolean existsCmd = params.stream().anyMatch(i -> i instanceof Cmd);
         if (existsCmd) {
             Object[] objs = buildSqlAndArgsWithDbType(super.getSql(), super.getParameters(), dbType);
             this.sql = (String) objs[0];
-            this.parameters = (Object[]) objs[1];
+            this.parameters = (List<Object>) objs[1];
         } else {
             this.parameters = super.getParameters();
             this.sql = super.getSql();
@@ -115,7 +115,7 @@ public class SelectPreparedContext<T> extends PreparedContext {
     }
 
     @Override
-    public Object[] getParameters() {
+    public List<Object> getParameters() {
         if (parameters == null) {
             return super.getParameters();
         }

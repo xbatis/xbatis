@@ -21,6 +21,7 @@ import org.apache.ibatis.mapping.ParameterMapping;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 public class OtherFrameworkPreparedParameterHandler implements ParameterHandler {
@@ -44,7 +45,14 @@ public class OtherFrameworkPreparedParameterHandler implements ParameterHandler 
 
     @Override
     public void setParameters(PreparedStatement ps) throws SQLException {
-        int index = ParameterHandleUtil.setParameters(configuration, ps, (Object[]) parameterObject.get("parameters"));
+        Object params = parameterObject.get("parameters");
+        int index;
+        if (params instanceof List) {
+            index = ParameterHandleUtil.setParameters(configuration, ps, (List) params);
+        } else {
+            index = ParameterHandleUtil.setParameters(configuration, ps, (Object[]) params);
+        }
+
         this.pageHelperSetParameters(ps, index);
     }
 

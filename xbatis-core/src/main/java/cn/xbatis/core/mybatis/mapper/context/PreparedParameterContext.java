@@ -14,11 +14,13 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
+import java.util.List;
+
 public interface PreparedParameterContext {
 
     default String getName() {
         return "xbatis.context";
     }
 
-    Object[] getParameters();
+    List<Object> getParameters();
 }
