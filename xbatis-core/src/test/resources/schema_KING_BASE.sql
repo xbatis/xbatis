@@ -53,7 +53,7 @@ CREATE TABLE sys_user_score
 );
 
 insert all
-into t_sys_user
+    into t_sys_user
 values (t_sys_user_seq.NEXTVAL, 'admin', '123', 0, TO_DATE('2023-10-11 15:16:17', 'YYYY-MM-DD HH24:MI:SS'))
 into t_sys_user
 values (t_sys_user_seq.NEXTVAL, 'test1', '123456', 1, TO_DATE('2023-10-11 15:16:17', 'YYYY-MM-DD HH24:MI:SS'))
@@ -65,7 +65,7 @@ from dual;
 
 
 insert all
-into sys_role
+    into sys_role
 values (sys_role_seq.NEXTVAL, '测试', TO_DATE('2022-10-10', 'YYYY-MM-DD'))
 into sys_role
 values (sys_role_seq.NEXTVAL, '运维', TO_DATE('2022-10-10', 'YYYY-MM-DD'))
@@ -74,7 +74,7 @@ from dual;
 
 
 insert all
-into sys_user_score
+    into sys_user_score
 values (2, 3.2)
 into sys_user_score
 values (3, 2.6)
@@ -140,7 +140,7 @@ CREATE TABLE logic_delete_test
 );
 
 insert all
-into logic_delete_test
+    into logic_delete_test
 values (logic_delete_test_seq.NEXTVAL, '测试', 0, null)
 into logic_delete_test
 values (logic_delete_test_seq.NEXTVAL, '运维', 0, null)
@@ -212,7 +212,7 @@ CREATE TABLE nested_third
 );
 
 insert all
-into nested_first(id, th_name)
+    into nested_first(id, th_name)
 values (1, '嵌套A')
 into nested_first(id, th_name)
 values (2, '嵌套B')
@@ -220,7 +220,7 @@ select *
 from dual;
 
 insert all
-into nested_second(id, nested_one_id, th_name)
+    into nested_second(id, nested_one_id, th_name)
 values (1, 1, '嵌套AA')
 into nested_second(id, nested_one_id, th_name)
 values (2, 2, '嵌套BA')
@@ -228,7 +228,7 @@ select *
 from dual;
 
 insert all
-into nested_third(id, nested_second_id, th_name)
+    into nested_third(id, nested_second_id, th_name)
 values (1, 1, '嵌套AAA')
 into nested_third(id, nested_second_id, th_name)
 values (2, 2, '嵌套BAA')
@@ -262,7 +262,7 @@ CREATE TABLE nested_muti_third
 );
 
 insert all
-into nested_muti_first(id, th_name)
+    into nested_muti_first(id, th_name)
 values (1, '嵌套A')
 into nested_muti_first(id, th_name)
 values (2, '嵌套B')
@@ -270,7 +270,7 @@ select *
 from dual;
 
 insert all
-into nested_muti_second(id, nested_one_id, th_name)
+    into nested_muti_second(id, nested_one_id, th_name)
 values (1, 1, '嵌套AA')
 into nested_muti_second(id, nested_one_id, th_name)
 values (2, 1, '嵌套AB')
@@ -280,7 +280,7 @@ select *
 from dual;
 
 insert all
-into nested_muti_third(id, nested_second_id, th_name)
+    into nested_muti_third(id, nested_second_id, th_name)
 values (1, 2, '嵌套BAA')
 into nested_muti_third(id, nested_second_id, th_name)
 values (2, 2, '嵌套BAB')

@@ -319,7 +319,7 @@ public class SysUser { }
 - `@ResultField`
 
   | 属性 | 是否可空 | 默认值 | 说明 |
-      | --- | --- | --- | --- |
+        | --- | --- | --- | --- |
   | `value` | 是 | – | 可指定一个或多个列名，支持从多个列取值 |
   | `jdbcType` | 是 | – | 指定 JDBC 类型 |
   | `typeHandler` | 是 | – | 指定类型处理器 |
@@ -327,7 +327,7 @@ public class SysUser { }
 - `@Fetch`
 
   | 属性 | 是否可空 | 默认值 | 说明 |
-      | --- | --- | --- | --- |
+        | --- | --- | --- | --- |
   | `column` | 是 | – | 指定列作为匹配条件；与 `property` 二选一，优先 `column` |
   | `property` | 否 | – | 源实体属性名 |
   | `source` | 否 | – | 源实体类型 |
@@ -404,7 +404,7 @@ public class SysUser { }
 - `@SplitTable`
 
   | 属性 | 是否可空 | 默认值 | 说明 |
-      | --- | --- | --- | --- |
+        | --- | --- | --- | --- |
   | `value` | 否 | – | 指定 `TableSplitter` 实现类，用来根据分表键计算真实表名 |
 
 - `@SplitTableKey`：标记实体中的分表字段，仅支持单列，用于在运行时传入分片值。
@@ -924,7 +924,7 @@ public class XbatisSafeCheckConfig {
 - 注解属性说明（`org.mybatis.spring.boot.autoconfigure.XbatisPojoCheckScan`）：
 
   | 属性名 | 说明 |
-      | --- | --- |
+        | --- | --- |
   | `basePackages` | 基础包扫描路径 |
   | `modelPackages` | Model 实现所在包，缺省时使用 `basePackages` |
   | `resultEntityPackages` | VO（`@ResultEntity`）包路径，缺省时使用 `basePackages` |
