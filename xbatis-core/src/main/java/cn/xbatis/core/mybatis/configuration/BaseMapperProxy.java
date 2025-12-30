@@ -140,7 +140,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             shareVariables.put(ShareVariableName.MAPPER_METHOD_INTERCEPTED, true);
 
             if (method.getDeclaringClass().getPackage().getName().startsWith("java.")) {
-                //java自带方法
+                //java 自带方法
                 return this.doInvoke(proxy, method, args);
             }
 
