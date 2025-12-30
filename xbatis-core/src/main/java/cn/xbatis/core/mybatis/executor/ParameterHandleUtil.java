@@ -70,10 +70,10 @@ public class ParameterHandleUtil {
 
             if (typeHandler instanceof LikeQuerySupport) {
                 LikeQuerySupport querySupport = (LikeQuerySupport) typeHandler;
-                querySupport.setLikeParameter(parameter.getLikeMode(), parameter.isNotLike(), ps, ++index, parameter.getValue(), jdbcType);
+                querySupport.setLikeParameter(parameter.getLikeMode(), parameter.isNotLike(), ps, ++index, realValue, jdbcType);
                 return index;
             }
-            return setParameters(configuration, ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
+            return setParameters(configuration, ps, index, realValue, typeHandler, parameter.getJdbcType());
         } else if (value instanceof MybatisParameter) {
             MybatisParameter parameter = (MybatisParameter) value;
             Object realValue = parameter.getValue();
@@ -86,7 +86,7 @@ public class ParameterHandleUtil {
                 return index;
             }
             if (parameter.getTypeHandlerClass() == null || parameter.getTypeHandlerClass() == UnknownTypeHandler.class) {
-                return setParameters(configuration, ps, index, parameter.getValue(), null, parameter.getJdbcType());
+                return setParameters(configuration, ps, index, realValue, null, parameter.getJdbcType());
             }
             if (typeHandler == null) {
                 typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandlerClass());
