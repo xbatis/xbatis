@@ -26,9 +26,9 @@ public class IdentifierGeneratorFactory {
 
     static {
         IdWorkerGenerator idWorkerGenerator = new IdWorkerGenerator();
-        IDENTIFIER_GENERATOR_MAP.put(IdentifierGeneratorType.DEFAULT, idWorkerGenerator);
-        IDENTIFIER_GENERATOR_MAP.put(IdentifierGeneratorType.UUID, new UUIDGenerator());
-        IDENTIFIER_GENERATOR_MAP.put(IdentifierGeneratorType.mpNextId, idWorkerGenerator);
+        IDENTIFIER_GENERATOR_MAP.put(KeyGeneratorTypes.DEFAULT, idWorkerGenerator);
+        IDENTIFIER_GENERATOR_MAP.put(KeyGeneratorTypes.UUID, new UUIDGenerator());
+        IDENTIFIER_GENERATOR_MAP.put(KeyGeneratorTypes.nextId, idWorkerGenerator);
     }
 
     private IdentifierGeneratorFactory() {
@@ -59,7 +59,7 @@ public class IdentifierGeneratorFactory {
      * @param identifierGenerator
      */
     public static void register(String name, IdentifierGenerator<?> identifierGenerator) {
-        if (!IdentifierGeneratorType.DEFAULT.equals(name) && IDENTIFIER_GENERATOR_MAP.containsKey(name)) {
+        if (!KeyGeneratorTypes.DEFAULT.equals(name) && IDENTIFIER_GENERATOR_MAP.containsKey(name)) {
             throw new RuntimeException(name + " IdentifierGenerator already exists");
         }
         IDENTIFIER_GENERATOR_MAP.put(name, identifierGenerator);

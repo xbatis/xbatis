@@ -14,28 +14,20 @@
 
 package cn.xbatis.core.incrementer;
 
-/**
- * 后续使用
- *
- * @see cn.xbatis.core.incrementer.KeyGeneratorTypes
- */
-@Deprecated
-public class IdentifierGeneratorType {
+public class KeyGeneratorTypes {
 
     /**
      * 基于java uuid获取
      */
-    public static final String UUID = KeyGeneratorTypes.UUID;
+    public static final String UUID = "UUID";
 
     /**
      * 基于雪花算法
-     * 此方法已不建议使用，后续使用 xbId
      */
-    @Deprecated
-    public static final String mpNextId = KeyGeneratorTypes.nextId;
+    public static final String nextId = "nextId";
 
     /**
-     * 默认生成器
+     * 默认生成器,默认就是 nextId；区别是DEFAULT 可以重置算法
      */
-    public static final String DEFAULT = KeyGeneratorTypes.DEFAULT;
+    public static final String DEFAULT = "DEFAULT";
 }
