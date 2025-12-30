@@ -175,7 +175,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             Class<?> provider = selectProvider.value() == void.class ? selectProvider.type() : selectProvider.value();
             if (MybatisSQLProvider.class.isAssignableFrom(provider)) {
                 if (MAP_WITH_KEY_METHOD_NAME.equals(method.getName())) {
-                    this.wrapperParams(method, args);
                     return mapWithKey(method, args);
                 }
                 return super.invoke(proxy, method, args);
@@ -187,16 +186,16 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             }
         }
 
-        if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
+        if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
+            return this.getDbType();
+        } else if (method.isAnnotationPresent(Paging.class)) {
+            this.wrapperParams(method, args);
+            return paging(method, args);
+        } else if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
             Consumer<Object> consumer = (Consumer<Object>) args[0];
             DbSelectorCall dbSelector = new DbSelectorCall();
             consumer.accept(dbSelector);
             return dbSelector.dbExecute(this.getDbType());
-        } else if (method.isAnnotationPresent(Paging.class)) {
-            this.wrapperParams(method, args);
-            return paging(method, args);
-        } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
-            return this.getDbType();
         } else if (method.getName().equals(WITH_SQL_SESSION_METHOD_NAME)) {
             this.wrapperParams(method, args);
             if (args.length == 1) {
