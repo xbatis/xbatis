@@ -69,7 +69,7 @@ public class BasicValue extends AbstractField<BasicValue> {
                 sqlBuilder.append(originValue);
             } else {
                 if (originValue instanceof Date) {
-                    originValue = new SimpleDateFormat("yyyy-MM-hh HH:mm:ss").format((Date) originValue);
+                    originValue = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) originValue);
                 } else if (originValue instanceof LocalDate) {
                     originValue = ((LocalDate) originValue).toString();
                 } else if (originValue instanceof LocalDateTime) {
