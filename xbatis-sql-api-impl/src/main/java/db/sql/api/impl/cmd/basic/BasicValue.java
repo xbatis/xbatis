@@ -24,6 +24,10 @@ import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
 public class BasicValue extends AbstractField<BasicValue> {
@@ -64,6 +68,13 @@ public class BasicValue extends AbstractField<BasicValue> {
             if (originValue instanceof Number) {
                 sqlBuilder.append(originValue);
             } else {
+                if (originValue instanceof Date) {
+                    originValue = new SimpleDateFormat("yyyy-MM-hh HH:mm:ss").format((Date) originValue);
+                } else if (originValue instanceof LocalDate) {
+                    originValue = ((LocalDate) originValue).toString();
+                } else if (originValue instanceof LocalDateTime) {
+                    originValue = ((LocalDate) originValue).toString();
+                }
                 sqlBuilder.append(SqlConst.SINGLE_QUOT).append(originValue).append(SqlConst.SINGLE_QUOT);
             }
         } else {
