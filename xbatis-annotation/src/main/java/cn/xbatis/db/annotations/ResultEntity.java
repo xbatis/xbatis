@@ -29,7 +29,7 @@ public @interface ResultEntity {
 
     /**
      * 对应的实体类
-     *
+     * 如果不想指定，而是作为一个普通的 映射类可以指定为 Void.class
      * @return
      */
     Class value();
