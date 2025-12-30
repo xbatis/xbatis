@@ -26,9 +26,9 @@ public class GeneratorFactory {
 
     static {
         IdWorkerGenerator idWorkerGenerator = new IdWorkerGenerator();
-        GENERATOR_MAP.put(GeneratorTypes.DEFAULT, idWorkerGenerator);
-        GENERATOR_MAP.put(GeneratorTypes.UUID, new UUIDGenerator());
-        GENERATOR_MAP.put(GeneratorTypes.nextId, idWorkerGenerator);
+        GENERATOR_MAP.put(Generators.DEFAULT, idWorkerGenerator);
+        GENERATOR_MAP.put(Generators.UUID, new UUIDGenerator());
+        GENERATOR_MAP.put(Generators.nextId, idWorkerGenerator);
     }
 
     private GeneratorFactory() {
@@ -59,7 +59,7 @@ public class GeneratorFactory {
      * @param generator
      */
     public static void register(String name, Generator<?> generator) {
-        if (!GeneratorTypes.DEFAULT.equals(name) && GENERATOR_MAP.containsKey(name)) {
+        if (!Generators.DEFAULT.equals(name) && GENERATOR_MAP.containsKey(name)) {
             throw new RuntimeException(name + " Generator already exists");
         }
         GENERATOR_MAP.put(name, generator);

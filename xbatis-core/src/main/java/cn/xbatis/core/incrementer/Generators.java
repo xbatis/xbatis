@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.incrementer;
 
-public class GeneratorTypes {
+public class Generators {
 
     /**
      * 基于java uuid获取

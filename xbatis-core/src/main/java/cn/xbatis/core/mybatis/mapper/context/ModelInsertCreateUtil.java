@@ -49,7 +49,7 @@ public class ModelInsertCreateUtil {
             if (!IdUtil.isIdValueExists(value)) {
                 TableId tableId = TableIds.get(modelInfo.getEntityType(), dbType);
                 if (tableId.value() == IdAutoType.GENERATOR) {
-                    Generator generator = GeneratorFactory.getIdentifierGenerator(tableId.generatorName());
+                    Generator generator = GeneratorFactory.getIdentifierGenerator(tableId.generator());
                     Object id = generator.nextId(modelInfo.getTableInfo().getType());
                     IdUtil.setId(insertData, modelFieldInfo, id);
                 }

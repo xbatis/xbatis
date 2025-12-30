@@ -14,7 +14,7 @@
 
 package com.xbatis.core.test.DO;
 
-import cn.xbatis.core.incrementer.GeneratorTypes;
+import cn.xbatis.core.incrementer.Generators;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableField;
@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 @FieldNameConstants
 public class VersionTest {
 
-    @TableId(value = IdAutoType.GENERATOR, generatorName = GeneratorTypes.UUID)
+    @TableId(value = IdAutoType.GENERATOR, generator = Generators.UUID)
     private String id;
 
     @Version

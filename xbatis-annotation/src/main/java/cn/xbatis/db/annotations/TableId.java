@@ -44,12 +44,12 @@ public @interface TableId {
 
     /**
      * 自增器的名字
-     * 自定义生成器 需要 实现 cn.xbatis.core.incrementer.IdentifierGenerator
-     * 然后 注册到ID生成器工厂 cn.xbatis.core.incrementer.IdentifierGeneratorFactory.register(name,ID自增器实例)
+     * 自定义生成器 需要 实现 cn.xbatis.core.incrementer.Generator
+     * 然后 注册到ID生成器工厂 cn.xbatis.core.incrementer.GeneratorFactory.register(name,ID自增器实例)
      *
      * @return
      */
-    String generatorName() default "";
+    String generator() default "";
 
     /**
      * id 自增的sql语句
