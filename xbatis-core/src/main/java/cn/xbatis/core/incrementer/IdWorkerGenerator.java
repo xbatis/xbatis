@@ -17,7 +17,7 @@ package cn.xbatis.core.incrementer;
 /**
  * 基于IdWorker 自增器
  */
-public class IdWorkerGenerator implements IdentifierGenerator<Long> {
+public class IdWorkerGenerator implements Generator<Long> {
 
     @Override
     public Long nextId(Class<?> entity) {

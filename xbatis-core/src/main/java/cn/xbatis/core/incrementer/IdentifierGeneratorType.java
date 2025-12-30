@@ -17,7 +17,7 @@ package cn.xbatis.core.incrementer;
 /**
  * 后续使用
  *
- * @see cn.xbatis.core.incrementer.KeyGeneratorTypes
+ * @see GeneratorTypes
  */
 @Deprecated
 public class IdentifierGeneratorType {
@@ -25,17 +25,17 @@ public class IdentifierGeneratorType {
     /**
      * 基于java uuid获取
      */
-    public static final String UUID = KeyGeneratorTypes.UUID;
+    public static final String UUID = GeneratorTypes.UUID;
 
     /**
      * 基于雪花算法
      * 此方法已不建议使用，后续使用 xbId
      */
     @Deprecated
-    public static final String mpNextId = KeyGeneratorTypes.nextId;
+    public static final String mpNextId = GeneratorTypes.nextId;
 
     /**
      * 默认生成器
      */
-    public static final String DEFAULT = KeyGeneratorTypes.DEFAULT;
+    public static final String DEFAULT = GeneratorTypes.DEFAULT;
 }

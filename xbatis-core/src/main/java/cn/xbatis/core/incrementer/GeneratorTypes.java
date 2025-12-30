@@ -14,14 +14,20 @@
 
 package cn.xbatis.core.incrementer;
 
-public interface IdentifierGenerator<T> {
-
+public class GeneratorTypes {
 
     /**
-     * 生成Id
-     *
-     * @param entity 实体
-     * @return id
+     * 基于java uuid获取
      */
-    T nextId(Class<?> entity);
+    public static final String UUID = "UUID";
+
+    /**
+     * 基于雪花算法
+     */
+    public static final String nextId = "nextId";
+
+    /**
+     * 默认生成器,默认就是 nextId；区别是DEFAULT 可以重置算法
+     */
+    public static final String DEFAULT = "DEFAULT";
 }

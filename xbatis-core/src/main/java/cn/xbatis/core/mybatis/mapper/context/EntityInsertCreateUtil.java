@@ -18,8 +18,8 @@ import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableIds;
 import cn.xbatis.core.db.reflect.TableInfo;
-import cn.xbatis.core.incrementer.IdentifierGenerator;
-import cn.xbatis.core.incrementer.IdentifierGeneratorFactory;
+import cn.xbatis.core.incrementer.Generator;
+import cn.xbatis.core.incrementer.GeneratorFactory;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.xbatis.core.sql.TableSplitUtil;
 import cn.xbatis.core.sql.executor.BaseInsert;
@@ -51,8 +51,8 @@ public class EntityInsertCreateUtil {
             if (!IdUtil.isIdValueExists(value)) {
                 TableId tableId = TableIds.get(insertData.getClass(), dbType);
                 if (tableId.value() == IdAutoType.GENERATOR) {
-                    IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
-                    Object id = identifierGenerator.nextId(tableInfo.getType());
+                    Generator generator = GeneratorFactory.getIdentifierGenerator(tableId.generatorName());
+                    Object id = generator.nextId(tableInfo.getType());
                     IdUtil.setId(insertData, tableFieldInfo, id);
                 }
             }

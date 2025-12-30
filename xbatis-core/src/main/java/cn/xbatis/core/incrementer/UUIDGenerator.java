@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * UUID 自增器
  */
-public class UUIDGenerator implements IdentifierGenerator<String> {
+public class UUIDGenerator implements Generator<String> {
 
     @Override
     public String nextId(Class<?> entity) {

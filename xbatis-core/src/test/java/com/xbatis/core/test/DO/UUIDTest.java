@@ -14,7 +14,7 @@
 
 package com.xbatis.core.test.DO;
 
-import cn.xbatis.core.incrementer.KeyGeneratorTypes;
+import cn.xbatis.core.incrementer.GeneratorTypes;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableId;
@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 @FieldNameConstants
 public class UUIDTest {
 
-    @TableId(value = IdAutoType.GENERATOR, generatorName = KeyGeneratorTypes.UUID)
+    @TableId(value = IdAutoType.GENERATOR, generatorName = GeneratorTypes.UUID)
     private String id;
 
     private LocalDateTime createTime;

@@ -14,20 +14,14 @@
 
 package cn.xbatis.core.incrementer;
 
-public class KeyGeneratorTypes {
+public interface Generator<T> {
+
 
     /**
-     * 基于java uuid获取
+     * 生成Id
+     *
+     * @param entity 实体
+     * @return id
      */
-    public static final String UUID = "UUID";
-
-    /**
-     * 基于雪花算法
-     */
-    public static final String nextId = "nextId";
-
-    /**
-     * 默认生成器,默认就是 nextId；区别是DEFAULT 可以重置算法
-     */
-    public static final String DEFAULT = "DEFAULT";
+    T nextId(Class<?> entity);
 }
