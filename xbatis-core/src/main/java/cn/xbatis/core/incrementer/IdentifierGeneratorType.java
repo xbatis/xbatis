@@ -31,7 +31,6 @@ public class IdentifierGeneratorType {
      * 基于雪花算法
      * 此方法已不建议使用，后续使用 xbId
      */
-    @Deprecated
     public static final String mpNextId = Generators.nextId;
 
     /**
