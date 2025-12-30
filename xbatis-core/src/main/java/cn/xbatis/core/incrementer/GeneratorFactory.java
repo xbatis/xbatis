@@ -22,13 +22,13 @@ import java.util.Map;
  */
 public class GeneratorFactory {
 
-    private static final Map<String, Generator<?>> IDENTIFIER_GENERATOR_MAP = new HashMap<>();
+    private static final Map<String, Generator<?>> GENERATOR_MAP = new HashMap<>();
 
     static {
         IdWorkerGenerator idWorkerGenerator = new IdWorkerGenerator();
-        IDENTIFIER_GENERATOR_MAP.put(GeneratorTypes.DEFAULT, idWorkerGenerator);
-        IDENTIFIER_GENERATOR_MAP.put(GeneratorTypes.UUID, new UUIDGenerator());
-        IDENTIFIER_GENERATOR_MAP.put(GeneratorTypes.nextId, idWorkerGenerator);
+        GENERATOR_MAP.put(GeneratorTypes.DEFAULT, idWorkerGenerator);
+        GENERATOR_MAP.put(GeneratorTypes.UUID, new UUIDGenerator());
+        GENERATOR_MAP.put(GeneratorTypes.nextId, idWorkerGenerator);
     }
 
     private GeneratorFactory() {
@@ -44,7 +44,7 @@ public class GeneratorFactory {
         if (name == null) {
             throw new RuntimeException("Generator name can't be null");
         }
-        Generator<T> generator = (Generator<T>) IDENTIFIER_GENERATOR_MAP.get(name);
+        Generator<T> generator = (Generator<T>) GENERATOR_MAP.get(name);
         if (generator == null) {
             throw new RuntimeException(name + " Generator is not exists");
         }
@@ -59,9 +59,9 @@ public class GeneratorFactory {
      * @param generator
      */
     public static void register(String name, Generator<?> generator) {
-        if (!GeneratorTypes.DEFAULT.equals(name) && IDENTIFIER_GENERATOR_MAP.containsKey(name)) {
+        if (!GeneratorTypes.DEFAULT.equals(name) && GENERATOR_MAP.containsKey(name)) {
             throw new RuntimeException(name + " Generator already exists");
         }
-        IDENTIFIER_GENERATOR_MAP.put(name, generator);
+        GENERATOR_MAP.put(name, generator);
     }
 }
