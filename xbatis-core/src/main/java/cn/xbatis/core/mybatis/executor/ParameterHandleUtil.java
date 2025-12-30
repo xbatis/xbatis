@@ -63,7 +63,7 @@ public class ParameterHandleUtil {
                 return setParameters(configuration, ps, index, null, null, null);
             }
 
-            if (typeHandler == null || parameter.getTypeHandler() != typeHandler.getClass()) {
+            if (typeHandler == null) {
                 typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandler());
             }
 
@@ -82,7 +82,7 @@ public class ParameterHandleUtil {
             if (parameter.getTypeHandler() == null || parameter.getTypeHandler() == UnknownTypeHandler.class) {
                 return setParameters(configuration, ps, index, parameter.getValue(), null, parameter.getJdbcType());
             }
-            if (typeHandler == null || parameter.getTypeHandler() != typeHandler.getClass()) {
+            if (typeHandler == null) {
                 typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandler());
             }
             return setParameters(configuration, ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
