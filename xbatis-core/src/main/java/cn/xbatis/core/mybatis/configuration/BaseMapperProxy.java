@@ -26,6 +26,8 @@ import cn.xbatis.core.mybatis.mapper.context.SelectPreparedContext;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInvocation;
 import cn.xbatis.core.mybatis.mapper.mappers.BaseMapper;
+import cn.xbatis.core.mybatis.provider.MybatisSQLProvider;
+import cn.xbatis.core.mybatis.provider.PreparedSQLProvider;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.Where;
 import cn.xbatis.db.annotations.Paging;
@@ -34,6 +36,7 @@ import cn.xbatis.page.PagerField;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.DbSelectorCall;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ParamNameResolver;
 import org.apache.ibatis.session.SqlSession;
@@ -54,14 +57,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     public final static String CURRENT_DB_TYPE_METHOD_NAME = "getCurrentDbType";
 
     public final static String WITH_SQL_SESSION_METHOD_NAME = "withSqlSession";
-
-    public final static String SELECT = "$select";
-
-    public final static String SELECT_LIST = "$selectList";
-
-    public final static String EXECUTE_AND_RETURNING = "$executeAndReturning";
-
-    public final static String EXECUTE_AND_RETURNING_LIST = "$executeAndReturningList";
 
     protected final SqlSession sqlSession;
     protected final Class<T> mapperInterface;
@@ -175,15 +170,28 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             return super.invoke(proxy, method, args);
         }
 
+        SelectProvider selectProvider = method.getAnnotation(SelectProvider.class);
+        if (selectProvider != null) {
+            Class<?> provider = selectProvider.value() == void.class ? selectProvider.type() : selectProvider.value();
+            if (MybatisSQLProvider.class.isAssignableFrom(provider)) {
+                if (MAP_WITH_KEY_METHOD_NAME.equals(method.getName())) {
+                    this.wrapperParams(method, args);
+                    return mapWithKey(method, args);
+                }
+                return super.invoke(proxy, method, args);
+            } else if (PreparedSQLProvider.class.isAssignableFrom(provider)) {
+                SelectPreparedContext selectPreparedContext = (SelectPreparedContext) args[0];
+                selectPreparedContext.initWithDbType(getDbType());
+                this.wrapperParams(method, args);
+                return super.invoke(proxy, method, args);
+            }
+        }
 
         if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
             Consumer<Object> consumer = (Consumer<Object>) args[0];
             DbSelectorCall dbSelector = new DbSelectorCall();
             consumer.accept(dbSelector);
             return dbSelector.dbExecute(this.getDbType());
-        } else if (method.getName().equals(MAP_WITH_KEY_METHOD_NAME)) {
-            this.wrapperParams(method, args);
-            return mapWithKey(method, args);
         } else if (method.isAnnotationPresent(Paging.class)) {
             this.wrapperParams(method, args);
             return paging(method, args);
@@ -227,10 +235,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             } else {
                 throw new RuntimeException("NOT SUPPORTED");
             }
-        } else if ((method.getName().equals(SELECT) || method.getName().equals(SELECT_LIST) || method.getName().equals(EXECUTE_AND_RETURNING) || method.getName().equals(EXECUTE_AND_RETURNING_LIST))
-                && args.length == 1 && args[0] instanceof SelectPreparedContext) {
-            SelectPreparedContext selectPreparedContext = (SelectPreparedContext) args[0];
-            selectPreparedContext.initWithDbType(getDbType());
         }
         this.wrapperParams(method, args);
         return super.invoke(proxy, method, args);
