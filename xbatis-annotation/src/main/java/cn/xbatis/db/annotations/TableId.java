@@ -53,7 +53,7 @@ public @interface TableId {
 
     /**
      * id 自增的sql语句
-     *
+     * IdAutoType.SQL 时，必须填
      * @return
      */
     String sql() default "";
