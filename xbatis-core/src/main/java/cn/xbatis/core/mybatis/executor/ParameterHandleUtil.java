@@ -60,11 +60,12 @@ public class ParameterHandleUtil {
             MybatisLikeQueryParameter parameter = (MybatisLikeQueryParameter) value;
             Object realValue = parameter.getValue();
             if (realValue == null) {
-                return setParameters(configuration, ps, index, null, null, null);
+                ps.setNull(++index, Types.NULL);
+                return index;
             }
 
             if (typeHandler == null) {
-                typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandler());
+                typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandlerClass());
             }
 
             if (typeHandler instanceof LikeQuerySupport) {
@@ -77,13 +78,18 @@ public class ParameterHandleUtil {
             MybatisParameter parameter = (MybatisParameter) value;
             Object realValue = parameter.getValue();
             if (realValue == null) {
-                return setParameters(configuration, ps, index, null, null, null);
+                ps.setNull(++index, Types.NULL);
+                return index;
             }
-            if (parameter.getTypeHandler() == null || parameter.getTypeHandler() == UnknownTypeHandler.class) {
+            if (parameter.getTypeHandler() != null) {
+                parameter.getTypeHandler().setParameter(ps, ++index, realValue, jdbcType);
+                return index;
+            }
+            if (parameter.getTypeHandlerClass() == null || parameter.getTypeHandlerClass() == UnknownTypeHandler.class) {
                 return setParameters(configuration, ps, index, parameter.getValue(), null, parameter.getJdbcType());
             }
             if (typeHandler == null) {
-                typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandler());
+                typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, realValue.getClass(), parameter.getTypeHandlerClass());
             }
             return setParameters(configuration, ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
         }

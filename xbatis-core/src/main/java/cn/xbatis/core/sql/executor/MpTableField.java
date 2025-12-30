@@ -50,8 +50,8 @@ public class MpTableField extends TableField {
 
     @Override
     public Object paramWrap(Class userType, Object param) {
-        if (Objects.isNull(param)) {
-            return null;
+        if (Objects.isNull(param) || param instanceof Cmd) {
+            return param;
         } else if (param instanceof CmdConvert) {
             return ((CmdConvert) param).convert();
         }
@@ -74,7 +74,7 @@ public class MpTableField extends TableField {
         } else if (param instanceof CmdConvert) {
             return ((CmdConvert) param).convert();
         }
-        if (Objects.isNull(this.tableFieldInfo.getTypeHandler())) {
+        if (Objects.isNull(tableFieldInfo.getTypeHandler())) {
             return param;
         }
         if (!tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {

@@ -130,7 +130,7 @@ public class ModelUpdateCreateUtil {
             }
 
             if (Objects.nonNull(value)) {
-                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation(), value));
+                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo, value));
             }
         }
 

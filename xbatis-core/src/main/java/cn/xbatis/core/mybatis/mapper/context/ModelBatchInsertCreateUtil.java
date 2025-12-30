@@ -24,7 +24,6 @@ import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.Model;
-import cn.xbatis.db.annotations.TableField;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.basic.NULL;
@@ -150,11 +149,10 @@ public class ModelBatchInsertCreateUtil {
                     containId = true;
                 }
 
-                TableField tableField = modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation();
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {
-                    values.add(CmdParamUtil.build(tableField, value));
+                    values.add(CmdParamUtil.build(modelFieldInfo, value));
                 }
             }
             insert.values(values);

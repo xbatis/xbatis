@@ -22,6 +22,7 @@ import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -54,7 +55,7 @@ public class SplitTableQueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
 
-            List<SplitTableTest> list = mapper.list(where -> where.in(SplitTableTest::getSplitId, new MybatisParameter(1, null, JdbcType.UNDEFINED), 2));
+            List<SplitTableTest> list = mapper.list(where -> where.in(SplitTableTest::getSplitId, new MybatisParameter(1, (TypeHandler<?>) null, JdbcType.UNDEFINED), 2));
             for (SplitTableTest splitTableTest : list) {
                 assertNotNull(splitTableTest);
                 assertEquals(splitTableTest.getSplitId(), 1);

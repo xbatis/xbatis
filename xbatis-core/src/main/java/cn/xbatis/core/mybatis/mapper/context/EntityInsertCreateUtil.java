@@ -157,7 +157,7 @@ public class EntityInsertCreateUtil {
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {
-                    values.add(CmdParamUtil.build(tableFieldInfo.getTableFieldAnnotation(), value));
+                    values.add(CmdParamUtil.build(tableFieldInfo, value));
                 }
             }
         }

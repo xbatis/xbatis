@@ -114,11 +114,11 @@ public class IdentifierGenerateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             IdTestMapper idTestMapper = session.getMapper(IdTestMapper.class);
             IdTest idTest = new IdTest();
-            idTest.setId(TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2 ? null : 1L);
+            idTest.setId(TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2 ? null : "1");
             idTest.setCreateTime(LocalDateTime.now());
             idTestMapper.save(idTest);
             System.out.println(idTest);
-            assertEquals(1L, (long) idTest.getId());
+            assertEquals("1", idTest.getId());
 
             assertNotNull(idTestMapper.getById(idTest.getId()));
         }
@@ -141,8 +141,8 @@ public class IdentifierGenerateTest extends BaseTest {
             idTestMapper.save(idTestList);
             System.out.println(idTestList);
 
-            assertEquals(1L, (long) idTest.getId());
-            assertEquals(2L, (long) idTest2.getId());
+            assertEquals("1", idTest.getId());
+            assertEquals("2", idTest2.getId());
             assertNotNull(idTestMapper.getById(idTest.getId()));
         }
     }

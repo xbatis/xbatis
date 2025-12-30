@@ -14,8 +14,10 @@
 
 package com.xbatis.core.test.DO;
 
+import cn.xbatis.core.mybatis.typeHandler.LongStringTypeHandler;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.Table;
+import cn.xbatis.db.annotations.TableField;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
 import lombok.Data;
@@ -36,7 +38,8 @@ public class IdTest {
     @TableId(dbType = DbType.PGSQL, value = IdAutoType.SQL, sql = "select nextval('id_test_id_seq')")
     @TableId(dbType = DbType.ORACLE, value = IdAutoType.SQL, sql = "select id_test_seq.NEXTVAL FROM dual")
     @TableId(dbType = DbType.KING_BASE, value = IdAutoType.SQL, sql = "select id_test_seq.NEXTVAL FROM dual")
-    private Long id;
+    @TableField(typeHandler = LongStringTypeHandler.class)
+    private String id;
 
     private LocalDateTime createTime;
 

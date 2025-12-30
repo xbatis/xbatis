@@ -21,6 +21,7 @@ import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
 import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.impl.cmd.basic.DatasetField;
@@ -49,11 +50,13 @@ public class MpDatasetField extends DatasetField {
     public Object paramWrap(Class userType, Object param) {
         if (Objects.isNull(param) || param instanceof Cmd) {
             return param;
+        } else if (param instanceof CmdConvert) {
+            return ((CmdConvert) param).convert();
         }
-        if (!this.tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
+        if (Objects.isNull(tableFieldInfo.getTypeHandler())) {
             return param;
         }
-        if (Objects.isNull(this.tableFieldInfo.getTypeHandler())) {
+        if (!tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
 //        if (tableFieldInfo.getTypeHandler() instanceof InvalidInConditionTypeHandler && ICondition.class.isAssignableFrom(userType)) {
@@ -66,11 +69,13 @@ public class MpDatasetField extends DatasetField {
     public Object likeParamWrap(LikeMode likeMode, Object param, boolean isNotLike) {
         if (Objects.isNull(param) || param instanceof Cmd) {
             return param;
+        } else if (param instanceof CmdConvert) {
+            return ((CmdConvert) param).convert();
         }
-        if (!this.tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
+        if (Objects.isNull(tableFieldInfo.getTypeHandler())) {
             return param;
         }
-        if (Objects.isNull(this.tableFieldInfo.getTypeHandler())) {
+        if (!tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
         if (!(this.tableFieldInfo.getTypeHandler() instanceof LikeQuerySupport)) {

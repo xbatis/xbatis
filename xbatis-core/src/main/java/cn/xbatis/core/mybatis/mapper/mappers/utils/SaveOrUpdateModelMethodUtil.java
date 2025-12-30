@@ -27,6 +27,7 @@ import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.core.util.TableInfoUtil;
+import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -112,7 +113,8 @@ public class SaveOrUpdateModelMethodUtil {
                 updateStrategy.on(query.$where());
             } else {
                 modelInfo.getIdFieldInfos().stream().forEach(item -> {
-                    ModelInfoUtil.setValue(item, model, TableInfoUtil.getEntityFieldValue(item.getTableFieldInfo(), obj));
+                    Object id = TypeConvertUtil.convert(TableInfoUtil.getEntityFieldValue(item.getTableFieldInfo(), obj), item.getFieldInfo().getTypeClass());
+                    ModelInfoUtil.setValue(item, model, id);
                 });
             }
             updateStrategy.allFieldUpdate(saveOrUpdateStrategy.isAllField());

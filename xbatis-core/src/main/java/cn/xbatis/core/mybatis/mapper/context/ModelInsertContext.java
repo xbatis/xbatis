@@ -86,11 +86,15 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
 
     @Override
     public TypeHandler<?> getIdTypeHandler(Configuration configuration) {
-        if (Objects.nonNull(this.modelInfo.getIdFieldInfo())) {
-            TypeHandler typeHandler = this.modelInfo.getIdFieldInfo().getTableFieldInfo().getTypeHandler();
-            if (Objects.isNull(typeHandler)) {
-                return configuration.getTypeHandlerRegistry().getTypeHandler(this.modelInfo.getIdFieldInfo().getTableFieldInfo().getFieldInfo().getTypeClass());
-            }
+        if (Objects.isNull(this.modelInfo.getIdFieldInfo())) {
+            return null;
+        }
+        if (!this.modelInfo.getIdFieldInfo().getTableFieldInfo().getFieldInfo().getTypeClass().isAssignableFrom(this.modelInfo.getIdFieldInfo().getFieldInfo().getTypeClass())) {
+            return null;
+        }
+        TypeHandler typeHandler = this.modelInfo.getIdFieldInfo().getTableFieldInfo().getTypeHandler();
+        if (Objects.isNull(typeHandler)) {
+            return configuration.getTypeHandlerRegistry().getTypeHandler(this.modelInfo.getIdFieldInfo().getTableFieldInfo().getFieldInfo().getTypeClass());
         }
         return null;
     }

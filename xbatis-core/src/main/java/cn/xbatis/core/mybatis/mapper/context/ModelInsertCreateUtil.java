@@ -151,7 +151,7 @@ public class ModelInsertCreateUtil {
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {
-                    values.add(CmdParamUtil.build(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation(), value));
+                    values.add(CmdParamUtil.build(modelFieldInfo, value));
                 }
             }
         }

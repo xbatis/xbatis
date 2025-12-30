@@ -26,7 +26,6 @@ import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TableInfoUtil;
-import cn.xbatis.db.annotations.TableField;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.struct.Where;
@@ -134,8 +133,7 @@ public class EntityUpdateCreateUtil {
             }
 
             if (Objects.nonNull(value)) {
-                TableField tableField = tableFieldInfo.getTableFieldAnnotation();
-                update.set($.field(table, tableFieldInfo.getColumnName()), CmdParamUtil.build(tableField, value));
+                update.set($.field(table, tableFieldInfo.getColumnName()), CmdParamUtil.build(tableFieldInfo, value));
             }
         }
 
