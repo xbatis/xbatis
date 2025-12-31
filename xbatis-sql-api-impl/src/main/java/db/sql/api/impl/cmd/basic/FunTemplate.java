@@ -22,34 +22,42 @@ import db.sql.api.impl.cmd.dbFun.FunctionInterface;
  */
 public class FunTemplate extends BaseTemplate<FunTemplate> implements FunctionInterface {
 
+    @SafeVarargs
     public FunTemplate(String template, Object... params) {
         super(template, params);
     }
 
+    @SafeVarargs
     public FunTemplate(String template, Cmd... params) {
         super(template, params);
     }
 
+    @SafeVarargs
     public FunTemplate(boolean wrapping, String template, Object... params) {
         super(wrapping, template, params);
     }
 
+    @SafeVarargs
     public FunTemplate(boolean wrapping, String template, Cmd... params) {
         super(wrapping, template, params);
     }
 
+    @SafeVarargs
     public static FunTemplate create(String template, Object... params) {
         return new FunTemplate(template, params);
     }
 
+    @SafeVarargs
     public static FunTemplate create(String template, Cmd... params) {
         return new FunTemplate(template, params);
     }
 
+    @SafeVarargs
     public static FunTemplate create(boolean wrapping, String template, Object... params) {
         return new FunTemplate(wrapping, template, params);
     }
 
+    @SafeVarargs
     public static FunTemplate create(boolean wrapping, String template, Cmd... params) {
         return new FunTemplate(wrapping, template, params);
     }

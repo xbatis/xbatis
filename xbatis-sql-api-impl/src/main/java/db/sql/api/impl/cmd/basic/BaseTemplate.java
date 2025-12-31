@@ -32,11 +32,11 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
 
     protected final boolean wrapping;
 
-    public BaseTemplate(String template, Object... params) {
+    public BaseTemplate(String template, Object[] params) {
         this(false, template, params);
     }
 
-    public BaseTemplate(boolean wrapping, String template, Object... params) {
+    public BaseTemplate(boolean wrapping, String template, Object[] params) {
         this.template = template;
         if (Objects.nonNull(params)) {
             Cmd[] cmds = new Cmd[params.length];
@@ -51,7 +51,7 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
         this.wrapping = wrapping;
     }
 
-    public BaseTemplate(boolean wrapping, String template, Cmd... params) {
+    public BaseTemplate(boolean wrapping, String template, Cmd[] params) {
         this.template = template;
         this.wrapping = wrapping;
         this.params = params;

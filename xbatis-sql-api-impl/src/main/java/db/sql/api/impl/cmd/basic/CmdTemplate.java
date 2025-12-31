@@ -22,34 +22,42 @@ import db.sql.api.Cmd;
  */
 public class CmdTemplate extends BaseTemplate<CmdTemplate> {
 
+    @SafeVarargs
     public CmdTemplate(String template, Object... params) {
         super(template, params);
     }
 
+    @SafeVarargs
     public CmdTemplate(String template, Cmd... params) {
         super(template, params);
     }
 
+    @SafeVarargs
     public CmdTemplate(boolean wrapping, String template, Object... params) {
         super(wrapping, template, params);
     }
 
+    @SafeVarargs
     public CmdTemplate(boolean wrapping, String template, Cmd... params) {
         super(wrapping, template, params);
     }
 
+    @SafeVarargs
     public static CmdTemplate create(String template, Object... params) {
         return new CmdTemplate(template, params);
     }
 
+    @SafeVarargs
     public static CmdTemplate create(String template, Cmd... params) {
         return new CmdTemplate(template, params);
     }
 
+    @SafeVarargs
     public static CmdTemplate create(boolean wrapping, String template, Object... params) {
         return new CmdTemplate(wrapping, template, params);
     }
 
+    @SafeVarargs
     public static CmdTemplate create(boolean wrapping, String template, Cmd... params) {
         return new CmdTemplate(wrapping, template, params);
     }

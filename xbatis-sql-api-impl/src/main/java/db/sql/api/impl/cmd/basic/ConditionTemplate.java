@@ -23,34 +23,42 @@ import db.sql.api.cmd.basic.ICondition;
  */
 public class ConditionTemplate extends BaseTemplate<ConditionTemplate> implements ICondition {
 
+    @SafeVarargs
     public ConditionTemplate(String template, Object... params) {
         super(template, params);
     }
 
+    @SafeVarargs
     public ConditionTemplate(String template, Cmd... params) {
         super(template, params);
     }
 
+    @SafeVarargs
     public ConditionTemplate(boolean wrapping, String template, Object... params) {
         super(wrapping, template, params);
     }
 
+    @SafeVarargs
     public ConditionTemplate(boolean wrapping, String template, Cmd... params) {
         super(wrapping, template, params);
     }
 
+    @SafeVarargs
     public static ConditionTemplate create(String template, Object... params) {
         return new ConditionTemplate(template, params);
     }
 
+    @SafeVarargs
     public static ConditionTemplate create(String template, Cmd... params) {
         return new ConditionTemplate(template, params);
     }
 
+    @SafeVarargs
     public static ConditionTemplate create(boolean wrapping, String template, Object... params) {
         return new ConditionTemplate(wrapping, template, params);
     }
 
+    @SafeVarargs
     public static ConditionTemplate create(boolean wrapping, String template, Cmd... params) {
         return new ConditionTemplate(wrapping, template, params);
     }
