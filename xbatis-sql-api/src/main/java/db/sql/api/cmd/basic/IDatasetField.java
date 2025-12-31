@@ -22,14 +22,14 @@ public interface IDatasetField<T extends IDatasetField<T>> extends IField<T>, Cm
     /**
      * 数据集对象 表或子表
      *
-     * @return
+     * @return IDataset
      */
     IDataset getTable();
 
     /**
      * 字段名字
      *
-     * @return
+     * @return 列名
      */
     String getName();
 
@@ -37,7 +37,7 @@ public interface IDatasetField<T extends IDatasetField<T>> extends IField<T>, Cm
      * 根据dbType处理后的对象
      *
      * @param dbType
-     * @return
+     * @return 列名
      */
     String getName(DbType dbType);
 

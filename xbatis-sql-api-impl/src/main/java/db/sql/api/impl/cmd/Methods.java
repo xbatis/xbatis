@@ -48,7 +48,7 @@ public final class Methods {
     /**
      * 对应SQL中的NULL
      *
-     * @return
+     * @return NULL
      */
     public static NULL NULL() {
         return NULL.NULL;
@@ -58,7 +58,7 @@ public final class Methods {
      * 对应SQL中的true;创建一个始终TRUE条件
      * 方便开发者使用
      *
-     * @return
+     * @return TRUE
      */
     public static TRUE TRUE() {
         return TRUE.TRUE;
@@ -68,7 +68,7 @@ public final class Methods {
      * 对应SQL中的true;创建一个始终TRUE条件
      * 方便开发者使用
      *
-     * @return
+     * @return FALSE
      */
     public static FALSE FALSE() {
         return FALSE.FALSE;
@@ -80,7 +80,7 @@ public final class Methods {
      * @param column   列
      * @param point    另外一个对象
      * @param distance 距离
-     * @return
+     * @return ST_DWithin
      */
     public static ST_DWithin ST_DWithin(Cmd column, Cmd point, double distance) {
         return ST_DWithin(column, point, distance, null);
@@ -91,7 +91,7 @@ public final class Methods {
      *
      * @param template 模板
      * @param params   参数
-     * @return
+     * @return CmdTemplate
      */
     @SafeVarargs
     public static CmdTemplate tpl(String template, Object... params) {
@@ -104,7 +104,7 @@ public final class Methods {
      * @param wrapping 会对单引号进行包裹，因为使用的是MessageFormat,单引号是特殊字符；开启后无需关注单引号问题
      * @param template 模板
      * @param params   参数
-     * @return
+     * @return CmdTemplate
      */
     @SafeVarargs
     public static CmdTemplate tpl(boolean wrapping, String template, Object... params) {
@@ -116,7 +116,7 @@ public final class Methods {
      *
      * @param template 模板
      * @param params   参数
-     * @return
+     * @return FunTemplate
      */
     @SafeVarargs
     public static FunTemplate fTpl(String template, Object... params) {
@@ -129,7 +129,7 @@ public final class Methods {
      * @param wrapping 会对单引号进行包裹，因为使用的是MessageFormat,单引号是特殊字符；开启后无需关注单引号问题
      * @param template 模板
      * @param params   参数
-     * @return
+     * @return FunTemplate
      */
     @SafeVarargs
     public static FunTemplate fTpl(boolean wrapping, String template, Object... params) {
@@ -141,7 +141,7 @@ public final class Methods {
      *
      * @param template 模板
      * @param params   参数
-     * @return
+     * @return ConditionTemplate
      */
     @SafeVarargs
     public static ConditionTemplate cTpl(String template, Object... params) {
@@ -154,7 +154,7 @@ public final class Methods {
      * @param wrapping 会对单引号进行包裹，因为使用的是MessageFormat,单引号是特殊字符；开启后无需关注单引号问题
      * @param template 模板
      * @param params   参数
-     * @return
+     * @return ConditionTemplate
      */
     @SafeVarargs
     public static ConditionTemplate cTpl(boolean wrapping, String template, Object... params) {
@@ -192,7 +192,7 @@ public final class Methods {
      * @param param     参数
      * @param mode      like方式
      * @param isNotLike 是否为NOT LIKE
-     * @return param包装后的值
+     * @return param 包装后的值
      */
     public static Object likeParamWrap(Cmd column, Object param, LikeMode mode, boolean isNotLike) {
         if (java.util.Objects.isNull(param)) {
@@ -488,7 +488,7 @@ public final class Methods {
      * round四舍五入 取整数位 函数
      *
      * @param column 列
-     * @return
+     * @return Round
      */
     public static Round round(Cmd column) {
         return round(column, 0);
@@ -499,7 +499,7 @@ public final class Methods {
      *
      * @param column    列
      * @param precision 精度
-     * @return
+     * @return Round
      */
     public static Round round(Cmd column, int precision) {
         Objects.requireNonNull(column);
@@ -510,7 +510,7 @@ public final class Methods {
      * ceil返回大于或等于 x 的最小整数（向上取整） 函数
      *
      * @param column 列
-     * @return
+     * @return Ceil
      */
     public static Ceil ceil(Cmd column) {
         Objects.requireNonNull(column);
@@ -521,7 +521,7 @@ public final class Methods {
      * floor返回小于或等于 x 的最大整数（向下取整） 函数
      *
      * @param column 列
-     * @return
+     * @return Floor
      */
     public static Floor floor(Cmd column) {
         Objects.requireNonNull(column);
@@ -1967,7 +1967,7 @@ public final class Methods {
      * @param point       另外一个对象
      * @param distance    距离
      * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
-     * @return
+     * @return ST_DWithin
      */
     public static ST_DWithin ST_DWithin(Cmd column, Cmd point, double distance, Boolean useSpheroid) {
         return new ST_DWithin(column, point, distance, useSpheroid);
@@ -1979,7 +1979,7 @@ public final class Methods {
      * @param column   列
      * @param point    另外一个坐标
      * @param distance 距离
-     * @return
+     * @return ST_DWithin
      */
     public static ST_DWithin ST_DWithin(Cmd column, ST_Point point, double distance) {
         return ST_DWithin(column, point, distance, null);
@@ -1992,7 +1992,7 @@ public final class Methods {
      * @param point       另外一个坐标
      * @param distance    距离
      * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
-     * @return
+     * @return ST_DWithin
      */
     public static ST_DWithin ST_DWithin(Cmd column, ST_Point point, double distance, Boolean useSpheroid) {
         return ST_DWithin(column, (Cmd) point, distance, useSpheroid);
@@ -2003,7 +2003,7 @@ public final class Methods {
      *
      * @param column 列
      * @param point  另外一个参考对象
-     * @return
+     * @return ST_Distance
      */
     public static ST_Distance ST_Distance(Cmd column, Cmd point) {
         return ST_Distance(column, point, null);
@@ -2015,7 +2015,7 @@ public final class Methods {
      * @param column      列
      * @param point       另外一个参考对象
      * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
-     * @return
+     * @return ST_Distance
      */
     public static ST_Distance ST_Distance(Cmd column, Cmd point, Boolean useSpheroid) {
         return new ST_Distance(column, point, useSpheroid);
@@ -2026,7 +2026,7 @@ public final class Methods {
      *
      * @param column 列
      * @param point  另外一个坐标
-     * @return
+     * @return ST_Distance
      */
     public static ST_Distance ST_Distance(Cmd column, ST_Point point) {
         return ST_Distance(column, point, null);
@@ -2038,7 +2038,7 @@ public final class Methods {
      * @param column      列
      * @param point       另外一个坐标
      * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
-     * @return
+     * @return ST_Distance
      */
     public static ST_Distance ST_Distance(Cmd column, ST_Point point, Boolean useSpheroid) {
         return ST_Distance(column, (Cmd) point, useSpheroid);
@@ -2049,7 +2049,7 @@ public final class Methods {
      *
      * @param column 列
      * @param geo    另外一个geo对象
-     * @return
+     * @return ST_Contains
      */
     public static ST_Contains ST_Contains(Cmd column, Cmd geo) {
         return new ST_Contains(column, geo);
@@ -2060,7 +2060,7 @@ public final class Methods {
      *
      * @param column 列
      * @param point  另外一个坐标
-     * @return
+     * @return ST_Contains
      */
     public static ST_Contains ST_Contains(Cmd column, ST_Point point) {
         return ST_Contains(column, (Cmd) point);

@@ -32,35 +32,35 @@ public @interface ResultCalcField {
     /**
      * 列名
      *
-     * @return
+     * @return 列名
      */
     String value();
 
     /**
      * 对应的实体类,默认使用@ResultEntity上的实体
      *
-     * @return
+     * @return 对应的实体类
      */
     Class target() default Void.class;
 
     /**
      * 存储层级，用于自动select场景
      *
-     * @return
+     * @return 存储层级
      */
     int storey() default 1;
 
     /**
      * 配置 列的 jdbcType
      *
-     * @return
+     * @return JdbcType
      */
     JdbcType jdbcType() default JdbcType.UNDEFINED;
 
     /**
      * 类型处理 针对特殊 类型的列使用
      *
-     * @return
+     * @return TypeHandler
      */
     Class<? extends TypeHandler<?>> typeHandler() default UnknownTypeHandler.class;
 }

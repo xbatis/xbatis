@@ -41,7 +41,7 @@ public final class FieldUtil {
      * 是否为ignore字段；只针对非静态 非final字段
      *
      * @param field
-     * @return
+     * @return 是否是忽略字段
      */
     private static boolean isIgnoreField(Field field) {
         if (Modifier.isStatic(field.getModifiers())) {

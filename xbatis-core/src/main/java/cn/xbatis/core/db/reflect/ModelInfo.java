@@ -166,7 +166,7 @@ public class ModelInfo {
      * 根据字段名获取字段信息
      *
      * @param property
-     * @return
+     * @return ModelFieldInfo
      */
     public final ModelFieldInfo getFieldInfo(String property) {
         return modelFieldInfoMap.get(property);

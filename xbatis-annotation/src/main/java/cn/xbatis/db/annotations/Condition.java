@@ -46,7 +46,7 @@ public @interface Condition {
     /**
      * 存储层级
      *
-     * @return
+     * @return 存储层级
      */
     int storey() default 1;
 
@@ -62,7 +62,7 @@ public @interface Condition {
      * 只支持 lte 和 between的第2个参数
      * 支持类型为LocalDate/Date/String/Long/LocalDateTime
      *
-     * @return
+     * @return 是否转换
      */
     boolean toEndDayTime() default false;
 
@@ -73,14 +73,14 @@ public @interface Condition {
      * "{NOW}" 支持单个时间
      * "{TODAY}" 时间范围（数组类型或者集合类型字段）
      *
-     * @return
+     * @return 默认值
      */
     String defaultValue() default "";
 
     /**
      * 转换成实体类字段的类型
      *
-     * @return
+     * @return 是否转换成实体类字段的类型
      */
     boolean cast() default false;
 

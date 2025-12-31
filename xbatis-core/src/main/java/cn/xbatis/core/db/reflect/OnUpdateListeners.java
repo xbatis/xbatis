@@ -26,7 +26,7 @@ public class OnUpdateListeners {
      * 获取实体类、Model类的的OnUpdate监听器
      *
      * @param clazz
-     * @return
+     * @return OnUpdateListener<T>
      */
 
     public static <T> OnUpdateListener<T> get(Class<T> clazz) {

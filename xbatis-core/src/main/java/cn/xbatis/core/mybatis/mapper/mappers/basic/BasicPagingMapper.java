@@ -54,7 +54,7 @@ public interface BasicPagingMapper extends BasicBaseMapper {
      * @param consumer     where consumer
      * @param pager        pager
      * @param selectFields select指定列
-     * @return
+     * @return 分页结果
      */
     default <T, P extends IPager<T>> P paging(Class<T> entityType, P pager, Consumer<Where> consumer, Getter<T>... selectFields) {
         return PagingMethodUtil.paging(getBasicMapper(), Tables.get(entityType), pager, consumer, selectFields);
@@ -76,12 +76,12 @@ public interface BasicPagingMapper extends BasicBaseMapper {
      * 分页查询
      *
      * @param entityType   实体类
-     * @param pager
-     * @param where
-     * @param selectFields
-     * @param <T>
-     * @param <P>
-     * @return
+     * @param pager 分页参数
+     * @param where where
+     * @param selectFields select的字段
+     * @param <T> 结果List的 泛型
+     * @param <P> 分页的结果的IPager 泛型
+     * @return 分页结果
      */
     default <T, P extends IPager<T>> P paging(Class<T> entityType, P pager, Where where, Getter<T>... selectFields) {
         return PagingMethodUtil.paging(getBasicMapper(), Tables.get(entityType), pager, where, selectFields);

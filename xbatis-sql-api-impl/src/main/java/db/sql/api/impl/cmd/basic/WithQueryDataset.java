@@ -44,7 +44,7 @@ public class WithQueryDataset extends AbstractDataset<WithQueryDataset, DatasetF
      *
      * @param getter
      * @param <E>
-     * @return
+     * @return DatasetField
      */
     public <E> DatasetField $outerField(Getter<E> getter) {
         return this.$outerField(getter, false);
@@ -56,7 +56,7 @@ public class WithQueryDataset extends AbstractDataset<WithQueryDataset, DatasetF
      * @param getter
      * @param depth  是否深度引用，非深度引用只是 别名.getter的对应的列名；如果是深度的匹配（只能针对那些没有包装过的字段）
      * @param <E>
-     * @return
+     * @return DatasetField
      */
     public <E> DatasetField $outerField(Getter<E> getter, boolean depth) {
         if (!depth) {

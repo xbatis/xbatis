@@ -31,7 +31,7 @@ public final class Models {
      * 获取Model的信息
      *
      * @param model
-     * @return
+     * @return ModelInfo
      */
     public static ModelInfo get(Class model) {
         if (!Model.class.isAssignableFrom(model)) {

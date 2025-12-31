@@ -51,7 +51,7 @@ public class OptimizeOptions {
     /**
      * 关闭所有优化项
      *
-     * @return
+     * @return OptimizeOptions
      */
     public OptimizeOptions disableAll() {
         this.optimizeJoin = false;
@@ -62,7 +62,7 @@ public class OptimizeOptions {
     /**
      * 是否所有优化项关闭
      *
-     * @return
+     * @return 是否全部禁用
      */
     public boolean isAllDisable() {
         return !optimizeOrderBy && !optimizeJoin;

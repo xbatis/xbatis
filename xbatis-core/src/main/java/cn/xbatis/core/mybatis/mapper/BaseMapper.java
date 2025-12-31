@@ -142,7 +142,7 @@ public interface BaseMapper {
      * @param query  查询对象
      * @param <K>    map的key
      * @param <V>    map的value
-     * @return
+     * @return map 结果
      */
     <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, V> query);
 }

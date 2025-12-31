@@ -57,7 +57,6 @@ public final class LogicDeleteUtil {
      *
      * @param state    开关状态
      * @param runnable 运行函数
-     * @return 函数执行后的返回值
      */
     public static void execute(boolean state, Runnable runnable) {
         try (LogicDeleteSwitch ignore = LogicDeleteSwitch.with(state)) {
@@ -81,7 +80,7 @@ public final class LogicDeleteUtil {
      *
      * @param logicDeleteFieldInfo 逻辑上删除字段
      * @param defaultValueContext  动态默认值上下文
-     * @return
+     * @return 获取删除后的值
      */
     public static Object getLogicAfterValue(TableFieldInfo logicDeleteFieldInfo, Map<String, Object> defaultValueContext) {
         Object value;
@@ -98,7 +97,7 @@ public final class LogicDeleteUtil {
      * 获取逻辑删除时间
      *
      * @param tableInfo
-     * @return
+     * @return 获取逻辑删除时间
      */
     public static Object getLogicDeleteTimeValue(TableInfo tableInfo) {
         TableFieldInfo deleteTimeField = tableInfo.getLogicDeleteTimeFieldInfo();
@@ -142,7 +141,7 @@ public final class LogicDeleteUtil {
      * @param tableInfo
      * @param where
      * @param defaultValueContext
-     * @return
+     * @return 影响的条数
      */
     public static int logicDelete(BasicMapper mapper, TableInfo tableInfo, Where where, Map<String, Object> defaultValueContext) {
         Update update = new Update(where);

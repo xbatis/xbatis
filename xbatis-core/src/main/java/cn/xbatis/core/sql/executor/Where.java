@@ -68,7 +68,7 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的where部分的 参数
      */
     public List<Object> getWhereScriptParams() {
         return whereScript.getScriptParams();
@@ -77,7 +77,7 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的where部分的 sql
      */
     public String getWhereScript() {
         if (whereScript != null) {

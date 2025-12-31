@@ -10,7 +10,7 @@ public @interface ConditionGroups {
     /**
      * 多个分组
      *
-     * @return
+     * @return 多个分组
      */
     ConditionGroup[] value();
 }

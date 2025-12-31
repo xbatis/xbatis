@@ -79,7 +79,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return 用于xml sql的参数
      */
     public List<Object> getQueryScriptParams() {
         return getXmlScriptMap().get(XmlScriptType.QUERY).getScriptParams();
@@ -88,7 +88,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return 用于xml 的sql
      */
     public String getQueryScript() {
         return getXmlScriptMap().computeIfAbsent(XmlScriptType.QUERY, key -> {
@@ -99,7 +99,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return 用于xml 的select部分的 参数
      */
     public List<Object> getSelectScriptParams() {
         return getXmlScriptMap().get(XmlScriptType.SELECT).getScriptParams();
@@ -108,7 +108,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return 用于xml 的select部分的 sql
      */
     public String getSelectScript() {
         return getXmlScriptMap().computeIfAbsent(XmlScriptType.SELECT, key -> {
@@ -119,7 +119,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的select部分的 参数
      */
     public List<Object> getFromScriptParams() {
         return getXmlScriptMap().get(XmlScriptType.FROM).getScriptParams();
@@ -128,7 +128,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的from部分的 sql
      */
     public String getFromScript() {
         return getXmlScriptMap().computeIfAbsent(XmlScriptType.FROM, key -> {
@@ -139,7 +139,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的where部分的 参数
      */
     public List<Object> getWhereScriptParams() {
         return getXmlScriptMap().get(XmlScriptType.WHERE).getScriptParams();
@@ -148,7 +148,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的where部分的 sql
      */
     public String getWhereScript() {
         return getXmlScriptMap().computeIfAbsent(XmlScriptType.WHERE, key -> {
@@ -160,7 +160,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的order by部分的 参数
      */
     public List<Object> getOrderByScriptParams() {
         return getXmlScriptMap().get(XmlScriptType.ORDER_BY).getScriptParams();
@@ -169,7 +169,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的order by部分的 sql
      */
     public String getOrderByScript() {
         return getXmlScriptMap().computeIfAbsent(XmlScriptType.ORDER_BY, key -> {
@@ -180,7 +180,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的group by部分的 参数
      */
     public List<Object> getGroupByScriptParams() {
         return getXmlScriptMap().get(XmlScriptType.GROUP_BY).getScriptParams();
@@ -189,7 +189,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的group by部分的 sql
      */
     public String getGroupByScript() {
         return getXmlScriptMap().computeIfAbsent(XmlScriptType.GROUP_BY, key -> {
@@ -200,7 +200,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的having部分的 参数
      */
     public List<Object> getHavingScriptParams() {
         return getXmlScriptMap().get(XmlScriptType.HAVING).getScriptParams();
@@ -209,7 +209,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     /**
      * 只给 xml 生成动态sql 用
      *
-     * @return
+     * @return  用于xml 的having部分的 sql
      */
     public String getHavingScript() {
         return getXmlScriptMap().computeIfAbsent(XmlScriptType.HAVING, key -> {

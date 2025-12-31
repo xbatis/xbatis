@@ -23,7 +23,7 @@ public interface DbTypeParser {
      * 通过jdbcUrl获取DbType
      *
      * @param jdbcUrl 连接池的jdbcUrl
-     * @return
+     * @return DbType
      */
     DbType getDbTypeByUrl(String jdbcUrl);
 

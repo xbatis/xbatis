@@ -37,7 +37,7 @@ public final class Tables {
      * 获取表的信息
      *
      * @param entity
-     * @return
+     * @return TableInfo
      */
 
     public static TableInfo get(Class entity) {

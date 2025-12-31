@@ -50,7 +50,7 @@ public interface PagingMapper<T> extends BaseMapper<T> {
      * @param consumer     where consumer
      * @param pager        pager
      * @param selectFields select指定列
-     * @return
+     * @return 分页结果
      */
     default <P extends IPager<T>> P paging(P pager, Consumer<Where> consumer, Getter<T>... selectFields) {
         return PagingMethodUtil.paging(getBasicMapper(), getTableInfo(), pager, consumer, selectFields);

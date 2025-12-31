@@ -67,7 +67,6 @@ public enum DbType {
      * 给所有数据库都加上数据库关键词
      *
      * @param keywords
-     * @return
      */
     @SafeVarargs
     public static final void addKeywords(String... keywords) {
@@ -88,7 +87,7 @@ public enum DbType {
      * 官方提供的添加关键字的方法
      *
      * @param keywords
-     * @return
+     * @return 添加是否成功
      */
     @SafeVarargs
     public final boolean addKeyword(String... keywords) {

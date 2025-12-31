@@ -100,7 +100,7 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WI
      * 让WithQuery 成为一个表（同一个withQuery复用时使用）
      *
      * @param alisa
-     * @return
+     * @return WITH QUERY 的DATASET Cmd
      */
     WITH_QUERY_DATASET asTable(String alisa);
 

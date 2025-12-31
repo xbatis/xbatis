@@ -27,7 +27,7 @@ public @interface Fetch {
      * Fetch列
      * column 和  property 二选一，column优先
      *
-     * @return
+     * @return 列名
      */
     String column() default "";
 
@@ -35,14 +35,14 @@ public @interface Fetch {
      * Fetch 源实体类的属性
      * property + source + storey 组合 用于获取列
      *
-     * @return
+     * @return 属性
      */
     String property() default "";
 
     /**
      * Fetch 源实体类的属性对应的数据类型 默认是简单的单个值
      *
-     * @return
+     * @return 字段的类型
      */
     FetchPropertyType propertyType() default FetchPropertyType.SIMPLE;
 
@@ -50,7 +50,7 @@ public @interface Fetch {
      * Fetch property 对应的实体类
      * 默认时：从当前作用域自动获取
      *
-     * @return
+     * @return 源
      */
     Class source() default Void.class;
 
@@ -58,42 +58,42 @@ public @interface Fetch {
      * 存储层级
      * 默认为-1；当为默认值-1时，如果有在内嵌类里，则使用内嵌类的层级，否则认为1
      *
-     * @return
+     * @return 存储层级
      */
     int storey() default -1;
 
     /**
      * 中间实体类（中间表）
      *
-     * @return
+     * @return 中间实体类
      */
     Class middle() default Void.class;
 
     /**
      * 中间实体类源属性（中间表与源表的列）
      *
-     * @return
+     * @return 中间实体类源属性
      */
     String middleSourceProperty() default "";
 
     /**
      * 中间实体类目标属性（中间表与目标表的列）
      *
-     * @return
+     * @return 中间实体类目标属性
      */
     String middleTargetProperty() default "";
 
     /**
      * 目标，相当于表
      *
-     * @return
+     * @return 目标类
      */
     Class target();
 
     /**
      * 目标属性，相当于关联列 用于条件
      *
-     * @return
+     * @return 目标属性
      */
     String targetProperty();
 
@@ -102,7 +102,7 @@ public @interface Fetch {
      * 用于返回单列的情况
      * 可以动态select 例如:[count({id})] or [{id}+{name} as aa]等
      *
-     * @return
+     * @return 目标select属性
      */
     String targetSelectProperty() default "";
 
@@ -110,14 +110,14 @@ public @interface Fetch {
      * 用于结果排序 例如 "xx desc,xx2 desc"; 其中 xx xx2 均为 实体类属性，不是列，多个逗号分割
      * 可以动态 例如:[{id} desc,{createTime} asc]等
      *
-     * @return
+     * @return orderBy 字符串
      */
     String orderBy() default "";
 
     /**
      * 1 对 1 多条时，发现多条不报错
      *
-     * @return
+     * @return 是否忽略多条错误
      */
     boolean multiValueErrorIgnore() default false;
 
@@ -125,14 +125,14 @@ public @interface Fetch {
      * 限制条数
      * 如果 memoryLimit true 则sql条件还是in，否则单个1个个limit 分页
      *
-     * @return
+     * @return 限制条数
      */
     int limit() default 0;
 
     /**
      * 通过内存的形式进行limit；默认是SQL；内存limit的好处就是使用in查询后，代码limit，减少了查询次数
      *
-     * @return
+     * @return 是否内存分页
      */
     boolean memoryLimit() default false;
 
@@ -140,7 +140,7 @@ public @interface Fetch {
      * 排序类，需要继承 java.util.Comparator类
      * 只有当 memoryLimit = true, 同时 orderBy 没有配置情况 才有效果
      *
-     * @return
+     * @return 排序类
      */
     Class<?> comparator() default Void.class;
 
@@ -152,7 +152,7 @@ public @interface Fetch {
     /**
      * 其他条件
      *
-     * @return
+     * @return 其他条件
      */
     String otherConditions() default "";
 
@@ -162,7 +162,7 @@ public @interface Fetch {
      * cacheKey 由 targetProperty + 动态条件-fetchFilter 组成
      * 注意 otherConditions 不参与cacheKey构建
      *
-     * @return
+     * @return 缓存名称
      */
     String cacheName() default "";
 }

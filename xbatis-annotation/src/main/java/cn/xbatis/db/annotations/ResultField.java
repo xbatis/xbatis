@@ -32,21 +32,21 @@ public @interface ResultField {
     /**
      * 列名
      *
-     * @return
+     * @return 列名
      */
     String[] value() default "";
 
     /**
      * 配置 列的 jdbcType
      *
-     * @return
+     * @return 配置 列的 jdbcType
      */
     JdbcType jdbcType() default JdbcType.UNDEFINED;
 
     /**
      * 类型处理 针对特殊 类型的列使用
      *
-     * @return
+     * @return TypeHandler
      */
     Class<? extends TypeHandler<?>> typeHandler() default UnknownTypeHandler.class;
 }

@@ -31,14 +31,14 @@ public @interface TableId {
     /**
      * 自增类型
      *
-     * @return
+     * @return 类型
      */
     IdAutoType value() default IdAutoType.AUTO;
 
     /**
      * 数据库类型
      *
-     * @return
+     * @return DbType
      */
     DbType dbType() default DbType.UNKNOWN;
 
@@ -47,14 +47,14 @@ public @interface TableId {
      * 自定义生成器 需要 实现 cn.xbatis.core.incrementer.Generator
      * 然后 注册到ID生成器工厂 cn.xbatis.core.incrementer.GeneratorFactory.register(name,ID自增器实例)
      *
-     * @return
+     * @return 自增器的名称
      */
     String generator() default "";
 
     /**
      * 后续使用 generator 替代
      *
-     * @return
+     * @return 自增器的名称
      */
     @Deprecated
     String generatorName() default "";
@@ -62,7 +62,7 @@ public @interface TableId {
     /**
      * id 自增的sql语句
      * IdAutoType.SQL 时，必须填
-     * @return
+     * @return 自增的sql
      */
     String sql() default "";
 

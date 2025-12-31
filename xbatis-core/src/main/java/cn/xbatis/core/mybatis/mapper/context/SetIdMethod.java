@@ -42,8 +42,8 @@ public interface SetIdMethod {
 
     /**
      * 获取插入的实例
-     *
-     * @return
+     * @param index 参数的索引
+     * @return 插入的对象
      */
     Object getInsertData(int index);
 
@@ -57,7 +57,7 @@ public interface SetIdMethod {
     /**
      * 获取ID的列名
      *
-     * @return
+     * @return ID的列名
      */
     String getIdColumnName();
 }

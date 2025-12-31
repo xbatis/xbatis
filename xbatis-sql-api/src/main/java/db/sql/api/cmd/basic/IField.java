@@ -23,7 +23,7 @@ public interface IField<T extends IField<T>> extends Alias<T> {
      *
      * @param aliasGetter
      * @param <T2>
-     * @return
+     * @return 自己
      */
     <T2> T as(Getter<T2> aliasGetter);
 }

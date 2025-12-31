@@ -50,7 +50,7 @@ public class SqlInjectionUtils {
      * 刪除字段转义符单引号双引号
      *
      * @param text 待处理字段
-     * @return
+     * @return 移除字段转义符后的字符串
      */
     public static String removeEscapeCharacter(String text) {
         return text.replaceAll("\"", "").replaceAll("'", "");

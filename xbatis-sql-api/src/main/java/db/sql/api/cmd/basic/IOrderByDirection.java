@@ -27,7 +27,7 @@ public interface IOrderByDirection {
      * 判断是否支持
      *
      * @param dbType
-     * @return
+     * @return 是否支持 NULL排序
      */
     static boolean isSupportNullsOrder(DbType dbType) {
         return dbType != DbType.MYSQL && dbType != DbType.MARIA_DB && dbType != DbType.SQL_SERVER;

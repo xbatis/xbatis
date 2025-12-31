@@ -35,7 +35,6 @@ public final class ForeignKeyUtil {
      * @param mainTable      主表
      * @param secondTable    副表
      * @param conditionChain 条件类
-     * @return
      */
     public static void addForeignKeyCondition(MpTable mainTable, MpTable secondTable, ConditionChain conditionChain) {
         TableInfo mainTableInfo = mainTable.getTableInfo();

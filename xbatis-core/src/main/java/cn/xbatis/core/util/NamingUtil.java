@@ -33,7 +33,7 @@ public final class NamingUtil {
      * 字符串驼峰转下划线格式
      *
      * @param name
-     * @return
+     * @return 下划线格式的名称
      */
     public static String camelToUnderline(String name) {
         if (isBlank(name)) {
@@ -55,7 +55,7 @@ public final class NamingUtil {
      * 字符串下划线转驼峰格式
      *
      * @param name
-     * @return
+     * @return 驼峰格式的名称
      */
     public static String underlineToCamel(String name) {
         if (isBlank(name)) {
@@ -86,7 +86,7 @@ public final class NamingUtil {
     /**
      * 首字母小写
      *
-     * @return
+     * @return 首字母小写后的名称
      */
     public static String firstToLower(String name) {
         if (isBlank(name)) {
@@ -104,9 +104,9 @@ public final class NamingUtil {
     }
 
     /**
-     * 首字母小写
+     * 首字母大写
      *
-     * @return
+     * @return 首字母大写后的名称
      */
     public static String firstToUpperCase(String name) {
         if (isBlank(name)) {
@@ -128,7 +128,7 @@ public final class NamingUtil {
      *
      * @param original 源字符串
      * @param prefixes 前缀列表
-     * @return
+     * @return 移除前缀后的结果
      */
     public static String removePrefix(String original, List<String> prefixes) {
         if (prefixes == null || prefixes.isEmpty()) {
@@ -148,7 +148,7 @@ public final class NamingUtil {
      *
      * @param original 源字符串
      * @param prefix   前缀列表
-     * @return
+     * @return 移除前缀后的结果
      */
     public static String removePrefix(String original, String prefix) {
         if (prefix == null || prefix.isEmpty()) {

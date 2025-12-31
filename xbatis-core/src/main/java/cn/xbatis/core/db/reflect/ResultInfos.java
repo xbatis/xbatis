@@ -28,7 +28,7 @@ public class ResultInfos {
      * 获取结果映射类的的信息
      *
      * @param clazz
-     * @return
+     * @return ResultInfo
      */
 
     public static ResultInfo get(Class clazz) {

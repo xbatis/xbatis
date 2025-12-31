@@ -46,7 +46,7 @@ public interface IExecutor<T extends IExecutor,
      * 内联，用于获取自身
      *
      * @param consumer
-     * @return
+     * @return 自己
      */
     default T connect(Consumer<T> consumer) {
         return this.connect(true, consumer);
@@ -56,7 +56,7 @@ public interface IExecutor<T extends IExecutor,
      * 内联，用于获取自身
      *
      * @param consumer
-     * @return
+     * @return 自己
      */
     default T connect(boolean when, Consumer<T> consumer) {
         if (!when) {

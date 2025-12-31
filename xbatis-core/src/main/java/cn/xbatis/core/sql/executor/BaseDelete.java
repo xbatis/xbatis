@@ -50,7 +50,7 @@ public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete
      *
      * @param parent
      * @param tag
-     * @return
+     * @return 自己
      */
     public T log(Class parent, String tag) {
         this.logger = parent.getName() + "." + tag;
@@ -61,7 +61,7 @@ public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete
      * 设置Log
      *
      * @param logger
-     * @return
+     * @return 自己
      */
     public T log(String logger) {
         this.logger = logger;
@@ -72,7 +72,7 @@ public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete
      * 开启或关闭log
      *
      * @param enable
-     * @return
+     * @return 自己
      */
     public T log(boolean enable) {
         this.enableLog = enable;

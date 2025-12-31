@@ -30,14 +30,14 @@ public @interface ResultEntity {
     /**
      * 对应的实体类
      * 如果不想指定，而是作为一个普通的 映射类可以指定为 Void.class
-     * @return
+     * @return 对应的实体类
      */
     Class value();
 
     /**
      * 存储层级，用于自动select场景
      *
-     * @return
+     * @return 存储层级
      */
     int storey() default 1;
 }

@@ -23,14 +23,14 @@ public interface Invocation {
     /**
      * 获取拦截的方法
      *
-     * @return
+     * @return 当前方法
      */
     Method getMethod();
 
     /**
      * 获取方法的参数
      *
-     * @return
+     * @return 当前的参数
      */
     Object[] getArguments();
 }

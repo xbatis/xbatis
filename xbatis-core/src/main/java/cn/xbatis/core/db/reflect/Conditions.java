@@ -32,7 +32,7 @@ public class Conditions {
      * 获取类的条件的信息
      *
      * @param clazz
-     * @return
+     * @return ConditionInfo
      */
     public static ConditionInfo get(Class clazz) {
         if (CACHE.containsKey(clazz)) {

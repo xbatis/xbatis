@@ -31,7 +31,7 @@ public class OrderBys {
      * 获取类的条件的信息
      *
      * @param clazz
-     * @return
+     * @return OrderByInfo
      */
     public static OrderByInfo get(Class clazz) {
         if (CACHE.containsKey(clazz)) {

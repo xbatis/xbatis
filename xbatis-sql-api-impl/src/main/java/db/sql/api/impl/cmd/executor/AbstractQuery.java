@@ -320,7 +320,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @param dataset    子查询
      * @param columnName 列
      * @param f          转换函数
-     * @return
+     * @return 自己
      */
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, Cmd> f) {
@@ -503,7 +503,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @param dataset 子查询
      * @param column  列
      * @param <T>     列的实体类
-     * @return
+     * @return 自己
      */
     @Override
     public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
@@ -516,7 +516,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @param dataset    子查询
      * @param columnName 列
      * @param f          转换函数
-     * @return
+     * @return 自己
      */
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, Cmd> f) {
@@ -754,7 +754,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @param column  列
      * @param f       转换函数
      * @param <T>     列的实体类
-     * @return
+     * @return 自己
      */
     @Override
     public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
@@ -770,7 +770,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @param dataset    子查询
      * @param columnName 列
      * @param f          转换函数
-     * @return
+     * @return 自己
      */
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, String columnName, Function<DATASET_FIELD, Cmd> f) {

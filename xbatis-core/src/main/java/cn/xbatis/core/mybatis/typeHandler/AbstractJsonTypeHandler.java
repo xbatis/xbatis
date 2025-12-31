@@ -89,7 +89,7 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
      * 入库 对象转json
      *
      * @param obj
-     * @return
+     * @return JSON 序列化后的字符串
      */
     protected abstract String toJson(Object obj);
 
@@ -97,7 +97,7 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
      * 出库 json 转对象
      *
      * @param json
-     * @return 对象
+     * @return JSON 反序列化后的对象
      */
     protected abstract Object parseJson(String json);
 }

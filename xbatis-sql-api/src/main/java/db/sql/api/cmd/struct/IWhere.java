@@ -22,7 +22,7 @@ public interface IWhere<SELF extends IWhere, TABLE_FIELD, COLUMN, V, CONDITION_C
     /**
      * 为搜索（注意查询和搜索是不一样的）
      *
-     * @return
+     * @return 自己
      */
     default SELF forSearch() {
         return this.forSearch(true);
@@ -32,7 +32,7 @@ public interface IWhere<SELF extends IWhere, TABLE_FIELD, COLUMN, V, CONDITION_C
      * 为搜索（注意查询和搜索是不一样的）
      *
      * @param bool 开关
-     * @return
+     * @return 自己
      */
     default SELF forSearch(boolean bool) {
         this.ignoreNullValueInCondition(bool);

@@ -62,7 +62,7 @@ public interface BasicUpdateMapper extends BasicBaseMapper {
     /**
      * 实体类修改
      *
-     * @param entity
+     * @param entity 实体类
      * @param forceFields 强制更新指定，解决需要修改为null的需求
      * @return 影响条数
      */
@@ -149,9 +149,9 @@ public interface BasicUpdateMapper extends BasicBaseMapper {
      * 根据id批量修改操作
      * 原生批量操作 采用 update case when  then else end 操作
      *
-     * @param list
-     * @param <T>
-     * @return
+     * @param list 实体类的集合
+     * @param <T> 实体类的类型
+     * @return  影响条数
      */
     default <T> int updateBatch(Collection<T> list) {
         return updateBatch(list, (Getter<T>[]) null);
@@ -161,10 +161,10 @@ public interface BasicUpdateMapper extends BasicBaseMapper {
      * 根据id批量修改操作
      * 原生批量操作 采用 update case when  then else end 操作
      *
-     * @param list
+     * @param list 实体类的集合
      * @param batchFields 必须指定字段
-     * @param <T>
-     * @return
+     * @param <T> 实体类的类型
+     * @return 影响条数
      */
     default <T> int updateBatch(Collection<T> list, Getter<T>... batchFields) {
         return UpdateMethodUtil.updateBatch(getBasicMapper(), list, batchFields);

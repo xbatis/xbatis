@@ -25,56 +25,56 @@ public @interface PutEnumValue {
      * 对应的实体类
      * 默认时：从当前作用域自动获取
      *
-     * @return
+     * @return 对应的实体类
      */
     Class source() default Void.class;
 
     /**
-     * 对应entity的属性
+     * 对应entity 的属性
      *
-     * @return
+     * @return 对应entity 的属性
      */
     String property();
 
     /**
      * 存储层级，用于自动select场景
      *
-     * @return
+     * @return 存储层级
      */
     int storey() default 1;
 
     /**
      * 枚举类
      *
-     * @return
+     * @return 枚举类
      */
     Class target();
 
     /**
-     * 枚举code字段名字
+     * 枚举code 字段名字
      *
-     * @return
+     * @return 枚举code 字段名字
      */
     String code() default "code";
 
     /**
      * 枚举值的字段名字
      *
-     * @return
+     * @return 枚举值的字段名字
      */
     String value() default "name";
 
     /**
      * 是否必须有值
      *
-     * @return
+     * @return 是否必须有值
      */
     boolean required() default false;
 
     /**
      * 未匹配时的默认值
      *
-     * @return
+     * @return 未匹配时的默认值
      */
     String defaultValue() default "";
 }

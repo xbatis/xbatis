@@ -446,7 +446,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     /**
      * 查所有
      *
-     * @return
+     * @return 返回结果列表
      */
     protected List<T> listAll() {
         return ListMethodUtil.listAll(getBasicMapper(), getTableInfo());
@@ -552,7 +552,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     /**
      * 列表查询,返回类型，当前实体类
      *
-     * @return
+     * @return 游标结果
      */
     protected Cursor<T> cursorAll() {
         return CursorMethodUtil.cursorAll(getBasicMapper(), getTableInfo());
@@ -575,7 +575,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param consumer     where consumer
      * @param pager        pager
      * @param selectFields select指定列
-     * @return
+     * @return 分页结果
      */
     @SuppressWarnings("unchecked")
     protected <P extends IPager<T>> P paging(P pager, Consumer<Where> consumer, Getter<T>... selectFields) {
@@ -604,7 +604,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param mapKey map的key
      * @param ids    ids
      * @param <K>    map的key的类型
-     * @return 一个map
+     * @return 一个 map
      */
     @SuppressWarnings("unchecked")
     protected <K, ID extends Serializable> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, ID... ids) {
@@ -618,7 +618,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param mapKey map的key
      * @param ids    ids
      * @param <K>    map的key的类型
-     * @return 一个map
+     * @return 一个 map
      */
     protected <K, ID extends Serializable> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, Collection<ID> ids) {
         this.checkIdType();
@@ -632,7 +632,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @param mapKey   map的key
      * @param consumer where consumer
      * @param <K>      map的key的类型
-     * @return 一个map
+     * @return 一个 map
      */
     protected <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, Consumer<Where> consumer) {
         return MapWithKeyMapperUtil.mapWithKey(getBasicMapper(), getTableInfo(), mapKey, consumer);
@@ -654,7 +654,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     /**
      * 查询所有，结果转map，key为ID
      *
-     * @return 一个map
+     * @return 一个 map
      */
     protected Map<ID, T> map() {
         this.checkIdType();
@@ -665,7 +665,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * 根据多个id查询结果转map
      *
      * @param consumer where consumer
-     * @return 一个map
+     * @return 一个 map
      */
     protected Map<ID, T> map(Consumer<Where> consumer) {
         this.checkIdType();

@@ -142,7 +142,7 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
     /**
      * 执行
      *
-     * @return
+     * @return 影响条数
      */
     public int execute() {
         this.setDefault();

@@ -25,9 +25,9 @@ import java.lang.annotation.*;
 public @interface NestedResultEntityField {
 
     /**
-     * 对应内嵌类target的属性
+     * 对应内嵌类target 的属性
      *
-     * @return
+     * @return 对应内嵌类target 的属性
      */
     String value();
 

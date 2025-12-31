@@ -53,7 +53,7 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
      * 开启或关闭log
      *
      * @param enable
-     * @return
+     * @return 自己
      */
     public T log(boolean enable) {
         this.enableLog = enable;
@@ -65,7 +65,7 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
      *
      * @param parent
      * @param tag
-     * @return
+     * @return 自己
      */
     public T log(Class parent, String tag) {
         this.logger = parent.getName() + "." + tag;
@@ -76,7 +76,7 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
      * 设置Log
      *
      * @param logger
-     * @return
+     * @return 自己
      */
     public T log(String logger) {
         this.logger = logger;

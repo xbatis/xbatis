@@ -23,7 +23,7 @@ public interface IConflictUpdate<T> {
      *
      * @param field
      * @param value
-     * @return
+     * @return IConflictUpdate
      */
     IConflictUpdate<T> set(Getter<T> field, Object value);
 
@@ -31,7 +31,7 @@ public interface IConflictUpdate<T> {
      * 覆盖字段
      *
      * @param fields
-     * @return
+     * @return IConflictUpdate
      */
     @SuppressWarnings("unchecked")
     IConflictUpdate<T> overwrite(Getter<T>... fields);
@@ -40,7 +40,7 @@ public interface IConflictUpdate<T> {
      * 覆盖所有修改字段
      * 除主键外
      *
-     * @return
+     * @return IConflictUpdate
      */
     IConflictUpdate<T> overwriteAll();
 
@@ -48,7 +48,7 @@ public interface IConflictUpdate<T> {
      * 忽略字段
      *
      * @param fields
-     * @return
+     * @return IConflictUpdate
      */
     @SuppressWarnings("unchecked")
     IConflictUpdate<T> ignore(Getter<T>... fields);

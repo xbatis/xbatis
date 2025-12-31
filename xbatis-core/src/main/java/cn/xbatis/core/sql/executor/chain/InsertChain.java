@@ -181,7 +181,7 @@ public class InsertChain extends BaseInsert<InsertChain> {
     /**
      * 执行
      *
-     * @return
+     * @return 影响条数
      */
     public int execute() {
         this.setDefault();

@@ -51,8 +51,8 @@ public interface ISelectMultiGetterMethod<SELF extends ISelectMultiGetterMethod,
 
     /**
      * @param getterFields 利用 GetterFields 进行 数组构建
-     * @param f
-     * @return
+     * @param f 函数
+     * @return 自己
      */
     SELF select(GetterField[] getterFields, Function<TABLE_FIELD[], Cmd> f);
 

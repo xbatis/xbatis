@@ -30,7 +30,7 @@ public class OptimisticLockUtil {
      *
      * @param tableInfo
      * @param update
-     * @return
+     * @return 版本后 +1 是否成功
      */
     public static boolean versionPlus1(TableInfo tableInfo, BaseUpdate<?> update) {
         //不管有没有乐观锁，都加上set version +1
@@ -46,7 +46,7 @@ public class OptimisticLockUtil {
 
 
     /**
-     * 添加version条件
+     * 添加 version条件
      *
      * @param where
      * @param tableInfo

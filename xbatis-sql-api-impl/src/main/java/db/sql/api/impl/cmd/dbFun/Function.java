@@ -54,7 +54,7 @@ public interface Function<T> extends Cmd, Alias<T> {
      * @param parent     引用对象 - 父节点
      * @param context    sql 上下文
      * @param sqlBuilder sql 拼接对象
-     * @return
+     * @return 函数 sql
      */
     StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder);
 

@@ -27,7 +27,7 @@ public @interface ResultEntityField {
     /**
      * 对应的实体类
      *
-     * @return
+     * @return 对应的实体类
      */
     Class target() default Void.class;
 
@@ -35,14 +35,14 @@ public @interface ResultEntityField {
      * 对应target的属性
      * 空时直接去该字段名字
      *
-     * @return
+     * @return 对应target 的属性
      */
     String property() default "";
 
     /**
      * 存储层级，用于自动select场景
      *
-     * @return
+     * @return 存储层级
      */
     int storey() default 1;
 }

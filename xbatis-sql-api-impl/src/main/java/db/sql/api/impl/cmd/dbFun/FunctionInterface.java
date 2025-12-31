@@ -181,7 +181,7 @@ public interface FunctionInterface extends Cmd {
      * 对自己进行保留小数位数操作
      *
      * @return Truncate
-     * @precision 保留小数位数
+     * @param precision 保留小数位数
      */
     default Truncate truncate(int precision) {
         return Methods.truncate(this, precision);
@@ -337,7 +337,7 @@ public interface FunctionInterface extends Cmd {
      * 字段串截取操作
      *
      * @param start 默认从1开始
-     * @return
+     * @return SubStr
      */
     default SubStr subStr(int start) {
         return Methods.subStr(this, start);
@@ -348,7 +348,7 @@ public interface FunctionInterface extends Cmd {
      *
      * @param start  默认从1开始
      * @param length 截取长度
-     * @return
+     * @return SubStr
      */
     default SubStr subStr(int start, int length) {
         return Methods.subStr(this, start, length);
@@ -445,9 +445,9 @@ public interface FunctionInterface extends Cmd {
     /**
      * 对自己进行字符串替换操作
      *
+     * @param target 匹配字符
+     * @param replacement 用于替换的字符
      * @return Repeat
-     * @target 匹配字符
-     * @replacement 用于替换的字符
      */
     default Replace replace(String target, String replacement) {
         return Methods.replace(this, target, replacement);
@@ -521,7 +521,7 @@ public interface FunctionInterface extends Cmd {
     /**
      * 获取自己属于星期几
      *
-     * @return
+     * @return Weekday
      */
     default Weekday weekday() {
         return Methods.weekday(this);
@@ -1222,7 +1222,7 @@ public interface FunctionInterface extends Cmd {
      *
      * @param point    另外一个对象
      * @param distance 距离
-     * @return
+     * @return ST_DWithin
      */
     default ST_DWithin ST_DWithin(Cmd point, double distance) {
         return ST_DWithin(point, distance, null);
@@ -1234,7 +1234,7 @@ public interface FunctionInterface extends Cmd {
      * @param point       另外一个对象
      * @param distance    距离
      * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
-     * @return
+     * @return ST_DWithin
      */
     default ST_DWithin ST_DWithin(Cmd point, double distance, Boolean useSpheroid) {
         return Methods.ST_DWithin(this, point, distance, useSpheroid);
@@ -1245,7 +1245,7 @@ public interface FunctionInterface extends Cmd {
      *
      * @param point    另外一个坐标
      * @param distance 距离
-     * @return
+     * @return ST_DWithin
      */
     default ST_DWithin ST_DWithin(ST_Point point, double distance) {
         return ST_DWithin(point, distance, null);
@@ -1257,7 +1257,7 @@ public interface FunctionInterface extends Cmd {
      * @param point       另外一个坐标
      * @param distance    距离
      * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
-     * @return
+     * @return ST_DWithin
      */
     default ST_DWithin ST_DWithin(ST_Point point, double distance, Boolean useSpheroid) {
         return ST_DWithin((Cmd) point, distance, useSpheroid);
@@ -1267,7 +1267,7 @@ public interface FunctionInterface extends Cmd {
      * 计算2个坐标的距离
      *
      * @param point 另外一个对象
-     * @return
+     * @return ST_Distance
      */
     default ST_Distance ST_Distance(Cmd point) {
         return ST_Distance(point, null);
@@ -1278,7 +1278,7 @@ public interface FunctionInterface extends Cmd {
      *
      * @param point       另外一个对象
      * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
-     * @return
+     * @return ST_Distance
      */
     default ST_Distance ST_Distance(Cmd point, Boolean useSpheroid) {
         return Methods.ST_Distance(this, point, useSpheroid);
@@ -1288,7 +1288,7 @@ public interface FunctionInterface extends Cmd {
      * 计算2个坐标的距离
      *
      * @param point 另外一个坐标
-     * @return
+     * @return ST_Distance
      */
     default ST_Distance ST_Distance(ST_Point point) {
         return ST_Distance(point, null);
@@ -1299,7 +1299,7 @@ public interface FunctionInterface extends Cmd {
      *
      * @param point       另外一个坐标
      * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
-     * @return
+     * @return ST_Distance
      */
     default ST_Distance ST_Distance(ST_Point point, Boolean useSpheroid) {
         return ST_Distance((Cmd) point, useSpheroid);
@@ -1309,7 +1309,7 @@ public interface FunctionInterface extends Cmd {
      * 判断是否包含 geo
      *
      * @param geo 另外一个geo对象
-     * @return
+     * @return ST_Contains
      */
     default ST_Contains ST_Contains(Cmd geo) {
         return new ST_Contains(this, geo);
@@ -1319,7 +1319,7 @@ public interface FunctionInterface extends Cmd {
      * 判断是否包含 point
      *
      * @param point 另外一个坐标
-     * @return
+     * @return ST_Contains
      */
     default ST_Contains ST_Contains(ST_Point point) {
         return ST_Contains((Cmd) point);

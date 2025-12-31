@@ -36,14 +36,14 @@ public interface Dao<T, ID> {
     /**
      * 获取ID的类型
      *
-     * @return
+     * @return 主键字段的类型
      */
     Class<ID> getIdType();
 
     /**
      * 获取ID的类型
      *
-     * @return
+     * @return 实体类的类型
      */
     Class<T> getEntityType();
 
@@ -260,7 +260,7 @@ public interface Dao<T, ID> {
      *
      * @param entity         实体类对象
      * @param updateStrategy 策略
-     * @return
+     * @return 影响条数
      */
     int update(T entity, UpdateStrategy<T> updateStrategy);
 
@@ -333,7 +333,7 @@ public interface Dao<T, ID> {
      * 原生批量操作 采用 update case when  then else end 操作
      *
      * @param list
-     * @return
+     * @return 影响条数
      */
     default int updateBatch(Collection<T> list) {
         return updateBatch(list, (Getter<T>[]) null);
@@ -345,7 +345,7 @@ public interface Dao<T, ID> {
      *
      * @param list
      * @param batchFields 必须指定字段
-     * @return
+     * @return 影响条数
      */
     int updateBatch(Collection<T> list, Getter<T>... batchFields);
 
@@ -364,7 +364,7 @@ public interface Dao<T, ID> {
      * @param model
      * @param updateStrategy
      * @param <M>
-     * @return
+     * @return 影响条数
      */
     <M extends Model<T>> int update(M model, UpdateStrategy<M> updateStrategy);
 
@@ -429,7 +429,7 @@ public interface Dao<T, ID> {
      * 原生批量操作 采用 update case when  then else end 操作
      *
      * @param list
-     * @return
+     * @return 影响条数
      */
     default <M extends Model<T>> int updateBatchModel(Collection<M> list) {
         return updateBatchModel(list, (Getter<M>[]) null);
@@ -441,7 +441,7 @@ public interface Dao<T, ID> {
      *
      * @param list
      * @param batchFields 必须指定字段
-     * @return
+     * @return 影响条数
      */
     <M extends Model<T>> int updateBatchModel(Collection<M> list, Getter<M>... batchFields);
 
@@ -486,7 +486,7 @@ public interface Dao<T, ID> {
      *
      * @param list                 实体类对象List
      * @param saveOrUpdateStrategy
-     * @return
+     * @return 影响条数
      */
     int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy);
 
@@ -635,7 +635,7 @@ public interface Dao<T, ID> {
      * 实体类结果转成Map<ID,T>
      *
      * @param ids 多个ID
-     * @return Map结果
+     * @return Map 结果
      */
     @SuppressWarnings("unchecked")
     Map<ID, T> map(ID... ids);
@@ -644,7 +644,7 @@ public interface Dao<T, ID> {
      * 实体类结果转成Map<ID,T>
      *
      * @param ids ID 集合
-     * @return Map结果
+     * @return Map 结果
      */
     Map<ID, T> map(Collection<ID> ids);
 }

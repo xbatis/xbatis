@@ -69,7 +69,6 @@ public final class SQLImplGlobalConfig {
     /**
      * 设置数据库命名规则 默认 不处理
      *
-     * @return 是否成功
      */
     public static void setDatabaseCaseRule(DbType dbType, DatabaseCaseRule databaseCaseRule) {
         DATABASE_CASE_RULES.computeIfAbsent(dbType, i -> databaseCaseRule);

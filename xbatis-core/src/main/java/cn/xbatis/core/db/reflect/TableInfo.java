@@ -246,7 +246,7 @@ public class TableInfo {
      * 根据字段名获取字段信息
      *
      * @param property
-     * @return
+     * @return TableFieldInfo
      */
     public final TableFieldInfo getFieldInfo(String property) {
         return tableFieldInfoMap.get(property);
@@ -256,7 +256,7 @@ public class TableInfo {
      * 根据列名获取字段信息
      *
      * @param columnName
-     * @return
+     * @return TableFieldInfo
      */
     public final TableFieldInfo getFieldInfoByColumnName(String columnName) {
         return tableFieldInfos.stream().filter(item -> item.getColumnName().equals(columnName)).findFirst().orElse(null);
@@ -267,7 +267,7 @@ public class TableInfo {
      * 根据连接的表的类获取外键匹配信息
      *
      * @param entityClass
-     * @return
+     * @return ForeignInfo
      */
     public final ForeignInfo getForeignInfo(Class<?> entityClass) {
         return this.foreignInfoMap.get(entityClass);

@@ -27,14 +27,14 @@ public @interface Table {
     /**
      * 表名
      *
-     * @return
+     * @return 表名
      */
     String value() default "";
 
     /**
      * 数据库的 schema
      *
-     * @return
+     * @return 数据库的 schema
      */
     String schema() default "";
 
@@ -49,7 +49,7 @@ public @interface Table {
     /**
      * 数据库大小写规则
      *
-     * @return
+     * @return DatabaseCaseRule
      */
     DatabaseCaseRule databaseCaseRule() default DatabaseCaseRule.DEFAULT;
 }

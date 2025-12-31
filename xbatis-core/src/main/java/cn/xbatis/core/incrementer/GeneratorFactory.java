@@ -37,8 +37,8 @@ public class GeneratorFactory {
     /**
      * 获取自增器
      *
-     * @param name
-     * @return
+     * @param name 自增器的名称
+     * @return Generator<T>
      */
     public static <T> Generator<T> getIdentifierGenerator(String name) {
         if (name == null) {

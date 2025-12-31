@@ -21,7 +21,7 @@ public class PageUtil {
      *
      * @param number 页码
      * @param size   分页条数
-     * @return
+     * @return 分页 offset
      */
     public static final int getOffset(int number, int size) {
         return (number - 1) * size;
@@ -32,7 +32,7 @@ public class PageUtil {
      *
      * @param size
      * @param total
-     * @return
+     * @return 总页数
      */
     public static int getTotalPage(Integer size, Integer total) {
         if (size == null) {

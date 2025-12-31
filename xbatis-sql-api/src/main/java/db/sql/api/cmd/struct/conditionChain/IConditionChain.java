@@ -46,7 +46,7 @@ public interface IConditionChain<SELF extends IConditionChain,
     /**
      * 清空条件
      *
-     * @return
+     * @return 自己
      */
     SELF clearConditions();
 

@@ -72,7 +72,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
      * 开启或关闭log
      *
      * @param enable
-     * @return
+     * @return 自己
      */
     public Q log(boolean enable) {
         this.enableLog = enable;
@@ -84,7 +84,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
      *
      * @param parent
      * @param tag
-     * @return
+     * @return 自己
      */
     public Q log(Class parent, String tag) {
         this.logger = parent.getName() + "." + tag;
@@ -95,7 +95,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
      * 设置Log
      *
      * @param logger
-     * @return
+     * @return 自己
      */
     public Q log(String logger) {
         this.logger = logger;
@@ -210,7 +210,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
      * use like fetchDirection(ResultSet.TYPE_FORWARD_ONLY)
      *
      * @param direction direction value:all in ResultSet
-     * @return
+     * @return 自己
      */
     @Override
     public Q fetchDirection(Integer direction) {

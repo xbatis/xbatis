@@ -212,7 +212,7 @@ public final class SQLOptimizeUtils {
      * @param query           查询语句
      * @param context         构建SQL上下文
      * @param optimizeOptions 优化配置
-     * @return
+     * @return 优化后的 sql
      */
     public static StringBuilder getOptimizedSql(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
         if (optimizeOptions != null && !optimizeOptions.isOptimizeJoin()) {

@@ -142,7 +142,7 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
     /**
      * 执行
      *
-     * @return
+     * @return 影响条数
      */
     public int execute() {
         this.setDefault();

@@ -29,14 +29,14 @@ public @interface NestedResultEntity {
     /**
      * 对应的实体类
      *
-     * @return
+     * @return 对应的实体类
      */
     Class target();
 
     /**
      * 存储层级，用于自动select场景
      *
-     * @return
+     * @return 存储层级
      */
     int storey() default 1;
 }

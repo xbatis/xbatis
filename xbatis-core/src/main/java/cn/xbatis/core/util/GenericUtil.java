@@ -33,7 +33,7 @@ public class GenericUtil {
      * 获取通过继承的泛型类
      *
      * @param clazz
-     * @return
+     * @return 获取继承的所有泛型
      */
     public static List<Class<?>> getGenericSuperClass(Class clazz) {
         Type type = clazz.getGenericSuperclass();
@@ -52,10 +52,10 @@ public class GenericUtil {
     }
 
     /**
-     * 获取通过接口实现的返回
+     * 获取通过接口实现的泛型
      *
-     * @param clazz
-     * @return
+     * @param clazz 类
+     * @return 获取通过接口实现的泛型
      */
     public static List<Class<?>> getGenericInterfaceClass(Class clazz) {
         Type[] types = clazz.getGenericInterfaces();

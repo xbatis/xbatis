@@ -192,7 +192,6 @@ public final class XbatisGlobalConfig {
     /**
      * 设置数据库命名规则 默认 不处理
      *
-     * @return 是否成功
      */
     public static void setDatabaseCaseRule(DbType dbType, DatabaseCaseRule databaseCaseRule) {
         SQLImplGlobalConfig.setDatabaseCaseRule(dbType, databaseCaseRule);
@@ -341,7 +340,7 @@ public final class XbatisGlobalConfig {
     /**
      * 获取逻辑删除 update 拦截器
      *
-     * @return
+     * @return BiConsumer<Class<?>, BaseUpdate<?>>
      */
     public static BiConsumer<Class<?>, BaseUpdate<?>> getLogicDeleteInterceptor() {
         if (LOGIC_DELETE_INTERCEPTOR == NULL) {
@@ -368,7 +367,7 @@ public final class XbatisGlobalConfig {
      * 判断key是否是动态值格式，例如 是不是"{xxx}"
      *
      * @param key
-     * @return
+     * @return 是否是动态值格式
      */
     public static boolean isDynamicValueKeyFormat(String key) {
         return key.startsWith("{") && key.endsWith("}");
@@ -378,7 +377,7 @@ public final class XbatisGlobalConfig {
      * 设置动态值的函数的方法
      *
      * @param key 动态值 需要符合 "{xxx}"的格式
-     * @param f   返回该key的动态值的函数
+     * @param f   返回该key 的动态值的函数
      */
     public static void setDynamicValue(String key, BiFunction<Class<?>, Class<?>, Object> f) {
         if (!isDynamicValueKeyFormat(key)) {
@@ -540,9 +539,9 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 获取所有的SQLListener
+     * 获取所有的 SQLListener
      *
-     * @return
+     * @return SQLListener 集合
      */
     public static List<SQLListener> getSQLListeners() {
         return Collections.unmodifiableList(SQL_LISTENERS);
@@ -569,7 +568,7 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 添加MapperMethodInterceptor
+     * 添加 MapperMethodInterceptor
      *
      * @param methodInterceptor
      */
@@ -578,7 +577,7 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 移除MapperMethodInterceptor
+     * 移除 MapperMethodInterceptor
      *
      * @param type
      */
@@ -592,18 +591,18 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 获取所有Mapper的方法拦截器
+     * 获取所有 Mapper的方法拦截器
      *
-     * @return
+     * @return MethodInterceptor 结合
      */
     public static List<MethodInterceptor> getMapperMethodInterceptors() {
         return Collections.unmodifiableList(MAPPER_METHOD_INTERCEPTORS);
     }
 
     /**
-     * 是否拦截官方的mapper方法
+     * 是否拦截官方的 mapper方法
      *
-     * @return
+     * @return 是否启用拦截官方的  mapper方法
      */
     public static boolean isEnableInterceptOfficialMapperMethod() {
         if (INTERCEPT_OFFICIAL_MAPPER_METHOD == NULL) {
@@ -626,9 +625,9 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 获取全局OnInsertListener
+     * 获取全局 OnInsertListener
      *
-     * @return
+     * @return OnInsertListener
      */
     public static OnInsertListener getGlobalOnInsertListener() {
         if (GLOBAL_ON_INSERT_LISTENER == NULL) {
@@ -638,7 +637,7 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 设置全局OnInsertListener
+     * 设置全局 OnInsertListener
      *
      * @param listener
      */
@@ -649,9 +648,9 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 获取全局OnUpdateListener
+     * 获取全局 OnUpdateListener
      *
-     * @return
+     * @return OnUpdateListener
      */
     public static OnUpdateListener<?> getGlobalOnUpdateListener() {
         if (GLOBAL_ON_UPDATE_LISTENER == NULL) {
@@ -661,7 +660,7 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 设置全局OnUpdateListener
+     * 设置全局 OnUpdateListener
      *
      * @param listener
      * @return 是否成功
@@ -677,7 +676,7 @@ public final class XbatisGlobalConfig {
     /**
      * 获取@Fetch的IN批量size
      *
-     * @return
+     * @return 每次@Fetch的IN批量size
      */
     public static int getFetchInBatchSize() {
         if (FETCH_IN_BATCH_SIZE == NULL) {
@@ -704,7 +703,7 @@ public final class XbatisGlobalConfig {
     /**
      * 获取@Fetch的cache实现类
      *
-     * @return
+     * @return FetchCache
      */
     public static FetchCache getFetchCache() {
         if (FETCH_CACHE == NULL) {
@@ -740,9 +739,9 @@ public final class XbatisGlobalConfig {
     }
 
     /**
-     * 设置DbTypeParser
+     * 设置 DbTypeParser
      *
-     * @param dbTypeParser DbType解析器
+     * @param dbTypeParser DbType 解析器
      */
     public static void setDbTypeParser(DbTypeParser dbTypeParser) {
         if (DB_TYPE_PARSER == NULL) {

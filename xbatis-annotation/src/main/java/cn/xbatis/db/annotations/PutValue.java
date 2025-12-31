@@ -28,47 +28,48 @@ public @interface PutValue {
      * 对应的实体类
      * 默认时：从当前作用域自动获取
      *
-     * @return
+     * @return 对应的实体类
      */
     Class source() default Void.class;
 
     /**
      * 对应entity的属性，多个逗号分隔
      *
-     * @return
+     * @return 对应entity 的属性
      */
     String property();
 
     /**
      * 存储层级，用于自动select场景
      *
-     * @return
+     * @return 存储层级
      */
     int storey() default 1;
 
     /**
      * 目标类 需要实现 指定method名字的静态方法
      *
-     * @return
+     * @return 目标类
      */
     Class factory();
 
     /**
-     * @return
+     * factory类 对应的方法名
+     * @return factory类 对应的方法名
      */
     String method();
 
     /**
      * 是否必须有值
      *
-     * @return
+     * @return 是否必须有值
      */
     boolean required() default false;
 
     /**
      * 未匹配时的默认值
      *
-     * @return
+     * @return 未匹配时的默认值
      */
     String defaultValue() default "";
 }

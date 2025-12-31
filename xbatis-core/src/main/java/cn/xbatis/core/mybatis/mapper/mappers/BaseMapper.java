@@ -29,7 +29,7 @@ public interface BaseMapper<T> {
     /**
      * 获取当前实体类的TableInfo
      *
-     * @return
+     * @return TableInfo
      */
     TableInfo getTableInfo();
 

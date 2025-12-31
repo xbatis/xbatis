@@ -28,7 +28,7 @@ public @interface TableField {
     /**
      * 列名
      *
-     * @return
+     * @return 列名
      */
     String value() default "";
 
@@ -74,14 +74,14 @@ public @interface TableField {
     /**
      * 配置 列的 jdbcType
      *
-     * @return
+     * @return JdbcType
      */
     JdbcType jdbcType() default JdbcType.UNDEFINED;
 
     /**
      * 类型处理 针对特殊 类型的列使用
      *
-     * @return
+     * @return TypeHandler
      */
     Class<? extends TypeHandler<?>> typeHandler() default UnknownTypeHandler.class;
 

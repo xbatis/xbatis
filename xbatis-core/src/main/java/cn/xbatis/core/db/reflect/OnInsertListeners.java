@@ -28,7 +28,7 @@ public class OnInsertListeners {
      * 获取实体类、Model类的的OnInsert监听器
      *
      * @param clazz
-     * @return
+     * @return OnInsertListener<T>
      */
 
     public static <T> OnInsertListener<T> get(Class<T> clazz) {

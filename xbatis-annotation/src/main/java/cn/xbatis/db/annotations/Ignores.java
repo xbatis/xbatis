@@ -24,7 +24,7 @@ public @interface Ignores {
     /**
      * 忽略字段
      *
-     * @return
+     * @return 忽略字段
      */
     String[] value() default {};
 }

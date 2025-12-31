@@ -31,7 +31,7 @@ public @interface Paging {
     /**
      * 是否优化
      *
-     * @return
+     * @return 是否优化
      */
     boolean optimize() default true;
 }

@@ -42,14 +42,14 @@ public class SqlBuilderContext {
      * 添加设置参数 返回参数名字
      *
      * @param value
-     * @return
+     * @return 占位符
      */
     public String addParam(Object value) {
         return "?";
     }
 
     /**
-     * @return
+     * @return 扩展 map
      */
     public Map<String, Object> getExtMap() {
         return extMap;

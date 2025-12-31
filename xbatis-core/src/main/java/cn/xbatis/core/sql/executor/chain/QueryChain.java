@@ -193,7 +193,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     /**
      * 获取单个对象
      *
-     * @return
+     * @return 影响条数
      */
     public T get() {
         this.setDefault(false);
@@ -203,7 +203,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     /**
      * 获取列表
      *
-     * @return
+     * @return 结果列表
      */
     public List<T> list() {
         this.setDefault(false);
@@ -213,7 +213,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     /**
      * 获取列表
      *
-     * @return
+     * @return 游标
      */
     public Cursor<T> cursor() {
         this.setDefault(false);
@@ -224,7 +224,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     /**
      * 获取条数
      *
-     * @return
+     * @return count数
      */
     public Integer count() {
         if (this.select == null) {
@@ -237,7 +237,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     /**
      * 判断是否存在
      *
-     * @return
+     * @return 是否存在
      */
     public boolean exists() {
         if (this.select == null) {
@@ -252,7 +252,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
      * 分页查询
      *
      * @param pager
-     * @return
+     * @return 分页结果
      */
     public <P extends IPager<T>> P paging(P pager) {
         this.setDefault();
@@ -260,11 +260,11 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     }
 
     /**
-     * 将结果转成map
+     * 将结果转成 map
      *
-     * @param mapKey 指定的map的key属性
-     * @param mapKey map的key
-     * @return
+     * @param mapKey 指定的map的 key属性
+     * @param <R> map的value 的类型
+     * @return 结果 map
      */
     public <R> Map<R, T> mapWithKey(GetterFun<T, R> mapKey) {
         this.setDefault();
@@ -313,10 +313,10 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     /**
      * 自动select mapKey value
      *
-     * @param mapKey
-     * @param valueGetter
-     * @param <R>
-     * @param <R2>
+     * @param mapKey map指定的 key
+     * @param valueGetter value 的转换器
+     * @param <R> key 的类泛型
+     * @param <R2> value 的类泛型
      */
     private <R, R2> void selectMapWithKeyAndValue(GetterFun<T, R> mapKey, GetterFun<T, R2> valueGetter) {
         this.selectFromMapWithGetter(mapKey);
@@ -327,11 +327,10 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
      * 将结果转成map（key value都是简单类型的情况）
      * 缺点：需要额外非基本类型 类接收key value的值（框架内部操作）
      *
-     * @param mapKey 指定的map的key属性
-     * @param <R>    valueGetter  指定返回T中的某字段的Getter方法
-     * @param <R>    map的key类型
-     * @param <R2>   map的value类型
-     * @return
+     * @param mapKey 指定的map的 key属性
+     * @param <R>    map的 key类型
+     * @param <R2>   map的 value类型
+     * @return map 结果
      */
     public <R, R2> Map<R, R2> mapWithKeyAndValue(GetterFun<T, R> mapKey, GetterFun<T, R2> valueGetter) {
         if (this.select == null || this.select.getSelectField().isEmpty()) {
@@ -353,11 +352,11 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     }
 
     /**
-     * 将结果转成map
+     * 将结果转成 map
      *
-     * @param mapKey 指定的map的key属性
+     * @param mapKey 指定的 map的key属性
      * @param <K>    map的key
-     * @return
+     * @return map 结果
      */
     public <K> Map<K, T> mapWithKey(String mapKey) {
         this.setDefault();

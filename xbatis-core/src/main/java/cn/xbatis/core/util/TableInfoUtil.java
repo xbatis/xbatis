@@ -52,10 +52,10 @@ public final class TableInfoUtil {
     }
 
     /**
-     * 从实体类中获取ID
+     * 从实体类中 获取ID
      *
      * @param entity 实体
-     * @return 返回ID
+     * @return 返回 ID
      */
     public static Serializable getEntityIdValue(Object entity) {
         return getEntityIdValue(Tables.get(entity.getClass()), entity, false);
@@ -66,7 +66,7 @@ public final class TableInfoUtil {
      *
      * @param tableInfo 表信息
      * @param entity    实体
-     * @return 返回ID
+     * @return 返回 ID
      */
     public static Serializable getEntityIdValue(TableInfo tableInfo, Object entity) {
         return getEntityIdValue(tableInfo, entity, true);
@@ -78,7 +78,7 @@ public final class TableInfoUtil {
      * @param tableInfo 表信息
      * @param entity    实体
      * @param check     是否检查
-     * @return 返回ID
+     * @return 返回 ID
      */
     public static Serializable getEntityIdValue(TableInfo tableInfo, Object entity, boolean check) {
         if (check) {
@@ -93,7 +93,7 @@ public final class TableInfoUtil {
     /**
      * @param tableFieldInfo
      * @param entity
-     * @return
+     * @return 获取实体类字段的值
      */
     public static Object getEntityFieldValue(TableFieldInfo tableFieldInfo, Object entity) {
         try {
@@ -103,7 +103,12 @@ public final class TableInfoUtil {
         }
     }
 
-
+    /**
+     * 获取实体类的表名
+     *
+     * @param entity 实体类
+     * @return 获取实体类的表名
+     */
     public static String getTableName(Class entity) {
         Table table = (Table) entity.getAnnotation(Table.class);
         String tableName = table.value();
@@ -122,9 +127,9 @@ public final class TableInfoUtil {
     /**
      * 获取主键的注解信息，非ID 返回 null
      *
-     * @param field
-     * @param dbType
-     * @return
+     * @param field 字段
+     * @param dbType 数据库类型
+     * @return 获取ID注解
      */
     public static TableId getTableIdAnnotation(Field field, DbType dbType) {
         TableId[] tableIdAnnotations = field.getAnnotationsByType(TableId.class);
@@ -157,8 +162,8 @@ public final class TableInfoUtil {
     /**
      * 获取TableField注解信息 未配置则用默认的 Default.defaultTableFieldAnnotation()
      *
-     * @param field
-     * @return
+     * @param field 字段
+     * @return 字段的 TableField注解信息
      */
     public static TableField getTableFieldAnnotation(Field field) {
         TableField tableFieldAnnotation = field.getAnnotation(TableField.class);
@@ -171,8 +176,8 @@ public final class TableInfoUtil {
     /**
      * 获取列名
      *
-     * @param field
-     * @return
+     * @param field 字段
+     * @return 列名
      */
     public static String getFieldColumnName(Table table, Field field) {
         TableField tableFieldAnnotation = getTableFieldAnnotation(field);

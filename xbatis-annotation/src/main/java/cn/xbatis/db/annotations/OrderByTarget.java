@@ -34,7 +34,7 @@ public @interface OrderByTarget {
     /**
      * 是否严格模式：开启则只匹配带有@OrderBy|@OrderByColumn|OrderByAsField注解字段
      *
-     * @return
+     * @return 是否严格模式
      */
     boolean strict() default false;
 }

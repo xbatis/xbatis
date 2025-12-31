@@ -19,7 +19,7 @@ public interface TableSplitter {
      * 支持值的类型
      *
      * @param type
-     * @return
+     * @return 是否支持
      */
     boolean support(Class<?> type);
 

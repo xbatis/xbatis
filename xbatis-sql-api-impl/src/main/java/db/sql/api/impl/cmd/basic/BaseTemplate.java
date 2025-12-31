@@ -61,7 +61,7 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
      * 对模板特殊字符 进行封装：例如 ',format会报错，自动包装成 ''
      *
      * @param template
-     * @return
+     * @return 已处理特殊字符后的模板
      */
     protected String wrapTemplate(String template) {
         StringBuilder tsb = new StringBuilder();
@@ -131,7 +131,7 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
             str = MessageFormat.format(str, paramsStr);
         } else if (wrapping) {
             str = wrapTemplate(this.template);
-            str = MessageFormat.format(str, null);
+            str = MessageFormat.format(str, (Object[]) null);
         }
         sqlBuilder.append(SqlConst.BLANK).append(str);
         this.appendAlias(module, parent, context, sqlBuilder);
@@ -143,7 +143,7 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
         boolean contain = false;
 
         if (Objects.nonNull(params)) {
-            contain = CmdUtils.contain(cmd, params);
+            contain = CmdUtils.contain(cmd, (Object[]) params);
         }
 
         if (!contain && cmd instanceof IDataset) {

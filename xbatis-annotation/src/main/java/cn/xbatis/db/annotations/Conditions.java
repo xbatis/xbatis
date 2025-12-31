@@ -25,7 +25,7 @@ public @interface Conditions {
     /**
      * 多个条件
      *
-     * @return
+     * @return Condition[]
      */
     Condition[] value();
 

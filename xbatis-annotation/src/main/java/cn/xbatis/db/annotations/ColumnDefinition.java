@@ -19,56 +19,56 @@ public @interface ColumnDefinition {
     /**
      * 默认值
      *
-     * @return
+     * @return 默认值
      */
     String defaultValue() default "";
 
     /**
      * 长度
      *
-     * @return
+     * @return 长度
      */
     int length() default 0;
 
     /**
      * 是否唯一
      *
-     * @return
+     * @return 是否唯一
      */
     boolean unique() default false;
 
     /**
-     * 是否可以为NULL
+     * 是否可以为 NULL
      *
-     * @return
+     * @return 是否可以为 NULL
      */
     boolean nullable() default true;
 
     /**
      * 列的精度，仅对十进制数值有效，表示有效数值的总位数。默认为0。
      *
-     * @return
+     * @return 列的精度
      */
     int precision() default 0;
 
     /**
      * 列的精度，仅对十进制数值有效，表示小数位的总位数。默认为0。
      *
-     * @return
+     * @return 列的精度
      */
     int scale() default 0;
 
     /**
      * 生成列的 DDL 时使用的 SQL 片段。默认使用推断的类型来生成 SQL 片段以创建此列。
      *
-     * @return
+     * @return 生成列的 DDL
      */
     String definition() default "";
 
     /**
      * 备注
      *
-     * @return
+     * @return 备注
      */
     String comment() default "";
 

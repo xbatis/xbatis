@@ -66,7 +66,7 @@ public class TenantContext {
     /**
      * 获取租户信息
      *
-     * @return
+     * @return 租户 ID
      */
     public static Serializable getTenantId() {
         if (Objects.isNull(TENANT_INFO_GETTER)) {

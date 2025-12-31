@@ -26,7 +26,7 @@ public @interface OrderByColumn {
     /**
      * 列名
      *
-     * @return
+     * @return 列名
      */
     String value();
 }

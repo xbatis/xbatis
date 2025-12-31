@@ -30,7 +30,7 @@ public class XbatisSQLBuilder implements SQLBuilder {
      * @param query           查询
      * @param context         上下文
      * @param optimizeOptions 优化配置
-     * @return
+     * @return query的sql
      */
     @Override
     public StringBuilder buildQuerySQL(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
@@ -38,12 +38,12 @@ public class XbatisSQLBuilder implements SQLBuilder {
     }
 
     /**
-     * 构建count查询sql
+     * 构建count 查询sql
      *
      * @param query           查询
      * @param context         上下文
      * @param optimizeOptions 优化配置
-     * @return
+     * @return query count的sql
      */
     @Override
     public StringBuilder buildCountQuerySQL(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
@@ -56,7 +56,7 @@ public class XbatisSQLBuilder implements SQLBuilder {
      * @param query           查询
      * @param context         上下文
      * @param optimizeOptions 优化配置
-     * @return
+     * @return 从query中构建的count sql
      */
     @Override
     public StringBuilder buildCountSQLFromQuery(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {

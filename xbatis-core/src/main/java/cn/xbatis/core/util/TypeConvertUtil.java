@@ -56,7 +56,7 @@ public final class TypeConvertUtil {
      * @param value
      * @param targetType
      * @param <T>
-     * @return
+     * @return 转换后的值
      */
     public static <T> T convert(Object value, Class<T> targetType) {
         if (value == null) {
