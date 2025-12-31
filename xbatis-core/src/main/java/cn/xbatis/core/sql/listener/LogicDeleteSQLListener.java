@@ -52,14 +52,14 @@ public class LogicDeleteSQLListener implements SQLListener {
         } else {
             throw new RuntimeException("not support type:" + source.getClass());
         }
-        LogicDeleteUtil.addLogicDeleteCondition((MpTable) dataset, where.extConditionChain());
+        LogicDeleteUtil.addLogicDeleteCondition((MpTable) dataset, where);
     }
 
     private void addConditionToOn(IDataset<?, ?> dataset, IOn on) {
         if (!(dataset instanceof MpTable) || !(on instanceof On)) {
             return;
         }
-        LogicDeleteUtil.addLogicDeleteCondition((MpTable) dataset, ((On) on).extConditionChain());
+        LogicDeleteUtil.addLogicDeleteCondition((MpTable) dataset, (On) on);
     }
 
     @Override

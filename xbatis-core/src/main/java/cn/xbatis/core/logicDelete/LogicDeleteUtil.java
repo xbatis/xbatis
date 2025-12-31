@@ -23,7 +23,7 @@ import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Update;
 import cn.xbatis.db.annotations.LogicDelete;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.cmd.struct.ConditionChain;
+import db.sql.api.impl.cmd.struct.On;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.time.LocalDateTime;
@@ -161,9 +161,9 @@ public final class LogicDeleteUtil {
      * 添加逻辑删除条件
      *
      * @param table          MpTable
-     * @param conditionChain ConditionChain
+     * @param on On
      */
-    public static void addLogicDeleteCondition(MpTable table, ConditionChain conditionChain) {
+    public static void addLogicDeleteCondition(MpTable table, On on) {
         if (!XbatisGlobalConfig.isLogicDeleteSwitchOpen()) {
             return;
         }
@@ -175,9 +175,33 @@ public final class LogicDeleteUtil {
         Object logicBeforeValue = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteInitValue();
         TableField tableField = table.$(tableInfo.getLogicDeleteFieldInfo().getColumnName());
         if (Objects.isNull(logicBeforeValue)) {
-            conditionChain.isNull(tableField);
+            on.extConditionChain().isNull(tableField);
         } else {
-            conditionChain.eq(tableField, logicBeforeValue);
+            on.extConditionChain().eq(tableField, logicBeforeValue);
+        }
+    }
+
+    /**
+     * 添加逻辑删除条件
+     *
+     * @param table MpTable
+     * @param where Where
+     */
+    public static void addLogicDeleteCondition(MpTable table, Where where) {
+        if (!XbatisGlobalConfig.isLogicDeleteSwitchOpen()) {
+            return;
+        }
+
+        TableInfo tableInfo = table.getTableInfo();
+        if (Objects.isNull(tableInfo.getLogicDeleteFieldInfo())) {
+            return;
+        }
+        Object logicBeforeValue = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteInitValue();
+        TableField tableField = table.$(tableInfo.getLogicDeleteFieldInfo().getColumnName());
+        if (Objects.isNull(logicBeforeValue)) {
+            where.extConditionChain().isNull(tableField);
+        } else {
+            where.extConditionChain().eq(tableField, logicBeforeValue);
         }
     }
 }

@@ -20,6 +20,8 @@ import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.impl.cmd.struct.ConditionChain;
+import db.sql.api.impl.cmd.struct.On;
+import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 
 import java.io.Serializable;
@@ -132,9 +134,9 @@ public final class TenantUtil {
      * 添加租户条件
      *
      * @param table          MpTable
-     * @param conditionChain ConditionChain
+     * @param on On
      */
-    public static void addTenantCondition(MpTable table, ConditionChain conditionChain) {
+    public static void addTenantCondition(MpTable table, On on) {
         Serializable tid = TenantUtil.getTenantId();
         if (Objects.isNull(tid)) {
             return;
@@ -147,15 +149,45 @@ public final class TenantUtil {
         if (tid instanceof TenantId) {
             TenantId tenantId = (TenantId) tid;
             if (tenantId.isMultiValue()) {
-                conditionChain.in(new MpDatasetField(table, tenantIdFieldInfo), tenantId.getValues());
-                onWhere(tableInfo.getType(), conditionChain);
+                on.extConditionChain().in(new MpDatasetField(table, tenantIdFieldInfo), tenantId.getValues());
+                onWhere(tableInfo.getType(), on.extConditionChain());
                 return;
             }
             tid = tenantId.getValues()[0];
         }
 
-        conditionChain.eq(new MpDatasetField(table, tenantIdFieldInfo), tid);
-        onWhere(tableInfo.getType(), conditionChain);
+        on.extConditionChain().eq(new MpDatasetField(table, tenantIdFieldInfo), tid);
+        onWhere(tableInfo.getType(), on.extConditionChain());
+    }
+
+    /**
+     * 添加租户条件
+     *
+     * @param table MpTable
+     * @param where Where
+     */
+    public static void addTenantCondition(MpTable table, Where where) {
+        Serializable tid = TenantUtil.getTenantId();
+        if (Objects.isNull(tid)) {
+            return;
+        }
+        TableInfo tableInfo = table.getTableInfo();
+        if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
+            return;
+        }
+        TableFieldInfo tenantIdFieldInfo = tableInfo.getTenantIdFieldInfo();
+        if (tid instanceof TenantId) {
+            TenantId tenantId = (TenantId) tid;
+            if (tenantId.isMultiValue()) {
+                where.extConditionChain().in(new MpDatasetField(table, tenantIdFieldInfo), tenantId.getValues());
+                onWhere(tableInfo.getType(), where.extConditionChain());
+                return;
+            }
+            tid = tenantId.getValues()[0];
+        }
+
+        where.extConditionChain().eq(new MpDatasetField(table, tenantIdFieldInfo), tid);
+        onWhere(tableInfo.getType(), where.extConditionChain());
     }
 
     private static void onWhere(Class<?> entityType, ConditionChain where) {

@@ -26,7 +26,7 @@ import java.util.List;
 
 public class From implements IFrom {
 
-    private final List<IDataset<?, ?>> tables = new ArrayList<>(2);
+    private final List<IDataset<?, ?>> tables = new ArrayList<>(3);
 
     public From append(IDataset table) {
         this.tables.add(table);

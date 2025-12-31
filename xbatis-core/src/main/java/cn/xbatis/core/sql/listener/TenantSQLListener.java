@@ -54,14 +54,14 @@ public class TenantSQLListener implements SQLListener {
         } else {
             throw new RuntimeException("not support type:" + source.getClass());
         }
-        TenantUtil.addTenantCondition((MpTable) dataset, where.extConditionChain());
+        TenantUtil.addTenantCondition((MpTable) dataset, where);
     }
 
     private void addConditionToOn(IDataset<?, ?> dataset, IOn on) {
         if (!(dataset instanceof MpTable) || !(on instanceof On)) {
             return;
         }
-        TenantUtil.addTenantCondition((MpTable) dataset, ((On) on).extConditionChain());
+        TenantUtil.addTenantCondition((MpTable) dataset, (On) on);
     }
 
     @Override
