@@ -14,13 +14,20 @@
 
 package cn.xbatis.core.incrementer;
 
-public interface Generator<T> {
+/**
+ * 后续使用
+ */
+@Deprecated
+public class IdentifierGeneratorFactory {
 
     /**
-     * 生成Id
+     * 注册自增器
+     * 除了DEFAULT 注册器可以重新注册 其他均不行
      *
-     * @param entity 实体
-     * @return id
+     * @param name
+     * @param generator
      */
-    T nextId(Class<?> entity);
+    public static void register(String name, Generator<?> generator) {
+        GeneratorFactory.register(name, generator);
+    }
 }

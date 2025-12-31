@@ -14,13 +14,11 @@
 
 package cn.xbatis.core.incrementer;
 
-public interface Generator<T> {
-
-    /**
-     * 生成Id
-     *
-     * @param entity 实体
-     * @return id
-     */
-    T nextId(Class<?> entity);
+/**
+ * 已作废，后续使用 Generator 替换
+ *
+ * @param <T>
+ */
+@Deprecated
+public interface IdentifierGenerator<T> extends Generator<T> {
 }

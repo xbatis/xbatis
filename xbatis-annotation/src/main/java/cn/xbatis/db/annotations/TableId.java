@@ -52,6 +52,14 @@ public @interface TableId {
     String generator() default "";
 
     /**
+     * 后续使用 generator 替代
+     *
+     * @return
+     */
+    @Deprecated
+    String generatorName() default "";
+
+    /**
      * id 自增的sql语句
      * IdAutoType.SQL 时，必须填
      * @return

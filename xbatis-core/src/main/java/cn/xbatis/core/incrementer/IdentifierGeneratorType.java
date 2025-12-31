@@ -14,13 +14,24 @@
 
 package cn.xbatis.core.incrementer;
 
-public interface Generator<T> {
+/**
+ * 后续使用 Generators 代替
+ */
+@Deprecated
+public class IdentifierGeneratorType {
 
     /**
-     * 生成Id
-     *
-     * @param entity 实体
-     * @return id
+     * 基于java uuid获取
      */
-    T nextId(Class<?> entity);
+    public static final String UUID = Generators.UUID;
+
+    /**
+     * 基于雪花算法
+     */
+    public static final String mpNextId = Generators.nextId;
+
+    /**
+     * 默认生成器,默认就是 mpNextId；区别是DEFAULT 可以重置算法
+     */
+    public static final String DEFAULT = Generators.DEFAULT;
 }
