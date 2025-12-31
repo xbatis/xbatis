@@ -82,7 +82,7 @@ public class ParameterHandleUtil {
                 return index;
             }
             if (parameter.getTypeHandler() != null) {
-                parameter.getTypeHandler().setParameter(ps, ++index, realValue, jdbcType);
+                parameter.getTypeHandler().setParameter(ps, ++index, realValue, parameter.getJdbcType());
                 return index;
             }
             if (parameter.getTypeHandlerClass() == null || parameter.getTypeHandlerClass() == UnknownTypeHandler.class) {
