@@ -43,11 +43,12 @@ public @interface TableId {
     DbType dbType() default DbType.UNKNOWN;
 
     /**
-     * 自增器的名字
+     * 自增器的名字,可使用 cn.xbatis.core.incrementer.Generators 下的常量
      * 自定义生成器 需要 实现 cn.xbatis.core.incrementer.Generator
      * 然后 注册到ID生成器工厂 cn.xbatis.core.incrementer.GeneratorFactory.register(name,ID自增器实例)
      *
      * @return 自增器的名称
+     * @see cn.xbatis.core.incrementer.Generators
      */
     String generator() default "";
 
