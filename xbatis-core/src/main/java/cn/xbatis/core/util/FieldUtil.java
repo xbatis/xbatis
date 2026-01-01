@@ -101,7 +101,7 @@ public final class FieldUtil {
      *
      * @param clazz
      * @param field
-     * @return
+     * @return 字段最终泛型类型
      */
     public static Class<?> getFieldFinalType(Class clazz, Field field) {
         return getFieldFinalType(TypeParameterResolver.resolveFieldType(field, clazz), clazz, field);
