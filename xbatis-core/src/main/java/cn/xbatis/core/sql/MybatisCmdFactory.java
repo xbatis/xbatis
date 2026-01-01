@@ -25,7 +25,6 @@ import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.tookit.LambdaUtil;
-import org.apache.ibatis.util.MapUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +70,7 @@ public class MybatisCmdFactory extends CmdFactory {
                 }
             }
         }
-        return (MpTable) MapUtil.computeIfAbsent(this.tableCache, storey + entity.getName(), key -> {
+        return (MpTable) this.tableCache.computeIfAbsent(storey + entity.getName(), key -> {
             TableInfo tableInfo = getTableInfo(entity);
             return new MpTable(tableInfo, tableAs(storey, ++tableNums));
         });
@@ -103,12 +102,16 @@ public class MybatisCmdFactory extends CmdFactory {
     }
 
     @Override
-    public TableField field(Class entity, String filedName, int storey) {
+    public TableField field(Class entity, String fieldName, int storey) {
         MpTable table = table(entity, storey);
-        TableFieldInfo tableFieldInfo = table.getTableInfo().getFieldInfo(filedName);
+        TableFieldInfo tableFieldInfo = table.getTableInfo().getFieldInfo(fieldName);
         if (Objects.isNull(tableFieldInfo)) {
-            throw new RuntimeException("property " + filedName + " is not a column");
+            throw new RuntimeException("property " + fieldName + " is not a column");
         }
+        return this.field(table, tableFieldInfo);
+    }
+
+    public MpTableField field(MpTable table, TableFieldInfo tableFieldInfo) {
         return new MpTableField(table, tableFieldInfo);
     }
 

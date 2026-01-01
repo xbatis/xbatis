@@ -80,19 +80,19 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
 
     TABLE_FIELD[] fields(GetterField... getterFields);
 
-    default TABLE_FIELD field(Class<?> entity, String filedName) {
-        return this.field(entity, filedName, 1);
+    default TABLE_FIELD field(Class<?> entity, String fieldName) {
+        return this.field(entity, fieldName, 1);
     }
 
     /**
      * 根据字段名获取TABLE_FIELD
      *
      * @param entity 实体类
-     * @param filedName 字段名
+     * @param fieldName 字段名
      * @param storey 存储层级
      * @return  TABLE_FIELD cmd
      */
-    TABLE_FIELD field(Class<?> entity, String filedName, int storey);
+    TABLE_FIELD field(Class<?> entity, String fieldName, int storey);
 
 
     /**

@@ -215,10 +215,10 @@ public final class TableInfoUtil {
             throw new RuntimeException("class " + entity.getName() + " is not entity");
         }
 
-        String filedName = fieldInfo.getName();
-        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(filedName);
+        String fieldName = fieldInfo.getName();
+        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldName);
         if (Objects.isNull(tableFieldInfo)) {
-            throw new RuntimeException("property " + filedName + " is not a column");
+            throw new RuntimeException("property " + fieldName + " is not a column");
         }
         return tableFieldInfo.getColumnName();
     }

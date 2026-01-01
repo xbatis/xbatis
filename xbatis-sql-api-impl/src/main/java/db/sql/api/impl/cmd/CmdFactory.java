@@ -128,8 +128,8 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
     }
 
     @Override
-    public TableField field(Class<?> entity, String filedName, int storey) {
-        return this.field(entity, storey, filedName);
+    public TableField field(Class<?> entity, String fieldName, int storey) {
+        return this.field(entity, storey, fieldName);
     }
 
     public TableField field(Table table, String columnName, boolean id) {
@@ -138,8 +138,8 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
 
     @Override
     public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
-        String filedName = LambdaUtil.getName(column);
-        return (DATASET_FIELD) new DatasetField(dataset, filedName);
+        String fieldName = LambdaUtil.getName(column);
+        return (DATASET_FIELD) new DatasetField(dataset, fieldName);
     }
 
     @Override
@@ -210,8 +210,8 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
         return subQuery;
     }
 
-    protected TableField field(Class<?> clazz, int storey, String filedName) {
+    protected TableField field(Class<?> clazz, int storey, String fieldName) {
         Table table = table(clazz, storey);
-        return new TableField(table, filedName);
+        return new TableField(table, fieldName);
     }
 }
