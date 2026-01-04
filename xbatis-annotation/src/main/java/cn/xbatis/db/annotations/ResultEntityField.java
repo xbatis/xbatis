@@ -26,7 +26,7 @@ public @interface ResultEntityField {
 
     /**
      * 对应的实体类
-     *
+     * 可不配置 默认继承上层类上的 target
      * @return 对应的实体类
      */
     Class target() default Void.class;
