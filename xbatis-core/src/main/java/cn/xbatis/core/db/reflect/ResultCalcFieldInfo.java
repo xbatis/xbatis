@@ -79,6 +79,6 @@ public class ResultCalcFieldInfo extends ResultFieldInfo {
             TableFieldInfo tableFieldInfo = tableFieldInfos[i];
             cmds[i] = cmdFactory.field(tableInfo.getType(), tableFieldInfo.getField().getName());
         }
-        return CmdTemplate.create(this.sql, cmds).as(getMappingColumnName());
+        return CmdTemplate.create(true, this.sql, cmds).as(getMappingColumnName());
     }
 }

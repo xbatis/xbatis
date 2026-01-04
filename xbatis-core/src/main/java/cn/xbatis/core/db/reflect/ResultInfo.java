@@ -250,13 +250,14 @@ public class ResultInfo {
 
             if (field.isAnnotationPresent(ResultEntityField.class)) {
                 ResultEntityField resultEntityField = field.getAnnotation(ResultEntityField.class);
+                Class<?> entity;
                 if (resultEntityField.target() == Void.class) {
-                    throw new RuntimeException(" class:" + field.getDeclaringClass() + ", the field:" + field.getName() + " config @ResultEntityField error");
+                    entity = nestedResultEntity.target();
+                } else {
+                    entity = resultEntityField.target();
                 }
 
-                Class<?> entity = resultEntityField.target();
                 int storey = resultEntityField.storey();
-
                 tableInfo = Tables.get(entity);
                 if (Objects.isNull(tableInfo)) {
                     throw new NotTableClassException(root, path.toString(), entity);
