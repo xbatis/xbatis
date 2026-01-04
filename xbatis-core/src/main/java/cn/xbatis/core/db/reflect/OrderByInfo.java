@@ -39,7 +39,7 @@ public class OrderByInfo {
 
         Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
         for (Field field : fieldList) {
-            OrderByItem orderByItem = this.parseOrderByAnnotation(field, orderByTarget, tableInfoMap);
+            OrderByItem orderByItem = this.parseOrderByAnnotation(orderByTarget.storey(), field, orderByTarget, tableInfoMap);
             if (orderByItem == null) {
                 continue;
             }
@@ -48,7 +48,7 @@ public class OrderByInfo {
         this.orderByItems = orderByList;
     }
 
-    private OrderByItem parseOrderByAnnotation(Field field, OrderByTarget orderByTarget, Map<Class<?>, TableInfo> tableInfoMap) {
+    private OrderByItem parseOrderByAnnotation(int parentStorey, Field field, OrderByTarget orderByTarget, Map<Class<?>, TableInfo> tableInfoMap) {
 
         if (field.isAnnotationPresent(OrderByColumn.class)) {
             OrderByColumn orderByColumn = field.getAnnotation(OrderByColumn.class);
@@ -80,7 +80,7 @@ public class OrderByInfo {
         if (tableFieldInfo == null) {
             throw new RuntimeException("can not find entity property " + property + " in entity " + tableInfo.getType());
         }
-        return new OrderByItem(field, tableFieldInfo, condition);
+        return new OrderByItem(parentStorey, field, tableFieldInfo, condition);
     }
 
     public void appendOrderBy(BaseQuery<?, ?> query, Object target) {

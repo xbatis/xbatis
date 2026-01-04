@@ -31,6 +31,13 @@ public @interface ConditionTarget {
     Class<?> value();
 
     /**
+     * 存储层级
+     *
+     * @return 存储层级
+     */
+    int storey() default 1;
+
+    /**
      * 逻辑符号
      *
      * @return Logic

@@ -45,10 +45,10 @@ public @interface Condition {
 
     /**
      * 存储层级
-     *
+     * -1 时 集成上层的 storey值
      * @return 存储层级
      */
-    int storey() default 1;
+    int storey() default -1;
 
     /**
      * like的方式 默认 %xx%

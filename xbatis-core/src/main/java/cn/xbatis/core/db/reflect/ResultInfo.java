@@ -84,6 +84,13 @@ public class ResultInfo {
         return parseResult;
     }
 
+    private static int getStorey(int first, int second) {
+        if (first == -1) {
+            return second;
+        }
+        return first;
+    }
+
     private static void parseResultEntity(ParseResult parseResult, Class<?> clazz, ResultEntity resultEntity) {
         if (clazz.isAnnotationPresent(CreatedEvent.class)) {
             parseResult.createdEventInfos.add(new CreatedEventInfo(clazz, clazz.getAnnotation(CreatedEvent.class)));
@@ -108,25 +115,25 @@ public class ResultInfo {
 
             if (field.isAnnotationPresent(ResultCalcField.class)) {
                 //计算字段
-                tableCount = parseResultCalcField(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
+                tableCount = parseResultCalcField(parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
                 continue;
             }
 
             if (field.isAnnotationPresent(Fetch.class)) {
                 //Fetch
-                tableCount = parseFetch(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount, 1);
+                tableCount = parseFetch(parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
                 continue;
             }
 
             if (field.isAnnotationPresent(PutValue.class)) {
                 //PutValue
-                tableCount = parsePutValue(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
+                tableCount = parsePutValue(parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
                 continue;
             }
 
             if (field.isAnnotationPresent(PutEnumValue.class)) {
                 //PutEnumValue
-                tableCount = parsePutEnumValue(parseResult, resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
+                tableCount = parsePutEnumValue(parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
                 continue;
             }
 
@@ -154,19 +161,15 @@ public class ResultInfo {
 
             if (field.isAnnotationPresent(ResultEntityField.class)) {
                 ResultEntityField resultEntityField = field.getAnnotation(ResultEntityField.class);
+                storey = getStorey(resultEntityField.storey(), resultEntity.storey());
                 if (resultEntityField.target() != Void.class) {
                     entity = resultEntityField.target();
-                    storey = resultEntityField.storey();
                     tableInfo = Tables.get(entity);
                     if (Objects.isNull(tableInfo)) {
                         throw new NotTableClassException(clazz, entity);
                     }
                 } else {
-                    if (resultEntity.storey() != resultEntityField.storey()) {
-                        throw new RuntimeException(" class: no config ?, the field:" + field.getName() + " config @ResultEntityField(storey) error");
-                    }
                     entity = resultEntity.value();
-                    storey = resultEntity.storey();
                     tableInfo = resultEntityTableInfo;
                 }
                 tableFieldName = resultEntityField.property();
@@ -235,7 +238,7 @@ public class ResultInfo {
 
             if (field.isAnnotationPresent(ResultCalcField.class)) {
                 //计算字段
-                tableCount = parseResultCalcField(parseResult, tableInfo, parseResult.resultFieldInfos, targetType, field, tableCount);
+                tableCount = parseResultCalcField(parseResult, nestedResultEntity.storey(), tableInfo, parseResult.resultFieldInfos, targetType, field, tableCount);
                 continue;
             }
 
@@ -244,7 +247,18 @@ public class ResultInfo {
                 FieldInfo fieldInfo = new FieldInfo(targetType, sourceField);
                 Class fetchType = fieldInfo.getFinalClass();
 
-                tableCount = parseFetch(parseResult, tableInfo, nestedResultInfo.getResultFieldInfos(), fetchType, field, tableCount, nestedResultEntity.storey());
+                tableCount = parseFetch(parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), fetchType, field, tableCount);
+                continue;
+            }
+
+            if (field.isAnnotationPresent(NestedResultEntity.class)) {
+                //内嵌类字段
+                NestedResultEntity newNestedResultEntity = field.getAnnotation(NestedResultEntity.class);
+
+                NestedResultInfo newNestedResultInfo = new NestedResultInfo(targetType, field, newNestedResultEntity, new ArrayList<>(), new ArrayList<>());
+                nestedResultInfo.getNestedResultInfos().add(newNestedResultInfo);
+
+                tableCount = parseNestedResultEntity(root, path.append(field.getName()), parseResult, newNestedResultInfo, field, newNestedResultEntity, tableCount);
                 continue;
             }
 
@@ -257,7 +271,7 @@ public class ResultInfo {
                     entity = resultEntityField.target();
                 }
 
-                int storey = resultEntityField.storey();
+                int storey = getStorey(resultEntityField.storey(), nestedResultEntity.storey());
                 tableInfo = Tables.get(entity);
                 if (Objects.isNull(tableInfo)) {
                     throw new NotTableClassException(root, path.toString(), entity);
@@ -283,27 +297,15 @@ public class ResultInfo {
                 continue;
             }
 
-
-            if (field.isAnnotationPresent(NestedResultEntity.class)) {
-                //内嵌类字段
-                NestedResultEntity newNestedResultEntity = field.getAnnotation(NestedResultEntity.class);
-
-                NestedResultInfo newNestedResultInfo = new NestedResultInfo(targetType, field, newNestedResultEntity, new ArrayList<>(), new ArrayList<>());
-                nestedResultInfo.getNestedResultInfos().add(newNestedResultInfo);
-
-                tableCount = parseNestedResultEntity(root, path.append(field.getName()), parseResult, newNestedResultInfo, field, newNestedResultEntity, tableCount);
-                continue;
-            }
-
             if (field.isAnnotationPresent(PutValue.class)) {
                 //PutValue
-                tableCount = parsePutValue(parseResult, tableInfo, parseResult.resultFieldInfos, targetType, field, tableCount);
+                tableCount = parsePutValue(parseResult, nestedResultEntity.storey(), tableInfo, parseResult.resultFieldInfos, targetType, field, tableCount);
                 continue;
             }
 
             if (field.isAnnotationPresent(PutEnumValue.class)) {
                 //PutEnumValue
-                tableCount = parsePutEnumValue(parseResult, tableInfo, parseResult.resultFieldInfos, targetType, field, tableCount);
+                tableCount = parsePutEnumValue(parseResult, nestedResultEntity.storey(), tableInfo, parseResult.resultFieldInfos, targetType, field, tableCount);
                 continue;
             }
 
@@ -351,7 +353,7 @@ public class ResultInfo {
      * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
      * @return 当前已存在表的个数
      */
-    private static int parseFetch(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount, int parentStorey) {
+    private static int parseFetch(ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
         Fetch fetch = field.getAnnotation(Fetch.class);
 
         String valueColumn = fetch.column();
@@ -371,15 +373,7 @@ public class ResultInfo {
                 fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
             }
 
-            int storey;
-
-            if (fetch.storey() != -1) {
-                storey = fetch.storey();
-            } else if (fetchTableInfo == currentTableInfo) {
-                storey = parentStorey;
-            } else {
-                storey = 1;
-            }
+            int storey = getStorey(fetch.storey(), parentStorey);
 
             if (Objects.isNull(fetchFieldInfo)) {
                 throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + fetch.property() + " is not a entity field");
@@ -416,9 +410,10 @@ public class ResultInfo {
      * @param currentTableInfo 当前对应TableInfo
      * @param field            字段
      * @param tableCount       当前表个数
+     * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
      * @return 当前已存在表的个数
      */
-    private static int parseResultCalcField(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
+    private static int parseResultCalcField(ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
         ResultCalcField resultCalcField = field.getAnnotation(ResultCalcField.class);
         String value = resultCalcField.value();
 
@@ -433,7 +428,7 @@ public class ResultInfo {
             tableInfo = currentTableInfo;
         }
 
-        int storey = resultCalcField.storey();
+        int storey = getStorey(resultCalcField.storey(), parentStorey);
 
         //以字段为基础的查询
         //创建前缀
@@ -496,9 +491,10 @@ public class ResultInfo {
      * @param currentTableInfo 当前对应TableInfo
      * @param field            字段
      * @param tableCount       当前表个数
+     * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
      * @return 当前已存在表的个数
      */
-    private static int parsePutValue(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
+    private static int parsePutValue(ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
         PutValue putValue = field.getAnnotation(PutValue.class);
 
         TableInfo fetchTableInfo;
@@ -510,7 +506,7 @@ public class ResultInfo {
             }
             fetchTableInfo = Tables.get(putValue.source());
         }
-
+        int storey = getStorey(putValue.storey(), parentStorey);
         String[] properties = putValue.property().split(",");
         String[] valuesColumn = new String[properties.length];
         Class<?>[] valueTypes = new Class[properties.length];
@@ -523,11 +519,11 @@ public class ResultInfo {
                 throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + putValue.property() + " is not a entity field");
             }
             //创建前缀
-            tableCount = createPrefix(fetchTableInfo.getType(), putValue.storey(), parseResult.tablePrefixes, tableCount);
+            tableCount = createPrefix(fetchTableInfo.getType(), storey, parseResult.tablePrefixes, tableCount);
             //获取前缀
-            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), putValue.storey());
+            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), storey);
 
-            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, putValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
+            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, fetchTableInfo, fetchFieldInfo, field));
 
             valuesColumn[i] = tablePrefix + fetchFieldInfo.getColumnName();
             valuesTypeHandler[i] = fetchFieldInfo.getTypeHandler();
@@ -545,9 +541,10 @@ public class ResultInfo {
      * @param currentTableInfo 当前对应TableInfo
      * @param field            字段
      * @param tableCount       当前表个数
+     * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
      * @return 当前已存在表的个数
      */
-    private static int parsePutEnumValue(ParseResult parseResult, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
+    private static int parsePutEnumValue(ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
         PutEnumValue putEnumValue = field.getAnnotation(PutEnumValue.class);
 
         TableInfo fetchTableInfo;
@@ -565,17 +562,16 @@ public class ResultInfo {
         if (Objects.isNull(fetchFieldInfo)) {
             throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + putEnumValue.property() + " is not a entity field");
         }
+        int storey = getStorey(putEnumValue.storey(), parentStorey);
         //创建前缀
-        tableCount = createPrefix(fetchTableInfo.getType(), putEnumValue.storey(), parseResult.tablePrefixes, tableCount);
+        tableCount = createPrefix(fetchTableInfo.getType(), storey, parseResult.tablePrefixes, tableCount);
         //获取前缀
-        String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), putEnumValue.storey());
+        String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), storey);
 
-        resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, putEnumValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
+        resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, fetchTableInfo, fetchFieldInfo, field));
 
         String valueColumn = tablePrefix + fetchFieldInfo.getColumnName();
         TypeHandler<?> valueTypeHandler = fetchFieldInfo.getTypeHandler();
-
-
         parseResult.putEnumValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutEnumValueInfo(new FieldInfo(clazz, field), putEnumValue, fetchFieldInfo.getFieldInfo().getTypeClass(), valueColumn, valueTypeHandler));
         return tableCount;
     }

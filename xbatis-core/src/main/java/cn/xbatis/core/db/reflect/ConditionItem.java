@@ -48,18 +48,18 @@ public class ConditionItem {
 
     private final Object defaultValue;
 
-    public ConditionItem(FieldInfo fieldInfo, TableFieldInfo tableFieldInfo, Condition annotation) {
+    public ConditionItem(int parentStorey, FieldInfo fieldInfo, TableFieldInfo tableFieldInfo, Condition annotation) {
         fieldInfo.getField().setAccessible(true);
         this.fieldInfo = fieldInfo;
         this.tableFieldInfo = tableFieldInfo;
         this.annotation = annotation;
         if (annotation == null) {
             this.type = Condition.Type.EQ;
-            this.storey = 1;
+            this.storey = parentStorey;
             this.likeMode = null;
         } else {
             this.type = annotation.value();
-            this.storey = annotation.storey();
+            this.storey = annotation.storey() == -1 ? parentStorey : annotation.storey();
             this.likeMode = LikeMode.valueOf(annotation.likeMode().name());
         }
 

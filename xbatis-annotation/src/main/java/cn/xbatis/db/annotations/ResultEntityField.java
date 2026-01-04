@@ -41,8 +41,8 @@ public @interface ResultEntityField {
 
     /**
      * 存储层级，用于自动select场景
-     *
+     * -1 时 集成上层的 storey值
      * @return 存储层级
      */
-    int storey() default 1;
+    int storey() default -1;
 }

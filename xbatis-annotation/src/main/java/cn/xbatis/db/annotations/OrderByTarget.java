@@ -37,4 +37,11 @@ public @interface OrderByTarget {
      * @return 是否严格模式
      */
     boolean strict() default false;
+
+    /**
+     * 存储层级
+     *
+     * @return 存储层级
+     */
+    int storey() default 1;
 }

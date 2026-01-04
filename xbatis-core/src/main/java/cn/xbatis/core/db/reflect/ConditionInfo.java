@@ -37,10 +37,12 @@ public class ConditionInfo {
         Class<?> targetTable;
 
         final Logic logic;
+        int parentStorey = 1;
         if (clazz.isAnnotationPresent(ConditionTarget.class)) {
             ConditionTarget conditionTarget = clazz.getAnnotation(ConditionTarget.class);
             targetTable = conditionTarget.value();
             logic = conditionTarget.logic();
+            parentStorey = conditionTarget.storey();
         } else {
             targetTable = clazz;
             logic = Logic.AND;
@@ -52,7 +54,7 @@ public class ConditionInfo {
             if (conditions != null) {
                 List<ConditionItem> subList = new ArrayList<>();
                 for (Condition condition : conditions.value()) {
-                    ConditionItem conditionItem = this.parseConditionAnnotation(clazz, field, condition, targetTable, tableInfoMap);
+                    ConditionItem conditionItem = this.parseConditionAnnotation(clazz, parentStorey, field, condition, targetTable, tableInfoMap);
                     if (conditionItem != null) {
                         subList.add(conditionItem);
                     }
@@ -64,7 +66,7 @@ public class ConditionInfo {
                 conditionList.add(conditionsItem);
             } else {
                 Condition condition = field.getAnnotation(Condition.class);
-                ConditionItem conditionItem = this.parseConditionAnnotation(clazz, field, condition, targetTable, tableInfoMap);
+                ConditionItem conditionItem = this.parseConditionAnnotation(clazz, parentStorey, field, condition, targetTable, tableInfoMap);
                 if (conditionItem != null) {
                     conditionList.add(conditionItem);
                 }
@@ -118,12 +120,13 @@ public class ConditionInfo {
         this.conditionItemGroups = itemGroups;
     }
 
-    private ConditionItem parseConditionAnnotation(Class<?> clazz, Field field, Condition condition, Class<?> targetTable, Map<Class<?>, TableInfo> tableInfoMap) {
+    private ConditionItem parseConditionAnnotation(Class<?> clazz, int parentStorey, Field field, Condition condition, Class<?> targetTable, Map<Class<?>, TableInfo> tableInfoMap) {
         if (condition != null && condition.value() == Condition.Type.IGNORE) {
             return null;
         }
 
         TableInfo tableInfo;
+
         if (condition == null || condition.target() == Void.class) {
             tableInfo = tableInfoMap.computeIfAbsent(targetTable, k -> Tables.get(targetTable));
         } else {
@@ -138,7 +141,7 @@ public class ConditionInfo {
         if (tableFieldInfo == null) {
             throw new RuntimeException("can not find entity property " + property + " in entity " + tableInfo.getType());
         }
-        return new ConditionItem(new FieldInfo(clazz, field), tableFieldInfo, condition);
+        return new ConditionItem(parentStorey, new FieldInfo(clazz, field), tableFieldInfo, condition);
     }
 
     public void appendCondition(ConditionChain conditionChain, Object target) {

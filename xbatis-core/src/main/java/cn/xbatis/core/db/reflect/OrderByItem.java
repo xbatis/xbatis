@@ -35,11 +35,15 @@ public class OrderByItem {
     private final int storey;
     private final Integer ZERO = 0;
 
-    public OrderByItem(Field field, Object orderByInfo, OrderBy annotation) {
+    public OrderByItem(int parentStorey, Field field, Object orderByInfo, OrderBy annotation) {
         field.setAccessible(true);
         this.field = field;
         this.orderByInfo = orderByInfo;
-        this.storey = annotation == null ? 1 : annotation.storey();
+        if (annotation == null || annotation.storey() == -1) {
+            storey = parentStorey;
+        } else {
+            storey = annotation.storey();
+        }
     }
 
     public OrderByItem(Field field, Object orderByInfo) {
