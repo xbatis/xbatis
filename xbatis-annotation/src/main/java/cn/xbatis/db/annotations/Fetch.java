@@ -56,7 +56,7 @@ public @interface Fetch {
 
     /**
      * 存储层级
-     * -1 时 集成上层的 storey值
+     * -1 时 ，如果相同的实体类，则继承上层的 storey值，否则默认为1
      *
      * @return 存储层级
      */
