@@ -104,7 +104,7 @@ public class ModelInfo {
         try {
             this.tableInfo = Tables.get(entity);
         } catch (NotTableClassException e) {
-            throw new RuntimeException(MessageFormat.format("unable match model class {0} , the generic class {1} is not a entity", model.getName(), entity.getName()));
+            throw new NotTableClassException(model, "", entity);
         }
 
         List<ModelFieldInfo> modelFieldInfos = FieldUtil.getFields(model).stream().map(field -> new ModelFieldInfo(entity, model, field)).collect(Collectors.toList());

@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.db.reflect;
 
+import cn.xbatis.core.exception.NotTableFieldException;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.db.annotations.OrderBy;
@@ -39,7 +40,7 @@ public class OrderByInfo {
 
         Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
         for (Field field : fieldList) {
-            OrderByItem orderByItem = this.parseOrderByAnnotation(orderByTarget.storey(), field, orderByTarget, tableInfoMap);
+            OrderByItem orderByItem = this.parseOrderByAnnotation(clazz, orderByTarget.storey(), field, orderByTarget, tableInfoMap);
             if (orderByItem == null) {
                 continue;
             }
@@ -48,7 +49,7 @@ public class OrderByInfo {
         this.orderByItems = orderByList;
     }
 
-    private OrderByItem parseOrderByAnnotation(int parentStorey, Field field, OrderByTarget orderByTarget, Map<Class<?>, TableInfo> tableInfoMap) {
+    private OrderByItem parseOrderByAnnotation(Class<?> clazz, int parentStorey, Field field, OrderByTarget orderByTarget, Map<Class<?>, TableInfo> tableInfoMap) {
 
         if (field.isAnnotationPresent(OrderByColumn.class)) {
             OrderByColumn orderByColumn = field.getAnnotation(OrderByColumn.class);
@@ -78,7 +79,7 @@ public class OrderByInfo {
         }
         TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
         if (tableFieldInfo == null) {
-            throw new RuntimeException("can not find entity property " + property + " in entity " + tableInfo.getType());
+            throw new NotTableFieldException(clazz, "", tableInfo.getType(), property);
         }
         return new OrderByItem(parentStorey, field, tableFieldInfo, condition);
     }

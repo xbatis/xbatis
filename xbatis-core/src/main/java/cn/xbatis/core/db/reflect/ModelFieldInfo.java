@@ -14,12 +14,12 @@
 
 package cn.xbatis.core.db.reflect;
 
+import cn.xbatis.core.exception.NotTableFieldException;
 import cn.xbatis.db.annotations.ModelEntityField;
 import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 
 import java.lang.reflect.Field;
-import java.text.MessageFormat;
 import java.util.Objects;
 
 public class ModelFieldInfo {
@@ -50,10 +50,10 @@ public class ModelFieldInfo {
         }
         this.tableFieldInfo = tableInfo.getFieldInfo(entityFieldName);
         if (Objects.isNull(this.tableFieldInfo)) {
-            throw new RuntimeException(MessageFormat.format("unable match field {0} in class {1} ,The field {2} can''t found in entity class {3}", field.getName(), model.getName(), entityFieldName, entity.getName()));
+            throw new NotTableFieldException(model, "", entity, entityFieldName);
         }
         if (!this.tableFieldInfo.isExists()) {
-            throw new RuntimeException(MessageFormat.format("unable match field {0} in class {1} ,The field {2} is not a table column in entity class {3}", field.getName(), model.getName(), entityFieldName, entity.getName()));
+            throw new NotTableFieldException(model, "", entity, entityFieldName);
         }
         this.field = field;
         this.fieldInfo = new FieldInfo(model, field);

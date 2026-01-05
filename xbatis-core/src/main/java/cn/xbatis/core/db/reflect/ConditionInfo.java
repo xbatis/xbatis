@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.db.reflect;
 
+import cn.xbatis.core.exception.NotTableFieldException;
 import cn.xbatis.core.sql.ObjectConditionLifeCycle;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.db.Logic;
@@ -139,7 +140,7 @@ public class ConditionInfo {
         }
         TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
         if (tableFieldInfo == null) {
-            throw new RuntimeException("can not find entity property " + property + " in entity " + tableInfo.getType());
+            throw new NotTableFieldException(clazz, "", tableInfo.getType(), property);
         }
         return new ConditionItem(parentStorey, new FieldInfo(clazz, field), tableFieldInfo, condition);
     }
