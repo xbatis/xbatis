@@ -58,7 +58,7 @@ API。
     <dependency>
       <groupId>cn.xbatis</groupId>
       <artifactId>xbatis-spring-boot-parent</artifactId>
-      <version>1.9.5</version>
+      <version>1.9.6</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -104,7 +104,7 @@ public class XbatisApplication {
       <dependency>
         <groupId>cn.xbatis</groupId>
         <artifactId>xbatis-spring-boot-parent</artifactId>
-        <version>1.9.5</version>
+        <version>1.9.6</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -129,7 +129,7 @@ public class XbatisApplication {
   <dependency>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis-solon-plugin</artifactId>
-    <version>1.9.5</version>
+    <version>1.9.6</version>
   </dependency>
   <dependency>
     <groupId>org.noear</groupId>
@@ -255,12 +255,12 @@ public class SysUser { }
 
 ### 5.2 `@TableId`（`cn.xbatis.db.annotations.TableId`）
 
-| 属性              | 是否可空 | 默认值               | 说明                                         |
-|-----------------|------|-------------------|--------------------------------------------|
-| `value`         | 是    | `IdAutoType.AUTO` | 主键策略，支持 `AUTO`, `NONE`, `SQL`, `GENERATOR` |
-| `dbType`        | 是    | –                 | 目标数据库类型，便于多库差异化配置                          |
-| `sql`           | 是    | –                 | `value = SQL` 时必填，自定义取号语句                  |
-| `generatorName` | 是    | –                 | `value = GENERATOR` 时必填，对应注册的 ID 生成器       |
+| 属性          | 是否可空 | 默认值               | 说明                                         |
+|-------------|------|-------------------|--------------------------------------------|
+| `value`     | 是    | `IdAutoType.AUTO` | 主键策略，支持 `AUTO`, `NONE`, `SQL`, `GENERATOR` |
+| `dbType`    | 是    | –                 | 目标数据库类型，便于多库差异化配置                          |
+| `sql`       | 是    | –                 | `value = SQL` 时必填，自定义取号语句                  |
+| `generator` | 是    | –                 | `value = GENERATOR` 时必填，对应注册的 ID 生成器       |
 
 可重复标注适配多种数据库的主键策略。
 

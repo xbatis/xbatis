@@ -60,7 +60,7 @@ key APIs.
     <dependency>
       <groupId>cn.xbatis</groupId>
       <artifactId>xbatis-spring-boot-parent</artifactId>
-      <version>1.9.5</version>
+      <version>1.9.6</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -106,7 +106,7 @@ public class XbatisApplication {
       <dependency>
         <groupId>cn.xbatis</groupId>
         <artifactId>xbatis-spring-boot-parent</artifactId>
-        <version>1.9.5</version>
+        <version>1.9.6</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -131,7 +131,7 @@ public class XbatisApplication {
   <dependency>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis-solon-plugin</artifactId>
-    <version>1.9.5</version>
+    <version>1.9.6</version>
   </dependency>
   <dependency>
     <groupId>org.noear</groupId>
@@ -264,7 +264,7 @@ public class SysUser { }
 | `value`         | Yes      | `IdAutoType.AUTO` | Primary key strategy: `AUTO`, `NONE`, `SQL`, `GENERATOR`             |
 | `dbType`        | Yes      | –                 | Target database type for differentiating strategies                  |
 | `sql`           | Yes      | –                 | Required when `value = SQL`; custom SQL for ID retrieval             |
-| `generatorName` | Yes      | –                 | Required when `value = GENERATOR`; refers to registered ID generator |
+| `generator` | Yes      | –                 | Required when `value = GENERATOR`; refers to registered ID generator |
 
 Repeatable to accommodate multiple database strategies.
 
