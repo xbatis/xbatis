@@ -93,7 +93,7 @@ public class ResultInfo {
 
         int tableCount = 0;
         if (Objects.nonNull(resultEntityTableInfo)) {
-            tableCount = createPrefix(resultEntity.value(), resultEntity.storey(), parseResult.tablePrefixes, 0);
+            tableCount = createPrefix(resultEntity.value(), resultEntity.storey(), parseResult.tablePrefixes, tableCount);
         } else if (resultEntity.value() != Void.class) {
             throw new NotTableClassException(root, path, resultEntity.value());
         }
