@@ -31,7 +31,6 @@
         <module>xbatis-core</module>
         <module>xbatis-sql-api</module>
         <module>xbatis-sql-api-impl</module>
-        <module>xbatis-benchmark</module>
     </modules>
     <issueManagement>
         <system>Gitee Issue</system>
