@@ -22,6 +22,7 @@ import cn.xbatis.db.annotations.*;
 import lombok.Data;
 import org.apache.ibatis.type.TypeHandler;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -101,43 +102,54 @@ public class ResultInfo {
         List<Field> fieldList = FieldUtil.getFields(clazz);
         for (Field field : fieldList) {
             String fieldPath = path + "." + field.getName();
-            if (field.isAnnotationPresent(ResultField.class)) {
+
+            FieldInfo fieldInfo = new FieldInfo(root, field);
+            Map<Class<? extends Annotation>, Annotation> annotationMap = AnnotationUtil.getAnnotations(root, field, fieldInfo.getTypeClass()
+                    , ResultField.class, ResultCalcField.class, Fetch.class, NestedResultEntity.class
+                    , PutValue.class, PutEnumValue.class, ResultEntityField.class
+            );
+
+            if (annotationMap.containsKey(ResultField.class)) {
                 //普通字段
-                ResultField resultField = field.getAnnotation(ResultField.class);
+                ResultField resultField = (ResultField) annotationMap.get(ResultField.class);
                 parseResult.resultFieldInfos.add(new ResultFieldInfo(clazz, field, resultField));
                 continue;
             }
 
-            if (field.isAnnotationPresent(ResultCalcField.class)) {
+            if (annotationMap.containsKey(ResultCalcField.class)) {
                 //计算字段
-                tableCount = parseResultCalcField(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
+                ResultCalcField resultCalcField = (ResultCalcField) annotationMap.get(ResultCalcField.class);
+                tableCount = parseResultCalcField(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, resultCalcField, tableCount);
                 continue;
             }
 
-            if (field.isAnnotationPresent(Fetch.class)) {
+            if (annotationMap.containsKey(Fetch.class)) {
                 //Fetch
-                tableCount = parseFetch(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
+                Fetch fetch = (Fetch) annotationMap.get(Fetch.class);
+                tableCount = parseFetch(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, fetch, tableCount);
                 continue;
             }
 
-            if (field.isAnnotationPresent(PutValue.class)) {
+            if (annotationMap.containsKey(NestedResultEntity.class)) {
+                //内嵌类字段
+                NestedResultEntity nestedResultEntity = (NestedResultEntity) annotationMap.get(NestedResultEntity.class);
+                NestedResultInfo nestedResultInfo = new NestedResultInfo(clazz, field, nestedResultEntity, new ArrayList<>(), new ArrayList<>());
+                parseResult.nestedResultInfos.add(nestedResultInfo);
+                tableCount = parseNestedResultEntity(clazz, fieldPath, parseResult, nestedResultInfo, field, nestedResultEntity, tableCount);
+                continue;
+            }
+
+            if (annotationMap.containsKey(PutValue.class)) {
                 //PutValue
-                tableCount = parsePutValue(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
+                PutValue putValue = (PutValue) annotationMap.get(PutValue.class);
+                tableCount = parsePutValue(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, putValue, tableCount);
                 continue;
             }
 
             if (field.isAnnotationPresent(PutEnumValue.class)) {
                 //PutEnumValue
-                tableCount = parsePutEnumValue(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
-                continue;
-            }
-
-            if (field.isAnnotationPresent(NestedResultEntity.class)) {
-                //内嵌类字段
-                NestedResultEntity nestedResultEntity = field.getAnnotation(NestedResultEntity.class);
-                NestedResultInfo nestedResultInfo = new NestedResultInfo(clazz, field, nestedResultEntity, new ArrayList<>(), new ArrayList<>());
-                parseResult.nestedResultInfos.add(nestedResultInfo);
-                tableCount = parseNestedResultEntity(clazz, fieldPath, parseResult, nestedResultInfo, field, nestedResultEntity, tableCount);
+                PutEnumValue putEnumValue = (PutEnumValue) annotationMap.get(PutEnumValue.class);
+                tableCount = parsePutEnumValue(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, putEnumValue, tableCount);
                 continue;
             }
 
@@ -146,19 +158,19 @@ public class ResultInfo {
                 throw new NotTableClassException(root, path, clazz);
             }
 
-            tableCount = parseResultEntityField(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, tableCount);
+            ResultEntityField resultEntityField = (ResultEntityField) annotationMap.get(ResultEntityField.class);
+            tableCount = parseResultEntityField(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, resultEntityField, tableCount);
         }
     }
 
-    private static int parseResultEntityField(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
+    private static int parseResultEntityField(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, ResultEntityField resultEntityField, int tableCount) {
         TableInfo tableInfo;
         TableFieldInfo tableFieldInfo;
         String tableFieldName;
         Class<?> entity;
 
-        ResultEntityField resultEntityField = null;
-        if (field.isAnnotationPresent(ResultEntityField.class)) {
-            resultEntityField = field.getAnnotation(ResultEntityField.class);
+
+        if (resultEntityField != null) {
             if (resultEntityField.target() != Void.class) {
                 entity = resultEntityField.target();
                 tableInfo = Tables.get(entity);
@@ -236,31 +248,39 @@ public class ResultInfo {
 
         for (Field field : FieldUtil.getFields(targetType)) {
             String fieldPath = path + "." + field.getName();
-            if (field.isAnnotationPresent(ResultField.class)) {
+            FieldInfo fieldInfo = new FieldInfo(root, field);
+            Map<Class<? extends Annotation>, Annotation> annotationMap = AnnotationUtil.getAnnotations(root, field, fieldInfo.getTypeClass()
+                    , ResultField.class, ResultCalcField.class, Fetch.class, NestedResultEntity.class, ResultEntityField.class
+                    , PutValue.class, PutEnumValue.class, NestedResultEntityField.class
+            );
+
+            if (annotationMap.containsKey(ResultField.class)) {
                 //普通字段
-                ResultField resultField = field.getAnnotation(ResultField.class);
+                ResultField resultField = (ResultField) annotationMap.get(ResultField.class);
                 nestedResultInfo.getResultFieldInfos().add(new ResultFieldInfo(targetType, field, resultField));
                 continue;
             }
 
-            if (field.isAnnotationPresent(ResultCalcField.class)) {
+            if (annotationMap.containsKey(ResultCalcField.class)) {
                 //计算字段
-                tableCount = parseResultCalcField(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, tableCount);
+                ResultCalcField resultCalcField = (ResultCalcField) annotationMap.get(ResultCalcField.class);
+                tableCount = parseResultCalcField(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, resultCalcField, tableCount);
                 continue;
             }
 
-            if (field.isAnnotationPresent(Fetch.class)) {
+            if (annotationMap.containsKey(Fetch.class)) {
                 //Fetch
-                FieldInfo fieldInfo = new FieldInfo(targetType, sourceField);
-                Class fetchType = fieldInfo.getFinalClass();
+                Fetch fetch = (Fetch) annotationMap.get(Fetch.class);
+                FieldInfo fetchFieldInfo = new FieldInfo(targetType, sourceField);
+                Class fetchType = fetchFieldInfo.getFinalClass();
 
-                tableCount = parseFetch(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), fetchType, field, tableCount);
+                tableCount = parseFetch(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), fetchType, field, fetch, tableCount);
                 continue;
             }
 
-            if (field.isAnnotationPresent(NestedResultEntity.class)) {
+            if (annotationMap.containsKey(NestedResultEntity.class)) {
                 //内嵌类字段
-                NestedResultEntity newNestedResultEntity = field.getAnnotation(NestedResultEntity.class);
+                NestedResultEntity newNestedResultEntity = (NestedResultEntity) annotationMap.get(NestedResultEntity.class);
                 NestedResultInfo newNestedResultInfo = new NestedResultInfo(targetType, field, newNestedResultEntity, new ArrayList<>(), new ArrayList<>());
                 nestedResultInfo.getNestedResultInfos().add(newNestedResultInfo);
                 tableCount = parseNestedResultEntity(root, fieldPath, parseResult, newNestedResultInfo, field, newNestedResultEntity, tableCount);
@@ -268,31 +288,33 @@ public class ResultInfo {
             }
 
             if (field.isAnnotationPresent(ResultEntityField.class)) {
-                tableCount = parseResultEntityField(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, tableCount);
+                ResultEntityField resultEntityField = (ResultEntityField) annotationMap.get(ResultEntityField.class);
+                tableCount = parseResultEntityField(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, resultEntityField, tableCount);
                 continue;
             }
 
             if (field.isAnnotationPresent(PutValue.class)) {
                 //PutValue
-                tableCount = parsePutValue(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, tableCount);
+                PutValue putValue = (PutValue) annotationMap.get(PutValue.class);
+                tableCount = parsePutValue(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, putValue, tableCount);
                 continue;
             }
 
             if (field.isAnnotationPresent(PutEnumValue.class)) {
                 //PutEnumValue
-                tableCount = parsePutEnumValue(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, tableCount);
+                PutEnumValue putEnumValue = (PutEnumValue) annotationMap.get(PutEnumValue.class);
+                tableCount = parsePutEnumValue(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, putEnumValue, tableCount);
                 continue;
             }
-
-            tableCount = parseNestedResultEntityField(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo, targetType, field, fieldTypeIsEntity, tableCount);
+            NestedResultEntityField nestedResultEntityField = (NestedResultEntityField) annotationMap.get(NestedResultEntityField.class);
+            tableCount = parseNestedResultEntityField(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo, targetType, field, fieldTypeIsEntity, nestedResultEntityField, tableCount);
         }
 
         return tableCount;
     }
 
-    private static int parseNestedResultEntityField(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, NestedResultInfo nestedResultInfo, Class<?> clazz, Field field, boolean fieldTypeIsEntity, int tableCount) {
+    private static int parseNestedResultEntityField(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, NestedResultInfo nestedResultInfo, Class<?> clazz, Field field, boolean fieldTypeIsEntity, NestedResultEntityField nestedResultEntityField, int tableCount) {
         String targetFieldName = field.getName();
-        NestedResultEntityField nestedResultEntityField = field.getAnnotation(NestedResultEntityField.class);
         if (Objects.nonNull(nestedResultEntityField)) {
             targetFieldName = nestedResultEntityField.value();
         }
@@ -333,9 +355,7 @@ public class ResultInfo {
      * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
      * @return 当前已存在表的个数
      */
-    private static int parseFetch(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
-        Fetch fetch = field.getAnnotation(Fetch.class);
-
+    private static int parseFetch(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, Fetch fetch, int tableCount) {
         String valueColumn = fetch.column();
         TypeHandler<?> valueTypeHandler = null;
         if (StringPool.EMPTY.equals(valueColumn)) {
@@ -398,10 +418,10 @@ public class ResultInfo {
      * @param field            字段
      * @param tableCount       当前表个数
      * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
+     * @param resultCalcField 注解
      * @return 当前已存在表的个数
      */
-    private static int parseResultCalcField(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, int tableCount) {
-        ResultCalcField resultCalcField = field.getAnnotation(ResultCalcField.class);
+    private static int parseResultCalcField(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, ResultCalcField resultCalcField, int tableCount) {
         String value = resultCalcField.value();
 
         TableInfo tableInfo;
@@ -488,9 +508,7 @@ public class ResultInfo {
      * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
      * @return 当前已存在表的个数
      */
-    private static int parsePutValue(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
-        PutValue putValue = field.getAnnotation(PutValue.class);
-
+    private static int parsePutValue(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, PutValue putValue, int tableCount) {
         TableInfo putTableInfo;
         if (putValue.source() == Void.class) {
             putTableInfo = currentTableInfo;
@@ -547,9 +565,7 @@ public class ResultInfo {
      * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
      * @return 当前已存在表的个数
      */
-    private static int parsePutEnumValue(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
-        PutEnumValue putEnumValue = field.getAnnotation(PutEnumValue.class);
-
+    private static int parsePutEnumValue(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, PutEnumValue putEnumValue, int tableCount) {
         TableInfo putEnumTableInfo;
         if (putEnumValue.source() == Void.class) {
             putEnumTableInfo = currentTableInfo;

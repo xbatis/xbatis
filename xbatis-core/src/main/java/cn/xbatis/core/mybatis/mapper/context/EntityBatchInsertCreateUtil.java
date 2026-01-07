@@ -46,7 +46,7 @@ public class EntityBatchInsertCreateUtil {
                 continue;
             }
             if (tableFieldInfo.isTableId()) {
-                TableId tableId = TableInfoUtil.getTableIdAnnotation(tableFieldInfo.getField(), dbType);
+                TableId tableId = TableInfoUtil.getTableIdAnnotation(tableFieldInfo, dbType);
                 Objects.requireNonNull(tableId.value());
                 if (tableId.value() == IdAutoType.AUTO) {
                     Object id;
@@ -99,7 +99,7 @@ public class EntityBatchInsertCreateUtil {
         //拼上主键
         if (!tableInfo.getIdFieldInfos().isEmpty()) {
             tableInfo.getIdFieldInfos().forEach(idFieldInfo -> {
-                TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getField(), dbType);
+                TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo, dbType);
                 if (tableId.value() == IdAutoType.GENERATOR || tableId.value() == IdAutoType.SQL) {
                     if (!saveFieldInfoSet.contains(idFieldInfo)) {
                         saveFieldInfoSet.add(idFieldInfo);

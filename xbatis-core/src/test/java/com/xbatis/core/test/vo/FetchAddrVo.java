@@ -18,8 +18,10 @@ import cn.xbatis.db.FetchPropertyType;
 import cn.xbatis.db.annotations.Fetch;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.ResultEntityField;
+import cn.xbatis.db.annotations.TableId;
 import com.xbatis.core.test.DO.Addr;
 import com.xbatis.core.test.DO.FetchAddr;
+import db.sql.api.DbType;
 import lombok.Data;
 import lombok.ToString;
 
@@ -29,6 +31,12 @@ import java.util.List;
 @ToString(callSuper = true)
 @ResultEntity(FetchAddr.class)
 public class FetchAddrVo extends FetchAddr {
+
+    @Override
+    @TableId(dbType = DbType.H2)
+    public void setId(Integer id) {
+        super.setId(id);
+    }
 
     @Fetch(property = FetchAddr.Fields.addrs1,
             propertyType = FetchPropertyType.MULTI,
@@ -80,4 +88,10 @@ public class FetchAddrVo extends FetchAddr {
     @ResultEntityField(property = "addrs3")
     private List<Long> addrs33;
 
+
+    @Override
+    @ResultEntityField(property = "addrs1")
+    public void setAddrs1(String addrs1) {
+        super.setAddrs1(addrs1);
+    }
 }

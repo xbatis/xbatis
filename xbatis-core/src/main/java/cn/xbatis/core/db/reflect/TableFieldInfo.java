@@ -18,11 +18,13 @@ import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.annotations.*;
+import db.sql.api.DbType;
 import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 public class TableFieldInfo {
 
@@ -61,6 +63,8 @@ public class TableFieldInfo {
 
     private final boolean tableId;
 
+    private final Map<DbType, TableId> tableIdMap;
+
     private final boolean version;
 
     private final boolean tenantId;
@@ -88,11 +92,13 @@ public class TableFieldInfo {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.tableAnnotation = tableAnnotation;
+
         this.tableFieldAnnotation = TableInfoUtil.getTableFieldAnnotation(field);
         this.exists = tableFieldAnnotation.exists();
         this.columnName = TableInfoUtil.getFieldColumnName(tableAnnotation, field);
         this.readFieldInvoker = new GetFieldInvoker(field);
-        this.tableId = field.isAnnotationPresent(TableId.class) || field.isAnnotationPresent(TableId.List.class);
+        this.tableIdMap = TableInfoUtil.getTableIds(clazz, field, fieldInfo.getTypeClass());
+        this.tableId = !tableIdMap.isEmpty();
         this.version = field.isAnnotationPresent(Version.class);
         this.tenantId = field.isAnnotationPresent(TenantId.class);
         this.logicDelete = field.isAnnotationPresent(LogicDelete.class);
@@ -100,7 +106,7 @@ public class TableFieldInfo {
         this.logicDeleteAnnotation = this.logicDelete ? field.getAnnotation(LogicDelete.class) : null;
         this.logicDeleteInitValue = this.logicDelete ? TypeConvertUtil.convert(this.logicDeleteAnnotation.beforeValue(), fieldInfo.getTypeClass()) : null;
         this.writeFieldInvoker = new SetFieldInvoker(field);
-        typeHandler = MybatisTypeHandlerUtil.createTypeHandler(this.fieldInfo, this.tableFieldAnnotation.typeHandler());
+        this.typeHandler = MybatisTypeHandlerUtil.createTypeHandler(this.fieldInfo, this.tableFieldAnnotation.typeHandler());
         this.isTableSplitKey = field.isAnnotationPresent(SplitTableKey.class);
         this.canUpdateField = this.exists && !this.tableId && !this.logicDelete && !this.version && !this.logicDeleteTime && !this.tenantId && !this.tableFieldAnnotation.neverUpdate();
     }
@@ -183,5 +189,9 @@ public class TableFieldInfo {
 
     public boolean isExists() {
         return exists;
+    }
+
+    public Map<DbType, TableId> getTableIdMap() {
+        return tableIdMap;
     }
 }

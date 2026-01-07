@@ -37,7 +37,7 @@ public class ModelBatchInsertCreateUtil {
         Set<String> saveFieldSet = new HashSet<>();
         for (ModelFieldInfo modelFieldInfo : modelInfo.getModelFieldInfos()) {
             if (modelFieldInfo.getTableFieldInfo().isTableId()) {
-                TableId tableId = TableInfoUtil.getTableIdAnnotation(modelFieldInfo.getTableFieldInfo().getField(), dbType);
+                TableId tableId = TableInfoUtil.getTableIdAnnotation(modelFieldInfo.getTableFieldInfo(), dbType);
                 Objects.requireNonNull(tableId.value());
                 if (tableId.value() == IdAutoType.AUTO) {
                     Object id;
@@ -95,7 +95,7 @@ public class ModelBatchInsertCreateUtil {
         //拼上主键
         if (!modelInfo.getIdFieldInfos().isEmpty()) {
             modelInfo.getIdFieldInfos().forEach(idFieldInfo -> {
-                TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getTableFieldInfo().getField(), dbType);
+                TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getTableFieldInfo(), dbType);
                 if (tableId.value() == IdAutoType.GENERATOR) {
                     if (!saveFieldInfoSet.contains(idFieldInfo)) {
                         saveFieldInfoSet.add(idFieldInfo);

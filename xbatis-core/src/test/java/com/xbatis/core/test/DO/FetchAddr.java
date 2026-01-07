@@ -28,4 +28,8 @@ public class FetchAddr extends FetchAddrBase<Integer> {
     private Integer id;
 
     private String addrs1;
+
+    public String getAddrs1() {
+        return addrs1;
+    }
 }

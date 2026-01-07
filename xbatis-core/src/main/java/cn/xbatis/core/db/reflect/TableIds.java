@@ -37,7 +37,7 @@ public final class TableIds {
             if (Objects.isNull(tableFieldInfo)) {
                 return null;
             }
-            return TableInfoUtil.getTableIdAnnotation(tableFieldInfo.getField(), dbType);
+            return TableInfoUtil.getTableIdAnnotation(tableFieldInfo, dbType);
         });
     }
 

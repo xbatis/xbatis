@@ -29,6 +29,9 @@ import db.sql.api.tookit.LambdaUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -127,34 +130,28 @@ public final class TableInfoUtil {
     /**
      * 获取主键的注解信息，非ID 返回 null
      *
-     * @param field 字段
+     * @param tableFieldInfo 字段信息
      * @param dbType 数据库类型
      * @return 获取ID注解
      */
-    public static TableId getTableIdAnnotation(Field field, DbType dbType) {
-        TableId[] tableIdAnnotations = field.getAnnotationsByType(TableId.class);
-        if (tableIdAnnotations.length < 1) {
+    public static TableId getTableIdAnnotation(TableFieldInfo tableFieldInfo, DbType dbType) {
+        if (tableFieldInfo.getTableIdMap().isEmpty()) {
             return null;
         }
-        TableId tableId = null;
-        TableId unkownTableId = null;
-        for (TableId item : tableIdAnnotations) {
-            if (item.dbType() == DbType.UNKNOWN) {
-                unkownTableId = item;
-                break;
-            }
-            if (item.dbType() == dbType) {
-                tableId = item;
-                break;
-            }
+
+        TableId tableId = tableFieldInfo.getTableIdMap().get(dbType);
+        if (tableId != null) {
+            return tableId;
+        }
+
+        tableId = tableFieldInfo.getTableIdMap().get(DbType.UNKNOWN);
+
+        if (tableId != null) {
+            return tableId;
         }
 
         if (Objects.isNull(tableId)) {
-            tableId = unkownTableId;
-        }
-
-        if (Objects.isNull(tableId)) {
-            tableId = tableIdAnnotations[0];
+            tableId = tableFieldInfo.getTableIdMap().entrySet().iterator().next().getValue();
         }
         return tableId;
     }
@@ -272,5 +269,49 @@ public final class TableInfoUtil {
 
     public static String buildDatabaseCaseNaming(Table table, String name) {
         return table.databaseCaseRule().convert(name);
+    }
+
+    public static Map<DbType, TableId> getTableIds(Class clazz, Field field, Class fieldType) {
+        String setterName = "set" + Character.toUpperCase(field.getName().charAt(0)) + (field.getName().length() > 1 ? field.getName().substring(1) : "");
+        Method fieldSetter = null;
+        try {
+            fieldSetter = clazz.getDeclaredMethod(setterName, fieldType);
+        } catch (NoSuchMethodException ignored) {
+
+        }
+        return getTableIds(field, fieldSetter);
+    }
+
+    private static void appendTableId(Map<DbType, TableId> tableIdMap, TableId[] tableIds) {
+        if (tableIds == null || tableIds.length < 1) {
+            return;
+        }
+
+        for (TableId tableId : tableIds) {
+            if (tableIdMap.containsKey(tableId.dbType())) {
+                continue;
+            }
+            tableIdMap.put(tableId.dbType(), tableId);
+        }
+    }
+
+    private static Map<DbType, TableId> getTableIds(Field field, Method fieldSetter) {
+        Map<DbType, TableId> tableIdMap = new HashMap<>();
+
+        if (fieldSetter != null) {
+            if (fieldSetter.getDeclaringClass() == field.getDeclaringClass() || field.getDeclaringClass().isAssignableFrom(fieldSetter.getDeclaringClass())) {
+                TableId[] tableIds = fieldSetter.getAnnotationsByType(TableId.class);
+                if (tableIds != null && tableIds.length > 0) {
+                    appendTableId(tableIdMap, tableIds);
+                }
+            }
+        }
+
+        TableId[] tableIds = field.getAnnotationsByType(TableId.class);
+        if (tableIds != null && tableIds.length > 0) {
+            appendTableId(tableIdMap, tableIds);
+        }
+
+        return tableIdMap;
     }
 }
