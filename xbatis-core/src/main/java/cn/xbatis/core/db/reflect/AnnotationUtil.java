@@ -27,16 +27,22 @@ public class AnnotationUtil {
 
     public static Map<Class<? extends Annotation>, Annotation> getAnnotations(Class clazz, Field field, Class<?> fieldType, Class<? extends Annotation>... annotationTypes) {
         String setterName = "set" + Character.toUpperCase(field.getName().charAt(0)) + (field.getName().length() > 1 ? field.getName().substring(1) : "");
-        Method fieldSetter = null;
+        Method fieldSetter1 = null;
         try {
-            fieldSetter = clazz.getDeclaredMethod(setterName, fieldType);
+            fieldSetter1 = clazz.getDeclaredMethod(setterName, fieldType);
         } catch (NoSuchMethodException ignored) {
         }
 
-        return getAnnotations(field, fieldSetter, annotationTypes);
-    }
+        Method fieldSetter2 = null;
+        if (fieldSetter1 != null && field.getDeclaringClass() != fieldSetter1.getDeclaringClass() && field.getDeclaringClass().isAssignableFrom(fieldSetter1.getDeclaringClass())) {
+            //set方法覆盖 获取字段里的set方法
+            try {
+                fieldSetter2 = field.getDeclaringClass().getDeclaredMethod(setterName, fieldType);
+            } catch (NoSuchMethodException ignored) {
+            }
+        }
 
-    private static Map<Class<? extends Annotation>, Annotation> getAnnotations(Field field, Method fieldSetter, Class<? extends Annotation>... annotationTypes) {
+
         Map<Class<? extends Annotation>, Annotation> annotationMap = new HashMap<>();
         for (Class<? extends Annotation> annotationType : annotationTypes) {
             Target target = annotationType.getAnnotation(Target.class);
@@ -53,26 +59,39 @@ public class AnnotationUtil {
                 continue;
             }
 
-            if (fieldSetter != null) {
-                if (fieldSetter.getDeclaringClass() != field.getDeclaringClass() && fieldSetter.getDeclaringClass().isAssignableFrom(field.getDeclaringClass())) {
+            boolean fieldScan = false;
+            if (fieldSetter1 != null) {
+                //如果字段的类 是 方法1的类的子类 则优先字段
+                if (fieldSetter1.getDeclaringClass() != field.getDeclaringClass() && fieldSetter1.getDeclaringClass().isAssignableFrom(field.getDeclaringClass())) {
                     annotation = field.getAnnotation(annotationType);
+                    fieldScan = true;
                     if (annotation != null) {
                         annotationMap.put(annotationType, annotation);
                         continue;
                     }
                 }
-                annotation = fieldSetter.getAnnotation(annotationType);
+                //如果上面没有获取到注解 则在方法1上获取
+                annotation = fieldSetter1.getAnnotation(annotationType);
                 if (annotation != null) {
                     annotationMap.put(annotationType, annotation);
                     continue;
                 }
+                //如果依然没有获取到 在取里面set方法里获取
+                if (fieldSetter2 != null) {
+                    annotation = fieldSetter2.getAnnotation(annotationType);
+                    if (annotation != null) {
+                        annotationMap.put(annotationType, annotation);
+                    }
+                    continue;
+                }
             }
 
-            annotation = field.getAnnotation(annotationType);
-            if (annotation != null) {
-                annotationMap.put(annotationType, field.getAnnotation(annotationType));
+            if (!fieldScan) {
+                annotation = field.getAnnotation(annotationType);
+                if (annotation != null) {
+                    annotationMap.put(annotationType, field.getAnnotation(annotationType));
+                }
             }
-            continue;
         }
         return annotationMap;
     }

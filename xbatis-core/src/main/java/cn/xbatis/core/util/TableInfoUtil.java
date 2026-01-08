@@ -273,13 +273,44 @@ public final class TableInfoUtil {
 
     public static Map<DbType, TableId> getTableIds(Class clazz, Field field, Class fieldType) {
         String setterName = "set" + Character.toUpperCase(field.getName().charAt(0)) + (field.getName().length() > 1 ? field.getName().substring(1) : "");
-        Method fieldSetter = null;
+        Method fieldSetter1 = null;
         try {
-            fieldSetter = clazz.getDeclaredMethod(setterName, fieldType);
+            fieldSetter1 = clazz.getDeclaredMethod(setterName, fieldType);
         } catch (NoSuchMethodException ignored) {
 
         }
-        return getTableIds(field, fieldSetter);
+
+        Method fieldSetter2 = null;
+        if (fieldSetter1 != null && field.getDeclaringClass() != fieldSetter1.getDeclaringClass() && field.getDeclaringClass().isAssignableFrom(fieldSetter1.getDeclaringClass())) {
+            //set方法覆盖 获取字段里的set方法
+            try {
+                fieldSetter2 = field.getDeclaringClass().getDeclaredMethod(setterName, fieldType);
+            } catch (NoSuchMethodException ignored) {
+            }
+        }
+
+        Map<DbType, TableId> tableIdMap = new HashMap<>();
+
+        boolean fieldScan = false;
+        if (fieldSetter1 != null) {
+            //如果字段的类 是 方法1的类的子类 则优先字段
+            if (fieldSetter1.getDeclaringClass() != field.getDeclaringClass() && fieldSetter1.getDeclaringClass().isAssignableFrom(field.getDeclaringClass())) {
+                appendTableId(tableIdMap, field.getAnnotationsByType(TableId.class));
+                fieldScan = true;
+            }
+            //如果上面没有获取到注解 则在方法1上获取
+            appendTableId(tableIdMap, fieldSetter1.getAnnotationsByType(TableId.class));
+            //如果依然没有获取到 在取里面set方法里获取
+            if (fieldSetter2 != null) {
+                appendTableId(tableIdMap, fieldSetter1.getAnnotationsByType(TableId.class));
+            }
+        }
+
+        if (!fieldScan) {
+            appendTableId(tableIdMap, field.getAnnotationsByType(TableId.class));
+        }
+
+        return tableIdMap;
     }
 
     private static void appendTableId(Map<DbType, TableId> tableIdMap, TableId[] tableIds) {
@@ -295,23 +326,5 @@ public final class TableInfoUtil {
         }
     }
 
-    private static Map<DbType, TableId> getTableIds(Field field, Method fieldSetter) {
-        Map<DbType, TableId> tableIdMap = new HashMap<>();
 
-        if (fieldSetter != null) {
-            if (fieldSetter.getDeclaringClass() == field.getDeclaringClass() || field.getDeclaringClass().isAssignableFrom(fieldSetter.getDeclaringClass())) {
-                TableId[] tableIds = fieldSetter.getAnnotationsByType(TableId.class);
-                if (tableIds != null && tableIds.length > 0) {
-                    appendTableId(tableIdMap, tableIds);
-                }
-            }
-        }
-
-        TableId[] tableIds = field.getAnnotationsByType(TableId.class);
-        if (tableIds != null && tableIds.length > 0) {
-            appendTableId(tableIdMap, tableIds);
-        }
-
-        return tableIdMap;
-    }
 }
