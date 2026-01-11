@@ -26,6 +26,7 @@ import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.Model;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.basic.NULL;
 
 import java.util.*;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class ModelBatchInsertCreateUtil {
 
-    private static Set<String> getAllSaveField(ModelInfo modelInfo, DbType dbType, Model model) {
+    private static Set<String> getAllSaveField(ModelInfo modelInfo, IDbType dbType, Model model) {
         Set<String> saveFieldSet = new HashSet<>();
         for (ModelFieldInfo modelFieldInfo : modelInfo.getModelFieldInfos()) {
             if (modelFieldInfo.getTableFieldInfo().isTableId()) {
@@ -57,7 +58,7 @@ public class ModelBatchInsertCreateUtil {
     }
 
 
-    private static <M extends Model<T>, T> void doBefore(ModelInfo modelInfo, List<ModelFieldInfo> saveFieldInfoSet, M insertData, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
+    private static <M extends Model<T>, T> void doBefore(ModelInfo modelInfo, List<ModelFieldInfo> saveFieldInfoSet, M insertData, SaveBatchStrategy<T> saveBatchStrategy, IDbType dbType, Map<String, Object> defaultValueContext) {
         //设置租户ID
         TenantUtil.setTenantId(insertData);
 
@@ -73,7 +74,7 @@ public class ModelBatchInsertCreateUtil {
     }
 
 
-    public static <T extends Model> BaseInsert<?> create(BaseInsert<?> insert, ModelInfo modelInfo, T[] insertData, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, boolean useBatchExecutor, Map<String, Object> defaultValueContext) {
+    public static <T extends Model> BaseInsert<?> create(BaseInsert<?> insert, ModelInfo modelInfo, T[] insertData, SaveBatchStrategy<T> saveBatchStrategy, IDbType dbType, boolean useBatchExecutor, Map<String, Object> defaultValueContext) {
 
         insert = insert == null ? new Insert() : insert;
 

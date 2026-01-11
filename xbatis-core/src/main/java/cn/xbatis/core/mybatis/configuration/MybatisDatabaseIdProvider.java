@@ -44,7 +44,7 @@ public class MybatisDatabaseIdProvider extends VendorDatabaseIdProvider {
     @Override
     public String getDatabaseId(DataSource dataSource) {
         if (useDbTypeAutoProvider) {
-            return DbTypeUtil.getDbType(dataSource).name();
+            return DbTypeUtil.getDbType(dataSource).getName();
         }
         return super.getDatabaseId(dataSource);
     }

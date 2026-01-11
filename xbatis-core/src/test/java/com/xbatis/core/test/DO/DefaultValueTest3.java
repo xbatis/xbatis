@@ -30,8 +30,8 @@ import java.time.LocalDateTime;
 public class DefaultValueTest3 {
 
     @TableId
-    @TableId(dbType = DbType.ORACLE, value = IdAutoType.SQL, sql = "select default_value_test_seq.NEXTVAL FROM dual")
-    @TableId(dbType = DbType.KING_BASE, value = IdAutoType.SQL, sql = "select default_value_test_seq.NEXTVAL FROM dual")
+    @TableId(dbType = DbType.Name.ORACLE, value = IdAutoType.SQL, sql = "select default_value_test_seq.NEXTVAL FROM dual")
+    @TableId(dbType = DbType.Name.KING_BASE, value = IdAutoType.SQL, sql = "select default_value_test_seq.NEXTVAL FROM dual")
     private Integer id;
 
     @TableField(defaultValue = "{BLANK}")

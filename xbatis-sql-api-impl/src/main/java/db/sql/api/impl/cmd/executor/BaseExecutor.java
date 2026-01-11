@@ -15,7 +15,7 @@
 package db.sql.api.impl.cmd.executor;
 
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.tookit.CmdUtils;
 
@@ -54,7 +54,7 @@ public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>,
     }
 
     @Override
-    public void selectorExecute(DbType dbType) {
+    public void selectorExecute(IDbType dbType) {
         if (this.isExecuteSelector) {
             return;
         }

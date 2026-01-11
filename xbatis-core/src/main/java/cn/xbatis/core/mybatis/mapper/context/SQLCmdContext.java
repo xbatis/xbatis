@@ -16,7 +16,7 @@ package cn.xbatis.core.mybatis.mapper.context;
 
 
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.executor.Executor;
 
 import java.util.List;
@@ -25,11 +25,11 @@ public interface SQLCmdContext<E extends Executor> extends PreparedParameterCont
 
     E getExecution();
 
-    default void init(DbType dbType) {
+    default void init(IDbType dbType) {
 
     }
 
-    String sql(DbType dbType);
+    String sql(IDbType dbType);
 
     List<Object> getParameters();
 

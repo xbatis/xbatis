@@ -14,7 +14,7 @@
 
 package db.sql.api.impl.cmd.executor;
 
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 /**
  * 选择器 不同数据库执行不同的方法
@@ -28,7 +28,7 @@ public interface SelectorCall<R> {
      * @param runnable 执行器
      * @return 自己
      */
-    SelectorCall<R> when(DbType dbType, DbTypeCallable<R> runnable);
+    SelectorCall<R> when(IDbType dbType, DbTypeCallable<R> runnable);
 
     /**
      * 当数据库类型在dbTypes 时
@@ -37,8 +37,8 @@ public interface SelectorCall<R> {
      * @param runnable 执行器
      * @return 自己
      */
-    default SelectorCall<R> when(DbType[] dbTypes, DbTypeCallable<R> runnable) {
-        for (DbType dbType : dbTypes) {
+    default SelectorCall<R> when(IDbType[] dbTypes, DbTypeCallable<R> runnable) {
+        for (IDbType dbType : dbTypes) {
             when(dbType, runnable);
         }
         return this;
@@ -62,5 +62,5 @@ public interface SelectorCall<R> {
      *
      * @param dbType 数据库类型
      */
-    R dbExecute(DbType dbType);
+    R dbExecute(IDbType dbType);
 }

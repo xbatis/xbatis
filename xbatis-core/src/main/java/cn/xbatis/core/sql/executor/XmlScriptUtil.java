@@ -15,7 +15,7 @@
 package cn.xbatis.core.sql.executor;
 
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 
@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XmlScriptUtil {
-    public static final XmlScript buildXmlScript(String paramName, String scriptParamName, Cmd cmd, DbType dbType) {
+    public static final XmlScript buildXmlScript(String paramName, String scriptParamName, Cmd cmd, IDbType dbType) {
         return buildXmlScript(paramName, scriptParamName, cmd, dbType, null);
     }
 
-    public static final XmlScript buildXmlScript(String paramName, String scriptParamName, Cmd cmd, DbType dbType, String ignoreTag) {
+    public static final XmlScript buildXmlScript(String paramName, String scriptParamName, Cmd cmd, IDbType dbType, String ignoreTag) {
         if (cmd == null) {
             return new XmlScript("", null);
         }

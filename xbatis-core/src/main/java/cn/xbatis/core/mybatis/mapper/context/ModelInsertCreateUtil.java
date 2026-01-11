@@ -30,7 +30,7 @@ import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.Model;
 import cn.xbatis.db.annotations.TableId;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.basic.NULL;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import java.util.Objects;
 
 public class ModelInsertCreateUtil {
 
-    public static <M extends Model<T>, T> void initInsertValue(ModelInfo modelInfo, ModelFieldInfo modelFieldInfo, M insertData, DbType dbType, Map<String, Object> defaultValueContext) {
+    public static <M extends Model<T>, T> void initInsertValue(ModelInfo modelInfo, ModelFieldInfo modelFieldInfo, M insertData, IDbType dbType, Map<String, Object> defaultValueContext) {
         if (modelFieldInfo.getTableFieldInfo().isTableId()) {
             Object value = modelFieldInfo.getValue(insertData);
             if (value != null && IdUtil.isIdExists(insertData, modelFieldInfo)) {
@@ -102,7 +102,7 @@ public class ModelInsertCreateUtil {
     }
 
 
-    private static <M extends Model<T>, T> void doBefore(ModelInfo modelInfo, M insertData, SaveStrategy<T> saveStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
+    private static <M extends Model<T>, T> void doBefore(ModelInfo modelInfo, M insertData, SaveStrategy<T> saveStrategy, IDbType dbType, Map<String, Object> defaultValueContext) {
         //设置租户ID
         TenantUtil.setTenantId(insertData);
 
@@ -114,7 +114,7 @@ public class ModelInsertCreateUtil {
         OnListenerUtil.notifyInsert(insertData);
     }
 
-    public static <M extends Model<T>, T> BaseInsert<?> create(BaseInsert<?> insert, ModelInfo modelInfo, M insertData, SaveStrategy<T> saveStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
+    public static <M extends Model<T>, T> BaseInsert<?> create(BaseInsert<?> insert, ModelInfo modelInfo, M insertData, SaveStrategy<T> saveStrategy, IDbType dbType, Map<String, Object> defaultValueContext) {
         doBefore(modelInfo, insertData, saveStrategy, dbType, defaultValueContext);
 
         insert = insert == null ? new Insert() : insert;

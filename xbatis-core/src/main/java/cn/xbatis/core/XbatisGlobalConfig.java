@@ -33,7 +33,7 @@ import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.DatabaseCaseRule;
 import cn.xbatis.listener.OnInsertListener;
 import cn.xbatis.listener.OnUpdateListener;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.SQLImplGlobalConfig;
 import db.sql.api.impl.paging.IPagingProcessor;
@@ -185,7 +185,7 @@ public final class XbatisGlobalConfig {
      *
      * @return 命名规则
      */
-    public static DatabaseCaseRule getDatabaseCaseRule(DbType dbType) {
+    public static DatabaseCaseRule getDatabaseCaseRule(IDbType dbType) {
         return SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
     }
 
@@ -193,7 +193,7 @@ public final class XbatisGlobalConfig {
      * 设置数据库命名规则 默认 不处理
      *
      */
-    public static void setDatabaseCaseRule(DbType dbType, DatabaseCaseRule databaseCaseRule) {
+    public static void setDatabaseCaseRule(IDbType dbType, DatabaseCaseRule databaseCaseRule) {
         SQLImplGlobalConfig.setDatabaseCaseRule(dbType, databaseCaseRule);
     }
 
@@ -553,7 +553,7 @@ public final class XbatisGlobalConfig {
      * @param dbType          数据库类型
      * @param pagingProcessor 分页处理器
      */
-    public static void setPagingProcessor(DbType dbType, IPagingProcessor pagingProcessor) {
+    public static void setPagingProcessor(IDbType dbType, IPagingProcessor pagingProcessor) {
         PagingProcessorFactory.setProcessor(dbType, pagingProcessor);
     }
 
@@ -563,7 +563,7 @@ public final class XbatisGlobalConfig {
      * @param dbType 数据库类型
      * @return 分页处理器
      */
-    public static IPagingProcessor getPagingProcessor(DbType dbType) {
+    public static IPagingProcessor getPagingProcessor(IDbType dbType) {
         return PagingProcessorFactory.getProcessor(dbType);
     }
 

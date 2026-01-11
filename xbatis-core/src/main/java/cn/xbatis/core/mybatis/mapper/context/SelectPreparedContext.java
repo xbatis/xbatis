@@ -15,7 +15,7 @@
 package cn.xbatis.core.mybatis.mapper.context;
 
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
@@ -38,7 +38,7 @@ public class SelectPreparedContext<T> extends PreparedContext {
         this.returnType = returnType;
     }
 
-    private static Object[] buildSqlAndArgsWithDbType(String originalSql, List<Object> originalArgs, DbType dbType) {
+    private static Object[] buildSqlAndArgsWithDbType(String originalSql, List<Object> originalArgs, IDbType dbType) {
         int paramSize = originalArgs.size();
         String[] sqls = originalSql.split("\\?");
         if (sqls.length != paramSize && sqls.length != paramSize + 1) {
@@ -92,7 +92,7 @@ public class SelectPreparedContext<T> extends PreparedContext {
         return returnType;
     }
 
-    public void initWithDbType(DbType dbType) {
+    public void initWithDbType(IDbType dbType) {
         if (sql != null) {
             return;
         }

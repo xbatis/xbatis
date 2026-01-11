@@ -16,7 +16,7 @@ package cn.xbatis.core.mybatis.mapper.context;
 
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.executor.BaseQuery;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.executor.Executor;
 
 import java.util.Map;
@@ -47,7 +47,7 @@ public class XbatisContextUtil {
         return null;
     }
 
-    public static DbType getDbType(Object parameterObject) {
+    public static IDbType getDbType(Object parameterObject) {
         if (parameterObject instanceof SQLCmdQueryContext) {
             return ((SQLCmdQueryContext) parameterObject).getDbType();
         }
@@ -55,8 +55,8 @@ public class XbatisContextUtil {
             Map parameterMap = (Map) parameterObject;
             if (parameterMap.containsKey("dbType")) {
                 Object dbType = parameterMap.get("dbType");
-                if (dbType != null && dbType instanceof DbType) {
-                    return (DbType) dbType;
+                if (dbType != null && dbType instanceof IDbType) {
+                    return (IDbType) dbType;
                 }
             }
         }

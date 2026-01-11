@@ -14,9 +14,7 @@
 
 package db.sql.api.impl.cmd.basic;
 
-import db.sql.api.Cmd;
-import db.sql.api.DbType;
-import db.sql.api.SqlBuilderContext;
+import db.sql.api.*;
 import db.sql.api.impl.cmd.Methods;
 
 /**
@@ -26,28 +24,28 @@ public interface DatePattern extends Cmd {
 
     DatePattern HH = new DatePattern() {
         @Override
-        public String pattern(DbType dbType) {
+        public String pattern(IDbType dbType) {
             return hourPattern(dbType);
         }
     };
 
     DatePattern DD = new DatePattern() {
         @Override
-        public String pattern(DbType dbType) {
+        public String pattern(IDbType dbType) {
             return dayPattern(dbType);
         }
     };
 
     DatePattern MM = new DatePattern() {
         @Override
-        public String pattern(DbType dbType) {
+        public String pattern(IDbType dbType) {
             return monthPattern(dbType);
         }
     };
 
     DatePattern YYYY = new DatePattern() {
         @Override
-        public String pattern(DbType dbType) {
+        public String pattern(IDbType dbType) {
             return yearPattern(dbType);
         }
     };
@@ -55,21 +53,21 @@ public interface DatePattern extends Cmd {
 
     DatePattern MM_DD = new DatePattern() {
         @Override
-        public String pattern(DbType dbType) {
+        public String pattern(IDbType dbType) {
             return monthPattern(dbType) + '-' + dayPattern(dbType);
         }
     };
 
     DatePattern YYYY_MM = new DatePattern() {
         @Override
-        public String pattern(DbType dbType) {
+        public String pattern(IDbType dbType) {
             return yearPattern(dbType) + '-' + monthPattern(dbType);
         }
     };
 
     DatePattern YYYY_MM_DD = new DatePattern() {
         @Override
-        public String pattern(DbType dbType) {
+        public String pattern(IDbType dbType) {
             return
                     yearPattern(dbType) + '-' +
                             monthPattern(dbType) + '-' +
@@ -79,7 +77,7 @@ public interface DatePattern extends Cmd {
     };
     DatePattern YYYY_MM_DD_HH_MM_SS = new DatePattern() {
         @Override
-        public String pattern(DbType dbType) {
+        public String pattern(IDbType dbType) {
             return
                     yearPattern(dbType) + '-' +
                             monthPattern(dbType) + '-' +
@@ -91,173 +89,183 @@ public interface DatePattern extends Cmd {
         }
     };
 
-    default String yearPattern(DbType dbType) {
-        switch (dbType) {
-            case KING_BASE:
-            case H2:
-            case GAUSS:
-            case PGSQL:
-            case ORACLE:
-            case DB2: {
-                return "YYYY";
-            }
-
-            case SQLITE:
-            case DM:
-            case MARIA_DB:
-            case MYSQL: {
-                return "%Y";
-            }
-
-            case SQL_SERVER: {
-                return "yyyy";
-            }
-            default: {
-                throw new RuntimeException("Not supported");
-            }
+    default String yearPattern(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return "%Y";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return "YYYY";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return "YYYY";
+        }
+
+        if (dbType == DbType.SQLITE || dbType == DbType.DM) {
+            return "%Y";
+        }
+
+        if (dbType == DbType.H2 || dbType == DbType.DB2) {
+            return "YYYY";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return "yyyy";
+        }
+
+        throw new RuntimeException("Not supported");
     }
 
-    default String monthPattern(DbType dbType) {
-        switch (dbType) {
-            case KING_BASE:
-            case H2:
-            case SQL_SERVER:
-            case GAUSS:
-            case PGSQL:
-            case ORACLE:
-            case DB2: {
-                return "MM";
-            }
-
-            case SQLITE:
-            case DM:
-            case MARIA_DB:
-            case MYSQL: {
-                return "%m";
-            }
-
-            default: {
-                throw new RuntimeException("Not supported");
-            }
+    default String monthPattern(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return "%m";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return "MM";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return "MM";
+        }
+
+        if (dbType == DbType.SQLITE || dbType == DbType.DM) {
+            return "%m";
+        }
+
+        if (dbType == DbType.H2 || dbType == DbType.DB2) {
+            return "MM";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return "MM";
+        }
+
+        throw new RuntimeException("Not supported");
     }
 
-    default String dayPattern(DbType dbType) {
-        switch (dbType) {
-            case KING_BASE:
-            case H2:
-            case GAUSS:
-            case PGSQL:
-            case ORACLE:
-            case DB2: {
-                return "DD";
-            }
-
-            case SQLITE:
-            case DM:
-            case MARIA_DB:
-            case MYSQL: {
-                return "%d";
-            }
-
-            case SQL_SERVER: {
-                return "dd";
-            }
-            default: {
-                throw new RuntimeException("Not supported");
-            }
+    default String dayPattern(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return "%d";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return "DD";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return "DD";
+        }
+
+        if (dbType == DbType.SQLITE || dbType == DbType.DM) {
+            return "%d";
+        }
+
+        if (dbType == DbType.H2 || dbType == DbType.DB2) {
+            return "DD";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return "dd";
+        }
+
+        throw new RuntimeException("Not supported");
     }
 
-    default String hourPattern(DbType dbType) {
-        switch (dbType) {
-            case KING_BASE:
-            case H2:
-            case GAUSS:
-            case PGSQL:
-            case ORACLE:
-            case DB2: {
-                return "HH24";
-            }
-
-            case SQLITE:
-            case DM:
-            case MARIA_DB:
-            case MYSQL: {
-                return "%H";
-            }
-
-            case SQL_SERVER: {
-                return "HH";
-            }
-            default: {
-                throw new RuntimeException("Not supported");
-            }
+    default String hourPattern(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return "%H";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return "HH24";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return "HH24";
+        }
+
+        if (dbType == DbType.SQLITE || dbType == DbType.DM) {
+            return "%H";
+        }
+
+        if (dbType == DbType.H2 || dbType == DbType.DB2) {
+            return "HH24";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return "HH";
+        }
+
+        throw new RuntimeException("Not supported");
     }
 
-    default String minutePattern(DbType dbType) {
-        switch (dbType) {
-            case KING_BASE:
-            case H2:
-            case GAUSS:
-            case PGSQL:
-            case ORACLE:
-            case DB2: {
-                return "MI";
-            }
-
-            case SQLITE: {
-                return "%M";
-            }
-
-            case DM:
-            case MARIA_DB:
-            case MYSQL: {
-                return "%i";
-            }
-
-            case SQL_SERVER: {
-                return "mm";
-            }
-            default: {
-                throw new RuntimeException("Not supported");
-            }
+    default String minutePattern(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return "%i";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return "MI";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return "MI";
+        }
+
+        if (dbType == DbType.DM) {
+            return "%i";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return "%M";
+        }
+
+        if (dbType == DbType.H2 || dbType == DbType.DB2) {
+            return "MI";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return "mm";
+        }
+
+        throw new RuntimeException("Not supported");
     }
 
-    default String secondPattern(DbType dbType) {
-        switch (dbType) {
-            case KING_BASE:
-            case H2:
-            case GAUSS:
-            case PGSQL:
-            case ORACLE:
-            case DB2: {
-                return "SS";
-            }
-
-            case SQLITE: {
-                return "%S";
-            }
-
-            case DM:
-            case MARIA_DB:
-            case MYSQL: {
-                return "%s";
-            }
-
-            case SQL_SERVER: {
-                return "ss";
-            }
-            default: {
-                throw new RuntimeException("Not supported");
-            }
+    default String secondPattern(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return "%s";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return "SS";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return "SS";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return "%S";
+        }
+
+        if (dbType == DbType.DM) {
+            return "%s";
+        }
+
+        if (dbType == DbType.H2 || dbType == DbType.DB2) {
+            return "SS";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return "ss";
+        }
+
+        throw new RuntimeException("Not supported");
     }
 
-    String pattern(DbType dbType);
+    String pattern(IDbType dbType);
 
     @Override
     default StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {

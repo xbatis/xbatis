@@ -33,7 +33,7 @@ import java.util.List;
 public class FetchAddrVo extends FetchAddr {
 
     @Override
-    @TableId(dbType = DbType.H2)
+    @TableId(dbType = DbType.Name.H2)
     public void setId(Integer id) {
         super.setId(id);
     }

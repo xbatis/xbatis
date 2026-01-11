@@ -18,7 +18,6 @@ import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.annotations.*;
-import db.sql.api.DbType;
 import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.type.TypeHandler;
@@ -63,7 +62,7 @@ public class TableFieldInfo {
 
     private final boolean tableId;
 
-    private final Map<DbType, TableId> tableIdMap;
+    private final Map<String, TableId> tableIdMap;
 
     private final boolean version;
 
@@ -191,7 +190,7 @@ public class TableFieldInfo {
         return exists;
     }
 
-    public Map<DbType, TableId> getTableIdMap() {
+    public Map<String, TableId> getTableIdMap() {
         return tableIdMap;
     }
 }

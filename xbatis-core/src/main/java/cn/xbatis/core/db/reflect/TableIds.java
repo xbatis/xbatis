@@ -16,7 +16,7 @@ package cn.xbatis.core.db.reflect;
 
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.annotations.TableId;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 import java.util.Map;
 import java.util.Objects;
@@ -30,9 +30,8 @@ public final class TableIds {
 
     }
 
-    public static TableId get(Class entity, DbType dbType) {
-        return CACHE.computeIfAbsent(entity.getName() + dbType, key -> {
-
+    public static TableId get(Class entity, IDbType dbType) {
+        return CACHE.computeIfAbsent(entity.getName() + dbType.getName(), key -> {
             TableFieldInfo tableFieldInfo = Tables.get(entity).getSingleIdFieldInfo(false);
             if (Objects.isNull(tableFieldInfo)) {
                 return null;

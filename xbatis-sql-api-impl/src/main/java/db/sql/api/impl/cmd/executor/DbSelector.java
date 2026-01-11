@@ -14,7 +14,7 @@
 
 package db.sql.api.impl.cmd.executor;
 
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.cmd.executor.Runnable;
 import db.sql.api.impl.tookit.Objects;
 
@@ -23,17 +23,17 @@ import java.util.Map;
 
 public class DbSelector implements Selector {
 
-    private final Map<DbType, Runnable> consumers = new HashMap<>();
+    private final Map<IDbType, Runnable> consumers = new HashMap<>();
 
     private Runnable otherwise;
 
-    public DbSelector when(DbType dbType, Runnable runnable) {
+    public DbSelector when(IDbType dbType, Runnable runnable) {
         consumers.put(dbType, runnable);
         return this;
     }
 
-    public DbSelector when(DbType[] dbTypes, Runnable runnable) {
-        for (DbType dbType : dbTypes) {
+    public DbSelector when(IDbType[] dbTypes, Runnable runnable) {
+        for (IDbType dbType : dbTypes) {
             consumers.put(dbType, runnable);
         }
         return this;
@@ -52,7 +52,7 @@ public class DbSelector implements Selector {
         });
     }
 
-    public void dbExecute(DbType dbType) {
+    public void dbExecute(IDbType dbType) {
         Runnable runnable = consumers.get(dbType);
         if (Objects.nonNull(runnable)) {
             runnable.run();
@@ -62,6 +62,6 @@ public class DbSelector implements Selector {
             this.otherwise.run();
             return;
         }
-        throw new RuntimeException("Not adapted to DbType " + dbType);
+        throw new RuntimeException("Not adapted to IDbType " + dbType);
     }
 }

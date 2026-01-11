@@ -29,6 +29,7 @@ import com.xbatis.core.test.model.DefaultValue2ModelTest;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.cmd.GetterFields;
 import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
@@ -298,7 +299,7 @@ public class DefaultValueTestCase extends BaseTest {
             InsertChain.of(mapper)
                     .insert(DefaultValueTest.class)
                     .dbAdapt((insertChain, selector) -> {
-                        selector.when(new DbType[]{DbType.SQL_SERVER, DbType.DB2}, () -> {
+                        selector.when(new IDbType[]{DbType.SQL_SERVER, DbType.DB2}, () -> {
 
                         }).otherwise(() -> {
                             insertChain.insertSelect(DefaultValueTest::getId, Methods.value(maxId + 1));

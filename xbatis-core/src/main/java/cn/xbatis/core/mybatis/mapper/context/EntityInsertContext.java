@@ -17,7 +17,7 @@ package cn.xbatis.core.mybatis.mapper.context;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.xbatis.core.sql.executor.BaseInsert;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -48,14 +48,14 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T> i
     }
 
     @Override
-    public void init(DbType dbType) {
+    public void init(IDbType dbType) {
         super.init(dbType);
         if (Objects.isNull(this.execution)) {
             this.execution = createCmd(dbType);
         }
     }
 
-    private BaseInsert createCmd(DbType dbType) {
+    private BaseInsert createCmd(IDbType dbType) {
         return EntityInsertCreateUtil.create(insert, tableInfo, entity, strategy, dbType, defaultValueContext);
     }
 

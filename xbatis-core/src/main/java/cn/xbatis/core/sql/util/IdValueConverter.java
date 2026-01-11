@@ -14,6 +14,8 @@
 
 package cn.xbatis.core.sql.util;
 
+import cn.xbatis.core.util.TypeConvertUtil;
+
 import java.math.BigInteger;
 import java.util.Objects;
 
@@ -43,8 +45,16 @@ public class IdValueConverter {
             if (targetType == BigInteger.class) {
                 return new BigInteger(idN.toString());
             }
+        } else if (targetType == Byte.class || targetType == byte.class) {
+            return Byte.valueOf(id.toString());
+        } else if (targetType == Integer.class || targetType == int.class) {
+            return Integer.valueOf(id.toString());
+        } else if (targetType == Long.class || targetType == long.class) {
+            return Long.valueOf(id.toString());
+        } else if (targetType == BigInteger.class) {
+            return new BigInteger(id.toString());
         }
 
-        return id;
+        return TypeConvertUtil.convert(id, targetType);
     }
 }

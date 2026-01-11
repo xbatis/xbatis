@@ -14,7 +14,9 @@
 
 package db.sql.api.impl.tookit;
 
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 public final class SqlConst {
 
@@ -218,264 +220,304 @@ public final class SqlConst {
 
     public static final char[] ROWNUM = " ROWNUM ".toCharArray();
 
-    public static String FORCE_INDEX(DbType dbType, String indexName) {
-        switch (dbType) {
-            case SQL_SERVER: {
-                return " WITH(INDEX(" + indexName + "))";
-            }
-
-            case PGSQL:
-            case GAUSS:
-            case KING_BASE: {
-                return " USE INDEX(" + indexName + ")";
-            }
-
-            default: {
-                return " FORCE INDEX(" + indexName + ")";
-            }
+    public static String FORCE_INDEX(IDbType dbType, String indexName) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return " FORCE INDEX(" + indexName + ")";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return " USE INDEX(" + indexName + ")";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return " WITH(INDEX(" + indexName + "))";
+        }
+        return "";
     }
 
-    public static char[] AS(DbType dbType) {
-        switch (dbType) {
-            case ORACLE: {
-                return BLANK;
-            }
-            default: {
-                return AS;
-            }
+    public static char[] AS(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return BLANK;
         }
+        return AS;
     }
 
-    public static String CURRENT_DATE(DbType dbType) {
-        switch (dbType) {
-            case DB2: {
-                return " CURRENT_DATE";
-            }
-            case SQL_SERVER: {
-                return " CAST(GETDATE() AS date)";
-            }
-            case KING_BASE: {
-                return " CURRENT_DATE";
-            }
-            case ORACLE: {
-                return " TO_CHAR(CURRENT_DATE,'YYYY-MM-DD')";
-            }
-            case GAUSS:
-            case PGSQL: {
-                return " CURRENT_DATE";
-            }
-            case SQLITE: {
-                return " DATE('NOW')";
-            }
+    public static String CURRENT_DATE(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return " CURRENT_DATE()";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.KING_BASE || dbType == DbType.GAUSS) {
+            return " CURRENT_DATE";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " TO_CHAR(CURRENT_DATE,'YYYY-MM-DD')";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return " CAST(GETDATE() AS date)";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return " DATE('NOW')";
+        }
+
+        if (dbType == DbType.DB2) {
+            return " CURRENT_DATE";
+        }
+
         return " CURRENT_DATE()";
     }
 
-    public static String CURRENT_TIME(DbType dbType) {
-        switch (dbType) {
-            case DB2: {
-                return " CURRENT_TIME";
-            }
-            case SQL_SERVER: {
-                return " CAST(GETDATE() AS time)";
-            }
-            case KING_BASE: {
-                return " CURRENT_TIME";
-            }
-            case ORACLE: {
-                return " TO_CHAR(CURRENT_DATE,'HH24:MI:SS')";
-            }
-            case GAUSS:
-            case PGSQL: {
-                return " LOCALTIME";
-            }
-            case SQLITE: {
-                return " TIME('NOW')";
-            }
+    public static String CURRENT_TIME(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return " CURRENT_TIME()";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.KING_BASE || dbType == DbType.GAUSS) {
+            return " LOCALTIME";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " TO_CHAR(CURRENT_DATE,'HH24:MI:SS')";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return " CAST(GETDATE() AS time)";
+        }
+
+        if (dbType == DbType.DB2) {
+            return " CURRENT_TIME";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return " TIME('NOW')";
+        }
+
         return " CURRENT_TIME()";
     }
 
-    public static String CURRENT_DATE_TIME(DbType dbType) {
-        switch (dbType) {
-            case DB2: {
-                return " CURRENT_TIMESTAMP";
-            }
-            case SQL_SERVER: {
-                return " GETDATE()";
-            }
-            case KING_BASE: {
-                return " CURRENT_TIMESTAMP";
-            }
-            case ORACLE: {
-                return " CURRENT_DATE";
-            }
-            case GAUSS:
-            case PGSQL: {
-                return " LOCALTIMESTAMP";
-            }
-            case SQLITE: {
-                return "DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')";
-            }
+    public static String CURRENT_DATE_TIME(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return " CURRENT_TIMESTAMP()";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS) {
+            return " LOCALTIMESTAMP";
+        }
+
+        if (dbType == DbType.KING_BASE) {
+            return " CURRENT_TIMESTAMP";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " CURRENT_DATE";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return " GETDATE()";
+        }
+
+        if (dbType == DbType.DB2) {
+            return " CURRENT_TIMESTAMP";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return "DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')";
+        }
+
         return " CURRENT_TIMESTAMP()";
     }
 
-    public static String DATE_FORMAT(DbType dbType) {
-        switch (dbType) {
-            case KING_BASE:
-            case H2:
-            case GAUSS:
-            case PGSQL:
-            case ORACLE:
-            case DB2: {
-                return " TO_CHAR";
-            }
-            case SQL_SERVER: {
-                return " FORMAT";
-            }
+    public static String DATE_FORMAT(IDbType dbType) {
 
-            case SQLITE: {
-                return " STRFTIME";
-            }
-
-            case DM:
-            case MARIA_DB:
-            case MYSQL: {
-                return " DATE_FORMAT";
-            }
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
+            return " DATE_FORMAT";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.KING_BASE || dbType == DbType.GAUSS) {
+            return " TO_CHAR";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " TO_CHAR";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return " FORMAT";
+        }
+
+        if (dbType == DbType.H2 || dbType == DbType.DB2 || dbType == DbType.DB2) {
+            return " TO_CHAR";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return " STRFTIME";
+        }
+
+        if (dbType == DbType.DM) {
+            return " DATE_FORMAT";
+        }
+
         return " TO_CHAR";
     }
 
-    public static String YEAR(DbType dbType) {
-        switch (dbType) {
-            case ORACLE:
-            case GAUSS:
-            case PGSQL: {
-                return " EXTRACT (YEAR FROM ";
-            }
-            case SQLITE: {
-                return "STRFTIME";
-            }
+    public static String YEAR(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL) {
+            return " YEAR";
         }
+
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS) {
+            return " EXTRACT (YEAR FROM ";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " EXTRACT (YEAR FROM ";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return "STRFTIME";
+        }
+
         return " YEAR";
     }
 
-    public static String MONTH(DbType dbType) {
-        switch (dbType) {
-            case ORACLE:
-            case GAUSS:
-            case PGSQL: {
-                return " EXTRACT (MONTH FROM ";
-            }
-            case SQLITE: {
-                return "STRFTIME";
-            }
+    public static String MONTH(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL) {
+            return " MONTH";
+        }
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS) {
+            return " EXTRACT (MONTH FROM ";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " EXTRACT (MONTH FROM ";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return "STRFTIME";
         }
         return " MONTH";
     }
 
-    public static String DAY(DbType dbType) {
-        switch (dbType) {
-            case KING_BASE:
-            case ORACLE:
-            case GAUSS:
-            case PGSQL: {
-                return " EXTRACT (DAY FROM ";
-            }
-            case SQLITE: {
-                return "STRFTIME";
-            }
+    public static String DAY(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL) {
+            return " DAY";
         }
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return " EXTRACT (DAY FROM ";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " EXTRACT (DAY FROM ";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return "STRFTIME";
+        }
+
         return " DAY";
     }
 
-    public static String HOUR(DbType dbType) {
-        switch (dbType) {
-            case SQL_SERVER: {
-                return " DATEPART(HOUR,";
-            }
-            case KING_BASE:
-            case ORACLE:
-            case GAUSS:
-            case PGSQL: {
-                return " EXTRACT(HOUR FROM ";
-            }
-            case SQLITE: {
-                return "STRFTIME";
-            }
+    public static String HOUR(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL) {
+            return " HOUR";
+        }
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return " EXTRACT(HOUR FROM ";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " EXTRACT(HOUR FROM ";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return " DATEPART(HOUR,";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return "STRFTIME";
         }
         return " HOUR";
     }
 
-    public static String WEEKDAY(DbType dbType) {
-        switch (dbType) {
-            case SQL_SERVER: {
-                return " DATEPART(WEEKDAY,";
-            }
-            case KING_BASE:
-            case GAUSS:
-            case PGSQL:
-            case ORACLE: {
-                return " TO_CHAR";
-            }
-            case SQLITE: {
-                return "STRFTIME";
-            }
+    public static String WEEKDAY(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL) {
+            return " DAYOFWEEK";
+        }
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return " TO_CHAR";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " TO_CHAR";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return " DATEPART(WEEKDAY,";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return "STRFTIME";
         }
         return " DAYOFWEEK";
     }
 
-    public static String UNIX_TIMESTAMP(DbType dbType) {
-        switch (dbType) {
-            case SQL_SERVER: {
-                return " DATEPART(WEEKDAY,";
-            }
-            case GAUSS:
-            case PGSQL:
-            case ORACLE: {
-                return " TO_TIMESTAMP";
-            }
+    public static String UNIX_TIMESTAMP(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL) {
+            return " UNIX_TIMESTAMP";
         }
+        if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {
+            return " TO_TIMESTAMP";
+        }
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " TO_TIMESTAMP";
+        }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return " DATEPART(WEEKDAY,";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return "STRFTIME";
+        }
+
         return " UNIX_TIMESTAMP";
     }
 
-    public static String CHAR_LENGTH(DbType dbType) {
-        switch (dbType) {
-            case SQL_SERVER: {
-                return " LEN";
-            }
-            case SQLITE:
-            case ORACLE: {
-                return " LENGTH";
-            }
+    public static String CHAR_LENGTH(IDbType dbType) {
+
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " LENGTH";
         }
+
+        if (dbType == DbType.SQL_SERVER) {
+            return " LEN";
+        }
+
+        if (dbType == DbType.SQLITE) {
+            return " LENGTH";
+        }
+
         return " CHAR_LENGTH";
     }
 
-    public static String TRUNCATE(DbType dbType) {
-        switch (dbType) {
-            case SQL_SERVER: {
-                return " ROUND";
-            }
-            case ORACLE: {
-                return " TRUNC";
-            }
+    public static String TRUNCATE(IDbType dbType) {
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
+            return " TRUNC";
+        }
+        if (dbType == DbType.SQL_SERVER) {
+            return " ROUND";
         }
         return " TRUNCATE";
     }
 
-    public static String SUBSTR(DbType dbType) {
-        switch (dbType) {
-            case SQL_SERVER: {
-                return " SUBSTRING";
-            }
-            default: {
-                return " SUBSTR";
-            }
+    public static String SUBSTR(IDbType dbType) {
+        if (dbType == DbType.SQL_SERVER) {
+            return " SUBSTRING";
         }
+        return " SUBSTR";
     }
-
 }

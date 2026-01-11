@@ -14,7 +14,7 @@
 
 package db.sql.api.impl.cmd.executor;
 
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.tookit.Objects;
 
 import java.util.HashMap;
@@ -22,19 +22,19 @@ import java.util.Map;
 
 public class DbSelectorCall<R> implements SelectorCall<R> {
 
-    private final Map<DbType, DbTypeCallable> consumers = new HashMap<>();
+    private final Map<IDbType, DbTypeCallable> consumers = new HashMap<>();
 
     private DbTypeCallable<R> otherwise;
 
     @Override
-    public DbSelectorCall<R> when(DbType dbType, DbTypeCallable<R> runnable) {
+    public DbSelectorCall<R> when(IDbType dbType, DbTypeCallable<R> runnable) {
         consumers.put(dbType, runnable);
         return this;
     }
 
     @Override
-    public DbSelectorCall<R> when(DbType[] dbTypes, DbTypeCallable<R> runnable) {
-        for (DbType dbType : dbTypes) {
+    public DbSelectorCall<R> when(IDbType[] dbTypes, DbTypeCallable<R> runnable) {
+        for (IDbType dbType : dbTypes) {
             consumers.put(dbType, runnable);
         }
         return this;
@@ -56,7 +56,7 @@ public class DbSelectorCall<R> implements SelectorCall<R> {
         });
     }
 
-    private R execute(DbType dbType, DbTypeCallable<R> callable) {
+    private R execute(IDbType dbType, DbTypeCallable<R> callable) {
         try {
             return callable.call(dbType);
         } catch (Exception e) {
@@ -65,7 +65,7 @@ public class DbSelectorCall<R> implements SelectorCall<R> {
     }
 
     @Override
-    public R dbExecute(DbType dbType) {
+    public R dbExecute(IDbType dbType) {
         DbTypeCallable<R> runnable = consumers.get(dbType);
         if (Objects.nonNull(runnable)) {
             return this.execute(dbType, runnable);
@@ -73,6 +73,6 @@ public class DbSelectorCall<R> implements SelectorCall<R> {
         if (Objects.nonNull(this.otherwise)) {
             return this.execute(dbType, this.otherwise);
         }
-        throw new RuntimeException("Not adapted to DbType " + dbType);
+        throw new RuntimeException("Not adapted to IDbType " + dbType);
     }
 }

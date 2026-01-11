@@ -14,10 +14,7 @@
 
 package db.sql.api.impl.cmd.basic;
 
-import db.sql.api.Cmd;
-import db.sql.api.DbType;
-import db.sql.api.Getter;
-import db.sql.api.SqlBuilderContext;
+import db.sql.api.*;
 import db.sql.api.cmd.basic.IConflict;
 import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.impl.cmd.CmdFactory;
@@ -65,7 +62,7 @@ public class Conflict<T> implements IConflict<T>, Cmd {
     }
 
     //增加默认 争议key
-    public final void addDefaultConflictKeys(AbstractInsert insert, DbType dbType) {
+    public final void addDefaultConflictKeys(AbstractInsert insert, IDbType dbType) {
         if (this.conflictKeys != null && this.conflictKeys.length > 0) {
             return;
         }

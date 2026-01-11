@@ -15,6 +15,7 @@
 package cn.xbatis.core.dbType;
 
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 public class DefaultDbTypeParser implements DbTypeParser {
 
@@ -23,7 +24,7 @@ public class DefaultDbTypeParser implements DbTypeParser {
      */
     public static final DbTypeParser INSTANCE = new DefaultDbTypeParser();
 
-    protected DbType getDbType(String jdbcUrl) {
+    protected IDbType getDbType(String jdbcUrl) {
         if (jdbcUrl.contains(":mysql:") || jdbcUrl.contains(":cobar:")) {
             return DbType.MYSQL;
         } else if (jdbcUrl.contains(":mariadb:")) {
@@ -55,8 +56,8 @@ public class DefaultDbTypeParser implements DbTypeParser {
     }
 
     @Override
-    public DbType getDbTypeByUrl(String jdbcUrl) {
-        DbType dbType = getDbType(jdbcUrl);
+    public IDbType getDbTypeByUrl(String jdbcUrl) {
+        IDbType dbType = getDbType(jdbcUrl);
         if (dbType != null) {
             return dbType;
         }

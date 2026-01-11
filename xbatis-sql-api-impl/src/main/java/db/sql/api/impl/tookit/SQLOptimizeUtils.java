@@ -16,6 +16,7 @@ package db.sql.api.impl.tookit;
 
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.AffectLineNumber;
 import db.sql.api.cmd.JoinMode;
@@ -127,7 +128,7 @@ public final class SQLOptimizeUtils {
         return removeOne;
     }
 
-    private static void optimizedCmdList(DbType dbType, Map<Class, Cmd> classCmdMap, boolean forCount, boolean optimizeOrderBy, boolean optimizeJoins, boolean isUnionQuery) {
+    private static void optimizedCmdList(IDbType dbType, Map<Class, Cmd> classCmdMap, boolean forCount, boolean optimizeOrderBy, boolean optimizeJoins, boolean isUnionQuery) {
 
         if (forCount) {
             if (!isUnionQuery) {

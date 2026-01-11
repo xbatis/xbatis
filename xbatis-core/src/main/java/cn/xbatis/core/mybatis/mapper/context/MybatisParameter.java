@@ -26,7 +26,7 @@ public class MybatisParameter implements Serializable {
 
     private Class<? extends TypeHandler<?>> typeHandlerClass;
 
-    private TypeHandler<Object> typeHandler;
+    private TypeHandler typeHandler;
 
     private final JdbcType jdbcType;
 
@@ -40,11 +40,11 @@ public class MybatisParameter implements Serializable {
         this.value = value;
     }
 
-    public MybatisParameter(Object value, TypeHandler typeHandler) {
+    public MybatisParameter(Object value, TypeHandler<?> typeHandler) {
         this(value, typeHandler, null);
     }
 
-    public MybatisParameter(Object value, TypeHandler typeHandler, JdbcType jdbcType) {
+    public MybatisParameter(Object value, TypeHandler<?> typeHandler, JdbcType jdbcType) {
         this.typeHandler = typeHandler;
         this.jdbcType = jdbcType;
         this.value = value;
@@ -58,11 +58,11 @@ public class MybatisParameter implements Serializable {
         return new MybatisParameter(value, typeHandlerClass, jdbcType);
     }
 
-    public static MybatisParameter create(Object value, TypeHandler<Object> typeHandler) {
+    public static MybatisParameter create(Object value, TypeHandler<?> typeHandler) {
         return new MybatisParameter(value, typeHandler);
     }
 
-    public static MybatisParameter create(Object value, TypeHandler<Object> typeHandler, JdbcType jdbcType) {
+    public static MybatisParameter create(Object value, TypeHandler<?> typeHandler, JdbcType jdbcType) {
         return new MybatisParameter(value, typeHandler, jdbcType);
     }
 
@@ -70,7 +70,7 @@ public class MybatisParameter implements Serializable {
         return typeHandlerClass;
     }
 
-    public TypeHandler<Object> getTypeHandler() {
+    public TypeHandler getTypeHandler() {
         return this.typeHandler;
     }
 

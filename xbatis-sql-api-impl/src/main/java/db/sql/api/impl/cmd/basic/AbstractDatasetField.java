@@ -17,7 +17,7 @@ package db.sql.api.impl.cmd.basic;
 
 import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
@@ -50,7 +50,7 @@ public abstract class AbstractDatasetField<T extends AbstractDatasetField<T>> ex
     }
 
     @Override
-    public String getName(DbType dbType) {
+    public String getName(IDbType dbType) {
         DatabaseCaseRule databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
         if (databaseCaseRule == null || databaseCaseRule == DatabaseCaseRule.DEFAULT) {
             databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule();

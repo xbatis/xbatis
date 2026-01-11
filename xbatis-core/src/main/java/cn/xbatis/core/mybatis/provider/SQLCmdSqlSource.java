@@ -16,7 +16,7 @@ package cn.xbatis.core.mybatis.provider;
 
 import cn.xbatis.core.dbType.DbTypeUtil;
 import cn.xbatis.core.mybatis.mapper.context.*;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlSource;
@@ -31,7 +31,7 @@ import java.util.function.BiFunction;
 
 public class SQLCmdSqlSource implements SqlSource {
 
-    private final static Map<String, BiFunction<Object, DbType, String>> SQL_GENERATOR_FUN_MAP = new HashMap<>();
+    private final static Map<String, BiFunction<Object, IDbType, String>> SQL_GENERATOR_FUN_MAP = new HashMap<>();
 
     static {
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.QUERY_NAME, (context, dbType) -> MybatisSQLProvider.cmdQuery((SQLCmdQueryContext) context, dbType));
@@ -58,7 +58,7 @@ public class SQLCmdSqlSource implements SqlSource {
     @Override
     public BoundSql getBoundSql(Object parameterObject) {
         String methodName = providerMethod.getName();
-        BiFunction<Object, DbType, String> sqlGenerator = SQL_GENERATOR_FUN_MAP.get(methodName);
+        BiFunction<Object, IDbType, String> sqlGenerator = SQL_GENERATOR_FUN_MAP.get(methodName);
         if (Objects.isNull(sqlGenerator)) {
             throw new RuntimeException("Unadapted: Unknown SQL method: " + methodName);
         }
@@ -68,7 +68,7 @@ public class SQLCmdSqlSource implements SqlSource {
                 .build()), parameterObject);
     }
 
-    public DbType getDbType() {
+    public IDbType getDbType() {
         return DbTypeUtil.getDbType(configuration);
     }
 

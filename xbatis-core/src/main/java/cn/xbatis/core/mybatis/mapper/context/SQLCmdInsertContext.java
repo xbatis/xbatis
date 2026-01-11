@@ -18,7 +18,7 @@ package cn.xbatis.core.mybatis.mapper.context;
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.provider.MybatisSqlBuilderContext;
 import cn.xbatis.core.sql.executor.BaseInsert;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.SQLMode;
 
 import java.util.Objects;
@@ -52,7 +52,7 @@ public class SQLCmdInsertContext<T extends BaseInsert, DATA> extends BaseSQLCmdC
     }
 
     @Override
-    public String sql(DbType dbType) {
+    public String sql(IDbType dbType) {
         if (Objects.nonNull(sql)) {
             return sql;
         }

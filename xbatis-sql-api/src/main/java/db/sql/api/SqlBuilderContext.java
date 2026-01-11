@@ -19,18 +19,18 @@ import java.util.Map;
 
 public class SqlBuilderContext {
 
-    private final DbType dbType;
+    private final IDbType dbType;
 
     private final SQLMode sqlMode;
 
     private final Map<String, Object> extMap = new HashMap<>();
 
-    public SqlBuilderContext(DbType dbType, SQLMode sqlMode) {
+    public SqlBuilderContext(IDbType dbType, SQLMode sqlMode) {
         this.dbType = dbType;
         this.sqlMode = sqlMode;
     }
 
-    public DbType getDbType() {
+    public IDbType getDbType() {
         return dbType;
     }
 

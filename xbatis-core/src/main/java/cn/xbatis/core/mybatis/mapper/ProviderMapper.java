@@ -16,7 +16,7 @@ package cn.xbatis.core.mybatis.mapper;
 
 import cn.xbatis.core.mybatis.mapper.context.*;
 import cn.xbatis.core.mybatis.provider.MybatisSQLProvider;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
@@ -51,7 +51,7 @@ public interface ProviderMapper {
     /**
      * @param insertContext 上下文
      * @return 影响条数
-     * @see MybatisSQLProvider#save(BaseSQLCmdContext, DbType) (SQLCmdInsertContext)
+     * @see MybatisSQLProvider#save(BaseSQLCmdContext, IDbType) (SQLCmdInsertContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $save(SQLCmdInsertContext insertContext);
@@ -60,7 +60,7 @@ public interface ProviderMapper {
     /**
      * @param insertContext 上下文
      * @return 影响条数
-     * @see MybatisSQLProvider#save(BaseSQLCmdContext, DbType) (SQLCmdInsertContext)
+     * @see MybatisSQLProvider#save(BaseSQLCmdContext, IDbType) (SQLCmdInsertContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $saveEntity(EntityInsertContext insertContext);
@@ -69,7 +69,7 @@ public interface ProviderMapper {
     /**
      * @param insertContext 上下文
      * @return 影响条数
-     * @see MybatisSQLProvider#save(BaseSQLCmdContext, DbType) (SQLCmdInsertContext)
+     * @see MybatisSQLProvider#save(BaseSQLCmdContext, IDbType) (SQLCmdInsertContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
     int $saveModel(ModelInsertContext insertContext);
@@ -78,7 +78,7 @@ public interface ProviderMapper {
     /**
      * @param updateContext 上下文
      * @return 修改的条数
-     * @see MybatisSQLProvider#update(SQLCmdUpdateContext, DbType)
+     * @see MybatisSQLProvider#update(SQLCmdUpdateContext, IDbType)
      */
     @UpdateProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.UPDATE_NAME)
     int $update(SQLCmdUpdateContext updateContext);
@@ -86,7 +86,7 @@ public interface ProviderMapper {
     /**
      * @param deleteContext 上下文
      * @return 删除的条数
-     * @see MybatisSQLProvider#delete(SQLCmdDeleteContext, DbType)
+     * @see MybatisSQLProvider#delete(SQLCmdDeleteContext, IDbType)
      */
     @UpdateProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.DELETE_NAME)
     int $delete(SQLCmdDeleteContext deleteContext);
@@ -96,7 +96,7 @@ public interface ProviderMapper {
      *
      * @param queryContext 上下文
      * @return 返回查询的结果
-     * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, DbType)
+     * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, IDbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
     <T> List<T> $list(SQLCmdQueryContext queryContext);
@@ -106,7 +106,7 @@ public interface ProviderMapper {
      *
      * @param queryContext 上下文
      * @return 返回游标
-     * @see MybatisSQLProvider#cmdQuery(SQLCmdQueryContext, DbType)
+     * @see MybatisSQLProvider#cmdQuery(SQLCmdQueryContext, IDbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
     <T> Cursor<T> $cursor(SQLCmdQueryContext queryContext);
@@ -116,7 +116,7 @@ public interface ProviderMapper {
      *
      * @param queryContext 上下文
      * @return 返回count数
-     * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, DbType)
+     * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, IDbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.COUNT_NAME)
     Integer $count(SQLCmdCountQueryContext queryContext);
@@ -126,7 +126,7 @@ public interface ProviderMapper {
      *
      * @param queryContext 上下文
      * @return 返回count数
-     * @see MybatisSQLProvider#countFromQuery(SQLCmdCountFromQueryContext, DbType)
+     * @see MybatisSQLProvider#countFromQuery(SQLCmdCountFromQueryContext, IDbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_COUNT_NAME)
     Integer $countFromQuery(SQLCmdCountFromQueryContext queryContext);

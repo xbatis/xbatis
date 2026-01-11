@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
+ *  Copyright (c) 2024-2026, Ai东 (abc-127@live.cn) xbatis.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -12,12 +12,11 @@
  *
  */
 
-package db.sql.api.impl.cmd.executor;
+package db.sql.api;
 
-import db.sql.api.IDbType;
-
-@FunctionalInterface
-public interface DbTypeCallable<V> {
-
-    V call(IDbType dbType);
+public enum DbModel {
+    DEFAULT,
+    MYSQL,
+    ORACLE,
+    PGSQL;
 }

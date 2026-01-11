@@ -17,7 +17,7 @@ package cn.xbatis.core.mybatis.mapper.context;
 
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.provider.MybatisSqlBuilderContext;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.SQLMode;
 import db.sql.api.impl.cmd.executor.Executor;
 import db.sql.api.impl.tookit.SQLOptimizeUtils;
@@ -31,7 +31,7 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
 
     protected String sql;
     protected E execution;
-    protected DbType dbType;
+    protected IDbType dbType;
     protected BasicMapper basicMapper;
 
     public BaseSQLCmdContext() {
@@ -48,12 +48,12 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
     }
 
     @Override
-    public void init(DbType dbType) {
+    public void init(IDbType dbType) {
         this.dbType = dbType;
     }
 
     @Override
-    public String sql(DbType dbType) {
+    public String sql(IDbType dbType) {
         if (Objects.nonNull(sql)) {
             return sql;
         }
@@ -67,7 +67,7 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
         return sqlBuilderContext.getParams();
     }
 
-    public DbType getDbType() {
+    public IDbType getDbType() {
         return dbType;
     }
 

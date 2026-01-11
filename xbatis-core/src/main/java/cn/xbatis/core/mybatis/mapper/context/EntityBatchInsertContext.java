@@ -17,7 +17,7 @@ package cn.xbatis.core.mybatis.mapper.context;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.xbatis.core.sql.executor.BaseInsert;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -49,7 +49,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert,
 
 
     @Override
-    public void init(DbType dbType) {
+    public void init(IDbType dbType) {
         super.init(dbType);
         if (Objects.isNull(this.execution)) {
             this.execution = EntityBatchInsertCreateUtil.create(insert, this.tableInfo, this.getInsertData(), saveBatchStrategy, dbType, useBatchExecutor, defaultValueContext);

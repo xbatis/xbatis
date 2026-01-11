@@ -59,6 +59,6 @@ public class AnnotationTest extends BaseTest {
         }
         TableFieldInfo tableFieldInfo = new TableFieldInfo(clazz, FetchAddr.class.getAnnotation(Table.class), field);
 
-        assertEquals(DbType.H2, TableInfoUtil.getTableIdAnnotation(tableFieldInfo, DbType.H2).dbType());
+        assertEquals(DbType.H2.getName(), TableInfoUtil.getTableIdAnnotation(tableFieldInfo, DbType.H2).dbType());
     }
 }

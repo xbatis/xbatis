@@ -14,9 +14,7 @@
 
 package db.sql.api.impl.cmd.condition;
 
-import db.sql.api.Cmd;
-import db.sql.api.DbType;
-import db.sql.api.SqlBuilderContext;
+import db.sql.api.*;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
@@ -27,16 +25,8 @@ public abstract class AbstractILike<T extends AbstractILike<T>> extends Abstract
         super(operator, mode, key, value);
     }
 
-    boolean notSupport(DbType dbType) {
-        switch (dbType) {
-            case PGSQL:
-            case GAUSS:
-            case H2:
-            case KING_BASE:
-                return false;
-            default:
-                return true;
-        }
+    boolean notSupport(IDbType dbType) {
+        return dbType.getDbModel() != DbModel.PGSQL && dbType != DbType.H2 && dbType != DbType.PGSQL && dbType != DbType.GAUSS && dbType != DbType.KING_BASE;
     }
 
     @Override
@@ -45,7 +35,7 @@ public abstract class AbstractILike<T extends AbstractILike<T>> extends Abstract
             this.operator = this instanceof NotILike ? SqlConst.NOT_LIKE : SqlConst.LIKE;
         }
 
-        if (context.getDbType() != DbType.MYSQL && context.getDbType() != DbType.MARIA_DB && context.getDbType() != DbType.SQL_SERVER) {
+        if (context.getDbType().getDbModel() != DbModel.MYSQL && context.getDbType() != DbType.SQL_SERVER && context.getDbType() != DbType.MYSQL && context.getDbType() != DbType.MARIA_DB) {
             this.field = Methods.upper(this.field);
             this.value = Methods.upper(this.value);
         }

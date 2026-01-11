@@ -22,7 +22,9 @@ import cn.xbatis.db.annotations.Paging;
 import cn.xbatis.page.IPager;
 import cn.xbatis.page.PageUtil;
 import cn.xbatis.page.PagerField;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.paging.OracleRowNumPagingProcessor;
 import db.sql.api.impl.paging.SQLServerRowNumberOverPagingProcessor;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -122,7 +124,7 @@ public final class PagingUtil {
     }
 
 
-    public static String getLimitedSQL(DbType dbType, IPager<?> pager, String sql) {
+    public static String getLimitedSQL(IDbType dbType, IPager<?> pager, String sql) {
         Integer number = pager.get(PagerField.NUMBER);
         Integer size = pager.get(PagerField.SIZE);
         if (size < 0) {
@@ -130,7 +132,7 @@ public final class PagingUtil {
         }
         int offset = PageUtil.getOffset(number, size);
 
-        if (dbType == DbType.ORACLE && XbatisGlobalConfig.getPagingProcessor(dbType) instanceof OracleRowNumPagingProcessor) {
+        if ((dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) && XbatisGlobalConfig.getPagingProcessor(dbType) instanceof OracleRowNumPagingProcessor) {
             return getOracleRowNumLimitedSQL(size, offset, sql);
         }
 
@@ -144,7 +146,7 @@ public final class PagingUtil {
 
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM (");
         sqlBuilder.append(sql).append(") T ");
-        if (dbType == DbType.ORACLE) {
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
             sqlBuilder.append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ").append(size).append(" ROWS ONLY");
             return sqlBuilder.toString();
         }
@@ -210,7 +212,7 @@ public final class PagingUtil {
         return sql;
     }
 
-    public static String getCountSQL(DbType dbType, String sql, boolean optimize) {
+    public static String getCountSQL(IDbType dbType, String sql, boolean optimize) {
         if (dbType == DbType.SQL_SERVER) {
             //sql server 必须移除order by
             optimize = true;

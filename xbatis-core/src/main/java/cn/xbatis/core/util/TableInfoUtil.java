@@ -25,6 +25,7 @@ import cn.xbatis.db.annotations.TableField;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
+import db.sql.api.IDbType;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.io.Serializable;
@@ -134,17 +135,17 @@ public final class TableInfoUtil {
      * @param dbType 数据库类型
      * @return 获取ID注解
      */
-    public static TableId getTableIdAnnotation(TableFieldInfo tableFieldInfo, DbType dbType) {
+    public static TableId getTableIdAnnotation(TableFieldInfo tableFieldInfo, IDbType dbType) {
         if (tableFieldInfo.getTableIdMap().isEmpty()) {
             return null;
         }
 
-        TableId tableId = tableFieldInfo.getTableIdMap().get(dbType);
+        TableId tableId = tableFieldInfo.getTableIdMap().get(dbType.getName());
         if (tableId != null) {
             return tableId;
         }
 
-        tableId = tableFieldInfo.getTableIdMap().get(DbType.UNKNOWN);
+        tableId = tableFieldInfo.getTableIdMap().get(DbType.UNKNOWN.name());
 
         if (tableId != null) {
             return tableId;
@@ -271,7 +272,7 @@ public final class TableInfoUtil {
         return table.databaseCaseRule().convert(name);
     }
 
-    public static Map<DbType, TableId> getTableIds(Class clazz, Field field, Class fieldType) {
+    public static Map<String, TableId> getTableIds(Class clazz, Field field, Class fieldType) {
         String setterName = "set" + Character.toUpperCase(field.getName().charAt(0)) + (field.getName().length() > 1 ? field.getName().substring(1) : "");
         Method fieldSetter1 = null;
         try {
@@ -289,7 +290,7 @@ public final class TableInfoUtil {
             }
         }
 
-        Map<DbType, TableId> tableIdMap = new HashMap<>();
+        Map<String, TableId> tableIdMap = new HashMap<>();
 
         boolean fieldScan = false;
         if (fieldSetter1 != null) {
@@ -313,7 +314,7 @@ public final class TableInfoUtil {
         return tableIdMap;
     }
 
-    private static void appendTableId(Map<DbType, TableId> tableIdMap, TableId[] tableIds) {
+    private static void appendTableId(Map<String, TableId> tableIdMap, TableId[] tableIds) {
         if (tableIds == null || tableIds.length < 1) {
             return;
         }

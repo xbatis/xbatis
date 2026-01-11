@@ -15,7 +15,7 @@
 package db.sql.api.cmd.executor;
 
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
@@ -40,7 +40,7 @@ public interface IExecutor<T extends IExecutor,
 
     List<Cmd> cmds();
 
-    void selectorExecute(DbType dbType);
+    void selectorExecute(IDbType dbType);
 
     /**
      * 内联，用于获取自身

@@ -29,6 +29,7 @@ import cn.xbatis.page.IPager;
 import cn.xbatis.page.PageUtil;
 import cn.xbatis.page.PagerField;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.executor.SelectorCall;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.cursor.Cursor;
@@ -48,9 +49,9 @@ public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapp
     /**
      * 获取当前数据库的类型
      *
-     * @return DbType
+     * @return dbType
      */
-    DbType getCurrentDbType();
+    IDbType getCurrentDbType();
 
     /**
      * 选择器 不同数据库执行不同的方法

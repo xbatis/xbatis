@@ -37,7 +37,7 @@ import java.time.LocalDateTime;
 public class SysUserOnInsert {
 
     @TableId
-    @TableId(dbType = DbType.KING_BASE, value = IdAutoType.SQL, sql = "select t_sys_user_seq.NEXTVAL FROM dual")
+    @TableId(dbType = DbType.Name.KING_BASE, value = IdAutoType.SQL, sql = "select t_sys_user_seq.NEXTVAL FROM dual")
     private Integer id;
 
     private String userName;

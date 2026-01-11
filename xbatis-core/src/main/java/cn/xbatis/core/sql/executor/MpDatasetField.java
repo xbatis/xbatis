@@ -20,7 +20,7 @@ import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
 import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IDataset;
@@ -39,7 +39,7 @@ public class MpDatasetField extends DatasetField {
     }
 
     @Override
-    public String getName(DbType dbType) {
+    public String getName(IDbType dbType) {
         if (tableFieldInfo.getTableAnnotation().databaseCaseRule() == DatabaseCaseRule.DEFAULT) {
             return super.getName(dbType);
         }

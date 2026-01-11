@@ -26,6 +26,7 @@ import com.xbatis.core.test.mapper.SysUserScoreMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.cmd.GetterFields;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
@@ -759,7 +760,7 @@ public class FunTest extends BaseTest {
             String xx = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(new DbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
+                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonExtract("$.obj.title"));
                         });
                     })
@@ -790,7 +791,7 @@ public class FunTest extends BaseTest {
             Boolean exists = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(new DbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
+                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContainsPath("$.obj.title"));
                         });
                     })
@@ -817,7 +818,7 @@ public class FunTest extends BaseTest {
             Boolean exists = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(new DbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
+                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContains("\"xx", "$.obj.title"));
                         });
                     })
@@ -829,7 +830,7 @@ public class FunTest extends BaseTest {
             exists = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(new DbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
+                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContains(30, "$.age"));
                         });
                     })

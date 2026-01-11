@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
+ *  Copyright (c) 2024-2026, Ai东 (abc-127@live.cn) xbatis.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -14,71 +14,79 @@
 
 package db.sql.api;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
-public enum DbType {
+public enum DbType implements IDbType {
 
-    UNKNOWN(new KeywordWrap("", ""), Collections.emptySet()),
+    UNKNOWN(Name.UNKNOWN, new KeywordWrap("", "")),
 
-    H2(new KeywordWrap("`", "`"), Collections.emptySet()),
+    H2(Name.H2, new KeywordWrap("`", "`")),
 
-    MYSQL(new KeywordWrap("`", "`"), Collections.emptySet()),
+    MYSQL(Name.MYSQL, new KeywordWrap("`", "`")),
 
-    MARIA_DB(new KeywordWrap("`", "`"), Collections.emptySet()),
+    MARIA_DB(Name.MARIA_DB, new KeywordWrap("`", "`")),
 
-    SQL_SERVER(new KeywordWrap("[", "]"), Collections.emptySet()),
+    SQL_SERVER(Name.SQL_SERVER, new KeywordWrap("[", "]")),
 
-    PGSQL(new KeywordWrap("\"", "\""), Collections.emptySet()),
+    PGSQL(Name.PGSQL, new KeywordWrap("\"", "\"")),
 
-    ORACLE(new KeywordWrap("\"", "\"", true), Collections.emptySet()),
+    ORACLE(Name.ORACLE, new KeywordWrap("\"", "\"", true)),
 
-    DM(new KeywordWrap("\"", "\"", true), Collections.emptySet()),
+    DM(Name.DM, new KeywordWrap("\"", "\"", true)),
 
-    DB2(new KeywordWrap("\"", "\"", true), Collections.emptySet()),
+    DB2(Name.DB2, new KeywordWrap("\"", "\"", true)),
 
-    KING_BASE(new KeywordWrap("\"", "\"", true), Collections.emptySet()),
+    KING_BASE(Name.KING_BASE, new KeywordWrap("\"", "\"", true)),
 
-    CLICK_HOUSE(new KeywordWrap("\"", "\"", true), Collections.emptySet()),
+    CLICK_HOUSE(Name.CLICK_HOUSE, new KeywordWrap("\"", "\"", true)),
 
-    SQLITE(new KeywordWrap("\"", "\""), Collections.emptySet()),
+    SQLITE(Name.SQLITE, new KeywordWrap("\"", "\"")),
 
-    GAUSS(new KeywordWrap("\"", "\""), Collections.emptySet());
+    GAUSS(Name.GAUSS, new KeywordWrap("\"", "\""));
+
+    private final String name;
 
     private final KeywordWrap keywordWrap;
-    private Set<String> keywords;
 
-    DbType(KeywordWrap keywordWrap, Set<String> keywords) {
-        this.keywordWrap = keywordWrap;
-        this.keywords = keywords;
+    private final Set<String> keywords;
+
+    private final DbModel dbModel;
+
+    DbType(String name, KeywordWrap keywordWrap) {
+        this(name, keywordWrap, DbModel.DEFAULT, new HashSet<>());
     }
 
-    public static DbType getByName(String name) {
-        DbType[] dbTypes = values();
-        for (DbType dbType : dbTypes) {
-            if (dbType.name().equals(name)) {
-                return dbType;
-            }
-        }
-        return MYSQL;
+    DbType(String name, KeywordWrap keywordWrap, DbModel keywords) {
+        this(name, keywordWrap, keywords, new HashSet<>());
+    }
+
+    DbType(String name, KeywordWrap keywordWrap, DbModel dbModel, Set<String> keywords) {
+        this.name = name;
+        this.keywordWrap = keywordWrap;
+        this.keywords = keywords;
+        this.dbModel = dbModel;
+        DbTypes.register(this);
     }
 
     /**
      * 官方提供的添加关键字的方法
      * 给所有数据库都加上数据库关键词
-     *
+     * 此方法已过期，后续使用 DbTypes.addKeyword 替代
      * @param keywords
      */
+    @Deprecated
     @SafeVarargs
     public static final void addKeywords(String... keywords) {
-        for (DbType dbType : DbType.values()) {
-            dbType.addKeyword(keywords);
-        }
+        DbTypes.addKeyword(keywords);
     }
 
+    @Override
     public KeywordWrap getKeywordWrap() {
         return keywordWrap;
     }
 
+    @Override
     public Set<String> getKeywords() {
         return keywords;
     }
@@ -90,17 +98,13 @@ public enum DbType {
      * @return 添加是否成功
      */
     @SafeVarargs
-    public final boolean addKeyword(String... keywords) {
-        Set<String> keywordsSet = new HashSet<>(this.keywords);
-        List<String> newKeywords = new ArrayList<>(keywords.length);
+    public final void addKeyword(String... keywords) {
         for (String keyword : keywords) {
-            newKeywords.add(keyword.toUpperCase());
+            getKeywords().add(keyword.toUpperCase());
         }
-        boolean bool = keywordsSet.addAll(newKeywords);
-        this.keywords = Collections.unmodifiableSet(keywordsSet);
-        return bool;
     }
 
+    @Override
     public String wrap(String name) {
         if (getKeywords().isEmpty()) {
             return name;
@@ -112,5 +116,34 @@ public enum DbType {
             return getKeywordWrap().getPrefix() + name + getKeywordWrap().getSuffix();
         }
         return name;
+    }
+
+    @Override
+    public DbModel getDbModel() {
+        return this.dbModel;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public static final class Name {
+
+        public static final String UNKNOWN = "UNKNOWN";
+        public static final String H2 = "H2";
+        public static final String MYSQL = "MYSQL";
+        public static final String MARIA_DB = "MARIA_DB";
+        public static final String SQL_SERVER = "SQL_SERVER";
+        public static final String PGSQL = "PGSQL";
+        public static final String ORACLE = "ORACLE";
+        public static final String DM = "DM";
+        public static final String DB2 = "DB2";
+        public static final String KING_BASE = "KING_BASE";
+        public static final String CLICK_HOUSE = "CLICK_HOUSE";
+        public static final String SQLITE = "SQLITE";
+        public static final String GAUSS = "GAUSS";
+
+        private Name() {
+        }
     }
 }

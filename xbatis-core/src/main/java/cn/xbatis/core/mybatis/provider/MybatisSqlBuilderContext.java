@@ -15,7 +15,7 @@
 package cn.xbatis.core.mybatis.provider;
 
 
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 
@@ -26,7 +26,7 @@ public class MybatisSqlBuilderContext extends SqlBuilderContext {
 
     private final List<Object> paramList = new ArrayList<>(6);
 
-    public MybatisSqlBuilderContext(DbType dbType, SQLMode sqlMode) {
+    public MybatisSqlBuilderContext(IDbType dbType, SQLMode sqlMode) {
         super(dbType, sqlMode);
     }
 

@@ -20,6 +20,7 @@ import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 import java.util.Objects;
 
@@ -39,12 +40,12 @@ public class MybatisSQLProvider {
 
     }
 
-    public static String save(BaseSQLCmdContext insertContext, DbType dbType) {
+    public static String save(BaseSQLCmdContext insertContext, IDbType dbType) {
         insertContext.init(dbType);
         return insertContext.sql(dbType);
     }
 
-    public static String update(SQLCmdUpdateContext updateContext, DbType dbType) {
+    public static String update(SQLCmdUpdateContext updateContext, IDbType dbType) {
         updateContext.init(dbType);
         String sql = updateContext.sql(dbType);
         db.sql.api.impl.cmd.struct.Where where = updateContext.getExecution().getWhere();
@@ -54,20 +55,20 @@ public class MybatisSQLProvider {
         return sql;
     }
 
-    public static String updateAndReturning(SQLCmdUpdateContext updateContext, DbType dbType) {
+    public static String updateAndReturning(SQLCmdUpdateContext updateContext, IDbType dbType) {
         String sql = update(updateContext, dbType);
         handlerPrefixMapping(updateContext);
         return sql;
     }
 
-    public static String deleteAndReturning(SQLCmdDeleteContext deleteContext, DbType dbType) {
+    public static String deleteAndReturning(SQLCmdDeleteContext deleteContext, IDbType dbType) {
         String sql = delete(deleteContext, dbType);
         handlerPrefixMapping(deleteContext);
         return sql;
     }
 
 
-    public static String delete(SQLCmdDeleteContext deleteContext, DbType dbType) {
+    public static String delete(SQLCmdDeleteContext deleteContext, IDbType dbType) {
         deleteContext.init(dbType);
         String sql = deleteContext.sql(dbType);
         db.sql.api.impl.cmd.struct.Where where = deleteContext.getExecution().getWhere();
@@ -114,23 +115,23 @@ public class MybatisSQLProvider {
     }
 
 
-    public static String countFromQuery(SQLCmdCountFromQueryContext queryContext, DbType dbType) {
+    public static String countFromQuery(SQLCmdCountFromQueryContext queryContext, IDbType dbType) {
         queryContext.init(dbType);
         return queryContext.sql(dbType);
     }
 
-    public static String cmdQuery(SQLCmdQueryContext queryContext, DbType dbType) {
+    public static String cmdQuery(SQLCmdQueryContext queryContext, IDbType dbType) {
         queryContext.init(dbType);
         handlerPrefixMapping(queryContext);
         return queryContext.sql(dbType);
     }
 
-    public static String getByIdCmdQuery(SQLCmdQueryContext queryContext, DbType dbType) {
+    public static String getByIdCmdQuery(SQLCmdQueryContext queryContext, IDbType dbType) {
         queryContext.init(dbType);
         return queryContext.sql(dbType);
     }
 
-    public static String getCmdQuery(SQLCmdQueryContext queryContext, DbType dbType) {
+    public static String getCmdQuery(SQLCmdQueryContext queryContext, IDbType dbType) {
         //SQL_SERVER 需要order by 才能分页 所以不加
         if (dbType != DbType.SQL_SERVER) {
             if (Objects.isNull(queryContext.getExecution().getLimit())) {
@@ -140,7 +141,7 @@ public class MybatisSQLProvider {
         return cmdQuery(queryContext, dbType);
     }
 
-    public static String cmdCount(SQLCmdCountQueryContext queryContext, DbType dbType) {
+    public static String cmdCount(SQLCmdCountQueryContext queryContext, IDbType dbType) {
         queryContext.init(dbType);
         return queryContext.sql(dbType);
     }

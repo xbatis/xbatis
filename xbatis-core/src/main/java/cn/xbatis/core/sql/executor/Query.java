@@ -15,7 +15,7 @@
 package cn.xbatis.core.sql.executor;
 
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 public class Query<T> extends BaseQuery<Query<T>, T> {
 
     private Map<XmlScriptType, XmlScript> xmlScriptMap;
-    private DbType dbType;
+    private IDbType dbType;
     private String mybatisParamNamespace;
 
     public Query() {
@@ -58,7 +58,7 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
         return (Query<R>) super.setReturnType(returnType, consumer);
     }
 
-    public void setDbType(DbType dbType) {
+    public void setDbType(IDbType dbType) {
         this.dbType = dbType;
     }
 

@@ -14,9 +14,7 @@
 
 package db.sql.api.cmd.basic;
 
-import db.sql.api.Cmd;
-import db.sql.api.DbType;
-import db.sql.api.SqlBuilderContext;
+import db.sql.api.*;
 
 /**
  * order by 方向
@@ -26,11 +24,11 @@ public interface IOrderByDirection {
     /**
      * 判断是否支持
      *
-     * @param dbType
+     * @param dbType 数据库类型
      * @return 是否支持 NULL排序
      */
-    static boolean isSupportNullsOrder(DbType dbType) {
-        return dbType != DbType.MYSQL && dbType != DbType.MARIA_DB && dbType != DbType.SQL_SERVER;
+    static boolean isSupportNullsOrder(IDbType dbType) {
+        return dbType.getDbModel() != DbModel.MYSQL && dbType != DbType.MYSQL && dbType != DbType.MARIA_DB && dbType != DbType.SQL_SERVER;
     }
 
     /**

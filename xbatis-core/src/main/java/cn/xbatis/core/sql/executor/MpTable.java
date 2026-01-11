@@ -17,8 +17,8 @@ package cn.xbatis.core.sql.executor;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.DatabaseCaseRule;
-import db.sql.api.DbType;
 import db.sql.api.Getter;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.tookit.LambdaUtil;
 
@@ -37,7 +37,7 @@ public class MpTable extends db.sql.api.impl.cmd.basic.Table {
     }
 
     @Override
-    public String getName(DbType dbType) {
+    public String getName(IDbType dbType) {
         if (tableInfo.getAnnotation().databaseCaseRule() == DatabaseCaseRule.DEFAULT) {
             return super.getName(dbType);
         }

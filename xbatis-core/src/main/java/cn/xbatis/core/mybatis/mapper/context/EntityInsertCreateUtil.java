@@ -32,7 +32,7 @@ import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.TableId;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.basic.NULL;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import java.util.Objects;
 
 public class EntityInsertCreateUtil {
 
-    public static void initInsertValue(TableInfo tableInfo, TableFieldInfo tableFieldInfo, Object insertData, DbType dbType, Map<String, Object> defaultValueContext) {
+    public static void initInsertValue(TableInfo tableInfo, TableFieldInfo tableFieldInfo, Object insertData, IDbType dbType, Map<String, Object> defaultValueContext) {
         if (tableFieldInfo.isTableId()) {
             Object value = tableFieldInfo.getValue(insertData);
             if (value != null && IdUtil.isIdExists(insertData, tableFieldInfo)) {
@@ -105,7 +105,7 @@ public class EntityInsertCreateUtil {
         throw new RuntimeException("未处理");
     }
 
-    private static <T> void doBefore(TableInfo tableInfo, T insertData, SaveStrategy<T> saveStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
+    private static <T> void doBefore(TableInfo tableInfo, T insertData, SaveStrategy<T> saveStrategy, IDbType dbType, Map<String, Object> defaultValueContext) {
         //设置租户ID
         TenantUtil.setTenantId(tableInfo, insertData);
 
@@ -117,7 +117,7 @@ public class EntityInsertCreateUtil {
         OnListenerUtil.notifyInsert(insertData);
     }
 
-    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T insertData, SaveStrategy<T> saveStrategy, DbType dbType, Map<String, Object> defaultValueContext) {
+    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T insertData, SaveStrategy<T> saveStrategy, IDbType dbType, Map<String, Object> defaultValueContext) {
         doBefore(tableInfo, insertData, saveStrategy, dbType, defaultValueContext);
         insert = insert == null ? new Insert() : insert;
 

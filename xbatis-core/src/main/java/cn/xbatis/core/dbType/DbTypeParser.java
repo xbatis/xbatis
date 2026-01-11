@@ -14,17 +14,17 @@
 
 package cn.xbatis.core.dbType;
 
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 @FunctionalInterface
 public interface DbTypeParser {
 
     /**
-     * 通过jdbcUrl获取DbType
+     * 通过jdbcUrl获取 IDbType
      *
      * @param jdbcUrl 连接池的jdbcUrl
-     * @return DbType
+     * @return IDbType
      */
-    DbType getDbTypeByUrl(String jdbcUrl);
+    IDbType getDbTypeByUrl(String jdbcUrl);
 
 }

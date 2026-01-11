@@ -14,20 +14,20 @@
 
 package db.sql.api.impl.paging;
 
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PagingProcessorFactory {
 
-    private static final Map<DbType, IPagingProcessor> MAP = new ConcurrentHashMap<>();
+    private static final Map<IDbType, IPagingProcessor> MAP = new ConcurrentHashMap<>();
 
-    public static void setProcessor(DbType dbType, IPagingProcessor processor) {
+    public static void setProcessor(IDbType dbType, IPagingProcessor processor) {
         MAP.putIfAbsent(dbType, processor);
     }
 
-    public static IPagingProcessor getProcessor(DbType dbType) {
+    public static IPagingProcessor getProcessor(IDbType dbType) {
         return MAP.computeIfAbsent(dbType, c -> new CommonPagingProcessor());
     }
 }

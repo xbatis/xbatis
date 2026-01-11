@@ -19,7 +19,7 @@ import cn.xbatis.core.db.reflect.Models;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.db.Model;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -52,7 +52,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
 
 
     @Override
-    public void init(DbType dbType) {
+    public void init(IDbType dbType) {
         super.init(dbType);
         if (Objects.isNull(this.execution)) {
             this.execution = createCmd(dbType);
@@ -60,7 +60,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
     }
 
 
-    private BaseInsert createCmd(DbType dbType) {
+    private BaseInsert createCmd(IDbType dbType) {
         return ModelInsertCreateUtil.create(insert, modelInfo, model, strategy, dbType, defaultValueContext);
     }
 

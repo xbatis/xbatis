@@ -27,7 +27,6 @@ import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.Model;
-import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
@@ -96,9 +95,9 @@ public class ModelUpdateCreateUtil {
             if (modelFieldInfo.getTableFieldInfo().isTableId()) {
                 if (Objects.nonNull(value)) {
                     if (update.$where().hasContent()) {
-                        update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
+                        update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo, value));
                     } else {
-                        update.$where().conditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
+                        update.$where().conditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo, value));
                     }
                     hasIdCondition = true;
                 }
@@ -111,7 +110,7 @@ public class ModelUpdateCreateUtil {
                 //乐观锁+1
                 Object version = VersionUtil.plus(value);
                 //乐观锁条件
-                update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
+                update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo, value));
                 //乐观锁回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, version);
                 continue;

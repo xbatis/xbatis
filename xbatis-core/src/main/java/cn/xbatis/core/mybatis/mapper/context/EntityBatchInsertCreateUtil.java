@@ -28,6 +28,7 @@ import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 
 public class EntityBatchInsertCreateUtil {
 
-    private static Set<String> getAllSaveField(TableInfo tableInfo, DbType dbType, Object entity) {
+    private static Set<String> getAllSaveField(TableInfo tableInfo, IDbType dbType, Object entity) {
         Set<String> saveFieldSet = new HashSet<>();
         for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
             if (!tableFieldInfo.getTableFieldAnnotation().exists()) {
@@ -65,7 +66,7 @@ public class EntityBatchInsertCreateUtil {
         return saveFieldSet;
     }
 
-    private static <T> void doBefore(TableInfo tableInfo, List<TableFieldInfo> saveFieldInfoSet, T insertData, DbType dbType, Map<String, Object> defaultValueContext) {
+    private static <T> void doBefore(TableInfo tableInfo, List<TableFieldInfo> saveFieldInfoSet, T insertData, IDbType dbType, Map<String, Object> defaultValueContext) {
         //设置租户ID
         TenantUtil.setTenantId(tableInfo, insertData);
         for (TableFieldInfo tableFieldInfo : tableInfo.getInsertDoBeforeTableFieldInfos()) {
@@ -79,7 +80,7 @@ public class EntityBatchInsertCreateUtil {
     }
 
 
-    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T[] insertData, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, boolean useBatchExecutor, Map<String, Object> defaultValueContext) {
+    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T[] insertData, SaveBatchStrategy<T> saveBatchStrategy, IDbType dbType, boolean useBatchExecutor, Map<String, Object> defaultValueContext) {
 
         insert = insert == null ? new Insert() : insert;
 

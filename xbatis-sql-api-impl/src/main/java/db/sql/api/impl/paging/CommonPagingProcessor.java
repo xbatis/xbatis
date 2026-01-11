@@ -14,9 +14,7 @@
 
 package db.sql.api.impl.paging;
 
-import db.sql.api.Cmd;
-import db.sql.api.DbType;
-import db.sql.api.SqlBuilderContext;
+import db.sql.api.*;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.struct.Limit;
 import db.sql.api.impl.tookit.SqlConst;
@@ -39,8 +37,8 @@ public class CommonPagingProcessor implements IPagingProcessor {
     }
 
     private StringBuilder sql(SqlBuilderContext sqlBuilderContext, Cmd module, Cmd parent, IQuery query, StringBuilder parentSQL, Limit limit) {
-        DbType dbType = sqlBuilderContext.getDbType();
-        if (dbType == DbType.ORACLE || dbType == DbType.SQL_SERVER) {
+        IDbType dbType = sqlBuilderContext.getDbType();
+        if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.SQL_SERVER || dbType == DbType.ORACLE) {
             return parentSQL.append(SqlConst.OFFSET).append(limit.getOffset()).append(SqlConst.ROWS_FETCH_NEXT).append(limit.getLimit()).append(SqlConst.ROWS_ONLY);
         }
         parentSQL.append(SqlConst.LIMIT).append(limit.getLimit()).append(SqlConst.OFFSET).append(limit.getOffset());

@@ -36,11 +36,11 @@ public @interface TableId {
     IdAutoType value() default IdAutoType.AUTO;
 
     /**
-     * 数据库类型
-     *
-     * @return DbType
+     * 数据库类型 例如 DbType.Name.MYSQL
+     * @see db.sql.api.DbType.Name
+     * @return DbType name
      */
-    DbType dbType() default DbType.UNKNOWN;
+    String dbType() default DbType.Name.UNKNOWN;
 
     /**
      * 自增器的名字,可使用 cn.xbatis.core.incrementer.Generators 下的常量

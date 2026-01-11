@@ -17,11 +17,15 @@ package cn.xbatis.core.sql.util;
 import cn.xbatis.core.db.reflect.Conditions;
 import cn.xbatis.core.db.reflect.ModelInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
+import cn.xbatis.core.mybatis.mapper.context.CmdParamUtil;
 import cn.xbatis.core.sql.MybatisCmdFactory;
+import cn.xbatis.core.sql.executor.MpTableField;
 import cn.xbatis.core.sql.executor.Where;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.Model;
+import db.sql.api.Cmd;
 import db.sql.api.impl.cmd.CmdFactory;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractDelete;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
@@ -29,7 +33,9 @@ import db.sql.api.impl.cmd.executor.AbstractUpdate;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -160,7 +166,7 @@ public final class WhereUtil {
                 throw new RuntimeException(e);
             }
             Objects.requireNonNull(id, "id can't be null");
-            where.eq($.field(tableInfo.getType(), item.getField().getName(), 1), id);
+            where.eq($.field(tableInfo.getType(), item.getField().getName(), 1), CmdParamUtil.build(item, id));
         });
     }
 
@@ -184,7 +190,7 @@ public final class WhereUtil {
                 throw new RuntimeException(e);
             }
             Objects.requireNonNull(id, "id can't be null");
-            where.eq($.field(modelInfo.getTableInfo().getType(), item.getTableFieldInfo().getField().getName(), 1), id);
+            where.eq($.field(modelInfo.getTableInfo().getType(), item.getTableFieldInfo().getField().getName(), 1), CmdParamUtil.build(item, id));
         });
     }
 
@@ -200,7 +206,15 @@ public final class WhereUtil {
         for (Serializable id : ids) {
             Objects.requireNonNull(id, "id can't be null");
         }
-        appendWhereWithIdTableField(where, tableInfo, idTableField -> where.in(idTableField, ids));
+        appendWhereWithIdTableField(where, tableInfo, idTableField -> {
+            MpTableField idMpTableField = (MpTableField) idTableField;
+            List<Cmd> values = new ArrayList<>(ids.length);
+            for (Serializable id : ids) {
+                Objects.requireNonNull(id, "id can't be null");
+                values.add(CmdParamUtil.build(idMpTableField.getTableFieldInfo(), id));
+            }
+            where.and(Methods.in(idTableField, values));
+        });
     }
 
     /**
@@ -213,7 +227,15 @@ public final class WhereUtil {
     public static <ID extends Serializable> void appendIdsWhere(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, Collection<ID> ids) {
         Objects.requireNonNull(ids, "id can't be null");
         ids.forEach(id -> Objects.requireNonNull(id, "id can't be null"));
-        appendWhereWithIdTableField(where, tableInfo, idTableField -> where.in(idTableField, ids));
+        appendWhereWithIdTableField(where, tableInfo, idTableField -> {
+            MpTableField idMpTableField = (MpTableField) idTableField;
+            List<Cmd> values = new ArrayList<>();
+            for (Serializable id : ids) {
+                Objects.requireNonNull(id, "id can't be null");
+                values.add(CmdParamUtil.build(idMpTableField.getTableFieldInfo(), id));
+            }
+            where.and(Methods.in(idTableField, values));
+        });
     }
 
     private static void appendWhereWithIdTableField(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, Consumer<TableField> consumer) {

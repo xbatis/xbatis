@@ -58,6 +58,10 @@ public class IdentifierGenerateTest extends BaseTest {
 
             idTestMapper.saveOrUpdate(idTest);
             idTestMapper.saveOrUpdate(idTest);
+
+            QueryChain.of(idTestMapper)
+                    .in(IdTest::getId, "1", "2", "3")
+                    .list();
         }
     }
 

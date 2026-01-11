@@ -28,7 +28,7 @@ import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.*;
 import cn.xbatis.db.FetchPropertyType;
 import cn.xbatis.db.annotations.ResultEntity;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.struct.Where;
@@ -78,7 +78,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     private Map<Class, List<CreatedEventInfo>> createdEventInfos;
     private Map<String, Object> defaultValueContext = new HashMap<>();
     private Boolean hasFetchMatchColumn;
-    private DbType dbType;
+    private IDbType dbType;
 
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);

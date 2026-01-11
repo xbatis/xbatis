@@ -16,13 +16,13 @@ package cn.xbatis.core.sql.executor;
 
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.util.WhereUtil;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 import java.util.List;
 
 public final class Where extends db.sql.api.impl.cmd.struct.Where {
 
-    private DbType dbType;
+    private IDbType dbType;
     private String mybatisParamNamespace;
     private XmlScript whereScript;
 
@@ -51,11 +51,11 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
         return this;
     }
 
-    public DbType getDbType() {
+    public IDbType getDbType() {
         return dbType;
     }
 
-    public void setDbType(DbType dbType) {
+    public void setDbType(IDbType dbType) {
         this.dbType = dbType;
     }
 

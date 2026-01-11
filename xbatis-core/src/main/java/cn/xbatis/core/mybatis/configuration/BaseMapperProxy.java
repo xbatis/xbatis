@@ -33,7 +33,7 @@ import cn.xbatis.core.sql.executor.Where;
 import cn.xbatis.db.annotations.Paging;
 import cn.xbatis.page.IPager;
 import cn.xbatis.page.PagerField;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.executor.DbSelectorCall;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -62,7 +62,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     protected final Class<T> mapperInterface;
     private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
     protected Map<ShareVariableName, Object> shareVariables = new HashMap<>();
-    private volatile DbType dbType;
+    private volatile IDbType dbType;
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
@@ -70,7 +70,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         this.mapperInterface = mapperInterface;
     }
 
-    private DbType getDbType() {
+    private IDbType getDbType() {
         if (Objects.isNull(dbType)) {
             dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration());
         }

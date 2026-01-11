@@ -15,7 +15,7 @@
 package db.sql.api.cmd.basic;
 
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 public interface IDatasetField<T extends IDatasetField<T>> extends IField<T>, Cmd {
 
@@ -34,11 +34,11 @@ public interface IDatasetField<T extends IDatasetField<T>> extends IField<T>, Cm
     String getName();
 
     /**
-     * 根据dbType处理后的对象
+     * 根据dbType 返回处理后的列
      *
-     * @param dbType
+     * @param dbType 数据库类型
      * @return 列名
      */
-    String getName(DbType dbType);
+    String getName(IDbType dbType);
 
 }

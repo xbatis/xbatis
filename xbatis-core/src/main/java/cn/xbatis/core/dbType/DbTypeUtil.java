@@ -15,7 +15,8 @@
 package cn.xbatis.core.dbType;
 
 import cn.xbatis.core.XbatisGlobalConfig;
-import db.sql.api.DbType;
+import db.sql.api.DbTypes;
+import db.sql.api.IDbType;
 import org.apache.ibatis.session.Configuration;
 
 import javax.sql.DataSource;
@@ -25,22 +26,22 @@ import java.util.Objects;
 
 public final class DbTypeUtil {
 
-    public static DbType getDbType(Configuration configuration) {
+    public static IDbType getDbType(Configuration configuration) {
         return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
     }
 
-    public static DbType getDbType(String databaseId, DataSource dataSource) {
+    public static IDbType getDbType(String databaseId, DataSource dataSource) {
         if (Objects.isNull(databaseId) || databaseId.isEmpty()) {
             return DbTypeUtil.getDbType(dataSource);
         }
-        return DbType.getByName(databaseId);
+        return DbTypes.getByName(databaseId);
     }
 
-    public static DbType getDbType(DataSource dataSource) {
+    public static IDbType getDbType(DataSource dataSource) {
         return getDbType(getJdbcUrl(dataSource));
     }
 
-    public static DbType getDbType(String jdbcUrl) {
+    public static IDbType getDbType(String jdbcUrl) {
         jdbcUrl = jdbcUrl.toLowerCase();
         return XbatisGlobalConfig.getDbTypeParser().getDbTypeByUrl(jdbcUrl);
     }
@@ -70,7 +71,7 @@ public final class DbTypeUtil {
         }
     }
 
-    public static DbType getDbType(Connection connection) {
+    public static IDbType getDbType(Connection connection) {
         return getDbType(getJdbcUrl(connection));
     }
 

@@ -17,8 +17,8 @@ package db.sql.api.impl.cmd.basic;
 
 import cn.xbatis.db.DatabaseCaseRule;
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
 import db.sql.api.Getter;
+import db.sql.api.IDbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.ITable;
@@ -76,7 +76,7 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
         return this;
     }
 
-    public String getName(DbType dbType) {
+    public String getName(IDbType dbType) {
         DatabaseCaseRule databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
         if (databaseCaseRule == null || databaseCaseRule == DatabaseCaseRule.DEFAULT) {
             databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule();
