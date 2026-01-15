@@ -60,7 +60,6 @@ public class ConditionTest extends BaseTest {
                         boolean isASC = true;
                         q.orderBy(isASC ? OrderByDirection.ASC : OrderByDirection.DESC, q.$(SysUser.class, "userName"));
                     })
-
                     .get();
 
             assertNull(id, "eq");

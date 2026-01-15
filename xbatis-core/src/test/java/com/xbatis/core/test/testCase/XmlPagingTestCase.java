@@ -163,7 +163,8 @@ public class XmlPagingTestCase extends BaseTest {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             Query query = Query.create()
                     .select(SysRole.class)
-                    .select(Methods.value(1))
+                    .select(Methods.value(true).concat(1))
+                    .select(Methods.value(1).as("xx"))
                     .from(SysRole.class)
                     .in(SysRole::getId, 1, 2)
                     .orderBy(SysRole::getId, SysRole::getCreateTime);
