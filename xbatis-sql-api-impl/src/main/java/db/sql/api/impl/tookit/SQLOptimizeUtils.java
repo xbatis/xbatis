@@ -14,10 +14,7 @@
 
 package db.sql.api.impl.tookit;
 
-import db.sql.api.Cmd;
-import db.sql.api.DbType;
-import db.sql.api.IDbType;
-import db.sql.api.SqlBuilderContext;
+import db.sql.api.*;
 import db.sql.api.cmd.AffectLineNumber;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.CmdList;
@@ -191,7 +188,7 @@ public final class SQLOptimizeUtils {
         if (forCount && !isUnionQuery && !select.isDistinct() && !select.getSelectField().stream().anyMatch(i -> i instanceof AffectLineNumber)) {
             if (classCmdMap.containsKey(GroupBy.class) || select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
                 Select newSelect;
-                if (dbType == DbType.ORACLE) {
+                if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
                     if (classCmdMap.containsKey(GroupBy.class)) {
                         //ORACLE 有group时 无法支持 select 1
                         newSelect = select;
@@ -291,7 +288,7 @@ public final class SQLOptimizeUtils {
      */
     public static StringBuilder getCountSqlFromQuery(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
         if (optimizeOptions != null && optimizeOptions.isAllDisable()) {
-            if (context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.ORACLE) {
+            if (context.getDbType() == DbType.SQL_SERVER || context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE) {
                 //需要去掉order by
                 return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false);
             }

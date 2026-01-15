@@ -346,7 +346,7 @@ public class UpdateTest extends BaseDaoTest {
             getDao(sysUserMapper).update(old);
 
             SysUser sysUser = getDao(sysUserMapper).getById(1);
-            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 assertNull(sysUser.getUserName());
             } else {
                 assertEquals("", sysUser.getUserName());

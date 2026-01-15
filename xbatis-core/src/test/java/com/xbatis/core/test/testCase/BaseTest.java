@@ -18,6 +18,7 @@ import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import cn.xbatis.core.mybatis.configuration.MybatisDatabaseIdProvider;
 import cn.xbatis.core.mybatis.mapper.DbRunner;
+import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.db2.typeHandler.LocalDateTimeTypeHandler;
 import com.xbatis.core.test.fetch.FetchCacheTestImpl;
 import com.xbatis.core.test.mapper.*;
@@ -75,6 +76,7 @@ public class BaseTest {
     public void init() {
         System.out.println("init");
         XbatisGlobalConfig.setPagingProcessor(DbType.ORACLE, new OracleRowNumPagingProcessor());
+        XbatisGlobalConfig.setPagingProcessor(MyDbType.LIKE_ORACLE, new OracleRowNumPagingProcessor());
         XbatisGlobalConfig.setPagingProcessor(DbType.SQL_SERVER, new SQLServerRowNumberOverPagingProcessor());
         XbatisGlobalConfig.setFetchCache(new FetchCacheTestImpl());
         dataSource = TestDataSource.getDataSource();

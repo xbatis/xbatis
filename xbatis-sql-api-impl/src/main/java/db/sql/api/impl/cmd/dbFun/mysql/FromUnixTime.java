@@ -28,7 +28,7 @@ public class FromUnixTime extends BasicFunction<FromUnixTime> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.ORACLE) {
+        if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE) {
             sqlBuilder.append("(TO_TIMESTAMP('1970-01-01', 'YYYY-MM-DD') + NUMTODSINTERVAL(");
             this.key.sql(module, parent, context, sqlBuilder);
             sqlBuilder.append(", 'SECOND'))");

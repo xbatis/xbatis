@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.tookit.SqlConst;
@@ -30,7 +31,7 @@ public class Right extends BasicFunction<Right> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQLITE) {
+        if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(" SUBSTR");
         } else {
             sqlBuilder.append(operator);
@@ -39,7 +40,7 @@ public class Right extends BasicFunction<Right> {
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
         sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
 
-        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQLITE) {
+        if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.DELIMITER).append("LENGTH(");
             sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(") - " + (length - 1));

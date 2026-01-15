@@ -35,7 +35,7 @@ public class GroupConcat extends BasicFunction<GroupConcat> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.ORACLE) {
+        if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE) {
             sqlBuilder.append("LISTAGG");
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);

@@ -74,7 +74,7 @@ public class MultiPkTestCase extends BaseTest {
             );
         }
 
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE) {
             return;
         }
 
@@ -127,7 +127,7 @@ public class MultiPkTestCase extends BaseTest {
             );
         }
 
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE) {
             return;
         }
 
@@ -180,7 +180,7 @@ public class MultiPkTestCase extends BaseTest {
             );
         }
 
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE) {
             return;
         }
 
@@ -255,7 +255,7 @@ public class MultiPkTestCase extends BaseTest {
             );
         }
 
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE) {
             return;
         }
 

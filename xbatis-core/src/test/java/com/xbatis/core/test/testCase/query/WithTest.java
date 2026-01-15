@@ -20,9 +20,11 @@ import cn.xbatis.core.sql.executor.WithQuery;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.WithQueryDataset;
@@ -182,7 +184,7 @@ public class WithTest extends BaseTest {
                     .recursive("n", "n2")
                     .select("1,1")
                     .dbAdapt((query, selector) -> {
-                        selector.when(DbType.ORACLE, () -> {
+                        selector.when(new IDbType[]{DbType.ORACLE, MyDbType.LIKE_ORACLE}, () -> {
                             query.from(new Table("dual"));
                         }).when(DbType.DB2, () -> {
                             query.from(new Table("SYSIBM.SYSDUMMY1"));

@@ -259,7 +259,7 @@ public class UpdateTest extends BaseTest {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        } else if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+        } else if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE) {
             int updateCnt = -1;
             // ORACLE 只支持 修改单个表数据  不支持 from 不支持join 可以通过 子查询修改
 
@@ -553,7 +553,7 @@ public class UpdateTest extends BaseTest {
             sysUserMapper.update(old);
 
             SysUser sysUser = sysUserMapper.getById(1);
-            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 assertEquals(null, sysUser.getUserName());
             } else {
                 assertEquals("", sysUser.getUserName());

@@ -631,7 +631,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void dateDiff() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
             //oracle 不支持
             return;
         }
@@ -770,7 +770,7 @@ public class FunTest extends BaseTest {
                     .returnType(String.class)
                     .get();
 
-            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE) {
                 assertEquals(xx, "\"xx\"");
             } else {
                 assertEquals(xx, "\"xx\"");

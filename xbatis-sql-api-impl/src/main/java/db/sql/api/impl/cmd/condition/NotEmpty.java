@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.condition;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
@@ -32,7 +33,7 @@ public class NotEmpty extends BaseCondition<NotEmpty, Cmd, Void> {
 
     @Override
     public StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.KING_BASE) {
+        if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.KING_BASE) {
             return new IsNotNull(this.field).sql(module, parent, context, sqlBuilder);
         }
         return new Ne(this.field, Methods.value("")).conditionSql(module, parent, context, sqlBuilder);

@@ -31,7 +31,7 @@ public class Day extends BasicFunction<Day> {
         if (context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT).append("'%d'").append(SqlConst.DELIMITER);
         } else if (context.getDbType().getDbModel() != DbModel.PGSQL && context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.GAUSS
-                && context.getDbType() != DbType.ORACLE && context.getDbType() != DbType.KING_BASE) {
+                && context.getDbType().getDbModel() != DbModel.ORACLE && context.getDbType() != DbType.ORACLE && context.getDbType() != DbType.KING_BASE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
         }
 

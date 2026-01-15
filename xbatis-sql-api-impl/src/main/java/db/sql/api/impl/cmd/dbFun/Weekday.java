@@ -41,7 +41,7 @@ public class Weekday extends BasicFunction<Weekday> {
         }
 
         sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
-        if (context.getDbType() == DbType.ORACLE ||
+        if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE ||
                 context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.KING_BASE) {
             sqlBuilder.append(SqlConst.DELIMITER).append(" 'D'");
         }

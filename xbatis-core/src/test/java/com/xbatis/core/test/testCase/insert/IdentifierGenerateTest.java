@@ -224,7 +224,7 @@ public class IdentifierGenerateTest extends BaseTest {
             sysUserMapper.save(old);
 
             SysUser sysUser = sysUserMapper.getById(maxId + 1);
-            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 assertEquals(null, sysUser.getUserName());
             } else {
                 assertEquals("", sysUser.getUserName());

@@ -20,6 +20,7 @@ import com.xbatis.core.test.DO.BaseRoleIdSysUserVo;
 import com.xbatis.core.test.DO.BaseRoleIdSysUserVo2;
 import com.xbatis.core.test.mapper.SysUserIDMapper;
 import com.xbatis.core.test.model.BaseIDSysUserModel;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ public class BaseUserTestCase extends BaseTest {
 
     @Test
     public void save() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
             return;
         }
 
@@ -96,7 +97,7 @@ public class BaseUserTestCase extends BaseTest {
 
     @Test
     public void saveModel() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
             return;
         }
 

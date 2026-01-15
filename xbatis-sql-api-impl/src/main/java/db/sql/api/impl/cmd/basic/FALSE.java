@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.ICondition;
@@ -26,7 +27,7 @@ public class FALSE implements ICondition {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.ORACLE) {
+        if (context.getDbType() == DbType.SQL_SERVER || context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE) {
             return sqlBuilder.append(SqlConst.NE_1_1);
         }
         return sqlBuilder.append(SqlConst.FALSE);

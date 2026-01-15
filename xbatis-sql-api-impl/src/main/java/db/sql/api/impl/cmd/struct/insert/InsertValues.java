@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.struct.insert;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.insert.IInsertValues;
@@ -50,7 +51,7 @@ public class InsertValues implements IInsertValues<Cmd> {
         }
         boolean oracleMuti = false;
 
-        if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {
+        if ((context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE) && parent instanceof AbstractInsert) {
             List<List<Cmd>> insertValues = this.getValues();
             if (Objects.nonNull(insertValues) && insertValues.size() > 1) {
                 oracleMuti = true;

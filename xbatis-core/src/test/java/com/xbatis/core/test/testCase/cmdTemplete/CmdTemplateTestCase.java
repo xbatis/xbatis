@@ -23,6 +23,7 @@ import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import com.xbatis.core.test.vo.SysUserRoleAutoSelectVo;
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.cmd.GetterFields;
 import db.sql.api.impl.cmd.basic.FunTemplate;
@@ -55,7 +56,7 @@ public class CmdTemplateTestCase extends BaseTest {
 
     @Test
     public void templateTest2() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.SQL_SERVER) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE || TestDataSource.DB_TYPE == DbType.SQL_SERVER) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

@@ -19,6 +19,7 @@ import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableField;
 import cn.xbatis.db.annotations.TableId;
+import com.xbatis.core.test.MyDbType;
 import db.sql.api.DbType;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -36,7 +37,9 @@ public class IdTest {
     @TableId(dbType = DbType.Name.SQL_SERVER, value = IdAutoType.AUTO)
     @TableId(dbType = DbType.Name.GAUSS, value = IdAutoType.SQL, sql = "select nextval('id_test_id_seq')")
     @TableId(dbType = DbType.Name.PGSQL, value = IdAutoType.SQL, sql = "select nextval('id_test_id_seq')")
+    @TableId(dbType = MyDbType.Name.LIKE_PGSQL, value = IdAutoType.SQL, sql = "select nextval('id_test_id_seq')")
     @TableId(dbType = DbType.Name.ORACLE, value = IdAutoType.SQL, sql = "select id_test_seq.NEXTVAL FROM dual")
+    @TableId(dbType = MyDbType.Name.LIKE_ORACLE, value = IdAutoType.SQL, sql = "select id_test_seq.NEXTVAL FROM dual")
     @TableId(dbType = DbType.Name.KING_BASE, value = IdAutoType.SQL, sql = "select id_test_seq.NEXTVAL FROM dual")
     @TableField(typeHandler = LongStringTypeHandler.class)
     private String id;

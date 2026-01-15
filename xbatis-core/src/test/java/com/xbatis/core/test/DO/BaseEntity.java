@@ -17,6 +17,7 @@ package com.xbatis.core.test.DO;
 import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.TableId;
 import cn.xbatis.db.annotations.Version;
+import com.xbatis.core.test.MyDbType;
 import db.sql.api.DbType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class BaseEntity {
 
     @TableId
     @TableId(dbType = DbType.Name.ORACLE, value = IdAutoType.SQL, sql = "select composite_test_seq.NEXTVAL FROM dual")
+    @TableId(dbType = MyDbType.Name.LIKE_ORACLE, value = IdAutoType.SQL, sql = "select composite_test_seq.NEXTVAL FROM dual")
     @TableId(dbType = DbType.Name.KING_BASE, value = IdAutoType.SQL, sql = "select composite_test_seq.NEXTVAL FROM dual")
     private Long id;
 
