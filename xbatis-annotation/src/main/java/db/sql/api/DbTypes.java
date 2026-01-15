@@ -21,6 +21,11 @@ public final class DbTypes {
 
     private static final Map<String, IDbType> DB_TYPE_MAP = new HashMap<>();
 
+    static {
+        //静态加载 防止 DbType 未初始化
+        DbType.values();
+    }
+
     /**
      * 注册 IDbType
      *

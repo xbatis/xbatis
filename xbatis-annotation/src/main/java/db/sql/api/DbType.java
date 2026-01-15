@@ -57,8 +57,8 @@ public enum DbType implements IDbType {
         this(name, keywordWrap, DbModel.DEFAULT, new HashSet<>());
     }
 
-    DbType(String name, KeywordWrap keywordWrap, DbModel keywords) {
-        this(name, keywordWrap, keywords, new HashSet<>());
+    DbType(String name, KeywordWrap keywordWrap, DbModel dbModel) {
+        this(name, keywordWrap, dbModel, new HashSet<>());
     }
 
     DbType(String name, KeywordWrap keywordWrap, DbModel dbModel, Set<String> keywords) {
