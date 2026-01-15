@@ -16,17 +16,19 @@ package db.sql.api.impl.cmd.basic;
 
 
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.LikeMode;
+import db.sql.api.cmd.struct.query.ISelect;
 import db.sql.api.impl.cmd.condition.Like;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.Date;
 import java.util.Objects;
 
@@ -74,7 +76,28 @@ public class BasicValue extends AbstractField<BasicValue> {
                 sqlBuilder.append(SqlConst.SINGLE_QUOT).append(originValue).append(SqlConst.SINGLE_QUOT);
             }
         } else {
-            sqlBuilder.append(context.addParam(value));
+            if (module instanceof ISelect && context.getDbType() == DbType.DB2) {
+                String castType;
+                if (value instanceof Date || value instanceof ChronoLocalDate) {
+                    castType = "DATE";
+                } else if (value instanceof Byte || value instanceof Short) {
+                    castType = "SMALLINT";
+                } else if (value instanceof Integer) {
+                    castType = "INTEGER";
+                } else if (value instanceof Long) {
+                    castType = "BIGINT";
+                } else if (value instanceof Float || value instanceof Double || value instanceof BigDecimal) {
+                    castType = "DECIMAL(19,6)";
+                } else if (value instanceof Boolean) {
+                    castType = "BOOLEAN";
+                } else {
+                    castType = "VARCHAR";
+                }
+                sqlBuilder.append("CAST(").append(context.addParam(value)).append(" AS " + castType + ")");
+            } else {
+                sqlBuilder.append(context.addParam(value));
+            }
+
         }
 
         if (parent instanceof Select) {
