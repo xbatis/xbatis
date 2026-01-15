@@ -23,6 +23,7 @@ import db.sql.api.Getter;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -47,6 +48,17 @@ public interface Dao<T, ID> {
      */
     Class<T> getEntityType();
 
+
+    /**
+     * 根据ID查询
+     *
+     * @param id ID
+     * @return 单个实体的 Optional对象
+     */
+    default Optional<T> getOptionalById(ID id) {
+        return Optional.ofNullable(getById(id));
+    }
+
     /**
      * 根据ID查询
      *
@@ -54,6 +66,17 @@ public interface Dao<T, ID> {
      * @return 单个实体
      */
     T getById(ID id);
+
+    /**
+     * 根据ID查询，指定目标类型
+     *
+     * @param targetType 目标类
+     * @param id         ID
+     * @return 单个目标类型的 Optional对象
+     */
+    default <T2> Optional<T2> getOptionalById(Class<T2> targetType, ID id) {
+        return Optional.ofNullable(getById(targetType, id));
+    }
 
     /**
      * 根据ID查询，指定目标类型

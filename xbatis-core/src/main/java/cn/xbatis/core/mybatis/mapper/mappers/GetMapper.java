@@ -19,9 +19,20 @@ import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public interface GetMapper<T> extends BaseMapper<T> {
+
+    /**
+     * 根据ID查询
+     *
+     * @param id ID
+     * @return 单个Optional 的当前实体类记录
+     */
+    default <ID extends Serializable> Optional<T> getOptionalById(ID id) {
+        return Optional.ofNullable(getById(id));
+    }
 
     /**
      * 根据ID查询
@@ -42,6 +53,17 @@ public interface GetMapper<T> extends BaseMapper<T> {
      */
     default <ID extends Serializable> T getById(ID id, Getter<T>... selectFields) {
         return GetMethodUtil.getById(getBasicMapper(), getTableInfo(), id, selectFields);
+    }
+
+    /**
+     * 根据ID查询，指定目标类型
+     *
+     * @param targetType 目标类
+     * @param id         ID
+     * @return 单个目标类型的 Optional
+     */
+    default <T, ID extends Serializable> Optional<T> getOptionalById(Class<T> targetType, ID id) {
+        return Optional.ofNullable(getById(targetType, id));
     }
 
     /**
