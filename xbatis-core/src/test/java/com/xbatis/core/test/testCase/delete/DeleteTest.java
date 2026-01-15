@@ -18,10 +18,13 @@ import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.util.WhereUtil;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +57,7 @@ public class DeleteTest extends BaseTest {
                         selector.when(DbType.H2, () -> {
                                     deleteChain.eq(SysUser::getId, 3);
                                 })
-                                .when(DbType.MYSQL, () -> {
+                                .when(new IDbType[]{DbType.MYSQL, MyDbType.LIKE_MYSQL}, () -> {
                                     deleteChain.eq(SysUser::getId, 2);
                                 })
                                 .otherwise(() -> {
@@ -65,7 +68,7 @@ public class DeleteTest extends BaseTest {
             assertEquals(cnt, 1);
             if (TestDataSource.DB_TYPE == DbType.H2) {
                 assertNull(sysUserMapper.getById(3));
-            } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
+            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE.getDbModel() == DbModel.MYSQL) {
                 assertNull(sysUserMapper.getById(2));
             } else {
                 assertNull(sysUserMapper.getById(1));

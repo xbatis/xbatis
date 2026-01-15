@@ -21,6 +21,7 @@ import com.xbatis.core.test.mapper.FetchAddrMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import com.xbatis.core.test.vo.FetchAddrVo;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class MultiValueFetchTest extends BaseTest {
 
     @Test
     public void fetchMulti() {
-        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL) {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -90,7 +91,7 @@ public class MultiValueFetchTest extends BaseTest {
 
     @Test
     public void fetchMulti2() {
-        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL) {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

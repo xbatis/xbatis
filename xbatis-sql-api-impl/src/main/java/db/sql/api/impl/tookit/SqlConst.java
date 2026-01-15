@@ -364,7 +364,7 @@ public final class SqlConst {
     }
 
     public static String YEAR(IDbType dbType) {
-        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
             return " YEAR";
         }
 
@@ -384,7 +384,7 @@ public final class SqlConst {
     }
 
     public static String MONTH(IDbType dbType) {
-        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
             return " MONTH";
         }
         if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS) {
@@ -402,7 +402,7 @@ public final class SqlConst {
     }
 
     public static String DAY(IDbType dbType) {
-        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL) {
+        if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
             return " DAY";
         }
         if (dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.GAUSS || dbType == DbType.KING_BASE) {

@@ -22,6 +22,7 @@ import cn.xbatis.core.sql.util.WhereUtil;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.DO.SysUserRoleMiddle;
+import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.REQ.SysUserOrderBys;
 import com.xbatis.core.test.REQ.SysUserOrderBys2;
 import com.xbatis.core.test.mapper.SysRoleMapper;
@@ -32,8 +33,10 @@ import com.xbatis.core.test.testCase.TestDataSource;
 import com.xbatis.core.test.vo.SysUserCalcSelectVo;
 import com.xbatis.core.test.vo.SysUserHandlerVo;
 import com.xbatis.core.test.vo.SysUserRoleMiddleVo;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.Getters;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import db.sql.api.impl.tookit.Objects;
@@ -150,7 +153,7 @@ public class QueryTest extends BaseTest {
             SysUser sysUser = sysUserMapper.dbAdapt(selector -> {
                 selector.when(DbType.H2, (dbType) -> {
                     return sysUserMapper.getById(1);
-                }).when(DbType.MYSQL, (dbType) -> {
+                }).when(new IDbType[]{DbType.MYSQL, MyDbType.LIKE_MYSQL}, (dbType) -> {
                     return sysUserMapper.getById(2);
                 }).otherwise((dbType) -> {
                     return sysUserMapper.getById(3);
@@ -159,7 +162,7 @@ public class QueryTest extends BaseTest {
 
             if (TestDataSource.DB_TYPE == DbType.H2) {
                 assertEquals(sysUser.getId(), 1);
-            } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
+            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE.getDbModel() == DbModel.MYSQL) {
                 assertEquals(sysUser.getId(), 2);
             } else {
                 assertEquals(sysUser.getId(), 3);
@@ -529,7 +532,7 @@ public class QueryTest extends BaseTest {
                                 })
                                 .isNotNull(SysUser::getPassword)
                                 .connect(subQuery -> {
-                                    if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+                                    if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
                                         subQuery.orderBy(SysUser::getId);
                                         subQuery.limit(1);
                                     }
@@ -539,7 +542,7 @@ public class QueryTest extends BaseTest {
                     })
                     .list();
 
-            if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+            if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
                 assertEquals(list.size(), 2, "inSubQuery size");
             } else {
                 assertEquals(list.size(), 2, "inSubQuery size");

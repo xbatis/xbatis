@@ -16,6 +16,7 @@ package db.sql.api.impl.cmd.struct.update;
 
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IInsert;
@@ -50,7 +51,7 @@ public class UpdateSets implements IUpdateSets<TableField, Cmd, UpdateSet> {
         if (context.getDbType() == DbType.CLICK_HOUSE) {
             sqlBuilder.append(SqlConst.BLANK).append(SqlConst.UPDATE);
         } else {
-            if (module instanceof IInsert && (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2)) {
+            if (module instanceof IInsert && (context.getDbType().getDbModel() == DbModel.MYSQL || context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2)) {
                 sqlBuilder.append(SqlConst.BLANK).append(SqlConst.UPDATE);
             } else if (module instanceof IInsert && (context.getDbType() == DbType.GAUSS)) {
                 sqlBuilder.append(SqlConst.BLANK);

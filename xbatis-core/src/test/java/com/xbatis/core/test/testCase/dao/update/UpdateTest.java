@@ -19,13 +19,12 @@ import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.model.SysUserModel;
 import com.xbatis.core.test.testCase.TestDataSource;
 import com.xbatis.core.test.testCase.dao.BaseDaoTest;
-import db.sql.api.Cmd;
-import db.sql.api.DbType;
-import db.sql.api.Getter;
+import db.sql.api.*;
 import db.sql.api.impl.cmd.basic.TableField;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -173,7 +172,7 @@ public class UpdateTest extends BaseDaoTest {
                     .dbAdapt((updateChain, selector) -> {
                         selector.when(DbType.H2, () -> {
                             updateChain.eq(SysUser::getId, 3);
-                        }).when(DbType.MYSQL, () -> {
+                        }).when(new IDbType[]{DbType.MYSQL, MyDbType.LIKE_MYSQL}, () -> {
                             updateChain.eq(SysUser::getId, 2);
                         }).otherwise(() -> {
                             updateChain.eq(SysUser::getId, 1);
@@ -183,7 +182,7 @@ public class UpdateTest extends BaseDaoTest {
             assertEquals(cnt, 1);
             if (TestDataSource.DB_TYPE == DbType.H2) {
                 assertEquals(getDao(sysUserMapper).getById(3).getUserName(), "xx123");
-            } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
+            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE.getDbModel() == DbModel.MYSQL) {
                 assertEquals(getDao(sysUserMapper).getById(2).getUserName(), "xx123");
             } else {
                 assertEquals(getDao(sysUserMapper).getById(1).getUserName(), "xx123");
@@ -358,7 +357,7 @@ public class UpdateTest extends BaseDaoTest {
 
     @Test
     public void updateJoin() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+        if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

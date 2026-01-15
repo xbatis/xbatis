@@ -85,13 +85,13 @@ public class Conflict<T> implements IConflict<T>, Cmd {
         //增加默认的争议key
         this.addDefaultConflictKeys((AbstractInsert) module, context.getDbType());
 
-        if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2) {
+        if (context.getDbType().getDbModel() == DbModel.MYSQL || context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2) {
             if (!conflictAction.isDoNothing()) {
                 sqlBuilder.append(" ON DUPLICATE KEY");
             }
         } else if (context.getDbType() == DbType.GAUSS) {
             sqlBuilder.append(" ON DUPLICATE KEY");
-        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
+        } else if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(" ON CONFLICT");
             if (this.conflictKeys != null) {
                 sqlBuilder.append(SqlConst.BRACKET_LEFT);

@@ -28,6 +28,7 @@ import com.xbatis.core.test.mapper.DefaultValueTestMapper;
 import com.xbatis.core.test.model.DefaultValue2ModelTest;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.IDbType;
 import db.sql.api.cmd.GetterFields;
@@ -47,7 +48,7 @@ public class DefaultValueTestCase extends BaseTest {
 
     @Test
     public void insertAllowNullTest() {
-        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL) {
+        if (TestDataSource.DB_TYPE != DbType.H2 && (TestDataSource.DB_TYPE != DbType.MYSQL || TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL)) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

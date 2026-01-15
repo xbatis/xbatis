@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.struct.query;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IWithQuery;
@@ -35,8 +36,9 @@ public class With implements IWith<With> {
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         Cmd recursive = this.withQuery.getRecursive();
 
-        if (Objects.nonNull(recursive) && (context.getDbType() == DbType.H2 || context.getDbType() ==
-                DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.KING_BASE)) {
+        if (Objects.nonNull(recursive) && (context.getDbType() == DbType.H2
+                || context.getDbType().getDbModel() == DbModel.MYSQL || context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB
+                || context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.KING_BASE)) {
             sqlBuilder.append(SqlConst.RECURSIVE);
         }
 

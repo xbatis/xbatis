@@ -14,10 +14,7 @@
 
 package db.sql.api.impl.cmd.executor;
 
-import db.sql.api.Cmd;
-import db.sql.api.DbType;
-import db.sql.api.Getter;
-import db.sql.api.SqlBuilderContext;
+import db.sql.api.*;
 import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.UpdateStrategy;
@@ -428,7 +425,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     @Override
     public StringBuilder sql(Cmd mould, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (Objects.nonNull(this.getJoins())) {
-            if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.DM) {
+            if (context.getDbType().getDbModel() == DbModel.MYSQL || context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.DM) {
                 // mysql dm 类数据库 update join 是在 update table 之后的
                 this.cmdSorts().remove(Joins.class);
                 this.cmdSorts().put(Joins.class, this.cmdSorts().get(UpdateTable.class) + 1);

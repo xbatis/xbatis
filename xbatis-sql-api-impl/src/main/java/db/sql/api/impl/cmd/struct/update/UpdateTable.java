@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.struct.update;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.update.IUpdateTable;
@@ -56,7 +57,7 @@ public class UpdateTable implements IUpdateTable<Table> {
                 sqlBuilder.append(SqlConst.DELIMITER);
             }
 
-            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
+            if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
                 //只能修改一张
                 AbstractUpdate abstractUpdate = (AbstractUpdate) module;
                 if (Objects.nonNull(abstractUpdate.getFrom())) {

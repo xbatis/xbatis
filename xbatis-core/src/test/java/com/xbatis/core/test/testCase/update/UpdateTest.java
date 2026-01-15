@@ -20,12 +20,15 @@ import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.model.SysUserModel;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
+import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -179,7 +182,7 @@ public class UpdateTest extends BaseTest {
                     .dbAdapt((updateChain, selector) -> {
                         selector.when(DbType.H2, () -> {
                             updateChain.eq(SysUser::getId, 3);
-                        }).when(DbType.MYSQL, () -> {
+                        }).when(new IDbType[]{DbType.MYSQL, MyDbType.LIKE_MYSQL}, () -> {
                             updateChain.eq(SysUser::getId, 2);
                         }).otherwise(() -> {
                             updateChain.eq(SysUser::getId, 1);
@@ -189,7 +192,7 @@ public class UpdateTest extends BaseTest {
             assertEquals(cnt, 1);
             if (TestDataSource.DB_TYPE == DbType.H2) {
                 assertEquals(sysUserMapper.getById(3).getUserName(), "xx123");
-            } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
+            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE.getDbModel() == DbModel.MYSQL) {
                 assertEquals(sysUserMapper.getById(2).getUserName(), "xx123");
             } else {
                 assertEquals(sysUserMapper.getById(1).getUserName(), "xx123");
@@ -214,7 +217,7 @@ public class UpdateTest extends BaseTest {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
+        } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE.getDbModel() == DbModel.MYSQL) {
             int updateCnt = -1;
             try (Connection conn = this.dataSource.getConnection()) {
 
@@ -492,7 +495,7 @@ public class UpdateTest extends BaseTest {
         if (TestDataSource.DB_TYPE == DbType.H2 || TestDataSource.DB_TYPE == DbType.SQLITE) {
             //H2 不支持
             return;
-        } else if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+        } else if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE) {
             //ORACLE 不支持
             return;
         } else if (TestDataSource.DB_TYPE == DbType.DB2) {
@@ -508,7 +511,7 @@ public class UpdateTest extends BaseTest {
                         //.from(SysUser.class)
                         .eq(SysUser::getId, 2);
 
-                if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.GAUSS || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+                if (TestDataSource.DB_TYPE.getDbModel() == DbModel.PGSQL || TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.GAUSS || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                     updateChain.from(SysRole.class)
                             .eq(SysUser::getId, SysRole::getId);
                 } else if (TestDataSource.DB_TYPE == DbType.SQL_SERVER) {
@@ -561,7 +564,7 @@ public class UpdateTest extends BaseTest {
 
     @Test
     public void updateJoin() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+        if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

@@ -19,6 +19,7 @@ import com.xbatis.core.test.mapper.MultiPkMapper;
 import com.xbatis.core.test.model.MultiPkModel;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -211,11 +212,18 @@ public class MultiPkTestCase extends BaseTest {
     }
 
     private boolean isSupportConflict() {
-        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB
+        if (TestDataSource.DB_TYPE != DbType.H2
+                && TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL
+                && TestDataSource.DB_TYPE != DbType.MYSQL
+                && TestDataSource.DB_TYPE != DbType.MARIA_DB
+
+                && TestDataSource.DB_TYPE.getDbModel() != DbModel.PGSQL
                 && TestDataSource.DB_TYPE != DbType.PGSQL
                 && TestDataSource.DB_TYPE != DbType.KING_BASE
                 && TestDataSource.DB_TYPE != DbType.GAUSS
                 && TestDataSource.DB_TYPE != DbType.SQLITE
+
+                && TestDataSource.DB_TYPE.getDbModel() != DbModel.ORACLE
                 && TestDataSource.DB_TYPE != DbType.ORACLE
         ) {
             return false;

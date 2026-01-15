@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.struct.insert;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.insert.IInsertTable;
@@ -42,12 +43,14 @@ public class InsertTable implements IInsertTable<Table> {
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         AbstractInsert abstractInsert = (AbstractInsert) parent;
 
-        boolean insertIgnore = (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2 || context.getDbType() == DbType.ORACLE)
+        boolean insertIgnore = (context.getDbType().getDbModel() == DbModel.MYSQL || context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB
+                || context.getDbType() == DbType.H2
+                || context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE)
                 && abstractInsert.getConflict() != null
                 && abstractInsert.getConflict().getConflictAction().isDoNothing();
 
         if (insertIgnore) {
-            if (context.getDbType() == DbType.ORACLE) {
+            if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE) {
                 //可能需要增加ConflictKeys
                 abstractInsert.getConflict().addDefaultConflictKeys(abstractInsert, context.getDbType());
 

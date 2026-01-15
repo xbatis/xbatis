@@ -21,10 +21,12 @@ import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.DO.SysUserScore;
+import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.mapper.SysUserScoreMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.IDbType;
 import db.sql.api.cmd.GetterFields;
@@ -748,7 +750,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void jsonExtract() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+        if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -760,7 +762,7 @@ public class FunTest extends BaseTest {
             String xx = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
+                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB, MyDbType.LIKE_MYSQL}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonExtract("$.obj.title"));
                         });
                     })
@@ -779,7 +781,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void jsonContainsPath() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+        if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -791,7 +793,7 @@ public class FunTest extends BaseTest {
             Boolean exists = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
+                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB, MyDbType.LIKE_MYSQL}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContainsPath("$.obj.title"));
                         });
                     })
@@ -806,7 +808,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void jsonContains() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+        if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -818,7 +820,7 @@ public class FunTest extends BaseTest {
             Boolean exists = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
+                        selector.when(new IDbType[]{MyDbType.LIKE_MYSQL, DbType.MYSQL, DbType.MARIA_DB}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContains("\"xx", "$.obj.title"));
                         });
                     })
@@ -830,7 +832,7 @@ public class FunTest extends BaseTest {
             exists = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
+                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB, MyDbType.LIKE_MYSQL}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContains(30, "$.age"));
                         });
                     })
@@ -843,7 +845,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void md5Test() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+        if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
