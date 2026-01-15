@@ -16,10 +16,11 @@ package db.sql.api;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class DbTypes {
 
-    private static final Map<String, IDbType> DB_TYPE_MAP = new HashMap<>();
+    private static final Map<String, IDbType> DB_TYPE_MAP = new ConcurrentHashMap<>();
 
     static {
         //静态加载 防止 DbType 未初始化
