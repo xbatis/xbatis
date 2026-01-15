@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.struct.query;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.Distinct;
@@ -95,13 +96,13 @@ public class Select implements ISelect<Select> {
         }
         if (distinct) {
             Distinct.INSTANCE.sql(module, this, context, sqlBuilder);
-            if ((context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.H2) && parent instanceof Count) {
+            if ((context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.H2) && parent instanceof Count) {
                 sqlBuilder.append(SqlConst.BRACKET_LEFT);
             }
         }
         sqlBuilder = CmdUtils.join(this, this, context, sqlBuilder, this.getSelectField(), SqlConst.DELIMITER);
         if (distinct) {
-            if ((context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.H2) && parent instanceof Count) {
+            if ((context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.H2) && parent instanceof Count) {
                 sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             }
         }

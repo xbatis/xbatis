@@ -21,6 +21,7 @@ import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
@@ -53,7 +54,7 @@ public class DbRunnerTest extends BaseTest {
 
     @Test
     public void oneParamUpdateAndSelectTest() {
-        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL) {
+        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE.getDbModel() != DbModel.PGSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -65,7 +66,7 @@ public class DbRunnerTest extends BaseTest {
 
     @Test
     public void multiParamUpdateAndSelectTest() {
-        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL) {
+        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE.getDbModel() != DbModel.PGSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

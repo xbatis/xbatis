@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.tookit.SqlConst;
@@ -30,7 +31,7 @@ public class Year extends BasicFunction<Year> {
         sqlBuilder.append(SqlConst.YEAR(context.getDbType()));
         if (context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT).append("'%Y'").append(SqlConst.DELIMITER);
-        } else if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.GAUSS && context.getDbType() != DbType.ORACLE) {
+        } else if (context.getDbType().getDbModel() != DbModel.PGSQL && context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.GAUSS && context.getDbType() != DbType.ORACLE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
         }
 

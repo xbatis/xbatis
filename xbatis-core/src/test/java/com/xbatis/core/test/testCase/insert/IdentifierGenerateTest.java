@@ -26,6 +26,7 @@ import com.xbatis.core.test.mapper.UUIDMapper;
 import com.xbatis.core.test.model.IdTestModel;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -130,7 +131,8 @@ public class IdentifierGenerateTest extends BaseTest {
 
     @Test
     public void batchInsertWithSelectIdTest() {
-        if (TestDataSource.DB_TYPE != DbType.ORACLE && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE == DbType.GAUSS) {
+        if (TestDataSource.DB_TYPE != DbType.ORACLE && TestDataSource.DB_TYPE.getDbModel() != DbModel.ORACLE
+                && TestDataSource.DB_TYPE.getDbModel() != DbModel.PGSQL && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE == DbType.GAUSS) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

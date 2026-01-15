@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
@@ -40,7 +41,7 @@ public class Instr extends BasicFunction<Instr> {
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         }
-        if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
+        if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
             sqlBuilder.append("strpos");
         } else {
             sqlBuilder.append(operator);

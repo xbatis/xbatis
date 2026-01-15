@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.tookit.SqlConst;
@@ -40,7 +41,8 @@ public class Weekday extends BasicFunction<Weekday> {
         }
 
         sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
-        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.KING_BASE) {
+        if (context.getDbType() == DbType.ORACLE ||
+                context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS || context.getDbType() == DbType.KING_BASE) {
             sqlBuilder.append(SqlConst.DELIMITER).append(" 'D'");
         }
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);

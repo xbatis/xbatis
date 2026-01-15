@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IConflictAction;
@@ -64,13 +65,13 @@ public class ConflictAction<T> implements IConflictAction<T>, Cmd {
             throw new IllegalStateException("conflict action not set");
         }
         if (this.conflictUpdate == null) {
-            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
+            if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
                 sqlBuilder.append(" DO NOTHING");
             } else if (context.getDbType() == DbType.GAUSS) {
                 sqlBuilder.append(" UPDATE NOTHING");
             }
         } else {
-            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
+            if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
                 sqlBuilder.append(" DO UPDATE");
             } else if (context.getDbType() == DbType.GAUSS) {
                 sqlBuilder.append(" UPDATE");

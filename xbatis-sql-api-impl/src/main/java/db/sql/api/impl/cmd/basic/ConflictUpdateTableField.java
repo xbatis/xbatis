@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 
@@ -30,7 +31,7 @@ public class ConflictUpdateTableField extends TableField {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.PGSQL
+        if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL
                 || context.getDbType() == DbType.KING_BASE
                 || context.getDbType() == DbType.GAUSS
                 || context.getDbType() == DbType.SQLITE

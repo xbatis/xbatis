@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
@@ -42,7 +43,7 @@ public class IfNull extends BasicFunction<IfNull> {
             sqlBuilder.append(" ISNULL");
         } else if (context.getDbType() == DbType.ORACLE) {
             sqlBuilder.append(" NVL");
-        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
+        } else if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
             sqlBuilder.append(" COALESCE");
         } else {
             sqlBuilder.append(operator);

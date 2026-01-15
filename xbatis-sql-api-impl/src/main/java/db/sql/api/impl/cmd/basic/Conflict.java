@@ -67,8 +67,8 @@ public class Conflict<T> implements IConflict<T>, Cmd {
             return;
         }
 
-        if (dbType == DbType.ORACLE
-                || ((dbType == DbType.PGSQL || dbType == DbType.KING_BASE) && !conflictAction.isDoNothing())
+        if ((dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE)
+                || ((dbType.getDbModel() == DbModel.PGSQL || dbType == DbType.PGSQL || dbType == DbType.KING_BASE) && !conflictAction.isDoNothing())
                 || ((dbType == DbType.GAUSS || dbType == DbType.SQLITE) && conflictAction.getConflictUpdate() == null)) {
             String[] conflictKeys = insert.getInsertTable().getTable().getIds();
             if (conflictKeys != null && conflictKeys.length > 0) {

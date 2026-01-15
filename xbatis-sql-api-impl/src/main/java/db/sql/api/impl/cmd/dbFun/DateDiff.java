@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.basic.BasicValue;
@@ -52,7 +53,7 @@ public class DateDiff extends BasicFunction<DateDiff> {
             sqlBuilder = this.another.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
+        } else if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT).append("DATE_PART").append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append("'DAY',");
             sqlBuilder = this.key.sql(module, this, context, sqlBuilder);

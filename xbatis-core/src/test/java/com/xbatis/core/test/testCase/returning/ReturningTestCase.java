@@ -6,6 +6,7 @@ import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ public class ReturningTestCase extends BaseTest {
 
     @Test
     public void singleUpdateTest() {
-        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL) {
+        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE.getDbModel() != DbModel.PGSQL) {
             return;
         }
 
@@ -51,7 +52,7 @@ public class ReturningTestCase extends BaseTest {
 
     @Test
     public void multiUpdateTest() {
-        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL) {
+        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE.getDbModel() != DbModel.PGSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -84,7 +85,7 @@ public class ReturningTestCase extends BaseTest {
 
     @Test
     public void singleDeleteTest() {
-        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL) {
+        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE.getDbModel() != DbModel.PGSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -129,7 +130,7 @@ public class ReturningTestCase extends BaseTest {
 
     @Test
     public void multiDeleteTest() {
-        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL) {
+        if (TestDataSource.DB_TYPE != DbType.SQLITE && TestDataSource.DB_TYPE != DbType.PGSQL && TestDataSource.DB_TYPE.getDbModel() != DbModel.PGSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

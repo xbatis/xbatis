@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
@@ -59,7 +60,7 @@ public class Concat extends BasicFunction<Concat> {
             Cmd value = cmds[i];
             builder = cmds[i].sql(module, parent, context, builder);
 
-            if (value.getClass() == BasicValue.class && (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS)) {
+            if (value.getClass() == BasicValue.class && (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS)) {
                 builder.append(SqlConst.CAST_TEXT);
             }
         }
