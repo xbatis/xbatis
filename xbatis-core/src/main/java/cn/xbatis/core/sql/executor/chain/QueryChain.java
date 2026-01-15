@@ -30,10 +30,7 @@ import db.sql.api.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -193,11 +190,20 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     /**
      * 获取单个对象
      *
-     * @return 影响条数
+     * @return 单条记录
      */
     public T get() {
         this.setDefault(false);
         return mapper.get(this);
+    }
+
+    /**
+     * 获取单个记录的 Optional对象
+     *
+     * @return Optional
+     */
+    public Optional<T> getOptional() {
+        return Optional.ofNullable(this.get());
     }
 
     /**
