@@ -236,7 +236,7 @@ public class UpdateTest extends BaseTest {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        } else if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.GAUSS || TestDataSource.DB_TYPE.getDbModel() != DbModel.PGSQL) {
+        } else if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.GAUSS || TestDataSource.DB_TYPE.getDbModel() == DbModel.PGSQL) {
             int updateCnt = -1;
             // pg 只支持 修改单个表数据
 
