@@ -42,7 +42,6 @@ public final class DbTypeUtil {
     }
 
     public static IDbType getDbType(String jdbcUrl) {
-        jdbcUrl = jdbcUrl.toLowerCase();
         return XbatisGlobalConfig.getDbTypeParser().getDbTypeByUrl(jdbcUrl);
     }
 

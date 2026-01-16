@@ -153,6 +153,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.oceanbase</groupId>
+            <artifactId>oceanbase-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!--json optional start-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.dbType;
 
-import db.sql.api.DbType;
+import db.sql.api.DbTypes;
 import db.sql.api.IDbType;
 
 public class DefaultDbTypeParser implements DbTypeParser {
@@ -25,32 +25,20 @@ public class DefaultDbTypeParser implements DbTypeParser {
     public static final DbTypeParser INSTANCE = new DefaultDbTypeParser();
 
     protected IDbType getDbType(String jdbcUrl) {
-        if (jdbcUrl.contains(":mysql:") || jdbcUrl.contains(":cobar:")) {
-            return DbType.MYSQL;
-        } else if (jdbcUrl.contains(":mariadb:")) {
-            return DbType.MARIA_DB;
-        } else if (jdbcUrl.contains(":oracle:")) {
-            return DbType.ORACLE;
-        } else if (jdbcUrl.contains(":postgresql:")) {
-            return DbType.PGSQL;
-        } else if (jdbcUrl.contains(":sqlserver:")) {
-            return DbType.SQL_SERVER;
-        } else if (jdbcUrl.contains(":h2:")) {
-            return DbType.H2;
-        } else if (jdbcUrl.contains(":dm:")) {
-            return DbType.DM;
-        } else if (jdbcUrl.contains(":db2:")) {
-            return DbType.DB2;
-        } else if (jdbcUrl.contains(":kingbase8:")) {
-            return DbType.KING_BASE;
-        } else if (jdbcUrl.contains(":sqlite:")) {
-            return DbType.SQLITE;
-        } else if (jdbcUrl.contains(":clickhouse:")) {
-            return DbType.CLICK_HOUSE;
-        } else if (jdbcUrl.contains(":opengauss:")) {
-            return DbType.GAUSS;
-        } else if (jdbcUrl.contains(":gaussdb:")) {
-            return DbType.GAUSS;
+        int start = jdbcUrl.indexOf(":");
+        int end = jdbcUrl.indexOf(":", start + 1);
+        String dbKey = jdbcUrl.substring(start, end + 1);
+        IDbType dbType = DbTypes.getDbTypeByUrlKey(dbKey);
+        if (dbType != null) {
+            return dbType;
+        }
+
+        String lowerDbKey = dbKey.toLowerCase();
+        if (!lowerDbKey.equals(dbKey)) {
+            dbType = DbTypes.getDbTypeByUrlKey(dbKey);
+            if (dbType != null) {
+                return dbType;
+            }
         }
         return null;
     }

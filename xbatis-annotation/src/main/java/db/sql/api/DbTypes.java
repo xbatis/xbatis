@@ -14,7 +14,6 @@
 
 package db.sql.api;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,24 +21,40 @@ public final class DbTypes {
 
     private static final Map<String, IDbType> DB_TYPE_MAP = new ConcurrentHashMap<>();
 
+    private static final Map<String, IDbType> JDBC_URL_MATCHER_MAP = new ConcurrentHashMap<>();
+
     static {
-        //静态加载 防止 DbType 未初始化
-        DbType.values();
+        DbTypes.register(DbType.class);
     }
 
     /**
      * 注册 IDbType
-     *
-     * @param dbType
+     * 所有 IDbType 的实现类 都必须调用此方法 才能注入
+     * @param dbTypeClass
      */
-    public static void register(IDbType dbType) {
-        if (DB_TYPE_MAP.containsKey(dbType.getName())) {
-            throw new RuntimeException(dbType.getName() + " is registered");
+    public static <T extends Enum<T> & IDbType> void register(Class<T> dbTypeClass) {
+        if (!(Enum.class.isAssignableFrom(dbTypeClass))) {
+            throw new RuntimeException(dbTypeClass + " must be an enum");
         }
-        if (!(dbType instanceof Enum)) {
-            throw new RuntimeException(dbType.getClass() + " must be an enum");
+
+        if (!(IDbType.class.isAssignableFrom(dbTypeClass))) {
+            throw new RuntimeException(dbTypeClass + " must implement IDbType");
         }
-        DB_TYPE_MAP.put(dbType.getName(), dbType);
+
+        T[] values = dbTypeClass.getEnumConstants();
+        for (T dbType : values) {
+            if (DB_TYPE_MAP.containsKey(dbType.getName()) && DB_TYPE_MAP.get(dbType.getName()) != dbType) {
+                throw new RuntimeException(dbType.getName() + " is registered");
+            }
+            DB_TYPE_MAP.put(dbType.getName(), dbType);
+            for (String key : dbType.getJdbcUrlMatchers()) {
+                IDbType existsDbType = JDBC_URL_MATCHER_MAP.get(key);
+                if (existsDbType != null && existsDbType != dbType) {
+                    //throw new RuntimeException(dbType.getName() + "'s " + key + " jdbcUrlMatcher is exists");
+                }
+                JDBC_URL_MATCHER_MAP.put(key, dbType);
+            }
+        }
     }
 
     /**
@@ -60,8 +75,21 @@ public final class DbTypes {
      */
     @SafeVarargs
     public static void addKeyword(String... keywords) {
-        for (DbType dbType : DbType.values()) {
-            dbType.addKeyword(keywords);
+        if (DB_TYPE_MAP.isEmpty()) {
+            throw new RuntimeException("DbType instance is not registered to DbTypes yet");
         }
+        DB_TYPE_MAP.entrySet().forEach(e -> {
+            e.getValue().addKeyword(keywords);
+        });
+    }
+
+    /**
+     * 根据jdbc url key
+     *
+     * @param key 例如 :mysql:
+     * @return IDbType
+     */
+    public static IDbType getDbTypeByUrlKey(String key) {
+        return JDBC_URL_MATCHER_MAP.get(key);
     }
 }

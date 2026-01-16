@@ -21,52 +21,64 @@ public enum DbType implements IDbType {
 
     UNKNOWN(Name.UNKNOWN, new KeywordWrap("", "")),
 
-    H2(Name.H2, new KeywordWrap("`", "`")),
+    PGSQL(Name.PGSQL, new KeywordWrap("\"", "\""), ":postgresql:"),
 
-    MYSQL(Name.MYSQL, new KeywordWrap("`", "`")),
+    MYSQL(Name.MYSQL, new KeywordWrap("`", "`"), ":mysql:"),
 
-    MARIA_DB(Name.MARIA_DB, new KeywordWrap("`", "`")),
+    MARIA_DB(Name.MARIA_DB, new KeywordWrap("`", "`"), ":mariadb:"),
 
-    SQL_SERVER(Name.SQL_SERVER, new KeywordWrap("[", "]")),
+    SQL_SERVER(Name.SQL_SERVER, new KeywordWrap("[", "]"), ":sqlserver:"),
 
-    PGSQL(Name.PGSQL, new KeywordWrap("\"", "\"")),
+    ORACLE(Name.ORACLE, new KeywordWrap("\"", "\"", true), ":oracle:"),
 
-    ORACLE(Name.ORACLE, new KeywordWrap("\"", "\"", true)),
+    DM(Name.DM, new KeywordWrap("\"", "\"", true), ":dm:"),
 
-    DM(Name.DM, new KeywordWrap("\"", "\"", true)),
+    GAUSS(Name.GAUSS, new KeywordWrap("\"", "\""), ":opengauss:", ":gaussdb:"),
 
-    DB2(Name.DB2, new KeywordWrap("\"", "\"", true)),
+    H2(Name.H2, new KeywordWrap("`", "`"), ":h2:"),
 
-    KING_BASE(Name.KING_BASE, new KeywordWrap("\"", "\"", true)),
+    SQLITE(Name.SQLITE, new KeywordWrap("\"", "\""), ":sqlite:"),
 
-    CLICK_HOUSE(Name.CLICK_HOUSE, new KeywordWrap("\"", "\"", true)),
+    KING_BASE(Name.KING_BASE, new KeywordWrap("\"", "\"", true), ":kingbase8:"),
 
-    SQLITE(Name.SQLITE, new KeywordWrap("\"", "\"")),
+    CLICK_HOUSE(Name.CLICK_HOUSE, new KeywordWrap("\"", "\"", true), ":clickhouse:"),
 
-    GAUSS(Name.GAUSS, new KeywordWrap("\"", "\""));
+    DB2(Name.DB2, new KeywordWrap("\"", "\"", true), ":db2:"),
 
+    COBAR(Name.COBAR, new KeywordWrap("`", "`"), DbModel.MYSQL, ":cobar:"),
+
+    ;
+
+    static {
+        DbTypes.register(DbType.class);
+    }
+
+    //数据库类型名字
     private final String name;
-
+    //数据库关键字环绕
     private final KeywordWrap keywordWrap;
-
+    //数据库关键字集合
     private final Set<String> keywords;
-
+    //数据库模式，用于那些基于某些原数据库扩展的延伸数据库
     private final DbModel dbModel;
+    //jdbc url 匹配串，必须全小写
+    private final String[] jdbcUrlMatchers;
 
-    DbType(String name, KeywordWrap keywordWrap) {
-        this(name, keywordWrap, DbModel.DEFAULT, new HashSet<>());
+
+    DbType(String name, KeywordWrap keywordWrap, String... jdbcUrlMatchers) {
+        this(name, keywordWrap, DbModel.DEFAULT, new HashSet<>(), jdbcUrlMatchers);
     }
 
-    DbType(String name, KeywordWrap keywordWrap, DbModel dbModel) {
-        this(name, keywordWrap, dbModel, new HashSet<>());
+    DbType(String name, KeywordWrap keywordWrap, DbModel dbModel, String... jdbcUrlMatchers) {
+        this(name, keywordWrap, dbModel, new HashSet<>(), jdbcUrlMatchers);
     }
 
-    DbType(String name, KeywordWrap keywordWrap, DbModel dbModel, Set<String> keywords) {
+    DbType(String name, KeywordWrap keywordWrap, DbModel dbModel, Set<String> keywords, String... jdbcUrlMatchers) {
         this.name = name;
         this.keywordWrap = keywordWrap;
         this.keywords = keywords;
         this.dbModel = dbModel;
-        DbTypes.register(this);
+        this.jdbcUrlMatchers = jdbcUrlMatchers;
     }
 
     /**
@@ -91,17 +103,9 @@ public enum DbType implements IDbType {
         return keywords;
     }
 
-    /**
-     * 官方提供的添加关键字的方法
-     *
-     * @param keywords
-     * @return 添加是否成功
-     */
-    @SafeVarargs
-    public final void addKeyword(String... keywords) {
-        for (String keyword : keywords) {
-            getKeywords().add(keyword.toUpperCase());
-        }
+    public static void main(String[] args) {
+        System.out.println(DbType.UNKNOWN.getName());
+        DbTypes.addKeyword("!");
     }
 
     @Override
@@ -127,6 +131,23 @@ public enum DbType implements IDbType {
         return name;
     }
 
+    /**
+     * 官方提供的添加关键字的方法
+     *
+     * @param keywords
+     * @return 添加是否成功
+     */
+    @Override
+    @SafeVarargs
+    public final void addKeyword(String... keywords) {
+        IDbType.super.addKeyword(keywords);
+    }
+
+    @Override
+    public String[] getJdbcUrlMatchers() {
+        return jdbcUrlMatchers;
+    }
+
     public static final class Name {
 
         public static final String UNKNOWN = "UNKNOWN";
@@ -142,8 +163,10 @@ public enum DbType implements IDbType {
         public static final String CLICK_HOUSE = "CLICK_HOUSE";
         public static final String SQLITE = "SQLITE";
         public static final String GAUSS = "GAUSS";
+        public static final String COBAR = "COBAR";
 
         private Name() {
+
         }
     }
 }

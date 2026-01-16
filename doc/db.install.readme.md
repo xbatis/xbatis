@@ -5,7 +5,7 @@ docker pull container-registry.oracle.com/mysql/community-server
 ```
 
 ```
-docker run --name mysql2 --env=MYSQL_ROOT_HOST=% --env=MYSQL_ROOT_PASSWORD=123456 -p 3307:3306 -d container-registry.oracle.com/mysql/community-server --lower_case_table_names=1
+docker run --name mysql --env=MYSQL_ROOT_HOST=% --env=MYSQL_ROOT_PASSWORD=123456 -p 3306:3306 -d container-registry.oracle.com/mysql/community-server --lower_case_table_names=1
 ```
 
 # mariadb
@@ -94,4 +94,14 @@ CREATE DATABASE test3 WITH ENCODING 'utf-8';
 
 ```
 docker run -d --name opengauss --privileged -e GS_PASSWORD="Enmo@123" -p 5437:5432 -u root enmotech/opengauss-lite:5.0.2
+```
+
+# oceanbase
+
+```
+docker pull oceanbase/oceanbase-ce
+```
+
+```
+docker run -p 2881:2881 --name oceanbase-ce -e MINI_MODE=0 -e OB_ROOT_PASSWORD='test@123' -d oceanbase/oceanbase-ce:4.2.2
 ```

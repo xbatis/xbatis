@@ -14,7 +14,9 @@
 
 package db.sql.api;
 
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * DbType 接口 ； 实现类 最好是一个是个 enum 类
@@ -41,4 +43,10 @@ public interface IDbType {
     }
 
     DbModel getDbModel();
+
+    default void addKeyword(String... keywords) {
+        getKeywords().addAll(Arrays.stream(keywords).collect(Collectors.toList()));
+    }
+
+    String[] getJdbcUrlMatchers();
 }
