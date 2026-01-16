@@ -298,15 +298,6 @@ public interface FunctionInterface extends Cmd {
     }
 
     /**
-     * 求自己的char长度操作
-     *
-     * @return CharLength
-     */
-    default CharLength charLength() {
-        return Methods.charLength(this);
-    }
-
-    /**
      * 求自己的长度操作
      *
      * @return Length

@@ -616,11 +616,11 @@ public class FunTest extends BaseTest {
     }
 
     @Test
-    public void charLengthTest() {
+    public void lengthTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer length = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getUserName, c -> c.concat("好").charLength())
+                    .select(SysUser::getUserName, c -> c.concat("好").length())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(Integer.class)

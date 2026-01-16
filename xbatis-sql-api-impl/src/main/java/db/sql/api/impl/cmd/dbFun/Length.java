@@ -21,13 +21,14 @@ import db.sql.api.impl.tookit.SqlConst;
 
 public class Length extends BasicFunction<Length> {
     public Length(Cmd key) {
-        super(SqlConst.LENGTH, key);
+        super(null, key);
     }
 
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
+        sqlBuilder.append(SqlConst.LENGTH(context.getDbType()));
+        sqlBuilder.append(SqlConst.BRACKET_LEFT);
         sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         if (context.getDbType() == DbType.HIGHGO) {
             sqlBuilder = sqlBuilder.append("::BYTEA,'UTF8'");

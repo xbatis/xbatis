@@ -735,17 +735,6 @@ public final class Methods {
     }
 
     /**
-     * 返回字符串的字符数
-     *
-     * @param column 列
-     * @return CharLength
-     */
-    public static CharLength charLength(Cmd column) {
-        Objects.requireNonNull(column);
-        return new CharLength(column);
-    }
-
-    /**
      * 返回字符串的长度 函数
      *
      * @param column 列

@@ -487,7 +487,7 @@ public final class SqlConst {
         return " UNIX_TIMESTAMP";
     }
 
-    public static String CHAR_LENGTH(IDbType dbType) {
+    public static String LENGTH(IDbType dbType) {
 
         if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
             return " LENGTH";
