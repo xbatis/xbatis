@@ -25,6 +25,7 @@ import com.xbatis.core.test.mapper.*;
 import com.xbatis.core.test.typeHandler.SQLiteLocalDateTimeHandler;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.DbTypes;
 import db.sql.api.impl.paging.OracleRowNumPagingProcessor;
 import db.sql.api.impl.paging.SQLServerRowNumberOverPagingProcessor;
 import db.sql.api.impl.tookit.SQLPrinter;
@@ -155,9 +156,8 @@ public class BaseTest {
 //        // 7 Mapper使用
 //        mapper.getById(1);
 
-        for (DbType dbType : DbType.values()) {
-            dbType.addKeyword("value3");
-        }
+        DbTypes.register(MyDbType.class);
+        DbTypes.addKeyword("value3");
     }
 
 

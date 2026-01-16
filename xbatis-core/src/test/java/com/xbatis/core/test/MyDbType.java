@@ -15,7 +15,6 @@
 package com.xbatis.core.test;
 
 import db.sql.api.DbModel;
-import db.sql.api.DbTypes;
 import db.sql.api.IDbType;
 import db.sql.api.KeywordWrap;
 
@@ -31,10 +30,6 @@ public enum MyDbType implements IDbType {
     LIKE_ORACLE(Name.LIKE_ORACLE, new KeywordWrap("\"", "\"", true), DbModel.ORACLE, ":oracle:"),
 
     ;
-
-    static {
-        DbTypes.register(MyDbType.class);
-    }
 
     //数据库类型名字
     private final String name;

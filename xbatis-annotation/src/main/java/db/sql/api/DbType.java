@@ -107,25 +107,6 @@ public enum DbType implements IDbType {
         return keywords;
     }
 
-    public static void main(String[] args) {
-        System.out.println(DbType.UNKNOWN.getName());
-        DbTypes.addKeyword("!");
-    }
-
-    @Override
-    public String wrap(String name) {
-        if (getKeywords().isEmpty()) {
-            return name;
-        }
-        if (getKeywords().contains(name.toUpperCase())) {
-            if (getKeywordWrap().isToUpperCase()) {
-                name = name.toUpperCase();
-            }
-            return getKeywordWrap().getPrefix() + name + getKeywordWrap().getSuffix();
-        }
-        return name;
-    }
-
     @Override
     public DbModel getDbModel() {
         return this.dbModel;

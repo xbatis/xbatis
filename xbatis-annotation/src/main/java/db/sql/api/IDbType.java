@@ -45,7 +45,7 @@ public interface IDbType {
     DbModel getDbModel();
 
     default void addKeyword(String... keywords) {
-        getKeywords().addAll(Arrays.stream(keywords).collect(Collectors.toList()));
+        getKeywords().addAll(Arrays.stream(keywords).map(i -> i.toUpperCase()).collect(Collectors.toList()));
     }
 
     String[] getJdbcUrlMatchers();
