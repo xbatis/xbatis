@@ -159,6 +159,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.highgo</groupId>
+            <artifactId>HgdbJdbc</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!--json optional start-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -208,12 +214,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.13</version>
-            <scope>test</scope>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>ch.qos.logback</groupId>-->
+        <!--            <artifactId>logback-classic</artifactId>-->
+        <!--            <version>1.2.13</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
 
     </dependencies>
 </project>

@@ -849,7 +849,7 @@ XbatisGlobalConfig.setGlobalOnUpdateListener(entity -> {
 ```xml
 <mapper namespace="xxx.MybatisBasicMapper">
   <select id="SysRole:selectByIds" resultType="com.xbatis.core.test.DO.SysRole">
-    select * from sys_role
+    select * from t_sys_role
     where id >= #{id} and id <= #{id2}
     order by id asc
   </select>

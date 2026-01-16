@@ -130,7 +130,7 @@ public class WithTest extends BaseTest {
             assertEquals(2, page.getResults().size(), "withQuery");
 
 
-            check("检测with  join", "WITH sub AS ( SELECT  wt.id ,  wt.name ,  wt.create_time FROM sys_role wt WHERE  wt.id = 1 ORDER BY  wt.id ASC LIMIT 111 OFFSET 0) SELECT  sub.id AS xx , ( sub.id + 1) AS xx2 ,  t.id ,  t.password ,  t.role_id ,  t.create_time,  t.user_name  FROM t_sys_user t  INNER JOIN  sub ON  t.role_id =  sub.id ORDER BY  sub.id ASC LIMIT 100 OFFSET 0", queryChain);
+            check("检测with  join", "WITH sub AS ( SELECT  wt.id ,  wt.name ,  wt.create_time FROM t_sys_role wt WHERE  wt.id = 1 ORDER BY  wt.id ASC LIMIT 111 OFFSET 0) SELECT  sub.id AS xx , ( sub.id + 1) AS xx2 ,  t.id ,  t.password ,  t.role_id ,  t.create_time,  t.user_name  FROM t_sys_user t  INNER JOIN  sub ON  t.role_id =  sub.id ORDER BY  sub.id ASC LIMIT 100 OFFSET 0", queryChain);
 
         }
     }

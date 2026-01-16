@@ -113,7 +113,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void leftJoinOrderBy2() {
         check("order by 优化后的SQL",
-                "select t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
+                "select t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -159,7 +159,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinOrderBy2() {
         check("order by 优化后的SQL",
-                "select  t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
+                "select  t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -174,7 +174,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinOrderBy2Limit() {
         check("order by 优化后的SQL",
-                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc limit 2 offset 0",
+                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc limit 2 offset 0",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -192,7 +192,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void rightJoinOrderBy() {
         check("right join order by 优化后的SQL",
-                "select t.id,t.user_name from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
+                "select t.id,t.user_name from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -206,7 +206,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void rightJoinOrderBy2() {
         check("right join order by 优化后的SQL",
-                "select t.id,t.user_name,t2.id from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
+                "select t.id,t.user_name,t2.id from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -221,7 +221,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctRightJoinOrderBy() {
         check("right join order by 优化后的SQL",
-                "select distinct t.id,t.user_name from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
+                "select distinct t.id,t.user_name from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -236,7 +236,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctRightJoinOrderByLimit() {
         check("right join order by 优化后的SQL",
-                "select distinct t.id,t.user_name from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc limit 1 offset 0",
+                "select distinct t.id,t.user_name from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc limit 1 offset 0",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -252,7 +252,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctRightJoinOrderBy2() {
         check("right join order by 优化后的SQL",
-                "select distinct t.id,t.user_name,t2.id from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
+                "select distinct t.id,t.user_name,t2.id from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -268,7 +268,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctRightJoinOrderBy2Limit() {
         check("right join order by 优化后的SQL",
-                "select distinct t.id,t.user_name,t2.id from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc limit 2 offset 0",
+                "select distinct t.id,t.user_name,t2.id from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc limit 2 offset 0",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -301,7 +301,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void leftJoin2OrderBy2() {
         check("order by 优化后的SQL",
-                "select t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
+                "select t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -350,7 +350,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoin2OrderBy2() {
         check("order by 优化后的SQL",
-                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
+                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -367,7 +367,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoin2OrderBy3() {
         check("order by 优化后的SQL",
-                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id left join sys_role t3 on t3.id=t.role_id where t.id=1 order by t3.id asc",
+                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id left join t_sys_role t3 on t3.id=t.role_id where t.id=1 order by t3.id asc",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -384,7 +384,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoin2OrderBy2Limit() {
         check("order by 优化后的SQL",
-                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc limit 2 offset 0",
+                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc limit 2 offset 0",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -403,7 +403,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void leftJoinRIGHTOrderBy() {
         check("order by 优化后的SQL",
-                "select t.id,t.user_name from t_sys_user t right join sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc",
+                "select t.id,t.user_name from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -418,7 +418,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void leftJoinRIGHTOrderBy2() {
         check("order by 优化后的SQL",
-                "select t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id right join sys_role t3 on t2.id=t3.id where t.id=1 order by t.id asc",
+                "select t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id right join t_sys_role t3 on t2.id=t3.id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -434,7 +434,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinRIGHTOrderBy() {
         check("order by 优化后的SQL",
-                "select distinct t.id,t.user_name from t_sys_user t right join sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc",
+                "select distinct t.id,t.user_name from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -450,7 +450,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinRIGHTOrderByLimit() {
         check("order by 优化后的SQL",
-                "select distinct t.id,t.user_name from t_sys_user t right join sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc limit 1 offset 0",
+                "select distinct t.id,t.user_name from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc limit 1 offset 0",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -467,7 +467,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinRIGHTOrderBy2() {
         check("order by 优化后的SQL",
-                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id right join sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc",
+                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id right join t_sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -484,7 +484,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinRIGHTOrderBy2Limit() {
         check("order by 优化后的SQL",
-                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join sys_role t2 on t2.id=t.role_id right join sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc limit 2 offset 0",
+                "select distinct t.id,t.user_name,t2.id from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id right join t_sys_role t3 on t3.id=t.role_id where t.id=1 order by t.id asc limit 2 offset 0",
                 getQuerySql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -542,7 +542,7 @@ public class OptimizeQueryTest extends BaseTest {
     @Test
     public void unionRightJoin() {
         check("unionOrderBy",
-                "select t.id,t.user_name from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc union select t.id,t.user_name from t_sys_user t where t.id=2 order by t.id asc",
+                "select t.id,t.user_name from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc union select t.id,t.user_name from t_sys_user t where t.id=2 order by t.id asc",
                 getQuerySql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)

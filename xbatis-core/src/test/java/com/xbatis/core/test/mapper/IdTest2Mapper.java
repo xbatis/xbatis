@@ -21,6 +21,6 @@ import org.apache.ibatis.annotations.Select;
 
 public interface IdTest2Mapper extends MybatisMapper<IdTest2> {
 
-    @Select("select 1 from sys_role where id=0")
+    @Select("select 1 from t_sys_role where id=0")
     public XmlVO select();
 }

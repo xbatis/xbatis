@@ -14,8 +14,11 @@
 
 package com.xbatis.core.test.testCase;
 
+import com.xbatis.core.test.MyDbType;
 import com.zaxxer.hikari.HikariDataSource;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 
 import javax.sql.DataSource;
 import java.io.FileNotFoundException;
@@ -29,7 +32,7 @@ import java.util.Objects;
 
 public class TestDataSource {
 
-    public static final DbType DB_TYPE = DbType.PGSQL;
+    public static final IDbType DB_TYPE = DbType.H2;
 
     public static final String TIME_ZONE = "Asia/Shanghai";
 
@@ -42,7 +45,25 @@ public class TestDataSource {
     }
 
     public static DataSource selectDataSource() {
-        switch (DB_TYPE) {
+        if (DB_TYPE instanceof MyDbType) {
+            MyDbType dbType = (MyDbType) DB_TYPE;
+            switch (dbType) {
+                case LIKE_MYSQL: {
+                    return createMySQLDataSource();
+                }
+                case LIKE_PGSQL: {
+                    return createPostgresDataSource();
+                }
+                case LIKE_ORACLE: {
+                    return createOracleDataSource();
+                }
+                default: {
+                    throw new RuntimeException("NOT support");
+                }
+            }
+        }
+        DbType dbType = (DbType) DB_TYPE;
+        switch (dbType) {
             case H2: {
                 return createH2DataSource();
             }
@@ -82,12 +103,24 @@ public class TestDataSource {
             case CLICK_HOUSE: {
                 return createClickhouseDataSource();
             }
+
+            case OCEAN_BASE: {
+                return createOceanBaseDataSource();
+            }
+
+            case HIGHGO: {
+                return createHighgoDataSource();
+            }
+
+            default: {
+                throw new RuntimeException("NOT support");
+            }
         }
-        return null;
     }
 
     private static DataSource createH2DataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:h2:mem:" + DB_NAME + ";DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL");
         ds.setUsername("sa");
         ds.setPassword("");
@@ -98,6 +131,7 @@ public class TestDataSource {
 
     private static DataSource createMySQLDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:mysql://localhost:3306/" + DB_NAME + "?createDatabaseIfNotExist=true&characterEncoding=utf-8&serverTimezone=" + TIME_ZONE);
         ds.setUsername("root");
         ds.setPassword("123456");
@@ -108,6 +142,7 @@ public class TestDataSource {
 
     private static DataSource createMariadbDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:mariadb://localhost:3307/" + DB_NAME + "?createDatabaseIfNotExist=true&characterEncoding=utf-8&serverTimezone=" + TIME_ZONE);
         ds.setUsername("root");
         ds.setPassword("123456");
@@ -118,6 +153,7 @@ public class TestDataSource {
 
     private static DataSource createPostgresDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
         ds.setUsername("postgres");
         ds.setPassword("123456");
@@ -128,6 +164,7 @@ public class TestDataSource {
 
     private static DataSource createOpenGaussDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:opengauss://localhost:5437/postgres");
         ds.setUsername("gaussdb");
         ds.setPassword("Enmo@123");
@@ -138,6 +175,7 @@ public class TestDataSource {
 
     private static DataSource createOracleDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:oracle:thin:@//localhost:1521/xe");
         ds.setUsername("system");
         ds.setPassword("oracle");
@@ -148,6 +186,7 @@ public class TestDataSource {
 
     private static DataSource createKingbaseDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:kingbase8://localhost:54321/test3");
         ds.setUsername("system");
         ds.setPassword("123456");
@@ -158,6 +197,7 @@ public class TestDataSource {
 
     private static DataSource createClickhouseDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:clickhouse://localhost:8123/test3");
         //ds.setUsername("system");
         //ds.setPassword("123456");
@@ -168,6 +208,7 @@ public class TestDataSource {
 
     private static DataSource createSqlServerDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:sqlserver://localhost:1433;DatabaseName=master;encrypt=false;useUnicode=true;characterEncoding=utf-8;genKeyNameCase=2;serverTimezone=" + TIME_ZONE);
         ds.setUsername("SA");
         ds.setPassword("AbC@128723");
@@ -178,6 +219,7 @@ public class TestDataSource {
 
     private static DataSource createDmDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:dm://localhost:5236/SYSDBA?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf-8&columnNameUpperCase=false");
         ds.setUsername("SYSDBA");
         ds.setPassword("SYSDBA001");
@@ -189,6 +231,7 @@ public class TestDataSource {
 
     private static DataSource createDB2DataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:db2://localhost:50000/" + DB_NAME);
         ds.setUsername("db2inst1");
         ds.setPassword("123456");
@@ -200,8 +243,31 @@ public class TestDataSource {
 
     private static DataSource createSqliteDataSource() {
         HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
         ds.setJdbcUrl("jdbc:sqlite:target/" + DB_NAME + ".db?date_string_format=yyyy-MM-hh HH:mm:ss");
         ds.setDriverClassName("org.sqlite.JDBC");
+        ds.setAutoCommit(false);
+        return ds;
+    }
+
+    private static DataSource createOceanBaseDataSource() {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
+        ds.setJdbcUrl("jdbc:oceanbase://localhost:2881/" + DB_NAME + "?rewriteBatchedStatements=TRUE&allowMultiQueries=TRUE&useLocalSessionState=TRUE&useUnicode=TRUE&characterEncoding=utf-8&socketTimeout=10000&connectTimeout=30000");
+        ds.setDriverClassName("com.oceanbase.jdbc.Driver");
+        ds.setUsername("root");
+        ds.setPassword("test@123");
+        ds.setAutoCommit(false);
+        return ds;
+    }
+
+    private static DataSource createHighgoDataSource() {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setMaximumPoolSize(1);
+        ds.setJdbcUrl("jdbc:highgo://localhost:5866/highgo");
+        ds.setUsername("highgo");
+        ds.setPassword("Highgo@123");
+        ds.setDriverClassName("com.highgo.jdbc.Driver");
         ds.setAutoCommit(false);
         return ds;
     }
@@ -213,34 +279,34 @@ public class TestDataSource {
             //runSql(conn,"CREATE DATABASE "+DB_NAME+" COLLATE Chinese_PRC_CI_AS");
             String[] sqls = getSqlFromFile();
             for (String sql : sqls) {
-                ex_sql = sql;
-                if (DB_TYPE == DbType.ORACLE || DB_TYPE == DbType.KING_BASE) {
-                    if (sql.contains("DROP TABLE ")) {
-                        String tableName = sql.replace("DROP TABLE ", "").trim();
+                ex_sql = sql.replaceAll("[\r?\n]", " ");
+                if (DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE) {
+                    if (ex_sql.contains("DROP TABLE ")) {
+                        String tableName = ex_sql.replace("DROP TABLE ", "").trim();
                         if (!existsOracleDropTable(conn, tableName)) {
                             continue;
                         }
-                    } else if (sql.contains("DROP SEQUENCE")) {
-                        String seqName = sql.replace("DROP SEQUENCE", "").trim();
+                    } else if (ex_sql.contains("DROP SEQUENCE")) {
+                        String seqName = ex_sql.replace("DROP SEQUENCE", "").trim();
                         if (!existsOracleSeq(conn, seqName)) {
                             continue;
                         }
                     }
                 } else if (DB_TYPE == DbType.KING_BASE) {
-                    if (sql.contains("DROP TABLE ")) {
-                        String tableName = sql.replace("DROP TABLE ", "").trim();
+                    if (ex_sql.contains("DROP TABLE ")) {
+                        String tableName = ex_sql.replace("DROP TABLE ", "").trim();
                         if (!existsOracleDropTable(conn, tableName)) {
                             continue;
                         }
-                    } else if (sql.contains("DROP SEQUENCE")) {
-                        String seqName = sql.replace("DROP SEQUENCE", "").trim();
+                    } else if (ex_sql.contains("DROP SEQUENCE")) {
+                        String seqName = ex_sql.replace("DROP SEQUENCE", "").trim();
                         if (!existsOracleSeq(conn, seqName)) {
                             continue;
                         }
                     }
                 }
 
-                runSql(conn, sql);
+                runSql(conn, ex_sql);
             }
         } catch (SQLException e) {
             System.out.println(ex_sql);
@@ -274,8 +340,14 @@ public class TestDataSource {
 
 
     private static String[] getSqlFromFile() {
+        String name = DB_TYPE.getName();
+        if (DB_TYPE == MyDbType.LIKE_PGSQL || DB_TYPE == DbType.HIGHGO) {
+            name = DbType.PGSQL.getName();
+        } else if (DB_TYPE == MyDbType.LIKE_ORACLE) {
+            name = DbType.ORACLE.getName();
+        }
         try {
-            return getSqlFromFile("/schema_" + DB_TYPE + ".sql");
+            return getSqlFromFile("/schema_" + name + ".sql");
         } catch (IOException e) {
             try {
                 return getSqlFromFile("/schema.sql");

@@ -590,7 +590,7 @@ public class QueryTest extends BaseTest {
 
             queryChain.setDefault();
 
-            check("检测in subquery sql", "select t.id,t.name,t.create_time from sys_role t where t.id in (select st.role_id from t_sys_user st where st.role_id = t.id) and t.id in (select st.role_id from t_sys_user st where st.role_id = t.id)", queryChain);
+            check("检测in subquery sql", "select t.id,t.name,t.create_time from t_sys_role t where t.id in (select st.role_id from t_sys_user st where st.role_id = t.id) and t.id in (select st.role_id from t_sys_user st where st.role_id = t.id)", queryChain);
 
             List<SysRole> list = queryChain.list();
 
@@ -608,7 +608,7 @@ public class QueryTest extends BaseTest {
 
             queryChain.setDefault();
 
-            check("检测in subquery sql", "select t.id,t.name,t.create_time from sys_role t where t.id in (select st.role_id from t_sys_user st where st.role_id = t.id and st.password = '123456')", queryChain);
+            check("检测in subquery sql", "select t.id,t.name,t.create_time from t_sys_role t where t.id in (select st.role_id from t_sys_user st where st.role_id = t.id and st.password = '123456')", queryChain);
 
             list = queryChain.list();
 

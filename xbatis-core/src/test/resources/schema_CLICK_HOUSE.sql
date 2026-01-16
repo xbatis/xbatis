@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS t_sys_user
 )
     ENGINE = MergeTree() PRIMARY KEY (id);
 
-drop table if exists sys_role;
+drop table if exists t_sys_role;
 
-CREATE TABLE IF NOT EXISTS sys_role
+CREATE TABLE IF NOT EXISTS t_sys_role
 (
     id UInt32 PRIMARY KEY auto_increment,
     name String not null,
@@ -46,7 +46,7 @@ values (1, 'admin', '123', 0, '2023-10-11 15:16:17'),
        (2, 'test1', '123456', 1, '2023-10-11 15:16:17'),
        (3, 'test2', null, 1, '2023-10-12 15:16:17');
 
-insert into sys_role
+insert into t_sys_role
 values (1, '测试', '2022-10-10'),
        (2, '运维', '2022-10-10');
 

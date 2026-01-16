@@ -17,7 +17,7 @@
 <mapper namespace="cn.xbatis.core.mybatis.mapper.BasicMapper">
     <select id="SysRole:basicXmlPaging2" resultType="com.xbatis.core.test.DO.SysRole">
         select *
-        from sys_role
+        from t_sys_role
         where id >= #{id}
           and id &lt;= #{id2}
         order by id asc

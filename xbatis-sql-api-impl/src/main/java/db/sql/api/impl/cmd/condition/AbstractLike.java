@@ -80,7 +80,9 @@ public class AbstractLike<T extends AbstractLike<T>> extends BasicCondition<T> {
             return sqlBuilder;
         }
 
-        if (before && after && (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE)) {
+        if (before && after && (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE
+                || context.getDbType() == DbType.KING_BASE
+        )) {
             //ORACLE Concat 不支持2个以上参数
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append(SqlConst.VAGUE_SYMBOL).append(SqlConst.CONCAT_SPLIT_SYMBOL);

@@ -64,7 +64,7 @@ public class GroupConcat extends BasicFunction<GroupConcat> {
             sqlBuilder.append("STRING_AGG");
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);
-            sqlBuilder.append("::TEXT ");
+            sqlBuilder.append("::VARCHAR ");
             sqlBuilder.append(SqlConst.DELIMITER);
             this.split.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);

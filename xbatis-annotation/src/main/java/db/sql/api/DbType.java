@@ -47,6 +47,10 @@ public enum DbType implements IDbType {
 
     COBAR(Name.COBAR, new KeywordWrap("`", "`"), DbModel.MYSQL, ":cobar:"),
 
+    OCEAN_BASE(Name.OCEAN_BASE, new KeywordWrap("`", "`"), DbModel.MYSQL, ":oceanbase:"),
+
+    // 瀚高
+    HIGHGO(Name.HIGHGO, new KeywordWrap("\"", "\""), DbModel.PGSQL, ":highgo:"),
     ;
 
     static {
@@ -164,7 +168,8 @@ public enum DbType implements IDbType {
         public static final String SQLITE = "SQLITE";
         public static final String GAUSS = "GAUSS";
         public static final String COBAR = "COBAR";
-
+        public static final String OCEAN_BASE = "OCEAN_BASE";
+        public static final String HIGHGO = "HIGHGO";
         private Name() {
 
         }

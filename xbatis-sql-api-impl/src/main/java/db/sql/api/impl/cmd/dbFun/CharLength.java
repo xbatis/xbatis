@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.tookit.SqlConst;
 
@@ -28,6 +29,9 @@ public class CharLength extends BasicFunction<CharLength> {
         sqlBuilder.append(SqlConst.CHAR_LENGTH(context.getDbType()));
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
         sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+        if (context.getDbType() == DbType.HIGHGO) {
+            sqlBuilder = sqlBuilder.append("::BYTEA,'UTF8'");
+        }
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }

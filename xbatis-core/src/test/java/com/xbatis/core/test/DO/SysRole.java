@@ -23,7 +23,7 @@ import lombok.experimental.FieldNameConstants;
 import java.time.LocalDateTime;
 
 @Data
-@Table
+@Table("t_sys_role")
 @FieldNameConstants
 public class SysRole {
 

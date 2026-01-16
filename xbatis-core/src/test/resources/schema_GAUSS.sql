@@ -37,9 +37,9 @@ VALUES (1, 1),
        (2, 2),
        (2, 3);
 
-drop table if exists sys_role;
+drop table if exists t_sys_role;
 
-CREATE TABLE IF NOT EXISTS sys_role
+CREATE TABLE IF NOT EXISTS t_sys_role
 (
     id          SERIAL PRIMARY KEY,
     name        VARCHAR(100) not null,
@@ -59,7 +59,7 @@ values ('admin', '123', 0, '2023-10-11 15:16:17'),
        ('test1', '123456', 1, '2023-10-11 15:16:17'),
        ('test2', null, 1, '2023-10-12 15:16:17');
 
-insert into sys_role
+insert into t_sys_role
 values (1, '测试', '2022-10-10'),
        (2, '运维', '2022-10-10');
 

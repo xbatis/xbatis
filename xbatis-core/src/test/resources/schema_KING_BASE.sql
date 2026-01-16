@@ -35,9 +35,9 @@ SEQUENCE sys_role_seq;
 CREATE
 SEQUENCE sys_role_seq;
 
-DROP TABLE sys_role;
+DROP TABLE t_sys_role;
 
-CREATE TABLE sys_role
+CREATE TABLE t_sys_role
 (
     id          INTEGER PRIMARY KEY,
     name        VARCHAR(100)              not null,
@@ -65,9 +65,9 @@ from dual;
 
 
 insert all
-    into sys_role
+    into t_sys_role
 values (sys_role_seq.NEXTVAL, '测试', TO_DATE('2022-10-10', 'YYYY-MM-DD'))
-into sys_role
+into t_sys_role
 values (sys_role_seq.NEXTVAL, '运维', TO_DATE('2022-10-10', 'YYYY-MM-DD'))
 select *
 from dual;

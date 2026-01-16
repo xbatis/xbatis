@@ -230,7 +230,7 @@ public class UpdateTest extends BaseTest {
                 // mysql  不支持 update from 语法
                 // mysql 支持 update join
                 // mysql 支持 同时修改 多张表 ，但是 join 语句是紧跟 update table 之后的
-                updateCnt = runUpdateSql(conn, "update t_sys_user t inner join sys_role t2 on t.role_id=t2.id  set t.user_name='123',t2.name='1234' where t.id=2");
+                updateCnt = runUpdateSql(conn, "update t_sys_user t inner join t_sys_role t2 on t.role_id=t2.id  set t.user_name='123',t2.name='1234' where t.id=2");
                 assertEquals(updateCnt, 2);
 
             } catch (Exception e) {
@@ -249,11 +249,11 @@ public class UpdateTest extends BaseTest {
                 assertEquals(updateCnt, 1);
 
                 //PG 支持 from ( from 表 和 update 一般意义为不同表)
-                updateCnt = runUpdateSql(conn, "update t_sys_user t set user_name=t2.name from sys_role t2  where t.id=2");
+                updateCnt = runUpdateSql(conn, "update t_sys_user t set user_name=t2.name from t_sys_role t2  where t.id=2");
                 assertEquals(updateCnt, 1);
 
                 //PG 支持 join 但是 必须加上 from
-                updateCnt = runUpdateSql(conn, "update t_sys_user t set user_name='123' from sys_role t2 inner join sys_role t3 on t2.id=t3.id  where t.id=2 and t.role_id=t2.id");
+                updateCnt = runUpdateSql(conn, "update t_sys_user t set user_name='123' from t_sys_role t2 inner join t_sys_role t3 on t2.id=t3.id  where t.id=2 and t.role_id=t2.id");
                 assertEquals(updateCnt, 1);
 
             } catch (Exception e) {
@@ -289,11 +289,11 @@ public class UpdateTest extends BaseTest {
                 assertEquals(updateCnt, 1);
 
                 // sqlserver 支持连表 from多表的方式 相当于 inner join
-                updateCnt = runUpdateSql(conn, "update t set t.user_name=t2.name from  t_sys_user t,sys_role t2 where t.id=2 and t.role_id=t2.id");
+                updateCnt = runUpdateSql(conn, "update t set t.user_name=t2.name from  t_sys_user t,t_sys_role t2 where t.id=2 and t.role_id=t2.id");
                 assertEquals(updateCnt, 1);
 
                 //sqlserver 支持连表 from+join的方式
-                updateCnt = runUpdateSql(conn, "update  t set user_name='123' from t_sys_user t  inner join sys_role t2 on t.role_id=t2.id  where t.id=2  ");
+                updateCnt = runUpdateSql(conn, "update  t set user_name='123' from t_sys_user t  inner join t_sys_role t2 on t.role_id=t2.id  where t.id=2  ");
                 assertEquals(updateCnt, 1);
 
             } catch (Exception e) {

@@ -49,7 +49,7 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
     Pager<SysRole> xmlDynamicPaging(Pager<SysRole> pager, @Param("id") Integer id, @Param("id2") Integer id2, @Param("id3") Integer id3);
 
     @Paging
-    @Select("select * from sys_role where id >=#{id} and id <=#{id2} order by id asc")
+    @Select("select * from t_sys_role where id >=#{id} and id <=#{id2} order by id asc")
     Pager<SysRole> annotationPaging(Pager<SysRole> pager, @Param("id") Integer id, @Param("id2") Integer id2);
 
 
