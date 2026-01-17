@@ -25,8 +25,8 @@ public class DefaultDbTypeParser implements DbTypeParser {
     public static final DbTypeParser INSTANCE = new DefaultDbTypeParser();
 
     protected IDbType getDbType(String jdbcUrl) {
-        int start = jdbcUrl.indexOf(":");
-        int end = jdbcUrl.indexOf(":", start + 1);
+        int start = jdbcUrl.indexOf(':');
+        int end = jdbcUrl.indexOf(':', start + 1);
         String dbKey = jdbcUrl.substring(start, end + 1);
         IDbType dbType = DbTypes.getDbTypeByUrlKey(dbKey);
         if (dbType != null) {
