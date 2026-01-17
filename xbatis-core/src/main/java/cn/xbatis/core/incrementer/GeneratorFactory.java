@@ -29,6 +29,7 @@ public class GeneratorFactory {
         GENERATOR_MAP.put(Generators.DEFAULT, idWorkerGenerator);
         GENERATOR_MAP.put(Generators.UUID, new UUIDGenerator());
         GENERATOR_MAP.put(Generators.nextId, idWorkerGenerator);
+        GENERATOR_MAP.put(Generators.UUID_V7, new UUIDv7Generator());
     }
 
     private GeneratorFactory() {

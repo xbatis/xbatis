@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
+ *  Copyright (c) 2024-2026, Ai东 (abc-127@live.cn) xbatis.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -14,25 +14,9 @@
 
 package cn.xbatis.core.incrementer;
 
-public class Generators {
-    /**
-     * 默认生成器,默认就是 nextId；区别是DEFAULT 可以重置算法
-     */
-    public static final String DEFAULT = "DEFAULT";
-
-    /**
-     * 基于雪花算法
-     */
-    public static final String nextId = "nextId";
-
-    /**
-     * 基于java uuid获取
-     */
-    public static final String UUID = "UUID";
-
-    /**
-     * 基于java uuid v7获取
-     */
-    public static final String UUID_V7 = "UUID_V7";
-
+public class UUIDv7Generator implements Generator<String> {
+    @Override
+    public String nextId(Class<?> entity) {
+        return UUIDv7.next().toString();
+    }
 }
