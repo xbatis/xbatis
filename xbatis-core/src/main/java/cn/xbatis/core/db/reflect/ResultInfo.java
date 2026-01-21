@@ -133,9 +133,21 @@ public class ResultInfo {
             if (annotationMap.containsKey(NestedResultEntity.class)) {
                 //内嵌类字段
                 NestedResultEntity nestedResultEntity = (NestedResultEntity) annotationMap.get(NestedResultEntity.class);
-                NestedResultInfo nestedResultInfo = new NestedResultInfo(clazz, field, nestedResultEntity, new ArrayList<>(), new ArrayList<>());
+
+                Class<?> nestedTargetEntityType = nestedResultEntity.target();
+                if (nestedTargetEntityType == Void.class) {
+                    Class<?> filedFinalClass = new FieldInfo(clazz, field).getFinalClass();
+                    if (filedFinalClass.isAnnotationPresent(Table.class)) {
+                        nestedTargetEntityType = filedFinalClass;
+                    } else if (filedFinalClass.isAnnotationPresent(ResultEntity.class)) {
+                        ResultEntity resultEntity2 = filedFinalClass.getAnnotation(ResultEntity.class);
+                        nestedTargetEntityType = resultEntity2.value();
+                    }
+                }
+
+                NestedResultInfo nestedResultInfo = new NestedResultInfo(clazz, field, nestedResultEntity, nestedTargetEntityType, new ArrayList<>(), new ArrayList<>());
                 parseResult.nestedResultInfos.add(nestedResultInfo);
-                tableCount = parseNestedResultEntity(clazz, fieldPath, parseResult, nestedResultInfo, field, nestedResultEntity, tableCount);
+                tableCount = parseNestedResultEntity(clazz, fieldPath, parseResult, nestedResultInfo, nestedTargetEntityType, field, nestedResultEntity, tableCount);
                 continue;
             }
 
@@ -227,9 +239,9 @@ public class ResultInfo {
      * @param tableCount         当前表个数
      * @return 当前已存在表的个数
      */
-    private static int parseNestedResultEntity(Class root, String path, ParseResult parseResult, NestedResultInfo nestedResultInfo, Field sourceField, NestedResultEntity nestedResultEntity, int tableCount) {
+    private static int parseNestedResultEntity(Class root, String path, ParseResult parseResult, NestedResultInfo nestedResultInfo, Class<?> nestedTargetEntityType, Field sourceField, NestedResultEntity nestedResultEntity, int tableCount) {
         //添加前缀
-        tableCount = createPrefix(nestedResultEntity.target(), nestedResultEntity.storey(), parseResult.tablePrefixes, tableCount);
+        tableCount = createPrefix(nestedTargetEntityType, nestedResultEntity.storey(), parseResult.tablePrefixes, tableCount);
 
         Class targetType = nestedResultInfo.getFieldInfo().getFinalClass();
 
@@ -241,9 +253,9 @@ public class ResultInfo {
             }
         }
 
-        TableInfo tableInfo = Tables.get(nestedResultEntity.target());
+        TableInfo tableInfo = Tables.get(nestedTargetEntityType);
         if (Objects.isNull(tableInfo)) {
-            throw new NotTableClassException(root, path, nestedResultEntity.target());
+            throw new NotTableClassException(root, path, nestedTargetEntityType);
         }
 
         for (Field field : FieldUtil.getFields(targetType)) {
@@ -281,9 +293,19 @@ public class ResultInfo {
             if (annotationMap.containsKey(NestedResultEntity.class)) {
                 //内嵌类字段
                 NestedResultEntity newNestedResultEntity = (NestedResultEntity) annotationMap.get(NestedResultEntity.class);
-                NestedResultInfo newNestedResultInfo = new NestedResultInfo(targetType, field, newNestedResultEntity, new ArrayList<>(), new ArrayList<>());
+                Class<?> newNestedTargetEntityType = newNestedResultEntity.target();
+                if (newNestedTargetEntityType == Void.class) {
+                    Class<?> filedFinalClass = new FieldInfo(targetType, field).getFinalClass();
+                    if (filedFinalClass.isAnnotationPresent(Table.class)) {
+                        newNestedTargetEntityType = filedFinalClass;
+                    } else if (filedFinalClass.isAnnotationPresent(ResultEntity.class)) {
+                        ResultEntity resultEntity2 = filedFinalClass.getAnnotation(ResultEntity.class);
+                        newNestedTargetEntityType = resultEntity2.value();
+                    }
+                }
+                NestedResultInfo newNestedResultInfo = new NestedResultInfo(targetType, field, newNestedResultEntity, newNestedTargetEntityType, new ArrayList<>(), new ArrayList<>());
                 nestedResultInfo.getNestedResultInfos().add(newNestedResultInfo);
-                tableCount = parseNestedResultEntity(root, fieldPath, parseResult, newNestedResultInfo, field, newNestedResultEntity, tableCount);
+                tableCount = parseNestedResultEntity(root, fieldPath, parseResult, newNestedResultInfo, newNestedTargetEntityType, field, newNestedResultEntity, tableCount);
                 continue;
             }
 

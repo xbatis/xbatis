@@ -43,10 +43,10 @@ public class NestedResultInfo {
      */
     private final List<ResultFieldInfo> resultFieldInfos;
 
-    public NestedResultInfo(Class clazz, Field field, NestedResultEntity nestedResultEntity, List<ResultFieldInfo> resultFieldInfos, List<NestedResultInfo> nestedResultInfos) {
+    public NestedResultInfo(Class clazz, Field field, NestedResultEntity nestedResultEntity, Class<?> nestedTargetEntityType, List<ResultFieldInfo> resultFieldInfos, List<NestedResultInfo> nestedResultInfos) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
-        this.targetEntityType = nestedResultEntity.target();
+        this.targetEntityType = nestedTargetEntityType;
         this.storey = nestedResultEntity.storey();
         this.resultFieldInfos = resultFieldInfos;
         this.nestedResultInfos = nestedResultInfos;
