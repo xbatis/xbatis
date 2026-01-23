@@ -27,6 +27,13 @@ public interface EnumSupport<T> extends Serializable {
     T getCode();
 
     default boolean isEq(T value) {
-        return Objects.equals(getCode(), value);
+        if (Objects.isNull(value)) {
+            return false;
+        }
+        return getCode().equals(value);
+    }
+
+    default boolean isNotEq(T value) {
+        return !isEq(value);
     }
 }
