@@ -33,7 +33,7 @@ public class EnumUtil {
      * @param <E>       枚举类的code的类型
      * @return
      */
-    public static <T extends Enum<T> & EnumSupport<E>, E> T get(Class<T> enumClass, E code) {
+    public static <T extends Enum<T> & EnumSupport<E>, E> T getByCode(Class<T> enumClass, E code) {
         if (code == null) {
             return null;
         }
