@@ -42,6 +42,7 @@ public interface SetIdMethod {
 
     /**
      * 获取插入的实例
+     *
      * @param index 参数的索引
      * @return 插入的对象
      */

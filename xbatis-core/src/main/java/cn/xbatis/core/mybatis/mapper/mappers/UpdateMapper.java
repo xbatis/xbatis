@@ -177,7 +177,7 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * 原生批量操作 采用 update case when  then else end 操作
      *
      * @param list 实体类集合
-     * @param <T> 实体类
+     * @param <T>  实体类
      * @return 影响条数
      */
     default <T> int updateBatch(Collection<T> list) {
@@ -188,9 +188,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * 根据id批量修改操作
      * 原生批量操作 采用 update case when  then else end 操作
      *
-     * @param list 实体类集合
+     * @param list        实体类集合
      * @param batchFields 必须指定字段
-     * @param <T> 实体类
+     * @param <T>         实体类
      * @return 影响条数
      */
     default <T> int updateBatch(Collection<T> list, Getter<T>... batchFields) {

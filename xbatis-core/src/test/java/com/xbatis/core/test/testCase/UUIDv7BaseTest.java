@@ -15,6 +15,7 @@
 package com.xbatis.core.test.testCase;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -36,6 +37,7 @@ public abstract class UUIDv7BaseTest {
 
     // 获取待测试的生成器实现
     protected abstract String generateUUIDv7();
+
     protected abstract UUID generateUUIDv7Object();
 
     // 工具方法：从UUIDv7提取时间戳
@@ -106,7 +108,10 @@ public abstract class UUIDv7BaseTest {
         for (int i = 0; i < count; i++) {
             uuids[i] = generateUUIDv7();
             // 微调时间，确保不同时间戳
-            try { Thread.sleep(0, 1000); } catch (InterruptedException e) {}
+            try {
+                Thread.sleep(0, 1000);
+            } catch (InterruptedException e) {
+            }
         }
 
         // 验证字符串排序与生成顺序一致（时间有序）
@@ -132,7 +137,10 @@ public abstract class UUIDv7BaseTest {
             }
 
             lastTimestamp = timestamp;
-            try { Thread.sleep(1); } catch (InterruptedException e) {}
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
         }
     }
 

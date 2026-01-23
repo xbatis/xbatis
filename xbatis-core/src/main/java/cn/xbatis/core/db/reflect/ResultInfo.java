@@ -440,7 +440,7 @@ public class ResultInfo {
      * @param field            字段
      * @param tableCount       当前表个数
      * @param parentStorey     父层的storey，如果Fetch的storey为-1，则使用parentStorey的值
-     * @param resultCalcField 注解
+     * @param resultCalcField  注解
      * @return 当前已存在表的个数
      */
     private static int parseResultCalcField(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, ResultCalcField resultCalcField, int tableCount) {

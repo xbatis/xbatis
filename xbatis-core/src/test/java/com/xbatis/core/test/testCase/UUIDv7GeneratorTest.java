@@ -14,11 +14,7 @@
 
 package com.xbatis.core.test.testCase;
 
-import cn.xbatis.core.incrementer.GeneratorFactory;
-import cn.xbatis.core.incrementer.Generators;
 import cn.xbatis.core.incrementer.UUIDv7;
-import cn.xbatis.core.incrementer.UUIDv7Generator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,9 +41,6 @@ class UUIDv7GeneratorTest extends UUIDv7BaseTest {
     }
 
     // ============== 额外特性测试 ==============
-
-
-
 
 
     // ============== 并发测试 ==============
@@ -158,7 +151,10 @@ class UUIDv7GeneratorTest extends UUIDv7BaseTest {
                 UUID obj = generateUUIDv7Object();
                 uuids.add(str);
                 uuidObjects.add(obj);
-                try { Thread.sleep(1); } catch (InterruptedException e) {}
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                }
             }
 
             // 字符串排序应与对象排序一致

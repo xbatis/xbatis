@@ -30,6 +30,7 @@ public final class DbTypes {
     /**
      * 注册 IDbType
      * 所有 IDbType 的实现类 都必须调用此方法 才能注入
+     *
      * @param dbTypeClass
      */
     public static <T extends Enum<T> & IDbType> void register(Class<T> dbTypeClass) {

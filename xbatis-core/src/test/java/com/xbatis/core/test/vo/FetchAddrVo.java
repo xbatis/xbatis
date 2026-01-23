@@ -32,12 +32,6 @@ import java.util.List;
 @ResultEntity(FetchAddr.class)
 public class FetchAddrVo extends FetchAddr {
 
-    @Override
-    @TableId(dbType = DbType.Name.H2)
-    public void setId(Integer id) {
-        super.setId(id);
-    }
-
     @Fetch(property = FetchAddr.Fields.addrs1,
             propertyType = FetchPropertyType.MULTI,
             target = Addr.class,
@@ -45,7 +39,6 @@ public class FetchAddrVo extends FetchAddr {
             targetSelectProperty = Addr.Fields.name
     )
     private List<String> faddrs1;
-
     @Fetch(property = "addrs2",
             propertyType = FetchPropertyType.MULTI,
             target = Addr.class,
@@ -53,7 +46,6 @@ public class FetchAddrVo extends FetchAddr {
             targetSelectProperty = Addr.Fields.name
     )
     private List<String> faddrs2;
-
     @Fetch(property = "addrs3",
             propertyType = FetchPropertyType.ARRAY,
             target = Addr.class,
@@ -61,33 +53,32 @@ public class FetchAddrVo extends FetchAddr {
             targetSelectProperty = Addr.Fields.name
     )
     private List<String> faddrs3;
-
-
     @Fetch(property = FetchAddr.Fields.addrs1,
             propertyType = FetchPropertyType.MULTI,
             target = Addr.class,
             targetProperty = Addr.Fields.id
     )
     private List<Addr> faddrs11;
-
     @Fetch(property = "addrs2",
             propertyType = FetchPropertyType.MULTI,
             target = Addr.class,
             targetProperty = Addr.Fields.id
     )
     private List<Addr> faddrs21;
-
     @Fetch(property = "addrs3",
             propertyType = FetchPropertyType.ARRAY,
             target = Addr.class,
             targetProperty = Addr.Fields.id
     )
     private List<Addr> faddrs31;
-
-
     @ResultEntityField(property = "addrs3")
     private List<Long> addrs33;
 
+    @Override
+    @TableId(dbType = DbType.Name.H2)
+    public void setId(Integer id) {
+        super.setId(id);
+    }
 
     @Override
     @ResultEntityField(property = "addrs1")

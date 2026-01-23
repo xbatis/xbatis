@@ -29,6 +29,7 @@ public @interface NestedResultEntity {
     /**
      * 对应的实体类;默认为Void.class；
      * 当为Void.class，它会读取字段上的vo的@ResultEntity里的target或者该字段类型对应的实体类
+     *
      * @return 对应的实体类
      */
     Class target() default Void.class;

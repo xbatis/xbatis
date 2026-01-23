@@ -23,12 +23,9 @@ import java.io.Serializable;
 public class MybatisParameter implements Serializable {
 
     private final Object value;
-
-    private Class<? extends TypeHandler<?>> typeHandlerClass;
-
-    private TypeHandler typeHandler;
-
     private final JdbcType jdbcType;
+    private Class<? extends TypeHandler<?>> typeHandlerClass;
+    private TypeHandler typeHandler;
 
     public MybatisParameter(Object value, Class<? extends TypeHandler<?>> typeHandlerClass) {
         this(value, typeHandlerClass, null);

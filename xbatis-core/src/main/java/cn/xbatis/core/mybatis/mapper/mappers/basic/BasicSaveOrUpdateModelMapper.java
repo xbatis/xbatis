@@ -31,8 +31,8 @@ public interface BasicSaveOrUpdateModelMapper extends BasicBaseMapper {
      * 先查是否存在，再进行新增或修改
      *
      * @param model model 对象
-     * @param <M>  Model的 类型
-     * @param <T> Model 对应的实体类
+     * @param <M>   Model的 类型
+     * @param <T>   Model 对应的实体类
      * @return 影响条数
      */
     default <T, M extends Model<T>> int saveOrUpdate(M model, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
@@ -46,9 +46,9 @@ public interface BasicSaveOrUpdateModelMapper extends BasicBaseMapper {
      * 先查是否存在，再进行新增或修改
      *
      * @param model model 对象
-     * @param <M>  Model的 类型
-     * @param <T> Model 对应的实体类
-     * @return  影响条数
+     * @param <M>   Model的 类型
+     * @param <T>   Model 对应的实体类
+     * @return 影响条数
      */
     default <T, M extends Model<T>> int saveOrUpdate(M model) {
         return this.saveOrUpdate(model, false);
@@ -58,11 +58,11 @@ public interface BasicSaveOrUpdateModelMapper extends BasicBaseMapper {
      * 实体类Model新增或修改
      * 先查是否存在，再进行新增或修改
      *
-     * @param model  model 对象
+     * @param model         model 对象
      * @param allFieldForce 所有字段都强制保存或修改,null值将会以NULL的形式插入
-     * @param <M>  Model的 类型
-     * @param <T> Model 对应的实体类
-     * @return  影响条数
+     * @param <M>           Model的 类型
+     * @param <T>           Model 对应的实体类
+     * @return 影响条数
      */
     default <T, M extends Model<T>> int saveOrUpdate(M model, boolean allFieldForce) {
         return this.saveOrUpdate(model, saveOrUpdateStrategy -> {
@@ -74,10 +74,10 @@ public interface BasicSaveOrUpdateModelMapper extends BasicBaseMapper {
      * 实体类Model新增或修改
      * 先查是否存在，再进行新增或修改
      *
-     * @param model  model 对象
+     * @param model       model 对象
      * @param forceFields 强制字段
-     * @param <M>  Model的 类型
-     * @param <T> Model 对应的实体类
+     * @param <M>         Model的 类型
+     * @param <T>         Model 对应的实体类
      * @return 影响条数
      */
     default <T, M extends Model<T>> int saveOrUpdate(M model, Getter<M>... forceFields) {
@@ -89,8 +89,9 @@ public interface BasicSaveOrUpdateModelMapper extends BasicBaseMapper {
     /**
      * 实体类Model新增或修改
      * 先查是否存在，再进行新增或修改
+     *
      * @param <M>  Model的 类型
-     * @param <T> Model 对应的实体类
+     * @param <T>  Model 对应的实体类
      * @param list 实体类Model 对象List
      * @return 影响条数
      */
@@ -103,8 +104,9 @@ public interface BasicSaveOrUpdateModelMapper extends BasicBaseMapper {
     /**
      * 实体类Model新增或修改
      * 先查是否存在，再进行新增或修改
+     *
      * @param <M>  Model的 类型
-     * @param <T> Model 对应的实体类
+     * @param <T>  Model 对应的实体类
      * @param list 实体类Model 对象List
      * @return 影响条数
      */
@@ -115,8 +117,9 @@ public interface BasicSaveOrUpdateModelMapper extends BasicBaseMapper {
     /**
      * 实体类Model新增或修改
      * 先查是否存在，再进行新增或修改
-     * @param <M>  Model的 类型
-     * @param <T> Model 对应的实体类
+     *
+     * @param <M>           Model的 类型
+     * @param <T>           Model 对应的实体类
      * @param list          实体类Model 对象List
      * @param allFieldForce 所有字段都强制保存或修改,null值将会以NULL的形式插入
      * @return 影响条数
@@ -130,8 +133,9 @@ public interface BasicSaveOrUpdateModelMapper extends BasicBaseMapper {
     /**
      * 实体类Model新增或修改
      * 先查是否存在，再进行新增或修改
-     * @param <M>  Model的 类型
-     * @param <T> Model 对应的实体类
+     *
+     * @param <M>         Model的 类型
+     * @param <T>         Model 对应的实体类
      * @param list        实体类Model 对象List
      * @param forceFields 强制字段
      * @return 影响条数

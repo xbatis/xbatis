@@ -37,8 +37,9 @@ public @interface TableId {
 
     /**
      * 数据库类型 例如 DbType.Name.MYSQL
-     * @see db.sql.api.DbType.Name
+     *
      * @return DbType name
+     * @see db.sql.api.DbType.Name
      */
     String dbType() default DbType.Name.UNKNOWN;
 
@@ -63,6 +64,7 @@ public @interface TableId {
     /**
      * id 自增的sql语句
      * IdAutoType.SQL 时，必须填
+     *
      * @return 自增的sql
      */
     String sql() default "";
