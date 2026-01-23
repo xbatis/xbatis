@@ -15,6 +15,7 @@
 package cn.xbatis.core.mybatis.typeHandler;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * 枚举支持，需要用一个枚举 进行 实现
@@ -24,4 +25,8 @@ import java.io.Serializable;
 public interface EnumSupport<T> extends Serializable {
 
     T getCode();
+
+    default boolean isEq(T value) {
+        return Objects.equals(getCode(), value);
+    }
 }
