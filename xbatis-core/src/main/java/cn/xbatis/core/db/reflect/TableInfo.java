@@ -140,7 +140,7 @@ public class TableInfo {
             this.schemaAndTableName = schema + "." + tableName;
         }
 
-        TableFieldInfo idFieldInfo = null;
+
         TableFieldInfo versionFieldInfo = null;
         TableFieldInfo tenantIdFieldInfo = null;
         TableFieldInfo logicDeleteFieldInfo = null;
@@ -149,7 +149,7 @@ public class TableInfo {
         List<TableFieldInfo> tableFieldInfos = new ArrayList<>();
         Map<String, TableFieldInfo> tableFieldInfoMap = new HashMap<>();
         Map<Class<?>, ForeignInfo> foreignInfoMap = new HashMap<>();
-        boolean hasMutilId = false;
+
 
         List<TableFieldInfo> idFieldInfos = new ArrayList<>(6);
 
@@ -168,13 +168,8 @@ public class TableInfo {
 
             if (tableFieldInfo.isTableId()) {
                 idFieldInfos.add(tableFieldInfo);
-                if (Objects.isNull(idFieldInfo)) {
-                    idFieldInfo = tableFieldInfo;
-                } else {
-                    idFieldInfo = null;
-                    hasMutilId = true;
-                }
             }
+
             if (tableFieldInfo.isVersion()) {
                 if (versionFieldInfo != null) {
                     throw new RuntimeException("Entity " + entity.getName() + " has multi @Version");
@@ -204,6 +199,13 @@ public class TableInfo {
                 logicDeleteTimeFieldInfo = tableFieldInfo;
             }
         }
+
+        TableFieldInfo idFieldInfo = null;
+        if (idFieldInfos.size() == 1) {
+            idFieldInfo = idFieldInfos.get(0);
+        }
+
+        boolean hasMutilId = idFieldInfos.size() > 1;
 
         this.tableFieldInfos = Collections.unmodifiableList(tableFieldInfos);
         this.fieldSize = this.tableFieldInfos.size();
