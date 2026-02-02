@@ -168,12 +168,6 @@ public class TableInfo {
 
             if (tableFieldInfo.isTableId()) {
                 idFieldInfos.add(tableFieldInfo);
-                if (Objects.isNull(idFieldInfo)) {
-                    idFieldInfo = tableFieldInfo;
-                } else {
-                    idFieldInfo = null;
-                    hasMutilId = true;
-                }
             }
             if (tableFieldInfo.isVersion()) {
                 if (versionFieldInfo != null) {
@@ -204,6 +198,12 @@ public class TableInfo {
                 logicDeleteTimeFieldInfo = tableFieldInfo;
             }
         }
+
+        if (idFieldInfos.size() == 1) {
+            idFieldInfo = idFieldInfos.get(0);
+        }
+
+        hasMutilId = idFieldInfos.size() > 1;
 
         this.tableFieldInfos = Collections.unmodifiableList(tableFieldInfos);
         this.fieldSize = this.tableFieldInfos.size();
