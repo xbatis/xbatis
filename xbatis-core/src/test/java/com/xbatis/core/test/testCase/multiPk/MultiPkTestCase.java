@@ -342,4 +342,70 @@ public class MultiPkTestCase extends BaseTest {
         }
 
     }
+
+    @Test
+    public void updateBatch() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+            MultiPk entity = new MultiPk();
+            entity.setId1(1);
+            entity.setId2(1);
+            entity.setName("11");
+            mapper.saveOrUpdate(entity);
+
+            MultiPk entity2 = new MultiPk();
+            entity2.setId1(1);
+            entity2.setId2(2);
+            entity2.setName("12");
+            mapper.saveOrUpdate(entity2);
+
+            MultiPk entity3 = new MultiPk();
+            entity3.setId1(1);
+            entity3.setId2(3);
+            entity3.setName("13");
+            mapper.saveOrUpdate(entity3);
+
+            MultiPk entity4 = new MultiPk();
+            entity4.setId1(2);
+            entity4.setId2(1);
+            entity4.setName("21");
+            mapper.saveOrUpdate(entity4);
+
+            MultiPk entity5 = new MultiPk();
+            entity5.setId1(2);
+            entity5.setId2(2);
+            entity5.setName("22");
+            mapper.saveOrUpdate(entity5);
+
+            MultiPk entity6 = new MultiPk();
+            entity6.setId1(2);
+            entity6.setId2(3);
+            entity6.setName("23");
+            mapper.saveOrUpdate(entity6);
+
+            MultiPk entity7 = new MultiPk();
+            entity7.setId1(3);
+            entity7.setId2(1);
+            entity7.setName("31");
+            mapper.saveOrUpdate(entity7);
+
+            MultiPk entity8 = new MultiPk();
+            entity8.setId1(3);
+            entity8.setId2(2);
+            entity8.setName("32");
+            mapper.saveOrUpdate(entity8);
+
+            MultiPk entity9 = new MultiPk();
+            entity9.setId1(3);
+            entity9.setId2(33);
+            entity9.setName("33");
+            mapper.saveOrUpdate(entity9);
+
+            mapper.listAll().stream().forEach(System.out::println);
+
+            int cnt = mapper.updateBatch(Arrays.asList(entity2, entity4));
+
+            assertEquals(2, cnt);
+        }
+    }
 }

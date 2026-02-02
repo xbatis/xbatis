@@ -321,7 +321,7 @@ public class FunTest extends BaseTest {
                                 .when(DbType.SQLITE, () -> {
                                     queryChain.returnType(String.class);
                                 })
-                                .otherwise(() -> {
+                                .otherwise((dbType) -> {
                                     queryChain.returnType(LocalDate.class);
                                 });
                     })
@@ -344,7 +344,7 @@ public class FunTest extends BaseTest {
                                 .when(DbType.SQLITE, () -> {
                                     queryChain.returnType(String.class);
                                 })
-                                .otherwise(() -> {
+                                .otherwise((dbType) -> {
                                     queryChain.returnType(LocalTime.class);
                                 });
                     })

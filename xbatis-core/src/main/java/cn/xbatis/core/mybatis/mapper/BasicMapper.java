@@ -132,7 +132,7 @@ public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapp
             selector.when(DbType.SQL_SERVER, () -> {
                 query.getSelect().top(1);
                 query.removeLimit();
-            }).otherwise(() -> {
+            }).otherwise((dbType) -> {
                 query.limit(1);
             });
         });

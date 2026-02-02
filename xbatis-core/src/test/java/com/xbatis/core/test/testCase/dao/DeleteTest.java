@@ -48,7 +48,7 @@ public class DeleteTest extends BaseDaoTest {
                                 .when(new IDbType[]{DbType.MYSQL, MyDbType.LIKE_MYSQL}, () -> {
                                     deleteChain.eq(SysUser::getId, 2);
                                 })
-                                .otherwise(() -> {
+                                .otherwise((dbType) -> {
                                     deleteChain.eq(SysUser::getId, 1);
                                 });
                     })

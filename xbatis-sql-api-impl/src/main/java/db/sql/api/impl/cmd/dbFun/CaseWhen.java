@@ -16,17 +16,17 @@ package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.impl.cmd.basic.Condition;
+import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
 public class CaseWhen implements Cmd {
 
-    private final Condition condition;
+    private final ICondition condition;
 
     private final Cmd then;
 
-    public CaseWhen(Condition condition, Cmd then) {
+    public CaseWhen(ICondition condition, Cmd then) {
         this.condition = condition;
         this.then = then;
     }
