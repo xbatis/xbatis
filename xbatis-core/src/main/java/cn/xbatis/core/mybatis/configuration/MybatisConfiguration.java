@@ -86,6 +86,13 @@ public class MybatisConfiguration extends Configuration {
         initialized = true;
         XbatisGlobalConfig.onInit();
         this.printBanner();
+
+        //添加基础 单Mapper
+        Class<?> basicMapper = XbatisGlobalConfig.getSingleMapperClass();
+        if (!this.hasMapper(basicMapper)) {
+            this.addBasicMapper(basicMapper);
+            this.clearResultMap();
+        }
     }
 
     private void printBanner() {
@@ -180,22 +187,11 @@ public class MybatisConfiguration extends Configuration {
         if (!initialized) {
             this.onInit();
         }
-        if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class) {
-            //添加基础 BasicMapper
-            if (!this.hasMapper(BasicMapper.class)) {
-                this.addBasicMapper(BasicMapper.class);
-                this.clearResultMap();
-                if (type == BasicMapper.class) {
-                    return;
-                }
-            }
+        if (XbatisGlobalConfig.getSingleMapperClass() == type || BasicMapper.class.isAssignableFrom(type)) {
+            return;
         }
 
-        if (BasicMapper.class.isAssignableFrom(type) && type != BasicMapper.class) {
-            this.addBasicMapper(type);
-            this.clearResultMap();
-            return;
-        } else if (MybatisMapper.class.isAssignableFrom(type)) {
+        if (MybatisMapper.class.isAssignableFrom(type)) {
             List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);
             Optional<Class<?>> entityOptional = list.stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst();
             if (!entityOptional.isPresent()) {
