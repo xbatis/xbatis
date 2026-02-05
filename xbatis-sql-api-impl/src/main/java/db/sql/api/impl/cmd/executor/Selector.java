@@ -17,6 +17,8 @@ package db.sql.api.impl.cmd.executor;
 import db.sql.api.IDbType;
 import db.sql.api.cmd.executor.Runnable;
 
+import java.util.function.Consumer;
+
 /**
  * 选择器 不同数据库执行不同的方法
  */
@@ -51,7 +53,7 @@ public interface Selector {
      * @param runnable 执行器
      * @return 自己
      */
-    Selector otherwise(Runnable runnable);
+    Selector otherwise(Consumer<IDbType> runnable);
 
     /**
      * 其他数据库类型时 忽略

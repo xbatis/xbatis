@@ -180,8 +180,8 @@ public interface FunctionInterface extends Cmd {
     /**
      * 对自己进行保留小数位数操作
      *
-     * @return Truncate
      * @param precision 保留小数位数
+     * @return Truncate
      */
     default Truncate truncate(int precision) {
         return Methods.truncate(this, precision);
@@ -436,7 +436,7 @@ public interface FunctionInterface extends Cmd {
     /**
      * 对自己进行字符串替换操作
      *
-     * @param target 匹配字符
+     * @param target      匹配字符
      * @param replacement 用于替换的字符
      * @return Repeat
      */

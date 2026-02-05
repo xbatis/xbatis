@@ -17,9 +17,9 @@ package db.sql.api.impl.cmd.dbFun;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.BasicValue;
-import db.sql.api.impl.cmd.basic.Condition;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -38,23 +38,23 @@ public class Case extends BasicFunction<Case> {
         super(CASE, null);
     }
 
-    public Case when(Condition condition, Cmd then) {
+    public Case when(ICondition condition, Cmd then) {
         values.add(new CaseWhen(condition, then));
         return this;
     }
 
-    public Case when(Condition condition, Serializable then) {
+    public Case when(ICondition condition, Serializable then) {
         return this.when(condition, Methods.cmd(then));
     }
 
-    public Case when(boolean when, Condition condition, Serializable then) {
+    public Case when(boolean when, ICondition condition, Serializable then) {
         if (!when) {
             return this;
         }
         return this.when(condition, then);
     }
 
-    public <V extends Serializable> Case when(Condition condition, V then, Predicate<V> predicate) {
+    public <V extends Serializable> Case when(ICondition condition, V then, Predicate<V> predicate) {
         return this.when(predicate.test(then), condition, then);
     }
 

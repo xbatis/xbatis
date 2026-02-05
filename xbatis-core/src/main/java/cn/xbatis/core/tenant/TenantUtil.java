@@ -138,8 +138,8 @@ public final class TenantUtil {
     /**
      * 添加租户条件
      *
-     * @param table          MpTable
-     * @param on On
+     * @param table MpTable
+     * @param on    On
      */
     public static void addTenantCondition(MpTable table, On on) {
         Serializable tid = TenantUtil.getTenantId();

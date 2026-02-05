@@ -89,6 +89,7 @@ public enum DbType implements IDbType {
      * 官方提供的添加关键字的方法
      * 给所有数据库都加上数据库关键词
      * 此方法已过期，后续使用 DbTypes.addKeyword 替代
+     *
      * @param keywords
      */
     @Deprecated
@@ -151,6 +152,7 @@ public enum DbType implements IDbType {
         public static final String COBAR = "COBAR";
         public static final String OCEAN_BASE = "OCEAN_BASE";
         public static final String HIGHGO = "HIGHGO";
+
         private Name() {
 
         }

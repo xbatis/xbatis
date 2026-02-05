@@ -174,7 +174,7 @@ public class UpdateTest extends BaseDaoTest {
                             updateChain.eq(SysUser::getId, 3);
                         }).when(new IDbType[]{DbType.MYSQL, MyDbType.LIKE_MYSQL}, () -> {
                             updateChain.eq(SysUser::getId, 2);
-                        }).otherwise(() -> {
+                        }).otherwise((dbType) -> {
                             updateChain.eq(SysUser::getId, 1);
                         });
                     })

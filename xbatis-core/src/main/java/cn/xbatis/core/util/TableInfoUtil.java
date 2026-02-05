@@ -132,7 +132,7 @@ public final class TableInfoUtil {
      * 获取主键的注解信息，非ID 返回 null
      *
      * @param tableFieldInfo 字段信息
-     * @param dbType 数据库类型
+     * @param dbType         数据库类型
      * @return 获取ID注解
      */
     public static TableId getTableIdAnnotation(TableFieldInfo tableFieldInfo, IDbType dbType) {

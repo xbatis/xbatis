@@ -18,6 +18,7 @@ import java.lang.annotation.*;
 
 /**
  * 内嵌 精准匹配  （ 会继承 注解：NestedResultEntity 的信息），用于解决命名不一致问题
+ * 推荐使用 @ResultEntityField 代替 @NestedResultEntityField；因为它更强 更好用
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

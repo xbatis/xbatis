@@ -160,8 +160,8 @@ public final class LogicDeleteUtil {
     /**
      * 添加逻辑删除条件
      *
-     * @param table          MpTable
-     * @param on On
+     * @param table MpTable
+     * @param on    On
      */
     public static void addLogicDeleteCondition(MpTable table, On on) {
         if (!XbatisGlobalConfig.isLogicDeleteSwitchOpen()) {

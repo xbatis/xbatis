@@ -20,12 +20,13 @@ import db.sql.api.impl.tookit.Objects;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class DbSelector implements Selector {
 
     private final Map<IDbType, Runnable> consumers = new HashMap<>();
 
-    private Runnable otherwise;
+    private Consumer<IDbType> otherwise;
 
     public DbSelector when(IDbType dbType, Runnable runnable) {
         consumers.put(dbType, runnable);
@@ -39,7 +40,7 @@ public class DbSelector implements Selector {
         return this;
     }
 
-    public DbSelector otherwise(Runnable runnable) {
+    public DbSelector otherwise(Consumer<IDbType> runnable) {
         if (Objects.nonNull(this.otherwise)) {
             throw new RuntimeException("The method of 'otherwise' has already called");
         }
@@ -48,7 +49,7 @@ public class DbSelector implements Selector {
     }
 
     public DbSelector otherwise() {
-        return this.otherwise(() -> {
+        return this.otherwise((dbType) -> {
         });
     }
 
@@ -59,7 +60,7 @@ public class DbSelector implements Selector {
             return;
         }
         if (Objects.nonNull(this.otherwise)) {
-            this.otherwise.run();
+            this.otherwise.accept(dbType);
             return;
         }
         throw new RuntimeException("Not adapted to IDbType " + dbType);

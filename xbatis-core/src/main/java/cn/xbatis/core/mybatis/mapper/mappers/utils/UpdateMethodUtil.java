@@ -25,13 +25,17 @@ import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.TableSplitUtil;
+import cn.xbatis.core.sql.executor.MpTableField;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.core.util.TableInfoUtil;
+import db.sql.api.DbModel;
+import db.sql.api.DbType;
 import db.sql.api.Getter;
+import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.Methods;
-import db.sql.api.impl.cmd.basic.Condition;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.dbFun.Case;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.io.Serializable;
@@ -158,8 +162,8 @@ public final class UpdateMethodUtil {
     }
 
     public static <T> int updateBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, Getter<T>[] batchFields) {
-        if (tableInfo.getIdFieldInfo() == null) {
-            throw new RuntimeException("The entity " + tableInfo.getType() + " has multi id field ,can't do batch update");
+        if (tableInfo.getIdFieldInfos().isEmpty()) {
+            throw new RuntimeException("The entity " + tableInfo.getType() + " has no id field ,can't do batch update");
         }
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
@@ -214,6 +218,11 @@ public final class UpdateMethodUtil {
     }
 
     private static <T> int _updateBatch(UpdateChain updateChain, TableInfo tableInfo, Collection<T> list, Collection<TableFieldInfo> updateTableFieldInfos, List<TableFieldInfo> idFieldInfos, boolean allUpdate) {
+        MpTableField[] idTableFields = idFieldInfos.stream().map(i -> {
+            return updateChain.$().field(tableInfo.getType(), i.getField().getName());
+        }).collect(Collectors.toList()).toArray(new MpTableField[0]);
+
+
         Map<String, List<Serializable>> columnUpdateValues = new HashMap<>();
         Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
@@ -223,17 +232,22 @@ public final class UpdateMethodUtil {
                 }
             }
 
-            Object idValue = tableInfo.getIdFieldInfo().getValue(entity);
-            if (idValue == null) {
-                throw new IllegalArgumentException("the datas of batch update has some id no set");
+            List<Serializable> values;
+            for (MpTableField idTableField : idTableFields) {
+                values = columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName());
+                Object idValue = idTableField.getTableFieldInfo().getValue(entity);
+                if (idValue == null) {
+                    throw new IllegalArgumentException("the datas of batch update has some id no set");
+                }
+
+
+                if (values == null) {
+                    values = new ArrayList<>();
+                    columnUpdateValues.put(idTableField.getTableFieldInfo().getColumnName(), values);
+                }
+                values.add((Serializable) idValue);
             }
 
-            List<Serializable> values = columnUpdateValues.get(tableInfo.getIdFieldInfo().getColumnName());
-            if (values == null) {
-                values = new ArrayList<>();
-                columnUpdateValues.put(tableInfo.getIdFieldInfo().getColumnName(), values);
-            }
-            values.add((Serializable) idValue);
 
             for (TableFieldInfo tableFieldInfo : updateTableFieldInfos) {
                 values = columnUpdateValues.get(tableFieldInfo.getColumnName());
@@ -267,21 +281,71 @@ public final class UpdateMethodUtil {
                 if (value == null) {
                     value = Methods.NULL();
                 }
-                sqlCase.when(buildIdCaseWhen(updateChain, tableInfo, columnUpdateValues.get(tableInfo.getIdFieldInfo().getColumnName()).get(i)), Methods.cmd(value));
+                sqlCase.when(buildIdCaseWhen(updateChain, idTableFields, columnUpdateValues, i), Methods.cmd(value));
             }
             sqlCase.else_(tableField);
             updateChain.set(tableField, sqlCase);
         }
 
-        TableField tableField = updateChain.$().field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName());
-        updateChain.in(tableField, columnUpdateValues.get(tableField.getName()));
+
+        if (idTableFields.length > 1) {
+            updateChain.dbAdapt((update, selector) -> {
+                selector.otherwise(dbType -> {
+                    if (dbType == DbType.H2 || dbType == DbType.SQLITE || dbType == DbType.KING_BASE || dbType == DbType.GAUSS ||
+                            dbType == DbType.PGSQL || dbType.getDbModel() == DbModel.PGSQL) {
+                        //支持双列 in
+                        StringBuilder inTpl = new StringBuilder("(");
+
+                        for (int i = 0; i < idTableFields.length; i++) {
+                            inTpl.append("{").append(i).append("},");
+                        }
+                        inTpl.deleteCharAt(inTpl.length() - 1).append(")");
+                        List<Object> values = new ArrayList<>();
+                        for (int j = 0; j < list.size(); j++) {
+                            List<Object> multiValues = new ArrayList<>();
+                            for (int i = 0; i < idTableFields.length; i++) {
+                                MpTableField idTableField = idTableFields[i];
+                                multiValues.add(columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(j));
+                            }
+                            values.add(Methods.tpl(inTpl.toString(), multiValues.toArray()));
+                        }
+                        update.and(Methods.in(Methods.tpl(inTpl.toString(), idTableFields), values));
+
+                    } else {
+                        for (MpTableField idTableField : idTableFields) {
+                            updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
+                        }
+                        updateChain.andNested(chain -> {
+                            for (int i = 0; i < list.size(); i++) {
+                                final int index = i;
+                                chain.orNested(o -> {
+                                    for (MpTableField idTableField : idTableFields) {
+                                        Object value = columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index);
+                                        o.eq(idTableField, value);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+
+        } else {
+            for (MpTableField idTableField : idTableFields) {
+                updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
+            }
+        }
 
         return updateChain
                 .execute();
     }
 
-    private static Condition buildIdCaseWhen(UpdateChain updateChain, TableInfo tableInfo, Object idValue) {
-        TableField tableField = updateChain.$().field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName());
-        return tableField.eq(idValue);
+    private static ICondition buildIdCaseWhen(UpdateChain updateChain, MpTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, int index) {
+        ConditionChain whenChain = updateChain.conditionChain().getConditionFactory().newConditionChain(null);
+        for (MpTableField idTableField : idTableFields) {
+            whenChain.and(idTableField.eq(columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index)));
+        }
+        return whenChain;
     }
 }

@@ -53,7 +53,7 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      * 根据Lambda getter 获取列名
      *
      * @param column getter列
-     * @param <T> getter的 所在类
+     * @param <T>    getter的 所在类
      * @return 列名
      */
     <T> String columnName(Getter<T> column);
@@ -67,7 +67,7 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      *
      * @param column getter列
      * @param storey 存储层级
-     * @param <T> 实体类
+     * @param <T>    实体类
      * @return TABLE_FIELD cmd
      */
     <T> TABLE_FIELD field(Getter<T> column, int storey);
@@ -87,10 +87,10 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
     /**
      * 根据字段名获取TABLE_FIELD
      *
-     * @param entity 实体类
+     * @param entity    实体类
      * @param fieldName 字段名
-     * @param storey 存储层级
-     * @return  TABLE_FIELD cmd
+     * @param storey    存储层级
+     * @return TABLE_FIELD cmd
      */
     TABLE_FIELD field(Class<?> entity, String fieldName, int storey);
 
@@ -99,8 +99,8 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      * 根据dataset(可能是子查询 也可能是表),Lambda getter 创建列对象
      *
      * @param dataset dataset 对象
-     * @param column getter列
-     * @param <T> getter 所在的类
+     * @param column  getter列
+     * @param <T>     getter 所在的类
      * @return IDatasetField
      */
     <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> IDatasetField field(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column);
@@ -109,7 +109,7 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      * 根据dataset(可能是子查询 也可能是表) 列名，创建 列对象
      *
      * @param dataset dataset 对象
-     * @param name 列名
+     * @param name    列名
      * @return IDatasetField
      */
     <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> IDatasetField field(IDataset<DATASET, DATASET_FIELD> dataset, String name);
@@ -144,7 +144,7 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      * @param RF     返回函数
      * @param <T>    实体类型
      * @param <R>    返回命令
-     * @return  R 对应的 Cmd
+     * @return R 对应的 Cmd
      */
     <T, R extends Cmd> R create(Getter<T> column, int storey, Function<TABLE_FIELD, R> RF);
 
@@ -159,11 +159,11 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      * 创建 Exists Or NotExists 的 子查询
      *
      * @param executor 执行器
-     * @param entity 实体类
+     * @param entity   实体类
      * @param consumer 消费函数
-     * @param <T> 函数参数
-     * @param <E> 实体类的类型
-     * @return  子查询 Cmd
+     * @param <T>      函数参数
+     * @param <E>      实体类的类型
+     * @return 子查询 Cmd
      */
     <T, E> ISubQuery createExistsOrNotExistsSubQuery(T executor, Class<E> entity, BiConsumer<T, ISubQuery> consumer);
 

@@ -76,11 +76,11 @@ public interface BasicPagingMapper extends BasicBaseMapper {
      * 分页查询
      *
      * @param entityType   实体类
-     * @param pager 分页参数
-     * @param where where
+     * @param pager        分页参数
+     * @param where        where
      * @param selectFields select的字段
-     * @param <T> 结果List的 泛型
-     * @param <P> 分页的结果的IPager 泛型
+     * @param <T>          结果List的 泛型
+     * @param <P>          分页的结果的IPager 泛型
      * @return 分页结果
      */
     default <T, P extends IPager<T>> P paging(Class<T> entityType, P pager, Where where, Getter<T>... selectFields) {

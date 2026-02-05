@@ -87,7 +87,7 @@ public class BasicValue extends AbstractField<BasicValue> {
                 } else if (value instanceof Long) {
                     castType = "BIGINT";
                 } else if (value instanceof Float || value instanceof Double || value instanceof BigDecimal) {
-                    castType = "DECIMAL(19,6)";
+                    castType = "DECIMAL";
                 } else if (value instanceof Boolean) {
                     castType = "BOOLEAN";
                 } else {

@@ -269,7 +269,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
      * 将结果转成 map
      *
      * @param mapKey 指定的map的 key属性
-     * @param <R> map的value 的类型
+     * @param <R>    map的value 的类型
      * @return 结果 map
      */
     public <R> Map<R, T> mapWithKey(GetterFun<T, R> mapKey) {
@@ -319,10 +319,10 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     /**
      * 自动select mapKey value
      *
-     * @param mapKey map指定的 key
+     * @param mapKey      map指定的 key
      * @param valueGetter value 的转换器
-     * @param <R> key 的类泛型
-     * @param <R2> value 的类泛型
+     * @param <R>         key 的类泛型
+     * @param <R2>        value 的类泛型
      */
     private <R, R2> void selectMapWithKeyAndValue(GetterFun<T, R> mapKey, GetterFun<T, R2> valueGetter) {
         this.selectFromMapWithGetter(mapKey);

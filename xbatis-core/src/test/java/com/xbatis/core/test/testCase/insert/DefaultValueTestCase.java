@@ -302,7 +302,7 @@ public class DefaultValueTestCase extends BaseTest {
                     .dbAdapt((insertChain, selector) -> {
                         selector.when(new IDbType[]{DbType.SQL_SERVER, DbType.DB2}, () -> {
 
-                        }).otherwise(() -> {
+                        }).otherwise((dbType) -> {
                             insertChain.insertSelect(DefaultValueTest::getId, Methods.value(maxId + 1));
                         });
                     })
