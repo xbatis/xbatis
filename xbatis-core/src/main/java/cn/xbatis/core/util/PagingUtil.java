@@ -34,6 +34,7 @@ import org.apache.ibatis.mapping.SqlSource;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -71,8 +72,16 @@ public final class PagingUtil {
         Class returnType = ms.getResultMaps().get(0).getType();
 
         ResultMap resultMap;
-        if (IPager.class.isAssignableFrom(returnType)) {
-            resultMap = new ResultMap.Builder(ms.getConfiguration(), id + "-inline", GenericUtil.getGenericParameterTypes(mapperMethod).get(0), Collections.emptyList()).build();
+        if (IPager.class.isAssignableFrom(returnType) && returnType.equals(mapperMethod.getReturnType())) {
+            Type firstParameterType = mapperMethod.getGenericParameterTypes()[0];
+            List<Class<?>> genericParameterTypes = GenericUtil.getGeneric(firstParameterType);
+            if (genericParameterTypes.isEmpty()) {
+                genericParameterTypes = GenericUtil.getGenericSuperClass((Class) firstParameterType);
+            }
+            if (genericParameterTypes.isEmpty()) {
+                genericParameterTypes = GenericUtil.getGenericInterfaceClass((Class) firstParameterType);
+            }
+            resultMap = new ResultMap.Builder(ms.getConfiguration(), id + "-inline", genericParameterTypes.get(0), Collections.emptyList()).build();
         } else {
             resultMap = ms.getResultMaps().get(0);
         }
