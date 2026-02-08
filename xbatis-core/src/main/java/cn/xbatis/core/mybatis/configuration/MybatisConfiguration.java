@@ -145,7 +145,6 @@ public class MybatisConfiguration extends Configuration {
         super.addMappedStatement(MappedStatementUtil.wrap(ms));
     }
 
-
     private <T> void addBasicMapper(Class<T> type) {
         super.addMapper(type);
         //替换成自己的   MapperProxy 工厂
@@ -155,11 +154,15 @@ public class MybatisConfiguration extends Configuration {
             knownMappers.put(type, new BasicMapperProxyFactory(type));
         }
 
-        this.clearResultMap(type);
-
         if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class && type != BasicMapper.class) {
             XbatisGlobalConfig.setSingleMapperClass((Class) type);
+            // 移除一开始注册是单mapper
+            MetaObject msMetaObject = this.newMetaObject(this.mapperRegistry);
+            Map<Class<?>, MapperProxyFactory<?>> knownMappers = (Map<Class<?>, MapperProxyFactory<?>>) msMetaObject.getValue("knownMappers");
+            knownMappers.remove(BasicMapper.class);
         }
+        // 清空多余的resultMap
+        this.clearResultMap(type);
     }
 
     private void clearResultMap(Class<?> type) {
@@ -170,10 +173,11 @@ public class MybatisConfiguration extends Configuration {
         boolean checkPrefix3 = !removeIdPrefix2.equals(removeIdPrefix3);
         while (it.hasNext()) {
             Map.Entry<String, ResultMap> entry = it.next();
-            if (!(entry instanceof ResultMap)) {
+            Object value = entry.getValue();
+            if (!(value instanceof ResultMap)) {
                 continue;
             }
-            ResultMap resultMap = entry.getValue();
+            ResultMap resultMap = (ResultMap) value;
             if (resultMap.getType() != Object.class && resultMap.getType() != Integer.class && resultMap.getType() != Map.class) {
                 continue;
             }
