@@ -90,7 +90,7 @@ public class ModelUpdateCreateUtil {
         doBefore(modelInfo, model, forceFields, defaultValueContext);
 
         for (ModelFieldInfo modelFieldInfo : modelInfo.getModelFieldInfos()) {
-            boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName());
+            boolean isForceUpdate = modelFieldInfo.isForceUpdate() || (Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName()));
             Object value = modelFieldInfo.getValue(model);
             if (modelFieldInfo.getTableFieldInfo().isTableId()) {
                 if (Objects.nonNull(value)) {

@@ -31,4 +31,11 @@ public @interface ModelEntityField {
      */
     String value();
 
+    /**
+     * 强制修改
+     *
+     * @return
+     */
+    boolean forceUpdate() default false;
+
 }
