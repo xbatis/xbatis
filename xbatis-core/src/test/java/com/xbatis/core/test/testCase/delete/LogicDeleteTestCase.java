@@ -16,6 +16,7 @@ package com.xbatis.core.test.testCase.delete;
 
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
+import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import com.xbatis.core.test.DO.LogicDeleteTest;
@@ -224,6 +225,29 @@ public class LogicDeleteTestCase extends BaseTest {
             assertEquals(logicDeleteTest.getDeleted(), (byte) 0);
 
             logicDeleteTestMapper.deleteById(1);
+            cnt = logicDeleteTestMapper.updateBatch(Arrays.asList(logicDeleteTest));
+            assertEquals(cnt, 0);
+        }
+    }
+
+
+    @Test
+    public void update2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            BasicMapper logicDeleteTestMapper = session.getMapper(BasicMapper.class);
+            LogicDeleteTest logicDeleteTest = logicDeleteTestMapper.getById(LogicDeleteTest.class, 1L);
+            logicDeleteTest.setDeleted((byte) 1);
+            logicDeleteTestMapper.update(logicDeleteTest);
+            logicDeleteTest = logicDeleteTestMapper.getById(LogicDeleteTest.class, 1L);
+            assertEquals(logicDeleteTest.getDeleted(), (byte) 0);
+
+            logicDeleteTest.setDeleted((byte) 1);
+            int cnt = logicDeleteTestMapper.updateBatch(Arrays.asList(logicDeleteTest));
+            assertEquals(cnt, 1);
+            logicDeleteTest = logicDeleteTestMapper.getById(LogicDeleteTest.class, 1L);
+            assertEquals(logicDeleteTest.getDeleted(), (byte) 0);
+
+            logicDeleteTestMapper.deleteById(LogicDeleteTest.class, 1);
             cnt = logicDeleteTestMapper.updateBatch(Arrays.asList(logicDeleteTest));
             assertEquals(cnt, 0);
         }
