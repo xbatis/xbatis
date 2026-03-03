@@ -21,7 +21,7 @@ import cn.xbatis.core.mybatis.mapper.context.EntityBatchInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.EntityInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
-import cn.xbatis.core.sql.TableSplitUtil;
+import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
 

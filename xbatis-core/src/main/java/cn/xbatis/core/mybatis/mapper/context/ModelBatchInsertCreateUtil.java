@@ -16,7 +16,7 @@ package cn.xbatis.core.mybatis.mapper.context;
 
 import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
-import cn.xbatis.core.sql.TableSplitUtil;
+import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
 import cn.xbatis.core.sql.executor.MpTable;

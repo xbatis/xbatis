@@ -14,7 +14,6 @@
 
 package cn.xbatis.core.sql.executor;
 
-import cn.xbatis.core.sql.TableSplitUtil;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.basic.Condition;

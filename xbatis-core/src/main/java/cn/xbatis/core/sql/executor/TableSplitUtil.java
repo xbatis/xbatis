@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
+ *  Copyright (c) 2024-2026, Ai东 (abc-127@live.cn) xbatis.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -12,11 +12,10 @@
  *
  */
 
-package cn.xbatis.core.sql;
+package cn.xbatis.core.sql.executor;
 
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
-import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.db.annotations.TableSplitter;
 import db.sql.api.impl.cmd.basic.BasicValue;
 

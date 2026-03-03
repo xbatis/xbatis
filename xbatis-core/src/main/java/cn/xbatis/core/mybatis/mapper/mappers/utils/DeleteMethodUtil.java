@@ -18,7 +18,7 @@ import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
-import cn.xbatis.core.sql.TableSplitUtil;
+import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.Delete;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.util.WhereUtil;

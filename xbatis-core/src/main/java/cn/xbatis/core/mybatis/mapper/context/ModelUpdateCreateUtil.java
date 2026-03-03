@@ -19,7 +19,7 @@ import cn.xbatis.core.db.reflect.ModelInfo;
 import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.MybatisCmdFactory;
-import cn.xbatis.core.sql.TableSplitUtil;
+import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Update;
 import cn.xbatis.core.sql.util.WhereUtil;

@@ -18,7 +18,6 @@ import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
 import cn.xbatis.core.mybatis.logging.Loggable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
-import cn.xbatis.core.sql.TableSplitUtil;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
