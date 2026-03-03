@@ -91,7 +91,6 @@ public class MybatisConfiguration extends Configuration {
         Class<?> basicMapper = XbatisGlobalConfig.getSingleMapperClass();
         if (!this.hasMapper(basicMapper)) {
             this.addBasicMapper(basicMapper);
-            this.clearResultMap();
         }
     }
 
@@ -146,7 +145,6 @@ public class MybatisConfiguration extends Configuration {
         super.addMappedStatement(MappedStatementUtil.wrap(ms));
     }
 
-
     private <T> void addBasicMapper(Class<T> type) {
         super.addMapper(type);
         //替换成自己的   MapperProxy 工厂
@@ -155,20 +153,31 @@ public class MybatisConfiguration extends Configuration {
             Map<Class<?>, MapperProxyFactory<?>> knownMappers = (Map<Class<?>, MapperProxyFactory<?>>) msMetaObject.getValue("knownMappers");
             knownMappers.put(type, new BasicMapperProxyFactory(type));
         }
+
+        if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class && type != BasicMapper.class) {
+            XbatisGlobalConfig.setSingleMapperClass((Class) type);
+            // 移除一开始注册是单mapper
+            MetaObject msMetaObject = this.newMetaObject(this.mapperRegistry);
+            Map<Class<?>, MapperProxyFactory<?>> knownMappers = (Map<Class<?>, MapperProxyFactory<?>>) msMetaObject.getValue("knownMappers");
+            knownMappers.remove(BasicMapper.class);
+        }
+        // 清空多余的resultMap
+        this.clearResultMap(type);
     }
 
-    private void clearResultMap() {
+    private void clearResultMap(Class<?> type) {
         Iterator<Map.Entry<String, ResultMap>> it = resultMaps.entrySet().iterator();
         String removeIdPrefix1 = "$";
         String removeIdPrefix2 = BasicMapper.class.getName() + ".$";
-        String removeIdPrefix3 = XbatisGlobalConfig.getSingleMapperClass().getName() + ".$";
+        String removeIdPrefix3 = type.getName() + ".$";
         boolean checkPrefix3 = !removeIdPrefix2.equals(removeIdPrefix3);
         while (it.hasNext()) {
             Map.Entry<String, ResultMap> entry = it.next();
-            if (!(entry instanceof ResultMap)) {
+            Object value = entry.getValue();
+            if (!(value instanceof ResultMap)) {
                 continue;
             }
-            ResultMap resultMap = entry.getValue();
+            ResultMap resultMap = (ResultMap) value;
             if (resultMap.getType() != Object.class && resultMap.getType() != Integer.class && resultMap.getType() != Map.class) {
                 continue;
             }
@@ -187,7 +196,16 @@ public class MybatisConfiguration extends Configuration {
         if (!initialized) {
             this.onInit();
         }
-        if (XbatisGlobalConfig.getSingleMapperClass() == type || BasicMapper.class.isAssignableFrom(type)) {
+
+        if (XbatisGlobalConfig.getSingleMapperClass() == type) {
+            //已在 onInit 中初始化
+            return;
+        }
+
+        if (XbatisGlobalConfig.getSingleMapperClass().isAssignableFrom(type)) {
+            if (!this.hasMapper(type)) {
+                this.addBasicMapper(type);
+            }
             return;
         }
 

@@ -33,6 +33,8 @@ public class ModelFieldInfo {
 
     private final FieldInfo fieldInfo;
 
+    private final boolean forceUpdate;
+
     /**
      * 字段读取反射方法
      */
@@ -47,6 +49,9 @@ public class ModelFieldInfo {
         if (field.isAnnotationPresent(ModelEntityField.class)) {
             ModelEntityField modelEntityField = field.getAnnotation(ModelEntityField.class);
             entityFieldName = modelEntityField.value();
+            this.forceUpdate = modelEntityField.forceUpdate();
+        } else {
+            this.forceUpdate = false;
         }
         this.tableFieldInfo = tableInfo.getFieldInfo(entityFieldName);
         if (Objects.isNull(this.tableFieldInfo)) {
@@ -87,5 +92,9 @@ public class ModelFieldInfo {
 
     public FieldInfo getFieldInfo() {
         return fieldInfo;
+    }
+
+    public boolean isForceUpdate() {
+        return forceUpdate;
     }
 }

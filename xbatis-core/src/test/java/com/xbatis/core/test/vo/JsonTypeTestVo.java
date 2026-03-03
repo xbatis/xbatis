@@ -17,7 +17,6 @@ package com.xbatis.core.test.vo;
 import cn.xbatis.core.mybatis.typeHandler.Fastjson2TypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.FastjsonTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.GsonTypeHandler;
-import cn.xbatis.core.mybatis.typeHandler.JacksonTypeHandler;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.ResultField;
 import com.xbatis.core.test.DO.SysRole;
@@ -36,10 +35,10 @@ public class JsonTypeTestVo {
     @ResultField(value = "bb", typeHandler = FastjsonTypeHandler.class)
     private SysUser bb;
 
-    @ResultField(value = "aa", typeHandler = JacksonTypeHandler.class)
+    @ResultField(value = "aa", typeHandler = Fastjson2TypeHandler.class)
     private List<SysRole> dd;
 
-    @ResultField(value = "bb", typeHandler = JacksonTypeHandler.class)
+    @ResultField(value = "bb", typeHandler = Fastjson2TypeHandler.class)
     private SysRole ee;
 
     @ResultField(value = "aa", typeHandler = Fastjson2TypeHandler.class)

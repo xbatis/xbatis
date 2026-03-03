@@ -154,9 +154,6 @@ public final class UpdateMethodUtil {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        if (batchFields == null || batchFields.length == 0) {
-            throw new IllegalArgumentException("batchFields must not be empty");
-        }
         TableInfo tableInfo = Tables.get(list.stream().findFirst().get().getClass());
         return updateBatch(basicMapper, tableInfo, list, batchFields);
     }

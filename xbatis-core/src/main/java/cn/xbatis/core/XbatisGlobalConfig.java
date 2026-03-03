@@ -496,7 +496,7 @@ public final class XbatisGlobalConfig {
      */
     public static Class<? extends BasicMapper> getSingleMapperClass() {
         if (SINGLE_MAPPER_CLASS == NULL) {
-            SINGLE_MAPPER_CLASS = BasicMapper.class;
+            return BasicMapper.class;
         }
         return (Class) SINGLE_MAPPER_CLASS;
     }
