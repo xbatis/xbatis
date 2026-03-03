@@ -65,10 +65,10 @@
     </select>
 
     <resultMap id="jsonTypeTestResultMap" type="com.xbatis.core.test.vo.JsonTypeTestVo">
-        <result property="aa" column="aa" typeHandler="cn.xbatis.core.mybatis.typeHandler.JacksonTypeHandler"/>
-        <result property="bb" column="bb" typeHandler="cn.xbatis.core.mybatis.typeHandler.JacksonTypeHandler"/>
-        <result property="dd" column="aa" typeHandler="cn.xbatis.core.mybatis.typeHandler.JacksonTypeHandler"/>
-        <result property="ee" column="bb" typeHandler="cn.xbatis.core.mybatis.typeHandler.JacksonTypeHandler"/>
+        <result property="aa" column="aa" typeHandler="cn.xbatis.core.mybatis.typeHandler.Fastjson2TypeHandler"/>
+        <result property="bb" column="bb" typeHandler="cn.xbatis.core.mybatis.typeHandler.Fastjson2TypeHandler"/>
+        <result property="dd" column="aa" typeHandler="cn.xbatis.core.mybatis.typeHandler.Fastjson2TypeHandler"/>
+        <result property="ee" column="bb" typeHandler="cn.xbatis.core.mybatis.typeHandler.Fastjson2TypeHandler"/>
     </resultMap>
 
     <select id="jsonTypeTest2" resultMap="jsonTypeTestResultMap">
