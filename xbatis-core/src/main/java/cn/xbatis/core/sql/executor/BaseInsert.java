@@ -142,7 +142,7 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
         }
 
         if (splitTableKeyIndex == -1) {
-            if (table.getName().equals(table.tableInfo.getTableName())) {
+            if (table.getTableInfo().isSplitTableStrict() && table.getName().equals(table.tableInfo.getTableName())) {
                 throw new SplitTableException("Not found the split field in insert fields");
             } else {
                 return;

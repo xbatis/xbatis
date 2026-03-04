@@ -27,8 +27,8 @@ public @interface SplitTable {
     Class<? extends TableSplitter> value();
 
     /**
-     * 严格模式下，入股跨区则会报错
-     *
+     * 严格模式下，如果跨区则会报错
+     * 数据库分区模式下建议非严格模式；非数据库分区模式 建议改为true
      * @return
      */
     boolean strict() default false;

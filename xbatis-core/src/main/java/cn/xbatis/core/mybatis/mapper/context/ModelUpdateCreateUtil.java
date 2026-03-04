@@ -78,7 +78,7 @@ public class ModelUpdateCreateUtil {
 
         if (TableSplitUtil.isNeedSplitHandle(table)) {
             Object splitValue = modelInfo.getSplitFieldInfo().getValue(model);
-            if (Objects.isNull(splitValue) && table.getName().equals(table.getTableInfo().getTableName())) {
+            if (Objects.isNull(splitValue) && modelInfo.getTableInfo().isSplitTableStrict() && table.getName().equals(table.getTableInfo().getTableName())) {
                 throw new SplitTableException("model update has no table split value");
             } else {
                 TableSplitUtil.splitHandle(table, splitValue);

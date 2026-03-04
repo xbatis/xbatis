@@ -76,7 +76,7 @@ public class EntityUpdateCreateUtil {
 
         if (TableSplitUtil.isNeedSplitHandle(table)) {
             Object splitValue = tableInfo.getSplitFieldInfo().getValue(entity);
-            if (Objects.isNull(splitValue) && table.getName().equals(tableInfo.getTableName())) {
+            if (Objects.isNull(splitValue) && tableInfo.isSplitTableStrict() && table.getName().equals(tableInfo.getTableName())) {
                 throw new SplitTableException("entity update has no table split value");
             } else {
                 TableSplitUtil.splitHandle(table, splitValue);
