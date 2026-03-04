@@ -27,7 +27,7 @@ public class SplitTableTestSplitter implements TableSplitter {
     public String split(String sourceTableName, Object splitValue) {
         Integer value = (Integer) splitValue;
         String index = "";
-        if (value == 1) {
+        if (value == 1 || value == 101) {
             index = "1";
         } else if (value == 2 || value == 3) {
             index = "2";

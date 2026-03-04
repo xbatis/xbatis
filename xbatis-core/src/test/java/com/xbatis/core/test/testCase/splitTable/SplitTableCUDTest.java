@@ -57,7 +57,7 @@ public class SplitTableCUDTest extends BaseTest {
             assertEquals(splitTableTest.getName(), "123");
 
             splitTableTest = QueryChain.of(mapper).isNotNull(SplitTableTest::getName).orNested(conditionChain -> {
-                conditionChain.eq(SplitTableTest::getSplitId, 1);
+                conditionChain.in(SplitTableTest::getSplitId, 1, 101);
             }).get();
 
             assertNotNull(splitTableTest);

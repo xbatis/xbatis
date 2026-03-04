@@ -19,7 +19,9 @@ import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
 import cn.xbatis.db.annotations.TableSplitter;
 import db.sql.api.impl.cmd.basic.BasicValue;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class TableSplitUtil {
@@ -41,9 +43,12 @@ public class TableSplitUtil {
             return getSplitValue(((Supplier) value).get(), splitter);
         }
 
-        Object v = null;
-        if (value.getClass().isArray()) {
+        Object v;
+        if (splitter.support(value.getClass())) {
+            return value;
+        } else if (value.getClass().isArray()) {
             //假如是数组
+            List list = new ArrayList();
             Object[] arr = (Object[]) value;
             for (Object o : arr) {
                 if (o == null) {
@@ -57,11 +62,13 @@ public class TableSplitUtil {
                     continue;
                 }
                 //从数组中找到符合的
-                return v;
+                list.add(v);
             }
+            return list;
         } else if (Collection.class.isAssignableFrom(value.getClass())) {
             //假如是数组
             Collection collection = (Collection) value;
+            List list = new ArrayList();
             for (Object item : collection) {
                 if (item == null) {
                     continue;
@@ -74,36 +81,64 @@ public class TableSplitUtil {
                     continue;
                 }
                 //从数组中找到符合的
-                return v;
+                list.add(v);
             }
-        } else if (splitter.support(value.getClass())) {
-            return value;
+            return list;
         }
-        return v;
+        return null;
     }
 
     public static boolean isNeedSplitHandle(MpTable mpTable) {
-        if (!mpTable.getTableInfo().isSplitTable()) {
-            return false;
-        }
-        if (mpTable.getName().equals(mpTable.getTableInfo().getSchemaAndTableName())) {
-            return true;
-        }
-        return false;
+        return mpTable.allowSplitTable;
     }
 
-    public static String getSplitTableName(TableInfo tableInfo, Object value) {
+    /**
+     * 获取分表
+     *
+     * @param tableInfo
+     * @param value     不能是集合 数组
+     * @return 分隔后的表
+     */
+    public static String getSplitTableNameAllowMulti(TableInfo tableInfo, Object value) {
         TableSplitter splitter = tableInfo.getTableSplitter();
         Object v = getSplitValue(value, splitter);
         if (v == null) {
             return null;
         }
-        String splitTableName = splitter.split(tableInfo.getTableName(), v);
-        if (splitTableName == null) {
+        if (!splitter.support(v.getClass())) {
             return null;
         }
-        if (!tableInfo.getSchema().isEmpty()) {
-            splitTableName = tableInfo.getSchema() + "." + splitTableName;
+        return splitter.split(tableInfo.getTableName(), v);
+    }
+
+    private static String getSplitTableName(MpTable mpTable, Object value) {
+        TableInfo tableInfo = mpTable.tableInfo;
+        TableSplitter splitter = tableInfo.getTableSplitter();
+        Object v = getSplitValue(value, splitter);
+        if (v == null) {
+            return null;
+        }
+        String splitTableName = null;
+        if (v instanceof List) {
+            List list = (List) v;
+            for (Object item : list) {
+                String name = splitter.split(tableInfo.getTableName(), item);
+                if (name == null) {
+                    continue;
+                }
+                if (splitTableName != null && !splitTableName.equals(name)) {
+                    //包含多个分区 直接设置为原始表；且不允许 分表了
+                    mpTable.allowSplitTable = false;
+                    mpTable.setName(tableInfo.getTableName());
+                    return null;
+                }
+                splitTableName = name;
+            }
+        } else {
+            splitTableName = splitter.split(tableInfo.getTableName(), v);
+            if (splitTableName == null) {
+                return null;
+            }
         }
         return splitTableName;
     }
@@ -116,10 +151,17 @@ public class TableSplitUtil {
         if (!isNeedSplitHandle(mpTable)) {
             return;
         }
-        String splitTableName = getSplitTableName(mpTable.getTableInfo(), value);
+        String splitTableName = getSplitTableName(mpTable, value);
         if (splitTableName == null) {
             return;
         }
+        if (!mpTable.getName().equals(mpTable.getTableInfo().getTableName()) && !mpTable.getName().equals(splitTableName)) {
+            // 包含多个分区 直接设置为原始表；且不允许 分表了
+            mpTable.setName(mpTable.getTableInfo().getTableName());
+            mpTable.allowSplitTable = false;
+            return;
+        }
+
         mpTable.setName(splitTableName);
     }
 }

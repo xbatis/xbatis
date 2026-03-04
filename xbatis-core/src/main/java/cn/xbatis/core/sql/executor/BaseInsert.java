@@ -132,14 +132,20 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
         int splitTableKeyIndex = -1;
         for (int i = 0; i < insertFields.size(); i++) {
             TableField item = insertFields.get(i);
-            MpTableField tableField = (MpTableField) item;
-            if (tableField.getTableFieldInfo().isTableSplitKey()) {
-                splitTableKeyIndex = i;
+            if (item instanceof MpTableField) {
+                MpTableField tableField = (MpTableField) item;
+                if (tableField.getTableFieldInfo().isTableSplitKey()) {
+                    splitTableKeyIndex = i;
+                }
             }
         }
 
         if (splitTableKeyIndex == -1) {
-            throw new RuntimeException("Not found the split field in insert fields");
+            if (table.getName().equals(table.tableInfo.getTableName())) {
+                throw new RuntimeException("Not found the split field in insert fields");
+            } else {
+                return;
+            }
         }
 
         if (getInsertValues() == null) {

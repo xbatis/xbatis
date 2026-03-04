@@ -38,6 +38,8 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
 
     protected String prefix;
 
+    protected String schema;
+
     protected String name;
 
     protected String[] ids;
@@ -84,6 +86,15 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
         return dbType.wrap(databaseCaseRule.convert(this.getName()));
     }
 
+    public String getSchema() {
+        return schema;
+    }
+
+    public Table setSchema(String schema) {
+        this.schema = schema;
+        return this;
+    }
+
     @Override
     public String getAlias() {
         return alias;
@@ -109,6 +120,9 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (this.schema != null && !this.schema.isEmpty()) {
+            sqlBuilder.append(schema).append(SqlConst.DOT);
+        }
         sqlBuilder.append(getName(context.getDbType()));
         if (getAlias() != null) {
             sqlBuilder.append(SqlConst.BLANK).append(getAlias());

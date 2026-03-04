@@ -21,9 +21,9 @@ import cn.xbatis.core.mybatis.mapper.context.ModelBatchInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.ModelInsertContext;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
-import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
+import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.db.Model;
 
 import java.util.*;
@@ -85,7 +85,7 @@ public final class SaveModelMethodUtil {
             final List<String> groups = new ArrayList<>();
             Map<String, List<M>> groupedMap = list.stream()
                     .collect(Collectors.groupingBy(m -> {
-                        String splitTableName = TableSplitUtil.getSplitTableName(modelInfo.getTableInfo(), modelInfo.getSplitFieldInfo().getValue(m));
+                        String splitTableName = TableSplitUtil.getSplitTableNameAllowMulti(modelInfo.getTableInfo(), modelInfo.getSplitFieldInfo().getValue(m));
                         if (!groups.contains(splitTableName)) {
                             groups.add(splitTableName);
                         }

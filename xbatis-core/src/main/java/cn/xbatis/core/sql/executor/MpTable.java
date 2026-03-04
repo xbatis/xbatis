@@ -26,14 +26,20 @@ public class MpTable extends db.sql.api.impl.cmd.basic.Table {
 
     protected final TableInfo tableInfo;
 
+    protected boolean allowSplitTable;
+
     public MpTable(TableInfo tableInfo) {
-        super(tableInfo.getSchemaAndTableName(), tableInfo.getIdColumnNames(), null);
+        super(tableInfo.getTableName(), tableInfo.getIdColumnNames(), null);
         this.tableInfo = tableInfo;
+        this.schema = tableInfo.getSchema();
+        this.allowSplitTable = tableInfo.isSplitTable();
     }
 
     public MpTable(TableInfo tableInfo, String alias) {
-        super(tableInfo.getSchemaAndTableName(), tableInfo.getIdColumnNames(), alias);
+        super(tableInfo.getTableName(), tableInfo.getIdColumnNames(), alias);
         this.tableInfo = tableInfo;
+        this.schema = tableInfo.getSchema();
+        this.allowSplitTable = tableInfo.isSplitTable();
     }
 
     @Override

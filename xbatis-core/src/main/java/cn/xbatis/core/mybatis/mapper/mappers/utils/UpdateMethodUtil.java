@@ -24,8 +24,8 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
-import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.MpTableField;
+import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.core.util.TableInfoUtil;
 import db.sql.api.DbModel;
@@ -195,7 +195,7 @@ public final class UpdateMethodUtil {
             final List<String> groups = new ArrayList<>();
             Map<String, List<T>> groupedMap = list.stream()
                     .collect(Collectors.groupingBy(e -> {
-                        String splitTableName = TableSplitUtil.getSplitTableName(tableInfo, tableInfo.getSplitFieldInfo().getValue(e));
+                        String splitTableName = TableSplitUtil.getSplitTableNameAllowMulti(tableInfo, tableInfo.getSplitFieldInfo().getValue(e));
                         if (!groups.contains(splitTableName)) {
                             groups.add(splitTableName);
                         }

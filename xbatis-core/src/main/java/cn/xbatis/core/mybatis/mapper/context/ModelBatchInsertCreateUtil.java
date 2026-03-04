@@ -16,10 +16,11 @@ package cn.xbatis.core.mybatis.mapper.context;
 
 import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
-import cn.xbatis.core.sql.executor.TableSplitUtil;
+import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
 import cn.xbatis.core.sql.executor.MpTable;
+import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.IdAutoType;
@@ -129,7 +130,12 @@ public class ModelBatchInsertCreateUtil {
 
         //设置insert 列
         for (ModelFieldInfo modelFieldInfo : saveFieldInfoSet) {
-            insert.fields(insert.$().field(table, modelFieldInfo.getTableFieldInfo().getColumnName(), modelFieldInfo.getTableFieldInfo().isTableId()));
+            MybatisCmdFactory cmdFactory = insert.$();
+            if (table instanceof MpTable) {
+                insert.fields(cmdFactory.field((MpTable) table, modelFieldInfo.getTableFieldInfo()));
+            } else {
+                insert.fields(insert.$().field(table, modelFieldInfo.getTableFieldInfo().getColumnName(), modelFieldInfo.getTableFieldInfo().isTableId()));
+            }
         }
 
         int fieldSize = saveFieldInfoSet.size();

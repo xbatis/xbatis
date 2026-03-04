@@ -19,8 +19,8 @@ import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.MybatisCmdFactory;
-import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.MpTable;
+import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.Update;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
@@ -75,7 +75,7 @@ public class EntityUpdateCreateUtil {
 
         if (TableSplitUtil.isNeedSplitHandle(table)) {
             Object splitValue = tableInfo.getSplitFieldInfo().getValue(entity);
-            if (Objects.isNull(splitValue)) {
+            if (Objects.isNull(splitValue) && table.getName().equals(tableInfo.getTableName())) {
                 throw new RuntimeException("entity update has no table split value");
             } else {
                 TableSplitUtil.splitHandle(table, splitValue);

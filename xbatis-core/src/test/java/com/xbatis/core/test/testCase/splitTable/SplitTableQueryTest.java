@@ -55,12 +55,10 @@ public class SplitTableQueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
 
-            List<SplitTableTest> list = mapper.list(where -> where.in(SplitTableTest::getSplitId, new MybatisParameter(1, (TypeHandler<?>) null, JdbcType.UNDEFINED), 2));
-            for (SplitTableTest splitTableTest : list) {
-                assertNotNull(splitTableTest);
-                assertEquals(splitTableTest.getSplitId(), 1);
-                assertEquals(splitTableTest.getSplitId(), 1);
-            }
+            List<SplitTableTest> list = mapper.list(where -> where.in(SplitTableTest::getSplitId, new MybatisParameter(2, (TypeHandler<?>) null, JdbcType.UNDEFINED), 3));
+            assertEquals(2, list.size());
+            assertEquals(list.get(0).getSplitId(), 2);
+            assertEquals(list.get(1).getSplitId(), 3);
 
         }
     }
@@ -73,11 +71,10 @@ public class SplitTableQueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
 
-            List<SplitTableTest> list = mapper.list(where -> where.in(SplitTableTest::getSplitId, Arrays.asList(1, 2)));
-            for (SplitTableTest splitTableTest : list) {
-                assertNotNull(splitTableTest);
-                assertEquals(splitTableTest.getSplitId(), 1);
-            }
+            List<SplitTableTest> list = mapper.list(where -> where.in(SplitTableTest::getSplitId, Arrays.asList(2, 3)));
+            assertEquals(2, list.size());
+            assertEquals(list.get(0).getSplitId(), 2);
+            assertEquals(list.get(1).getSplitId(), 3);
         }
     }
 
@@ -88,12 +85,10 @@ public class SplitTableQueryTest extends BaseTest {
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
-            List<SplitTableTest> list = mapper.list(where -> where.between(SplitTableTest::getSplitId, 1, 2));
-            for (SplitTableTest splitTableTest : list) {
-                assertNotNull(splitTableTest);
-                assertEquals(splitTableTest.getSplitId(), 1);
-                assertEquals(splitTableTest.getSplitId(), 1);
-            }
+            List<SplitTableTest> list = mapper.list(where -> where.between(SplitTableTest::getSplitId, 2, 3));
+            assertEquals(2, list.size());
+            assertEquals(list.get(0).getSplitId(), 2);
+            assertEquals(list.get(1).getSplitId(), 3);
         }
     }
 }
