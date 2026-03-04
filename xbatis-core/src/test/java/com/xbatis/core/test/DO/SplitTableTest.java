@@ -26,7 +26,7 @@ import lombok.experimental.FieldNameConstants;
 @Data
 @FieldNameConstants
 @Table("split_table")
-@SplitTable(SplitTableTestSplitter.class)
+@SplitTable(value = SplitTableTestSplitter.class, strict = true)
 public class SplitTableTest {
 
     @TableId(IdAutoType.AUTO)
