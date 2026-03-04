@@ -27,6 +27,7 @@ import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.Model;
+import cn.xbatis.db.SplitTableException;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
@@ -78,7 +79,7 @@ public class ModelUpdateCreateUtil {
         if (TableSplitUtil.isNeedSplitHandle(table)) {
             Object splitValue = modelInfo.getSplitFieldInfo().getValue(model);
             if (Objects.isNull(splitValue) && table.getName().equals(table.getTableInfo().getTableName())) {
-                throw new RuntimeException("model update has no table split value");
+                throw new SplitTableException("model update has no table split value");
             } else {
                 TableSplitUtil.splitHandle(table, splitValue);
             }

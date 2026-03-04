@@ -18,6 +18,7 @@ import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.executor.statement.Timeoutable;
 import cn.xbatis.core.mybatis.logging.Loggable;
 import cn.xbatis.core.sql.MybatisCmdFactory;
+import cn.xbatis.db.SplitTableException;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
@@ -142,7 +143,7 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
 
         if (splitTableKeyIndex == -1) {
             if (table.getName().equals(table.tableInfo.getTableName())) {
-                throw new RuntimeException("Not found the split field in insert fields");
+                throw new SplitTableException("Not found the split field in insert fields");
             } else {
                 return;
             }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
+ *  Copyright (c) 2024-2026, Ai东 (abc-127@live.cn) xbatis.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -12,24 +12,11 @@
  *
  */
 
-package cn.xbatis.db.annotations;
+package cn.xbatis.db;
 
-import java.lang.annotation.*;
+public class SplitTableException extends RuntimeException{
 
-/**
- * 分表注解
- */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface SplitTable {
-
-    Class<? extends TableSplitter> value();
-
-    /**
-     * 严格模式下，入股跨区则会报错
-     *
-     * @return
-     */
-    boolean strict() default false;
+    public SplitTableException(String message) {
+        super(message);
+    }
 }

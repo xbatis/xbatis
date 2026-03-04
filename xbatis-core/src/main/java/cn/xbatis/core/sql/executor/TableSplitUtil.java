@@ -16,6 +16,7 @@ package cn.xbatis.core.sql.executor;
 
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
+import cn.xbatis.db.SplitTableException;
 import cn.xbatis.db.annotations.TableSplitter;
 import db.sql.api.impl.cmd.basic.BasicValue;
 
@@ -127,6 +128,9 @@ public class TableSplitUtil {
                     continue;
                 }
                 if (splitTableName != null && !splitTableName.equals(name)) {
+                    if (mpTable.getTableInfo().isSplitTableStrict()) {
+                        throw new SplitTableException("cross-region");
+                    }
                     //包含多个分区 直接设置为原始表；且不允许 分表了
                     mpTable.allowSplitTable = false;
                     mpTable.setName(tableInfo.getTableName());
@@ -156,6 +160,9 @@ public class TableSplitUtil {
             return;
         }
         if (!mpTable.getName().equals(mpTable.getTableInfo().getTableName()) && !mpTable.getName().equals(splitTableName)) {
+            if (mpTable.getTableInfo().isSplitTableStrict()) {
+                throw new SplitTableException("cross-region");
+            }
             // 包含多个分区 直接设置为原始表；且不允许 分表了
             mpTable.setName(mpTable.getTableInfo().getTableName());
             mpTable.allowSplitTable = false;

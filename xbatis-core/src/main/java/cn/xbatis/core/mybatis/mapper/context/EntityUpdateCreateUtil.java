@@ -26,6 +26,7 @@ import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TableInfoUtil;
+import cn.xbatis.db.SplitTableException;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
@@ -76,7 +77,7 @@ public class EntityUpdateCreateUtil {
         if (TableSplitUtil.isNeedSplitHandle(table)) {
             Object splitValue = tableInfo.getSplitFieldInfo().getValue(entity);
             if (Objects.isNull(splitValue) && table.getName().equals(tableInfo.getTableName())) {
-                throw new RuntimeException("entity update has no table split value");
+                throw new SplitTableException("entity update has no table split value");
             } else {
                 TableSplitUtil.splitHandle(table, splitValue);
             }

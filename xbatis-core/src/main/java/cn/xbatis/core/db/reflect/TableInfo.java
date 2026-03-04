@@ -68,6 +68,8 @@ public class TableInfo {
 
     private final TableFieldInfo splitFieldInfo;
 
+    private final boolean splitTableStrict;
+
     /**
      * 乐观锁字段
      */
@@ -124,14 +126,17 @@ public class TableInfo {
 
         SplitTable splitTable = entity.getAnnotation(SplitTable.class);
         this.isSplitTable = splitTable != null;
+
         if (this.isSplitTable) {
             try {
                 this.tableSplitter = splitTable.value().newInstance();
+                this.splitTableStrict = splitTable.strict();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         } else {
             this.tableSplitter = null;
+            this.splitTableStrict = false;
         }
         this.tableName = TableInfoUtil.getTableName(entity);
         if (schema == null || StringPool.EMPTY.equals(schema)) {
@@ -373,5 +378,9 @@ public class TableInfo {
 
     public TableFieldInfo getLogicDeleteTimeFieldInfo() {
         return logicDeleteTimeFieldInfo;
+    }
+
+    public boolean isSplitTableStrict() {
+        return splitTableStrict;
     }
 }
