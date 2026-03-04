@@ -102,7 +102,7 @@ public final class SaveMethodUtil {
             final List<String> groups = new ArrayList<>();
             Map<String, List<E>> groupedMap = list.stream()
                     .collect(Collectors.groupingBy(e -> {
-                        String splitTableName = TableSplitUtil.getSplitTableNameAllowMulti(tableInfo, tableInfo.getSplitFieldInfo().getValue(e));
+                        String splitTableName = TableSplitUtil.getSplitTableName(tableInfo, tableInfo.getSplitFieldInfo().getValue(e));
                         if (!groups.contains(splitTableName)) {
                             groups.add(splitTableName);
                         }

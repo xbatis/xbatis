@@ -85,7 +85,7 @@ public final class SaveModelMethodUtil {
             final List<String> groups = new ArrayList<>();
             Map<String, List<M>> groupedMap = list.stream()
                     .collect(Collectors.groupingBy(m -> {
-                        String splitTableName = TableSplitUtil.getSplitTableNameAllowMulti(modelInfo.getTableInfo(), modelInfo.getSplitFieldInfo().getValue(m));
+                        String splitTableName = TableSplitUtil.getSplitTableName(modelInfo.getTableInfo(), modelInfo.getSplitFieldInfo().getValue(m));
                         if (!groups.contains(splitTableName)) {
                             groups.add(splitTableName);
                         }

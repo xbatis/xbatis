@@ -99,7 +99,7 @@ public class TableSplitUtil {
      * @param value     不能是集合 数组
      * @return 分隔后的表
      */
-    public static String getSplitTableNameAllowMulti(TableInfo tableInfo, Object value) {
+    public static String getSplitTableName(TableInfo tableInfo, Object value) {
         TableSplitter splitter = tableInfo.getTableSplitter();
         Object v = getSplitValue(value, splitter);
         if (v == null) {
