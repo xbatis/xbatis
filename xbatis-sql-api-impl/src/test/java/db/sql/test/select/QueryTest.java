@@ -46,7 +46,7 @@ public class QueryTest extends BaseTest {
 
 
         check("where测试",
-                "SELECT id FROM user where id=1 and name !='xx' and id>=2 and id>3" +
+                "SELECT id FROM user where id=1 and name <>'xx' and id>=2 and id>3" +
                         " and id<=4 and id<5 or name like concat('%' , 'abc' ,'%') and name not like concat('%','abcd') and id between 6 and 7" +
                         " and id not between 8 and 9",
                 new Query()
