@@ -92,7 +92,7 @@ public final class SqlConst {
     public static final char[] NOT_IN = " NOT IN ".toCharArray();
     public static final char[] OR = " OR ".toCharArray();
     public static final char[] EQ = " = ".toCharArray();
-    public static final char[] NE = " != ".toCharArray();
+    public static final char[] NE = " <> ".toCharArray();
     public static final char[] LT = " < ".toCharArray();
     public static final char[] GT = " > ".toCharArray();
     public static final char[] LTE = " <= ".toCharArray();
