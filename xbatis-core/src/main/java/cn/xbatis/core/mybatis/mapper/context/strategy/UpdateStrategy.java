@@ -44,6 +44,12 @@ public class UpdateStrategy<T> {
         return new UpdateStrategy<>();
     }
 
+    public static <T> UpdateStrategy<T> create(Consumer<UpdateStrategy<T>> consumer) {
+        UpdateStrategy<T> updateStrategy = UpdateStrategy.create();
+        consumer.accept(updateStrategy);
+        return updateStrategy;
+    }
+
     public static <T> UpdateStrategy<T> of(Class<T> clazz) {
         return new UpdateStrategy<>();
     }

@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public final class SaveMethodUtil {
 
     public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity) {
-        return save(basicMapper, tableInfo, entity, new SaveStrategy<>());
+        return save(basicMapper, tableInfo, entity, SaveStrategy.create());
     }
 
     public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity, SaveStrategy<T> strategy) {
@@ -60,8 +60,7 @@ public final class SaveMethodUtil {
             return 0;
         }
         TableInfo tableInfo = Tables.get(list.stream().findFirst().get().getClass());
-        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy();
-        return saveBatch(basicMapper, tableInfo, list, saveBatchStrategy);
+        return saveBatch(basicMapper, tableInfo, list, SaveBatchStrategy.create());
     }
 
     public static <E> int saveBatch(BasicMapper basicMapper, Collection<E> list, SaveBatchStrategy saveBatchStrategy) {
@@ -76,8 +75,7 @@ public final class SaveMethodUtil {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy();
-        return saveBatch(basicMapper, tableInfo, list, saveBatchStrategy);
+        return saveBatch(basicMapper, tableInfo, list, SaveBatchStrategy.create());
     }
 
     public static <T> int saveBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, SaveBatchStrategy<T> saveBatchStrategy) {

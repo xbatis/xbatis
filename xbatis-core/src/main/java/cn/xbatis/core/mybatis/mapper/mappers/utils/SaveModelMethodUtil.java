@@ -56,7 +56,7 @@ public final class SaveModelMethodUtil {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy();
+        SaveBatchStrategy saveBatchStrategy = SaveBatchStrategy.create();
         return saveBatch(basicMapper, new Insert(), list, saveBatchStrategy);
     }
 

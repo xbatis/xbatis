@@ -30,6 +30,20 @@ public class SaveOrUpdateStrategy<T> {
 
     private Consumer<Where> on;
 
+    public static <T> SaveOrUpdateStrategy<T> create() {
+        return new SaveOrUpdateStrategy<>();
+    }
+
+    public static <T> SaveOrUpdateStrategy<T> create(Consumer<SaveOrUpdateStrategy<T>> consumer) {
+        SaveOrUpdateStrategy<T> saveOrUpdateStrategy = SaveOrUpdateStrategy.create();
+        consumer.accept(saveOrUpdateStrategy);
+        return saveOrUpdateStrategy;
+    }
+
+    public static <T> SaveOrUpdateStrategy<T> of(Class<T> clazz) {
+        return new SaveOrUpdateStrategy<>();
+    }
+
     public SaveOrUpdateStrategy<T> ignoreLogicDeleteWhenCheck(boolean ignoreLogicDeleteWhenCheck) {
         this.ignoreLogicDeleteWhenCheck = ignoreLogicDeleteWhenCheck;
         return this;

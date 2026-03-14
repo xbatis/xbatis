@@ -18,11 +18,7 @@ import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.incrementer.Generator;
 import cn.xbatis.core.incrementer.GeneratorFactory;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
-import cn.xbatis.core.sql.executor.TableSplitUtil;
-import cn.xbatis.core.sql.executor.BaseInsert;
-import cn.xbatis.core.sql.executor.Insert;
-import cn.xbatis.core.sql.executor.MpTable;
-import cn.xbatis.core.sql.executor.MpTableField;
+import cn.xbatis.core.sql.executor.*;
 import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.ModelInfoUtil;
@@ -76,16 +72,7 @@ public class ModelInsertCreateUtil {
             return;
         }
 
-        if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
-            Object value = modelFieldInfo.getValue(insertData);
-            if (value != null && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValueFillAlways()) {
-                return;
-            }
 
-            //读取回填 默认值
-            DefaultValueUtil.getAndSetDefaultValue(insertData, modelFieldInfo, defaultValueContext);
-            return;
-        }
         if (modelFieldInfo.getTableFieldInfo().isVersion()) {
             Object value = modelFieldInfo.getValue(insertData);
             if (value != null) {
@@ -95,6 +82,21 @@ public class ModelInsertCreateUtil {
             value = VersionUtil.getInitValue(modelFieldInfo.getFieldInfo().getTypeClass());
             //乐观锁回写
             ModelInfoUtil.setValue(modelFieldInfo, insertData, value);
+            return;
+        }
+
+        if (modelFieldInfo.isIgnoreDefaultValue()) {
+            return;
+        }
+
+        if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
+            Object value = modelFieldInfo.getValue(insertData);
+            if (value != null && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValueFillAlways()) {
+                return;
+            }
+
+            //读取回填 默认值
+            DefaultValueUtil.getAndSetDefaultValue(insertData, modelFieldInfo, defaultValueContext);
             return;
         }
 

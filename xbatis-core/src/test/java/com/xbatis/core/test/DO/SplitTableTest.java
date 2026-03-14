@@ -19,6 +19,7 @@ import cn.xbatis.db.annotations.SplitTable;
 import cn.xbatis.db.annotations.SplitTableKey;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableId;
+import com.xbatis.core.test.model.SplitTableTestModel;
 import com.xbatis.core.test.testCase.SplitTableTestSplitter;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -36,4 +37,13 @@ public class SplitTableTest {
     private Integer splitId;
 
     private String name;
+
+
+    public SplitTableTestModel convert() {
+        SplitTableTestModel splitTableTestModel = new SplitTableTestModel();
+        splitTableTestModel.setId(id);
+        splitTableTestModel.setSplitId(splitId);
+        splitTableTestModel.setName(name);
+        return splitTableTestModel;
+    }
 }

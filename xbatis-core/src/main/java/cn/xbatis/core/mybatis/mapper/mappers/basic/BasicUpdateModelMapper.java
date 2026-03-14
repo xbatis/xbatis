@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper.mappers.basic;
 
+import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.mybatis.mapper.mappers.utils.UpdateMethodUtil;
 import cn.xbatis.core.mybatis.mapper.mappers.utils.UpdateModelMethodUtil;
@@ -186,8 +187,8 @@ public interface BasicUpdateModelMapper extends BasicBaseMapper {
      * @param list 实体类Model对象List
      * @return 影响条数
      */
-    default <T, M extends Model<T>> int updateBatchModel(Collection<M> list) {
-        return updateBatchModel(list, (Getter<M>[]) null);
+    default <T, M extends Model<T>> int updateModelBatch(Collection<M> list) {
+        return updateModelBatch(list, (Getter<M>[]) null);
     }
 
     /**
@@ -198,7 +199,19 @@ public interface BasicUpdateModelMapper extends BasicBaseMapper {
      * @param batchFields 指定字段修改
      * @return 影响条数
      */
-    default <T, M extends Model<T>> int updateBatchModel(Collection<M> list, Getter<M>... batchFields) {
-        return UpdateModelMethodUtil.updateBatchModel(getBasicMapper(), list, batchFields);
+    default <T, M extends Model<T>> int updateModelBatch(Collection<M> list, Getter<M>... batchFields) {
+        return UpdateModelMethodUtil.updateModelBatch(getBasicMapper(), list, batchFields);
+    }
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list                实体类Model对象List
+     * @param updateBatchStrategy 批量修改策略
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int updateModelBatch(Collection<M> list, UpdateBatchStrategy<M> updateBatchStrategy) {
+        return UpdateModelMethodUtil.updateModelBatch(getBasicMapper(), list, updateBatchStrategy);
     }
 }

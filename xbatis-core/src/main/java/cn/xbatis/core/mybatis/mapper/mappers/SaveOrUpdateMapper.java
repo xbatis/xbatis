@@ -33,7 +33,7 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
-        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        SaveOrUpdateStrategy strategy = SaveOrUpdateStrategy.create();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, strategy);
     }
@@ -88,7 +88,7 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
-        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        SaveOrUpdateStrategy strategy = SaveOrUpdateStrategy.create();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, strategy);
     }

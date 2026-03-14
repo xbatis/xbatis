@@ -34,6 +34,21 @@ public class SaveStrategy<T> {
 
     private Consumer<IConflictAction<T>> conflictAction;
 
+
+    public static <T> SaveStrategy<T> create() {
+        return new SaveStrategy<>();
+    }
+
+    public static <T> SaveStrategy<T> create(Consumer<SaveStrategy<T>> consumer) {
+        SaveStrategy<T> saveStrategy = SaveStrategy.create();
+        consumer.accept(saveStrategy);
+        return saveStrategy;
+    }
+
+    public static <T> SaveStrategy<T> of(Class<T> clazz) {
+        return new SaveStrategy<>();
+    }
+
     /**
      * 设置是否所有字段 新增 - null值字段 将会被修改成NULL
      *

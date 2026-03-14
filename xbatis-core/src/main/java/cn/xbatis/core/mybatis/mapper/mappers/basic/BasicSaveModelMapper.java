@@ -34,7 +34,7 @@ public interface BasicSaveModelMapper extends BasicBaseMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> saveStrategy) {
-        SaveStrategy<M> strategy = new SaveStrategy<M>();
+        SaveStrategy<M> strategy = SaveStrategy.create();
         saveStrategy.accept(strategy);
         return SaveModelMethodUtil.save(getBasicMapper(), model, strategy);
     }
@@ -83,7 +83,7 @@ public interface BasicSaveModelMapper extends BasicBaseMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> saveStrategy) {
-        SaveStrategy<M> strategy = new SaveStrategy<>();
+        SaveStrategy<M> strategy = SaveStrategy.create();
         saveStrategy.accept(strategy);
         return SaveModelMethodUtil.saveList(getBasicMapper(), list, strategy);
     }
@@ -133,7 +133,7 @@ public interface BasicSaveModelMapper extends BasicBaseMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<M>> strategy) {
-        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy<>();
+        SaveBatchStrategy saveBatchStrategy = SaveBatchStrategy.create();
         strategy.accept(saveBatchStrategy);
         return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list, saveBatchStrategy);
     }

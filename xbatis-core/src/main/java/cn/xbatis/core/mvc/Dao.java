@@ -454,8 +454,8 @@ public interface Dao<T, ID> {
      * @param list
      * @return 影响条数
      */
-    default <M extends Model<T>> int updateBatchModel(Collection<M> list) {
-        return updateBatchModel(list, (Getter<M>[]) null);
+    default <M extends Model<T>> int updateModelBatch(Collection<M> list) {
+        return updateModelBatch(list, (Getter<M>[]) null);
     }
 
     /**
@@ -466,7 +466,7 @@ public interface Dao<T, ID> {
      * @param batchFields 必须指定字段
      * @return 影响条数
      */
-    <M extends Model<T>> int updateBatchModel(Collection<M> list, Getter<M>... batchFields);
+    <M extends Model<T>> int updateModelBatch(Collection<M> list, Getter<M>... batchFields);
 
     /**
      * 实体类保存或修改

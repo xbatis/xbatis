@@ -38,6 +38,21 @@ public class SaveBatchStrategy<T> {
 
     private Consumer<IConflictAction<T>> conflictAction;
 
+
+    public static <T> SaveBatchStrategy<T> create() {
+        return new SaveBatchStrategy<>();
+    }
+
+    public static <T> SaveBatchStrategy<T> create(Consumer<SaveBatchStrategy<T>> consumer) {
+        SaveBatchStrategy<T> saveBatchStrategy = SaveBatchStrategy.create();
+        consumer.accept(saveBatchStrategy);
+        return saveBatchStrategy;
+    }
+
+    public static <T> SaveBatchStrategy<T> of(Class<T> clazz) {
+        return create();
+    }
+
     /**
      * 设置强制字段 - null值字段 将会被修改成NULL
      *

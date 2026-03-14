@@ -23,6 +23,7 @@ import cn.xbatis.core.exception.OptimisticLockException;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
+import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.executor.MpTableField;
 import cn.xbatis.core.sql.executor.TableSplitUtil;
@@ -155,10 +156,28 @@ public final class UpdateMethodUtil {
             return 0;
         }
         TableInfo tableInfo = Tables.get(list.stream().findFirst().get().getClass());
-        return updateBatch(basicMapper, tableInfo, list, batchFields);
+        return updateBatch(basicMapper, tableInfo, list, updateStrategy -> updateStrategy.batchFields(batchFields));
     }
 
     public static <T> int updateBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, Getter<T>[] batchFields) {
+        return updateBatch(basicMapper, tableInfo, list, updateStrategy -> updateStrategy.batchFields(batchFields));
+    }
+
+    public static <T> int updateBatch(BasicMapper basicMapper, Collection<T> list, UpdateBatchStrategy<T> updateBatchStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        TableInfo tableInfo = Tables.get(list.stream().findFirst().get().getClass());
+        return updateBatch(basicMapper, tableInfo, list, updateBatchStrategy);
+    }
+
+    public static <T> int updateBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, Consumer<UpdateBatchStrategy<T>> updateStrategy) {
+        UpdateBatchStrategy<T> updateBatchStrategy = UpdateBatchStrategy.create();
+        updateStrategy.accept(updateBatchStrategy);
+        return updateBatch(basicMapper, tableInfo, list, updateBatchStrategy);
+    }
+
+    public static <T> int updateBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, UpdateBatchStrategy<T> updateBatchStrategy) {
         if (tableInfo.getIdFieldInfos().isEmpty()) {
             throw new RuntimeException("The entity " + tableInfo.getType() + " has no id field ,can't do batch update");
         }
@@ -168,6 +187,8 @@ public final class UpdateMethodUtil {
 
         List<TableFieldInfo> tableIdFieldInfos;
         List<TableFieldInfo> tableFieldInfos;
+
+        Getter<T>[] batchFields = updateBatchStrategy.getBatchFields();
         if (batchFields == null || batchFields.length == 0) {
             tableIdFieldInfos = tableInfo.getIdFieldInfos();
             tableFieldInfos = tableInfo.getTableFieldInfos()
@@ -206,24 +227,25 @@ public final class UpdateMethodUtil {
             for (String key : groups) {
                 UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
                 updateChain.update(tableInfo.getType(), table -> table.setName(key));
-                count += _updateBatch(updateChain, tableInfo, groupedMap.get(key), tableFieldInfos, tableIdFieldInfos, batchFields == null || batchFields.length == 0);
+                count += _updateBatch(updateChain, tableInfo, groupedMap.get(key), tableFieldInfos, tableIdFieldInfos, updateBatchStrategy);
             }
             return count;
         }
         UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
-        return _updateBatch(updateChain, tableInfo, list, tableFieldInfos, tableIdFieldInfos, batchFields == null || batchFields.length == 0);
+        return _updateBatch(updateChain, tableInfo, list, tableFieldInfos, tableIdFieldInfos, updateBatchStrategy);
     }
 
-    private static <T> int _updateBatch(UpdateChain updateChain, TableInfo tableInfo, Collection<T> list, Collection<TableFieldInfo> updateTableFieldInfos, List<TableFieldInfo> idFieldInfos, boolean allUpdate) {
+    private static <T> int _updateBatch(UpdateChain updateChain, TableInfo tableInfo, Collection<T> list, Collection<TableFieldInfo> updateTableFieldInfos, List<TableFieldInfo> idFieldInfos, UpdateBatchStrategy<T> updateBatchStrategy) {
         MpTableField[] idTableFields = idFieldInfos.stream().map(i -> {
             return updateChain.$().field(tableInfo.getType(), i.getField().getName());
         }).collect(Collectors.toList()).toArray(new MpTableField[0]);
 
 
+        boolean allUpdate = updateBatchStrategy.getBatchFields() == null || updateBatchStrategy.getBatchFields().length == 0;
         Map<String, List<Serializable>> columnUpdateValues = new HashMap<>();
         Map<String, Object> defaultValueContext = new HashMap<>();
         for (T entity : list) {
-            if (allUpdate) {
+            if (allUpdate && !updateBatchStrategy.isIgnoreDefaultValue()) {
                 for (TableFieldInfo tableFieldInfo : updateTableFieldInfos) {
                     EntityUpdateCreateUtil.initUpdateValue(tableFieldInfo, entity, Collections.EMPTY_SET, defaultValueContext);
                 }
@@ -253,7 +275,7 @@ public final class UpdateMethodUtil {
                     columnUpdateValues.put(tableFieldInfo.getColumnName(), values);
                 }
 
-                if (!allUpdate) {
+                if (!allUpdate && !updateBatchStrategy.isIgnoreDefaultValue()) {
                     EntityUpdateCreateUtil.initUpdateValue(tableFieldInfo, entity, Collections.EMPTY_SET, defaultValueContext);
                 }
 
@@ -276,7 +298,11 @@ public final class UpdateMethodUtil {
             for (int i = 0; i < list.size(); i++) {
                 Object value = columnUpdateValues.get(tableFieldInfo.getColumnName()).get(i);
                 if (value == null) {
-                    value = Methods.NULL();
+                    if (updateBatchStrategy.isIgnoreNull()) {
+                        value = tableField;
+                    } else {
+                        value = Methods.NULL();
+                    }
                 }
                 sqlCase.when(buildIdCaseWhen(updateChain, idTableFields, columnUpdateValues, i), Methods.cmd(value));
             }

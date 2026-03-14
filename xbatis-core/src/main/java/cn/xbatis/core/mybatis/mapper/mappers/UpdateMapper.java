@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper.mappers;
 
+import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.mybatis.mapper.mappers.utils.UpdateMethodUtil;
 import db.sql.api.Getter;
@@ -195,5 +196,18 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      */
     default <T> int updateBatch(Collection<T> list, Getter<T>... batchFields) {
         return UpdateMethodUtil.updateBatch(getBasicMapper(), getTableInfo(), list, batchFields);
+    }
+
+    /**
+     * 根据id批量修改操作
+     * 原生批量操作 采用 update case when  then else end 操作
+     *
+     * @param list                实体类集合
+     * @param updateBatchStrategy 指定策略
+     * @param <T>                 实体类
+     * @return 影响条数
+     */
+    default <T> int updateBatch(Collection<T> list, UpdateBatchStrategy<T> updateBatchStrategy) {
+        return UpdateMethodUtil.updateBatch(getBasicMapper(), getTableInfo(), list, updateBatchStrategy);
     }
 }

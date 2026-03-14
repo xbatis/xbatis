@@ -35,6 +35,8 @@ public class ModelFieldInfo {
 
     private final boolean forceUpdate;
 
+    private final boolean ignoreDefaultValue;
+
     /**
      * 字段读取反射方法
      */
@@ -50,8 +52,10 @@ public class ModelFieldInfo {
             ModelEntityField modelEntityField = field.getAnnotation(ModelEntityField.class);
             entityFieldName = modelEntityField.value();
             this.forceUpdate = modelEntityField.forceUpdate();
+            this.ignoreDefaultValue = modelEntityField.ignoreDefaultValue();
         } else {
             this.forceUpdate = false;
+            this.ignoreDefaultValue = false;
         }
         this.tableFieldInfo = tableInfo.getFieldInfo(entityFieldName);
         if (Objects.isNull(this.tableFieldInfo)) {
@@ -96,5 +100,9 @@ public class ModelFieldInfo {
 
     public boolean isForceUpdate() {
         return forceUpdate;
+    }
+
+    public boolean isIgnoreDefaultValue() {
+        return ignoreDefaultValue;
     }
 }

@@ -206,4 +206,49 @@ public class SplitTableModelCUDTest extends BaseTest {
         }
     }
 
+
+    @Test
+    public void testSplitTableModelBatchUpdate() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SplitTableTestMapper mapper = session.getMapper(SplitTableTestMapper.class);
+
+            SplitTableTestModel splitTableTest1 = new SplitTableTestModel();
+            splitTableTest1.setSplitId(3);
+            splitTableTest1.setName("1111");
+
+            SplitTableTestModel splitTableTest2 = new SplitTableTestModel();
+
+            splitTableTest2.setSplitId(4);
+            splitTableTest2.setName("2222");
+
+            mapper.saveModelBatch(Arrays.asList(splitTableTest1, splitTableTest2));
+
+            assertNotNull(splitTableTest1.getId());
+            assertEquals(splitTableTest1.getSplitId(), 3);
+            assertEquals(splitTableTest1.getName(), "1111");
+
+            assertNotNull(splitTableTest2.getId());
+            assertEquals(splitTableTest2.getSplitId(), 4);
+            assertEquals(splitTableTest2.getName(), "2222");
+
+            SplitTableTestModel obj1 = mapper.get(where -> where.eq(SplitTableTest::getSplitId, 3).eq(SplitTableTest::getName, "1111")).convert();
+            assertNotNull(obj1);
+
+            SplitTableTestModel obj2 = mapper.get(where -> where.eq(SplitTableTest::getSplitId, 4).eq(SplitTableTest::getName, "2222")).convert();
+            assertNotNull(obj2);
+
+            obj1.setName("3333");
+            obj2.setName("4444");
+            mapper.updateModelBatch(Arrays.asList(obj1, obj2));
+
+            obj1 = mapper.get(where -> where.eq(SplitTableTest::getSplitId, 3).eq(SplitTableTest::getName, "3333")).convert();
+            assertNotNull(obj1);
+
+            obj2 = mapper.get(where -> where.eq(SplitTableTest::getSplitId, 4).eq(SplitTableTest::getName, "4444")).convert();
+            assertNotNull(obj2);
+        }
+    }
 }

@@ -408,4 +408,70 @@ public class MultiPkTestCase extends BaseTest {
             assertEquals(2, cnt);
         }
     }
+
+    @Test
+    public void updateModelBatch() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+            MultiPkModel entity = new MultiPkModel();
+            entity.setId1(1);
+            entity.setId2x(1);
+            entity.setName("11");
+            mapper.saveOrUpdate(entity);
+
+            MultiPkModel entity2 = new MultiPkModel();
+            entity2.setId1(1);
+            entity2.setId2x(2);
+            entity2.setName("12");
+            mapper.saveOrUpdate(entity2);
+
+            MultiPkModel entity3 = new MultiPkModel();
+            entity3.setId1(1);
+            entity3.setId2x(3);
+            entity3.setName("13");
+            mapper.saveOrUpdate(entity3);
+
+            MultiPkModel entity4 = new MultiPkModel();
+            entity4.setId1(2);
+            entity4.setId2x(1);
+            entity4.setName("21");
+            mapper.saveOrUpdate(entity4);
+
+            MultiPkModel entity5 = new MultiPkModel();
+            entity5.setId1(2);
+            entity5.setId2x(2);
+            entity5.setName("22");
+            mapper.saveOrUpdate(entity5);
+
+            MultiPkModel entity6 = new MultiPkModel();
+            entity6.setId1(2);
+            entity6.setId2x(3);
+            entity6.setName("23");
+            mapper.saveOrUpdate(entity6);
+
+            MultiPkModel entity7 = new MultiPkModel();
+            entity7.setId1(3);
+            entity7.setId2x(1);
+            entity7.setName("31");
+            mapper.saveOrUpdate(entity7);
+
+            MultiPkModel entity8 = new MultiPkModel();
+            entity8.setId1(3);
+            entity8.setId2x(2);
+            entity8.setName("32");
+            mapper.saveOrUpdate(entity8);
+
+            MultiPkModel entity9 = new MultiPkModel();
+            entity9.setId1(3);
+            entity9.setId2x(33);
+            entity9.setName("33");
+            mapper.saveOrUpdate(entity9);
+
+            mapper.listAll().stream().forEach(System.out::println);
+
+            int cnt = mapper.updateModelBatch(Arrays.asList(entity2, entity4));
+
+            assertEquals(2, cnt);
+        }
+    }
 }

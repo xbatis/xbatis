@@ -67,7 +67,7 @@ public class ModelNotForceWhereUpdateTest extends BaseTest {
             sysUserModel.setId(null);
             sysUserModel.setUserName(null);
 
-            UpdateStrategy<SysUserModel> updateStrategy = new UpdateStrategy();
+            UpdateStrategy<SysUserModel> updateStrategy = UpdateStrategy.create();
             updateStrategy.on(WhereUtil.create().eq(SysUser::getId, 1));
             updateStrategy.forceFields(SysUserModel::getRole_id);
             sysUserMapper.update(sysUserModel, updateStrategy);
@@ -86,7 +86,7 @@ public class ModelNotForceWhereUpdateTest extends BaseTest {
                     .eq(SysUser::getId, 1).get();
             sysUserModel.setId(null);
             sysUserModel.setUserName(null);
-            UpdateStrategy<SysUserModel> updateStrategy = new UpdateStrategy();
+            UpdateStrategy<SysUserModel> updateStrategy = UpdateStrategy.create();
             updateStrategy.on(WhereUtil.create().eq(SysUser::getId, 1));
             updateStrategy.forceFields(SysUserModel::getRole_id);
             sysUserMapper.update(sysUserModel, updateStrategy);

@@ -674,7 +674,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int save(T entity, Consumer<SaveStrategy<T>> saveStrategy) {
-        SaveStrategy<T> strategy = new SaveStrategy<>();
+        SaveStrategy<T> strategy = SaveStrategy.create();
         saveStrategy.accept(strategy);
         return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, strategy);
     }
@@ -701,7 +701,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
-        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        SaveOrUpdateStrategy strategy = SaveOrUpdateStrategy.create();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, strategy);
     }
@@ -728,7 +728,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
-        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        SaveOrUpdateStrategy strategy = SaveOrUpdateStrategy.create();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, strategy);
     }
@@ -755,7 +755,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int save(Collection<T> list, Consumer<SaveStrategy<T>> saveStrategy) {
-        SaveStrategy strategy = new SaveStrategy();
+        SaveStrategy strategy = SaveStrategy.create();
         saveStrategy.accept(strategy);
         return SaveMethodUtil.saveList(getBasicMapper(), getTableInfo(), list, strategy);
     }
@@ -782,7 +782,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> saveBatchStrategy) {
-        SaveBatchStrategy strategy = new SaveBatchStrategy();
+        SaveBatchStrategy strategy = SaveBatchStrategy.create();
         saveBatchStrategy.accept(strategy);
         return SaveMethodUtil.saveBatch(getBasicMapper(), getTableInfo(), list, strategy);
     }
@@ -794,7 +794,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> saveStrategy) {
-        SaveStrategy<M> strategy = new SaveStrategy<>();
+        SaveStrategy<M> strategy = SaveStrategy.create();
         saveStrategy.accept(strategy);
         return SaveModelMethodUtil.save(getBasicMapper(), model, strategy);
     }
@@ -820,7 +820,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> saveStrategy) {
-        SaveStrategy<M> strategy = new SaveStrategy<>();
+        SaveStrategy<M> strategy = SaveStrategy.create();
         saveStrategy.accept(strategy);
         return SaveModelMethodUtil.saveList(getBasicMapper(), list, strategy);
     }
@@ -851,14 +851,14 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<M>> saveBatchStrategy) {
-        SaveBatchStrategy strategy = new SaveBatchStrategy();
+        SaveBatchStrategy strategy = SaveBatchStrategy.create();
         saveBatchStrategy.accept(strategy);
         return SaveModelMethodUtil.saveBatch(getBasicMapper(), list, strategy);
     }
 
     @Override
     public <M extends Model<T>> int saveOrUpdate(M model, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
-        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        SaveOrUpdateStrategy strategy = SaveOrUpdateStrategy.create();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), model, strategy);
     }
@@ -884,7 +884,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
-        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        SaveOrUpdateStrategy strategy = SaveOrUpdateStrategy.create();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), list, strategy);
     }
@@ -910,7 +910,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
 
     protected int updateWithStrategy(T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
-        UpdateStrategy strategy = new UpdateStrategy();
+        UpdateStrategy strategy = UpdateStrategy.create();
         updateStrategy.accept(strategy);
         return this.update(entity, strategy);
     }
@@ -966,7 +966,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     protected int updateWithStrategy(Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy) {
-        UpdateStrategy strategy = new UpdateStrategy();
+        UpdateStrategy strategy = UpdateStrategy.create();
         updateStrategy.accept(strategy);
         return UpdateMethodUtil.updateList(getBasicMapper(), getTableInfo(), list, strategy);
     }
@@ -1057,9 +1057,9 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
-    public <M extends Model<T>> int updateBatchModel(Collection<M> list, Getter<M>... batchFields) {
+    public <M extends Model<T>> int updateModelBatch(Collection<M> list, Getter<M>... batchFields) {
         checkIdType();
-        return UpdateModelMethodUtil.updateBatchModel(getBasicMapper(), list, batchFields);
+        return UpdateModelMethodUtil.updateModelBatch(getBasicMapper(), list, batchFields);
     }
 
     @Override

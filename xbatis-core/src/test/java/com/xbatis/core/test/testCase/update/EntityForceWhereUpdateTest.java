@@ -48,7 +48,7 @@ public class EntityForceWhereUpdateTest extends BaseTest {
             sysUserModel.setId(null);
             sysUserModel.setUserName(null);
 
-            UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
+            UpdateStrategy<SysUser> updateStrategy = UpdateStrategy.create();
             updateStrategy.on(where -> where.eq(SysUser::getId, 1))
                     .forceFields(SysUser::getUserName);
 
@@ -83,7 +83,7 @@ public class EntityForceWhereUpdateTest extends BaseTest {
             sysUserModel.setId(null);
             sysUserModel.setUserName(null);
 
-            UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
+            UpdateStrategy<SysUser> updateStrategy = UpdateStrategy.create();
             updateStrategy.on(WhereUtil.create().eq(SysUser::getId, 1))
                     .forceFields(SysUser::getUserName);
 

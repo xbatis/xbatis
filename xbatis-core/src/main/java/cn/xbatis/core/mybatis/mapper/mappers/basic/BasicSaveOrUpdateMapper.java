@@ -34,7 +34,7 @@ public interface BasicSaveOrUpdateMapper extends BasicBaseMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
-        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        SaveOrUpdateStrategy strategy = SaveOrUpdateStrategy.create();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, strategy);
     }
@@ -91,7 +91,7 @@ public interface BasicSaveOrUpdateMapper extends BasicBaseMapper {
             return 0;
         }
         T first = list.stream().findFirst().get();
-        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        SaveOrUpdateStrategy strategy = SaveOrUpdateStrategy.create();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(first.getClass()), list, strategy);
     }

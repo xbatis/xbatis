@@ -38,4 +38,11 @@ public @interface ModelEntityField {
      */
     boolean forceUpdate() default false;
 
+    /**
+     * 是否忽略默认值（不在从实体类继承）
+     *
+     * @return
+     */
+    boolean ignoreDefaultValue() default false;
+
 }

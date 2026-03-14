@@ -38,6 +38,9 @@ import java.util.Set;
 
 public class ModelUpdateCreateUtil {
     public static <M extends Model<T>, T> void initUpdateValue(ModelFieldInfo modelFieldInfo, M insertData, Set<String> forceFields, Map<String, Object> defaultValueContext) {
+        if (modelFieldInfo.isIgnoreDefaultValue()) {
+            return;
+        }
         if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
             Object value = modelFieldInfo.getValue(insertData);
             if (value != null && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValueFillAlways()) {

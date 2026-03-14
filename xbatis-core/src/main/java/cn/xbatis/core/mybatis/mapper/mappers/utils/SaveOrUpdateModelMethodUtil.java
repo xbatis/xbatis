@@ -21,9 +21,9 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
-import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Query;
+import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.core.util.TableInfoUtil;
@@ -65,7 +65,7 @@ public class SaveOrUpdateModelMethodUtil {
                 throw new RuntimeException(e);
             }
             if (Objects.isNull(id)) {
-                SaveStrategy<M> saveStrategy = new SaveStrategy<>()
+                SaveStrategy<M> saveStrategy = SaveStrategy.create()
                         .allFieldSave(saveOrUpdateStrategy.isAllField())
                         .forceFields(saveOrUpdateStrategy.getForceFields());
                 return SaveModelMethodUtil.save(basicMapper, model, saveStrategy, defaultValueContext);
@@ -103,12 +103,12 @@ public class SaveOrUpdateModelMethodUtil {
 
         T obj = basicMapper.get(query);
         if (obj == null) {
-            SaveStrategy<M> saveStrategy = new SaveStrategy<>()
+            SaveStrategy<M> saveStrategy = SaveStrategy.create()
                     .allFieldSave(saveOrUpdateStrategy.isAllField())
                     .forceFields(saveOrUpdateStrategy.getForceFields());
             return SaveModelMethodUtil.save(basicMapper, model, saveStrategy, defaultValueContext);
         } else {
-            UpdateStrategy<M> updateStrategy = new UpdateStrategy<>();
+            UpdateStrategy<M> updateStrategy = UpdateStrategy.create();
             if (modelInfo.getIdFieldInfos().isEmpty()) {
                 updateStrategy.on(query.$where());
             } else {

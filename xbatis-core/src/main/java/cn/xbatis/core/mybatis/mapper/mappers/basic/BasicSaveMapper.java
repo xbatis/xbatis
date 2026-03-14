@@ -35,7 +35,7 @@ public interface BasicSaveMapper extends BasicBaseMapper {
      * @return 影响条数
      */
     default <T> int save(T entity, Consumer<SaveStrategy<T>> consumer) {
-        SaveStrategy strategy = new SaveStrategy();
+        SaveStrategy strategy = SaveStrategy.create();
         consumer.accept(strategy);
         return SaveMethodUtil.save(getBasicMapper(), Tables.get(entity.getClass()), entity, strategy);
     }
@@ -88,7 +88,7 @@ public interface BasicSaveMapper extends BasicBaseMapper {
             return 0;
         }
         T first = list.stream().findFirst().get();
-        SaveStrategy strategy = new SaveStrategy();
+        SaveStrategy strategy = SaveStrategy.create();
         consumer.accept(strategy);
         return SaveMethodUtil.saveList(getBasicMapper(), Tables.get(first.getClass()), list, strategy);
     }
@@ -141,7 +141,7 @@ public interface BasicSaveMapper extends BasicBaseMapper {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        SaveBatchStrategy strategy = new SaveBatchStrategy();
+        SaveBatchStrategy strategy = SaveBatchStrategy.create();
         saveBatchStrategy.accept(strategy);
         return SaveMethodUtil.saveBatch(getBasicMapper(), list, strategy);
     }
