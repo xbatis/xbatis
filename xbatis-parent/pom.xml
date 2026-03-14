@@ -1,0 +1,26 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.xbatis</groupId>
+        <artifactId>xbatis</artifactId>
+        <version>1.9.9-M1</version>
+    </parent>
+
+    <url>https://gitee.com/xbatis</url>
+    <artifactId>xbatis-parent</artifactId>
+    <name>xbatis-parent</name>
+    <packaging>pom</packaging>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cn.xbatis</groupId>
+                <artifactId>xbatis-bom</artifactId>
+                <version>${xbatis.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

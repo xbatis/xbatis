@@ -19,8 +19,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.xbatis</groupId>
-        <artifactId>xbatis</artifactId>
-        <version>1.9.8</version>
+        <artifactId>xbatis-parent</artifactId>
+        <version>1.9.9-M1</version>
+        <relativePath>../xbatis-parent/pom.xml</relativePath>
     </parent>
 
     <properties>
@@ -30,6 +31,7 @@
     <url>https://gitee.com/xbatis</url>
     <artifactId>xbatis-core</artifactId>
     <name>xbatis-core</name>
+
     <dependencies>
         <dependency>
             <groupId>cn.xbatis</groupId>
@@ -61,7 +63,6 @@
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc8</artifactId>
-            <version>23.26.0.0.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -98,7 +99,6 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>4.0.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -111,21 +111,18 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
-            <version>2.1.2</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -169,35 +166,24 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.20.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>3.0.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>2.0.60</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
-            <version>2.0.60</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.13.2</version>
             <scope>provided</scope>
         </dependency>
 
@@ -213,13 +199,5 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>ch.qos.logback</groupId>-->
-        <!--            <artifactId>logback-classic</artifactId>-->
-        <!--            <version>1.2.13</version>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
-
     </dependencies>
 </project>

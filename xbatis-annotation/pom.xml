@@ -19,8 +19,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.xbatis</groupId>
-        <artifactId>xbatis</artifactId>
-        <version>1.9.8</version>
+        <artifactId>xbatis-parent</artifactId>
+        <version>1.9.9-M1</version>
+        <relativePath>../xbatis-parent/pom.xml</relativePath>
     </parent>
 
     <url>https://gitee.com/xbatis</url>
