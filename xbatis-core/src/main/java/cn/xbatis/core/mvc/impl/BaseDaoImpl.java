@@ -916,6 +916,11 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
+    public <T1> int partialUpdate(T1 entity, Consumer<T1> proxy) {
+        return getBasicMapper().partialUpdate(entity, proxy);
+    }
+
+    @Override
     public int update(T entity, UpdateStrategy<T> updateStrategy) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, updateStrategy);
     }

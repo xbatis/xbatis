@@ -278,6 +278,16 @@ public interface Dao<T, ID> {
      */
     int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> saveBatchStrategy);
 
+
+    /**
+     * 局部修改（精准修改，只修改set过的和updateDefaultValueFillAlways=true的字段）
+     *
+     * @param entity 目标实体类
+     * @param proxy  实体类proxy实例
+     * @return 修改条数
+     */
+    <T> int partialUpdate(T entity, Consumer<T> proxy);
+
     /**
      * 实体类修改
      *

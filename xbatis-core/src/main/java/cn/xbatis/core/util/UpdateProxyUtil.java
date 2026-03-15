@@ -28,7 +28,7 @@ public class UpdateProxyUtil {
 
     public static <T> T of(T instance, Consumer<String> consumer) {
         if (instance == null) {
-            return null;
+            throw new RuntimeException("can't be null");
         }
         ProxyFactory f = new ProxyFactory();
         f.setSuperclass(instance.getClass());
