@@ -41,7 +41,7 @@
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
         <xbatis.version>1.9.9-M1</xbatis.version>
-        <xbatis-generator-core.version>1.1.6</xbatis-generator-core.version>
+        <xbatis-generator-core.version>1.1.7</xbatis-generator-core.version>
         <xbatis-datasource-routing.version>1.1.1</xbatis-datasource-routing.version>
 
         <!-- jdbc version -->
