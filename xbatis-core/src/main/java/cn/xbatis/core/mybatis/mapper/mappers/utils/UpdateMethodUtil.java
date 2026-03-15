@@ -169,6 +169,16 @@ public final class UpdateMethodUtil {
         return updateBatch(basicMapper, tableInfo, list, updateStrategy -> updateStrategy.batchFields(batchFields));
     }
 
+    public static <T> int updateBatch(BasicMapper basicMapper, Collection<T> list, Consumer<UpdateBatchStrategy<T>> updateStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        TableInfo tableInfo = Tables.get(list.stream().findFirst().get().getClass());
+        UpdateBatchStrategy<T> updateBatchStrategy = UpdateBatchStrategy.create();
+        updateStrategy.accept(updateBatchStrategy);
+        return updateBatch(basicMapper, tableInfo, list, updateBatchStrategy);
+    }
+
     public static <T> int updateBatch(BasicMapper basicMapper, Collection<T> list, UpdateBatchStrategy<T> updateBatchStrategy) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;

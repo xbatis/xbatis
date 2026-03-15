@@ -205,7 +205,7 @@ public interface BasicUpdateMapper extends BasicBaseMapper {
      * @param <T>                 实体类
      * @return 影响条数
      */
-    default <T> int updateBatch(Collection<T> list, UpdateBatchStrategy<T> updateBatchStrategy) {
+    default <T> int updateBatch(Collection<T> list, Consumer<UpdateBatchStrategy<T>> updateBatchStrategy) {
         return UpdateMethodUtil.updateBatch(getBasicMapper(), list, updateBatchStrategy);
     }
 }

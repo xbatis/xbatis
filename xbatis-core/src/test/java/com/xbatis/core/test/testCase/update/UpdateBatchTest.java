@@ -14,7 +14,6 @@
 
 package com.xbatis.core.test.testCase.update;
 
-import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateBatchStrategy;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.DefaultValueTestMapper;
@@ -81,10 +80,10 @@ public class UpdateBatchTest extends BaseTest {
                 sysUser.setPassword(null);
                 sysUser.setCreate_time(now);
             });
-            sysUserMapper.updateBatch(list, UpdateBatchStrategy.create(strategy -> {
+            sysUserMapper.updateBatch(list, strategy -> {
                 strategy.ignoreNull(true);
                 strategy.batchFields(SysUser::getUserName, SysUser::getPassword);
-            }));
+            });
             list = sysUserMapper.listAll();
             list.stream().forEach(sysUser -> {
                 assertNotEquals(sysUser.getPassword(), "null");

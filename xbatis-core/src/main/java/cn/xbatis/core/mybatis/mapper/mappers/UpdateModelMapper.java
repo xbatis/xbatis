@@ -204,7 +204,7 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      * @param updateBatchStrategy 修改策略
      * @return 影响条数
      */
-    default <M extends Model<T>> int updateModelBatch(Collection<M> list, UpdateBatchStrategy<M> updateBatchStrategy) {
+    default <M extends Model<T>> int updateModelBatch(Collection<M> list, Consumer<UpdateBatchStrategy<M>> updateBatchStrategy) {
         return UpdateModelMethodUtil.updateModelBatch(getBasicMapper(), list, updateBatchStrategy);
     }
 }

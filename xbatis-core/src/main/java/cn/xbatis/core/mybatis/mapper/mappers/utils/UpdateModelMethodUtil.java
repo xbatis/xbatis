@@ -144,6 +144,16 @@ public final class UpdateModelMethodUtil {
         return updateModelBatch(basicMapper, modelInfo, list, UpdateBatchStrategy.create(strategy -> strategy.batchFields(batchFields)));
     }
 
+    public static <M extends Model> int updateModelBatch(BasicMapper basicMapper, Collection<M> list, Consumer<UpdateBatchStrategy<M>> updateStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        ModelInfo modelInfo = Models.get(list.stream().findFirst().get().getClass());
+        UpdateBatchStrategy updateBatchStrategy = UpdateBatchStrategy.create();
+        updateStrategy.accept(updateBatchStrategy);
+        return updateModelBatch(basicMapper, modelInfo, list, updateBatchStrategy);
+    }
+
     public static <M extends Model> int updateModelBatch(BasicMapper basicMapper, Collection<M> list, UpdateBatchStrategy<M> updateBatchStrategy) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
