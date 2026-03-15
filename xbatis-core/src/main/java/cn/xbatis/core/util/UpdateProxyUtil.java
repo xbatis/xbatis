@@ -42,17 +42,17 @@ public class UpdateProxyUtil {
         Class c = f.createClass();
         T obj;
         try {
-            obj = (T)c.newInstance();
+            obj = (T) c.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         TableInfo tableInfo = Tables.get(instance.getClass());
-        ((Proxy)obj).setHandler((Object self, Method m, Method proceed, Object[] args)->{
+        ((Proxy) obj).setHandler((Object self, Method m, Method proceed, Object[] args) -> {
 
             String methodName = m.getName();
-            String fieldName ;
-            if (methodName.startsWith("set") && methodName.length()>3) {
-                fieldName=NamingUtil.firstToLower(methodName.substring(3));
+            String fieldName;
+            if (methodName.startsWith("set") && methodName.length() > 3) {
+                fieldName = NamingUtil.firstToLower(methodName.substring(3));
                 consumer.accept(fieldName);
                 tableInfo.getFieldInfo(fieldName).getWriteFieldInvoker().invoke(instance, args);
             }

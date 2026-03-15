@@ -29,7 +29,7 @@ public class EntityProxyUpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUser = sysUserMapper.getById(1);
-            int cnt = sysUserMapper.partialUpdate(sysUser, o->{
+            int cnt = sysUserMapper.partialUpdate(sysUser, o -> {
                 o.setUserName(null);
             });
             assertEquals(cnt, 1);

@@ -14,7 +14,7 @@
 
 package cn.xbatis.db;
 
-public class SplitTableException extends RuntimeException{
+public class SplitTableException extends RuntimeException {
 
     public SplitTableException(String message) {
         super(message);
