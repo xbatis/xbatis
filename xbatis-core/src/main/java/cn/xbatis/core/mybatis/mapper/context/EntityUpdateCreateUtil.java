@@ -115,25 +115,43 @@ public class EntityUpdateCreateUtil {
                 continue;
             }
 
-            //如果是不能修改的字段(例如乐观锁、逻辑删除、主键、exists=false的字段等等)
-            if (!tableFieldInfo.isCanUpdateField()) {
-                continue;
-            }
-
-            //普通修改且不强制修改 配置了@TableFiled(update=false)的不修改
-            if (!tableFieldInfo.getTableFieldAnnotation().update() && !isForceUpdate && !updateStrategy.isAllFieldUpdate()) {
-                continue;
-            }
-
-            if (isForceUpdate || updateStrategy.isAllFieldUpdate()) {
-                if (Objects.isNull(value)) {
-                    update.set($.field(table, tableFieldInfo.getColumnName()), NULL.NULL);
+            //如果指定了修改字段 不在里面不参与修改
+            if (updateStrategy.getUpdateFields() != null) {
+                boolean isNeedUpdate = false;
+                if (updateStrategy.getUpdateFields().contains(tableFieldInfo.getField().getName())) {
+                    isNeedUpdate = true;
+                } else if (tableFieldInfo.getTableFieldAnnotation().updateDefaultValueFillAlways()) {
+                    isNeedUpdate = true;
+                }
+                if (!isNeedUpdate) {
                     continue;
                 }
-            }
+                if (Objects.nonNull(value)) {
+                    update.set($.field(table, tableFieldInfo.getColumnName()), CmdParamUtil.build(tableFieldInfo, value));
+                } else {
+                    update.set($.field(table, tableFieldInfo.getColumnName()), NULL.NULL);
+                }
+            } else {
+                //如果是不能修改的字段(例如乐观锁、逻辑删除、主键、exists=false的字段等等)
+                if (!tableFieldInfo.isCanUpdateField()) {
+                    continue;
+                }
 
-            if (Objects.nonNull(value)) {
-                update.set($.field(table, tableFieldInfo.getColumnName()), CmdParamUtil.build(tableFieldInfo, value));
+                //普通修改且不强制修改 配置了@TableFiled(update=false)的不修改
+                if (!tableFieldInfo.getTableFieldAnnotation().update() && !isForceUpdate && !updateStrategy.isAllFieldUpdate()) {
+                    continue;
+                }
+
+                if (isForceUpdate || updateStrategy.isAllFieldUpdate()) {
+                    if (Objects.isNull(value)) {
+                        update.set($.field(table, tableFieldInfo.getColumnName()), NULL.NULL);
+                        continue;
+                    }
+                }
+
+                if (Objects.nonNull(value)) {
+                    update.set($.field(table, tableFieldInfo.getColumnName()), CmdParamUtil.build(tableFieldInfo, value));
+                }
             }
         }
 

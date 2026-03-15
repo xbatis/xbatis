@@ -18,13 +18,38 @@ import cn.xbatis.core.db.reflect.Tables;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.mybatis.mapper.mappers.utils.UpdateMethodUtil;
+import cn.xbatis.core.util.UpdateProxyUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public interface BasicUpdateMapper extends BasicBaseMapper {
+
+    /**
+     * 局部修改（精准修改，只修改set过的和updateDefaultValueFillAlways=true的字段）
+     *
+     * @param entity 目标实体类
+     * @param proxy  实体类proxy实例
+     * @param <E>    实体类类型
+     * @return 修改条数
+     */
+    default <E> int partialUpdate(E entity, Consumer<E> proxy) {
+        Set<String> updateFields = new HashSet<>();
+        E e2 = UpdateProxyUtil.of(entity, field -> {
+            updateFields.add(field);
+        });
+        proxy.accept(e2);
+        if (updateFields.isEmpty()) {
+            return 0;
+        }
+        UpdateStrategy<E> updateStrategy = UpdateStrategy.create();
+        updateStrategy.updateFields(updateFields);
+        return this.update(entity, updateStrategy);
+    }
 
     /**
      * 实体类修改

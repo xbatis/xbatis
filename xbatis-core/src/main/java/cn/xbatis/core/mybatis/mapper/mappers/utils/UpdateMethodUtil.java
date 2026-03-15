@@ -63,6 +63,12 @@ public final class UpdateMethodUtil {
     }
 
     public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, UpdateStrategy<T> updateStrategy, Map<String, Object> defaultValueContext) {
+        if (updateStrategy.getUpdateFields() != null && updateStrategy.getUpdateFields().isEmpty()) {
+            if (updateStrategy.isThrowExWhenNoRowUpdate()) {
+                throw new NoUpdateRowException(updateStrategy.getNoRowUpdateErrorMessage());
+            }
+            return 0;
+        }
         boolean isUpdateById = true;
 
         if (tableInfo.getIdFieldInfos().isEmpty()) {

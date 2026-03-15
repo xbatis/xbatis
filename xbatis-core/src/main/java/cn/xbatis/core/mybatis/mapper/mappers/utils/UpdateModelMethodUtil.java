@@ -66,6 +66,13 @@ public final class UpdateModelMethodUtil {
     }
 
     public static <M extends Model> int update(BasicMapper basicMapper, ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy, Map<String, Object> defaultValueContext) {
+        if (updateStrategy.getUpdateFields() != null && updateStrategy.getUpdateFields().isEmpty()) {
+            if (updateStrategy.isThrowExWhenNoRowUpdate()) {
+                throw new NoUpdateRowException(updateStrategy.getNoRowUpdateErrorMessage());
+            }
+            return 0;
+        }
+
         boolean isUpdateById = true;
 
         if (modelInfo.getIdFieldInfos().isEmpty()) {

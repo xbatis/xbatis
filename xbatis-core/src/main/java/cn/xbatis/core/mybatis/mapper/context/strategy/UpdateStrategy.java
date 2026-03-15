@@ -17,6 +17,7 @@ package cn.xbatis.core.mybatis.mapper.context.strategy;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 @lombok.Getter
@@ -39,6 +40,11 @@ public class UpdateStrategy<T> {
      * 指定没有修改数据的异常信息
      */
     private String noRowUpdateErrorMessage;
+
+    /**
+     * 指定修改字段；注意不为null时，不修改；
+     */
+    private Set<String> updateFields;
 
     public static <T> UpdateStrategy<T> create() {
         return new UpdateStrategy<>();
@@ -105,6 +111,11 @@ public class UpdateStrategy<T> {
 
     public UpdateStrategy<T> noRowUpdateErrorMessage(String noRowUpdateErrorMessage) {
         this.noRowUpdateErrorMessage = noRowUpdateErrorMessage;
+        return this;
+    }
+
+    public UpdateStrategy<T> updateFields(Set<String> updateFields) {
+        this.updateFields = updateFields;
         return this;
     }
 

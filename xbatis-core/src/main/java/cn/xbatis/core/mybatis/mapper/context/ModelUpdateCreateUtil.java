@@ -120,20 +120,38 @@ public class ModelUpdateCreateUtil {
                 continue;
             }
 
-            //如果是不能修改的字段(例如乐观锁、逻辑删除、主键、exists=false的字段等等)
-            if (!modelFieldInfo.getTableFieldInfo().isCanUpdateField()) {
-                continue;
-            }
-
-            if (isForceUpdate || updateStrategy.isAllFieldUpdate()) {
-                if (Objects.isNull(value)) {
-                    update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), NULL.NULL);
+            //如果指定了修改字段 不在里面不参与修改
+            if (updateStrategy.getUpdateFields() != null) {
+                boolean isNeedUpdate = false;
+                if (updateStrategy.getUpdateFields().contains(modelFieldInfo.getField().getName())) {
+                    isNeedUpdate = true;
+                } else if (modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValueFillAlways()) {
+                    isNeedUpdate = true;
+                }
+                if (!isNeedUpdate) {
                     continue;
                 }
-            }
+                if (Objects.nonNull(value)) {
+                    update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo.getTableFieldInfo(), value));
+                } else {
+                    update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), NULL.NULL);
+                }
+            } else {
+                //如果是不能修改的字段(例如乐观锁、逻辑删除、主键、exists=false的字段等等)
+                if (!modelFieldInfo.getTableFieldInfo().isCanUpdateField()) {
+                    continue;
+                }
 
-            if (Objects.nonNull(value)) {
-                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo, value));
+                if (isForceUpdate || updateStrategy.isAllFieldUpdate()) {
+                    if (Objects.isNull(value)) {
+                        update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), NULL.NULL);
+                        continue;
+                    }
+                }
+
+                if (Objects.nonNull(value)) {
+                    update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo, value));
+                }
             }
         }
 
