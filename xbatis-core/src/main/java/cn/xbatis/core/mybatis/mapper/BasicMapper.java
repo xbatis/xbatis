@@ -47,6 +47,13 @@ public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapp
         BasicUpdateMapper, BasicUpdateModelMapper, BasicDeleteMapper, DbRunner {
 
     /**
+     * 获取当前Mapper类
+     *
+     * @return 当前Mapper类
+     */
+    <M extends BasicMapper> Class<M> getMapperType();
+
+    /**
      * 获取当前数据库的类型
      *
      * @return dbType

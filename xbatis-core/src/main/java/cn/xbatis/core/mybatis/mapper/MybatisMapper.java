@@ -40,6 +40,13 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
         UpdateMapper<T>, UpdateModelMapper<T>, DeleteMapper<T> {
 
     /**
+     * 获取当前Mapper类
+     *
+     * @return 当前Mapper类
+     */
+    <M extends MybatisMapper<T>> Class<M> getMapperType();
+
+    /**
      * 选择器 不同数据库执行不同的方法
      *
      * @param consumer
