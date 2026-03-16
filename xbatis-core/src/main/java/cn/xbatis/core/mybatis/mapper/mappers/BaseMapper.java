@@ -20,6 +20,13 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 public interface BaseMapper<T> {
 
     /**
+     * 获取当前Mapper类
+     *
+     * @return Class
+     */
+    Class<T> getMapperType();
+
+    /**
      * 获取当前实体类
      *
      * @return Class

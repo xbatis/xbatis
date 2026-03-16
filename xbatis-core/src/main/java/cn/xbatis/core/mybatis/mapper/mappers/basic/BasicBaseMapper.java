@@ -19,6 +19,13 @@ import cn.xbatis.core.mybatis.mapper.ProviderMapper;
 
 public interface BasicBaseMapper extends ProviderMapper {
 
+    /**
+     * 获取当前Mapper类
+     *
+     * @return Class
+     */
+    Class<?> getMapperType();
+
     default BasicMapper getBasicMapper() {
         return (BasicMapper) this;
     }
