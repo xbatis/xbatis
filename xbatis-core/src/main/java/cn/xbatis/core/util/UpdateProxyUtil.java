@@ -54,7 +54,7 @@ public class UpdateProxyUtil {
             if (methodName.startsWith("set") && methodName.length() > 3) {
                 fieldName = NamingUtil.firstToLower(methodName.substring(3));
                 consumer.accept(fieldName);
-                tableInfo.getFieldInfo(fieldName).getWriteFieldInvoker().invoke(instance, args);
+                tableInfo.getFieldInfo(fieldName).setValue(instance, args[0]);
             }
 
             return null;

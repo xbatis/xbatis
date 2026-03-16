@@ -48,4 +48,7 @@ public class ResultInfos {
         }
     }
 
+    public static boolean contains(Class entity) {
+        return CACHE.containsKey(entity);
+    }
 }

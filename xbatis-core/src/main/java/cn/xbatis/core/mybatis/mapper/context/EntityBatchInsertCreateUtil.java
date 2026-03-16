@@ -51,12 +51,8 @@ public class EntityBatchInsertCreateUtil {
                 TableId tableId = TableInfoUtil.getTableIdAnnotation(tableFieldInfo, dbType);
                 Objects.requireNonNull(tableId.value());
                 if (tableId.value() == IdAutoType.AUTO) {
-                    Object id;
-                    try {
-                        id = tableFieldInfo.getReadFieldInvoker().invoke(entity, null);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Object id = tableFieldInfo.getValue(entity);
+
                     if (Objects.isNull(id)) {
                         continue;
                     }

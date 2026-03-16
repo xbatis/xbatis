@@ -42,12 +42,7 @@ public class ModelBatchInsertCreateUtil {
                 TableId tableId = TableInfoUtil.getTableIdAnnotation(modelFieldInfo.getTableFieldInfo(), dbType);
                 Objects.requireNonNull(tableId.value());
                 if (tableId.value() == IdAutoType.AUTO) {
-                    Object id;
-                    try {
-                        id = modelFieldInfo.getReadFieldInvoker().invoke(model, null);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Object id = modelFieldInfo.getValue(model);
                     if (Objects.isNull(id)) {
                         continue;
                     }

@@ -45,6 +45,10 @@ public class ModelFieldInfo {
 
     private final SetFieldInvoker writeFieldInvoker;
 
+//    private final Setter setter;
+//
+//    private final Getter getter;
+
     public ModelFieldInfo(Class entity, Class model, Field field) {
         TableInfo tableInfo = Tables.get(entity);
         String entityFieldName = field.getName();
@@ -57,6 +61,7 @@ public class ModelFieldInfo {
             this.forceUpdate = false;
             this.ignoreDefaultValue = false;
         }
+
         this.tableFieldInfo = tableInfo.getFieldInfo(entityFieldName);
         if (Objects.isNull(this.tableFieldInfo)) {
             throw new NotTableFieldException(model, "", entity, entityFieldName);
@@ -66,13 +71,52 @@ public class ModelFieldInfo {
         }
         this.field = field;
         this.fieldInfo = new FieldInfo(model, field);
-        this.readFieldInvoker = new GetFieldInvoker(field);
+
+//        Setter set = null;
+//        SetFieldInvoker writeFieldInvoker = null;
+//        try {
+//            set = LambdaUtil.createSetter(field.getDeclaringClass(), "set" + NamingUtil.firstToUpperCase(field.getName()), field.getType());
+//        } catch (Exception e) {
+//            writeFieldInvoker = new SetFieldInvoker(field);
+//        }
+//        this.setter = set;
+//        this.writeFieldInvoker = writeFieldInvoker;
+//
+//
+//        Getter get = null;
+//        GetFieldInvoker readFieldInvoker = null;
+//        try {
+//            get = LambdaUtil.createGetter(Getter.class, field.getDeclaringClass(), "get" + NamingUtil.firstToUpperCase(field.getName()), field.getType());
+//        } catch (Exception e) {
+//            try {
+//                get = LambdaUtil.createGetter(Getter.class, field.getDeclaringClass(), "is" + NamingUtil.firstToUpperCase(field.getName()), field.getType());
+//            } catch (Exception e1) {
+//                readFieldInvoker = new GetFieldInvoker(field);
+//            }
+//        }
+//        this.getter = get;
         this.writeFieldInvoker = new SetFieldInvoker(field);
+        this.readFieldInvoker = new GetFieldInvoker(field);
     }
 
     public Object getValue(Object object) {
         try {
+//            if (getter != null) {
+//                return getter.apply(object);
+//            }
             return this.readFieldInvoker.invoke(object, null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setValue(Object object, Object value) {
+        try {
+//            if (setter != null) {
+//                setter.accept(object, value);
+//                return;
+//            }
+            this.writeFieldInvoker.invoke(object, new Object[]{value});
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -84,14 +128,6 @@ public class ModelFieldInfo {
 
     public Field getField() {
         return field;
-    }
-
-    public GetFieldInvoker getReadFieldInvoker() {
-        return readFieldInvoker;
-    }
-
-    public SetFieldInvoker getWriteFieldInvoker() {
-        return writeFieldInvoker;
     }
 
     public FieldInfo getFieldInfo() {

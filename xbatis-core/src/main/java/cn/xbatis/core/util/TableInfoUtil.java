@@ -39,11 +39,7 @@ import java.util.Objects;
 public final class TableInfoUtil {
 
     public static void setValue(TableFieldInfo tableFieldInfo, Object target, Object value) {
-        try {
-            tableFieldInfo.getWriteFieldInvoker().invoke(target, new Object[]{value});
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        tableFieldInfo.setValue(target, value);
     }
 
     /**
@@ -100,11 +96,7 @@ public final class TableInfoUtil {
      * @return 获取实体类字段的值
      */
     public static Object getEntityFieldValue(TableFieldInfo tableFieldInfo, Object entity) {
-        try {
-            return tableFieldInfo.getReadFieldInvoker().invoke(entity, null);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return tableFieldInfo.getValue(entity);
     }
 
     /**

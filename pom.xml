@@ -33,6 +33,7 @@
         <module>xbatis-sql-api</module>
         <module>xbatis-sql-api-impl</module>
         <module>xbatis-parent</module>
+        <module>xbatis-benchmark</module>
     </modules>
 
     <properties>

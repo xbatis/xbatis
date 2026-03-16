@@ -21,11 +21,7 @@ import java.io.Serializable;
 
 public final class ModelInfoUtil {
     public static void setValue(ModelFieldInfo modelFieldInfo, Object target, Object value) {
-        try {
-            modelFieldInfo.getWriteFieldInvoker().invoke(target, new Object[]{value});
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        modelFieldInfo.setValue(target, value);
     }
 
     /**
@@ -75,13 +71,7 @@ public final class ModelInfoUtil {
             }
         }
         TableInfoUtil.checkId(tableInfo);
-        Serializable id;
-        try {
-            id = (Serializable) modelInfo.getSingleIdFieldInfo(true).getReadFieldInvoker().invoke(model, null);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return id;
+        return (Serializable) modelInfo.getSingleIdFieldInfo(true).getValue(model);
     }
 
     public static boolean isInsertDoBeforeTableField(ModelFieldInfo modelFieldInfo) {

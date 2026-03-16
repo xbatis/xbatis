@@ -58,12 +58,7 @@ public class SaveOrUpdateModelMethodUtil {
                 throw new RuntimeException(modelInfo.getType().getName() + " has no id");
             }
 
-            Object id;
-            try {
-                id = modelInfo.getIdFieldInfos().get(0).getReadFieldInvoker().invoke(model, null);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            Object id = modelInfo.getIdFieldInfos().get(0).getValue(model);
             if (Objects.isNull(id)) {
                 SaveStrategy<M> saveStrategy = SaveStrategy.create()
                         .allFieldSave(saveOrUpdateStrategy.isAllField())

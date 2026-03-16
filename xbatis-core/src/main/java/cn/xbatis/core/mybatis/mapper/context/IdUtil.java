@@ -30,12 +30,8 @@ public final class IdUtil {
         if (idFieldInfo == null) {
             return false;
         }
-        Object sourceId;
-        try {
-            sourceId = idFieldInfo.getReadFieldInvoker().invoke(obj, null);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        Object sourceId = idFieldInfo.getValue(obj);
+
         return isIdValueExists(sourceId);
     }
 
@@ -43,13 +39,8 @@ public final class IdUtil {
         if (idFieldInfo == null) {
             return false;
         }
-        Object sourceId;
-        try {
-            sourceId = idFieldInfo.getReadFieldInvoker().invoke(obj, null);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return isIdValueExists(sourceId);
+
+        return isIdValueExists(idFieldInfo.getValue(obj));
     }
 
     private static boolean isIdExists(Object obj, GetFieldInvoker getFieldInvoker) {

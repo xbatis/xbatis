@@ -21,11 +21,11 @@ import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.Cmd;
+import db.sql.api.Setter;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.cmd.struct.On;
 import db.sql.api.impl.cmd.struct.Where;
-import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -64,11 +64,11 @@ public final class TenantUtil {
      * @param model
      */
     public static void setTenantId(ModelFieldInfo modelFieldInfo, Model model, Object tenantId) {
-        setTenantId(modelFieldInfo.getWriteFieldInvoker(), model, tenantId, modelFieldInfo.getFieldInfo().getTypeClass());
+        setTenantId(modelFieldInfo::setValue, model, tenantId, modelFieldInfo.getFieldInfo().getTypeClass());
     }
 
 
-    public static void setTenantId(SetFieldInvoker writeFieldInvoker, Object object, Object tenantId, Class<?> targetType) {
+    public static void setTenantId(Setter setter, Object object, Object tenantId, Class<?> targetType) {
         if (Objects.isNull(tenantId)) {
             return;
         }
@@ -77,13 +77,9 @@ public final class TenantUtil {
             throw new RuntimeException("tenantId has multiple values");
         }
 
-        try {
-            tenantId = TypeConvertUtil.convert(tenantId, targetType);
-            writeFieldInvoker.invoke(object, new Object[]{tenantId});
-            onInsert(object);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        tenantId = TypeConvertUtil.convert(tenantId, targetType);
+        setter.accept(object, tenantId);
+        onInsert(object);
     }
 
     /**
@@ -102,7 +98,7 @@ public final class TenantUtil {
      * @param entity
      */
     public static void setTenantId(TableFieldInfo tableFieldInfo, Object entity, Object tenantId) {
-        setTenantId(tableFieldInfo.getWriteFieldInvoker(), entity, tenantId, tableFieldInfo.getFieldInfo().getTypeClass());
+        setTenantId(tableFieldInfo::setValue, entity, tenantId, tableFieldInfo.getFieldInfo().getTypeClass());
     }
 
 

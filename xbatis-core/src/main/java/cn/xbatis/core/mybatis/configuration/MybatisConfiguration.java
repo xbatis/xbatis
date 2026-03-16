@@ -77,6 +77,7 @@ public class MybatisConfiguration extends Configuration {
     private void initSetting() {
         this.setDefaultScriptingLanguage(MybatisLanguageDriver.class);
         this.setDefaultEnumTypeHandler(EnumTypeHandler.class);
+        //this.setObjectWrapperFactory(new MybatisObjectWrapperFactory());
     }
 
     public void onInit() {

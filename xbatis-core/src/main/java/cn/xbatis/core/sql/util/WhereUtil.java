@@ -159,12 +159,8 @@ public final class WhereUtil {
         }
 
         tableInfo.getIdFieldInfos().forEach(item -> {
-            Object id;
-            try {
-                id = item.getReadFieldInvoker().invoke(entity, null);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            Object id = item.getValue(entity);
+
             Objects.requireNonNull(id, "id can't be null");
             where.eq($.field(tableInfo.getType(), item.getField().getName(), 1), CmdParamUtil.build(item, id));
         });
@@ -183,12 +179,7 @@ public final class WhereUtil {
         }
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
         modelInfo.getIdFieldInfos().forEach(item -> {
-            Object id;
-            try {
-                id = item.getReadFieldInvoker().invoke(model, null);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            Object id = item.getValue(model);
             Objects.requireNonNull(id, "id can't be null");
             where.eq($.field(modelInfo.getTableInfo().getType(), item.getTableFieldInfo().getField().getName(), 1), CmdParamUtil.build(item, id));
         });

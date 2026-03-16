@@ -51,12 +51,9 @@ public class SaveOrUpdateMethodUtil {
             if (tableInfo.getIdFieldInfos().isEmpty()) {
                 throw new RuntimeException(entityType.getName() + " has no id");
             }
-            Object id;
-            try {
-                id = tableInfo.getIdFieldInfos().get(0).getReadFieldInvoker().invoke(entity, null);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            Object id = tableInfo.getIdFieldInfos().get(0).getValue(entity);
+            ;
+
             if (Objects.isNull(id)) {
                 SaveStrategy<T> saveStrategy = SaveStrategy.create()
                         .allFieldSave(saveOrUpdateStrategy.isAllField())

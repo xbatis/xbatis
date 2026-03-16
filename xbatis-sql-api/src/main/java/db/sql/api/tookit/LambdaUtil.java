@@ -16,14 +16,17 @@ package db.sql.api.tookit;
 
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
+import db.sql.api.Setter;
 
-import java.lang.invoke.SerializedLambda;
+import java.lang.invoke.*;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public final class LambdaUtil {
 
@@ -138,4 +141,51 @@ public final class LambdaUtil {
             return name;
         }
     }
+
+    private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+
+    public static <T, R> GetterFun<T, R> createGetter(Class<T> clazz, String getterName, Class<R> rType) {
+        return createGetter(GetterFun.class, clazz, getterName, rType);
+    }
+
+    public static <GETTER extends Function<T, R>, T, R> GETTER createGetter(Class<GETTER> getterClass, Class<T> clazz, String getterName, Class<R> rType) {
+        try {
+            CallSite callSite = LambdaMetafactory.metafactory(
+                    LOOKUP,
+                    "apply",
+                    MethodType.methodType(getterClass),
+                    MethodType.methodType(Object.class, Object.class),
+                    LOOKUP.findVirtual(clazz, getterName, MethodType.methodType(rType)),
+                    MethodType.methodType(rType, clazz)
+            );
+
+            MethodHandle factory = callSite.getTarget();
+            return (GETTER) factory.invoke();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T, V> Setter<T, V> createSetter(Class<T> clazz, String setterName, Class<V> vType) {
+        return createSetter(Setter.class, clazz, setterName, vType);
+    }
+
+    public static <SETTER extends BiConsumer<T, V>, T, V> SETTER createSetter(Class<SETTER> setterClass, Class<T> clazz, String setterName, Class<V> vType) {
+        try {
+            CallSite callSite = LambdaMetafactory.metafactory(
+                    LOOKUP,
+                    "accept",
+                    MethodType.methodType(setterClass),
+                    MethodType.methodType(void.class, Object.class, Object.class),
+                    LOOKUP.findVirtual(clazz, setterName, MethodType.methodType(void.class, vType)),
+                    MethodType.methodType(void.class, clazz, vType)
+            );
+
+            MethodHandle factory = callSite.getTarget();
+            return (SETTER) factory.invoke();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

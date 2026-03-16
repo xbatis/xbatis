@@ -81,6 +81,10 @@ public class TableFieldInfo {
 
     private final SetFieldInvoker writeFieldInvoker;
 
+//    private final Setter setter;
+//
+//    private final Getter getter;
+
     private final TypeHandler<?> typeHandler;
 
     private final boolean isTableSplitKey;
@@ -91,11 +95,10 @@ public class TableFieldInfo {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.tableAnnotation = tableAnnotation;
-
         this.tableFieldAnnotation = TableInfoUtil.getTableFieldAnnotation(field);
         this.exists = tableFieldAnnotation.exists();
         this.columnName = TableInfoUtil.getFieldColumnName(tableAnnotation, field);
-        this.readFieldInvoker = new GetFieldInvoker(field);
+
         this.tableIdMap = TableInfoUtil.getTableIds(clazz, field, fieldInfo.getTypeClass());
         this.tableId = !tableIdMap.isEmpty();
         this.version = field.isAnnotationPresent(Version.class);
@@ -104,15 +107,57 @@ public class TableFieldInfo {
         this.logicDeleteTime = field.isAnnotationPresent(LogicDeleteTime.class);
         this.logicDeleteAnnotation = this.logicDelete ? field.getAnnotation(LogicDelete.class) : null;
         this.logicDeleteInitValue = this.logicDelete ? TypeConvertUtil.convert(this.logicDeleteAnnotation.beforeValue(), fieldInfo.getTypeClass()) : null;
-        this.writeFieldInvoker = new SetFieldInvoker(field);
+
         this.typeHandler = MybatisTypeHandlerUtil.createTypeHandler(this.fieldInfo, this.tableFieldAnnotation.typeHandler());
         this.isTableSplitKey = field.isAnnotationPresent(SplitTableKey.class);
         this.canUpdateField = this.exists && !this.tableId && !this.logicDelete && !this.version && !this.logicDeleteTime && !this.tenantId && !this.tableFieldAnnotation.neverUpdate();
+
+
+//        Setter set = null;
+//        SetFieldInvoker writeFieldInvoker = null;
+//        try {
+//            set = LambdaUtil.createSetter(field.getDeclaringClass(), "set" + NamingUtil.firstToUpperCase(field.getName()), field.getType());
+//        } catch (Exception e) {
+//            writeFieldInvoker = new SetFieldInvoker(field);
+//        }
+//        this.setter = set;
+//        this.writeFieldInvoker = writeFieldInvoker;
+//
+//
+//        Getter get = null;
+//        GetFieldInvoker readFieldInvoker = null;
+//        try {
+//            get = LambdaUtil.createGetter(Getter.class, field.getDeclaringClass(), "get" + NamingUtil.firstToUpperCase(field.getName()), field.getType());
+//        } catch (Exception e) {
+//            try {
+//                get = LambdaUtil.createGetter(Getter.class, field.getDeclaringClass(), "is" + NamingUtil.firstToUpperCase(field.getName()), field.getType());
+//            } catch (Exception e1) {
+//                readFieldInvoker = new GetFieldInvoker(field);
+//            }
+//        }
+//        this.getter = get;
+        this.writeFieldInvoker = new SetFieldInvoker(field);
+        this.readFieldInvoker = new GetFieldInvoker(field);
     }
 
     public Object getValue(Object object) {
         try {
+//            if (getter != null) {
+//                return getter.apply(object);
+//            }
             return this.readFieldInvoker.invoke(object, null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setValue(Object object, Object value) {
+        try {
+//            if (setter != null) {
+//                setter.accept(object, value);
+//                return;
+//            }
+            this.writeFieldInvoker.invoke(object, new Object[]{value});
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -124,10 +169,6 @@ public class TableFieldInfo {
 
     public String getColumnName() {
         return this.columnName;
-    }
-
-    public GetFieldInvoker getReadFieldInvoker() {
-        return readFieldInvoker;
     }
 
     public Table getTableAnnotation() {
@@ -160,10 +201,6 @@ public class TableFieldInfo {
 
     public Object getLogicDeleteInitValue() {
         return logicDeleteInitValue;
-    }
-
-    public SetFieldInvoker getWriteFieldInvoker() {
-        return writeFieldInvoker;
     }
 
     public TypeHandler<?> getTypeHandler() {

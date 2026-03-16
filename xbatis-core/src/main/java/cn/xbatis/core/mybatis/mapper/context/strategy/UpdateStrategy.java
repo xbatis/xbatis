@@ -16,9 +16,12 @@ package cn.xbatis.core.mybatis.mapper.context.strategy;
 
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.tookit.LambdaUtil;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @lombok.Getter
 public class UpdateStrategy<T> {
@@ -116,6 +119,14 @@ public class UpdateStrategy<T> {
 
     public UpdateStrategy<T> updateFields(Set<String> updateFields) {
         this.updateFields = updateFields;
+        return this;
+    }
+
+    public UpdateStrategy<T> updateFields(Getter<T>... updateFields) {
+        this.updateFields = Arrays.asList(updateFields)
+                .stream()
+                .map(i -> LambdaUtil.getName(i))
+                .collect(Collectors.toSet());
         return this;
     }
 
