@@ -14,6 +14,8 @@
 
 package cn.xbatis.core.util;
 
+import db.sql.api.tookit.PropertyNamer;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -89,18 +91,7 @@ public final class NamingUtil {
      * @return 首字母小写后的名称
      */
     public static String firstToLower(String name) {
-        if (isBlank(name)) {
-            return name;
-        }
-
-        char first = name.charAt(0);
-        if (Character.isLowerCase(first)) {
-            return name;
-        }
-
-        char[] chars = name.toCharArray();
-        chars[0] = Character.toLowerCase(first);
-        return new String(chars);
+        return PropertyNamer.firstToLower(name);
     }
 
     /**
@@ -109,18 +100,7 @@ public final class NamingUtil {
      * @return 首字母大写后的名称
      */
     public static String firstToUpperCase(String name) {
-        if (isBlank(name)) {
-            return name;
-        }
-
-        char first = name.charAt(0);
-        if (Character.isUpperCase(first)) {
-            return name;
-        }
-
-        char[] chars = name.toCharArray();
-        chars[0] = Character.toUpperCase(first);
-        return new String(chars);
+        return PropertyNamer.firstToUpperCase(name);
     }
 
     /**

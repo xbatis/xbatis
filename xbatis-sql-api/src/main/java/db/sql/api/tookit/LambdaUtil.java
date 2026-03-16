@@ -144,6 +144,14 @@ public final class LambdaUtil {
 
     private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
+    public static <T, V> Setter<T, V> createGetterByField(Class<T> clazz, String field, Class<V> vType) {
+        try {
+            return createSetter(clazz, "get" + PropertyNamer.firstToUpperCase(field), vType);
+        } catch (RuntimeException e) {
+            return createSetter(clazz, "is" + PropertyNamer.firstToUpperCase(field), vType);
+        }
+    }
+
     public static <T, R> GetterFun<T, R> createGetter(Class<T> clazz, String getterName, Class<R> rType) {
         return createGetter(GetterFun.class, clazz, getterName, rType);
     }
@@ -164,6 +172,10 @@ public final class LambdaUtil {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static <T, V> Setter<T, V> createSetterByField(Class<T> clazz, String field, Class<V> vType) {
+        return createSetter(clazz, "set" + PropertyNamer.firstToUpperCase(field), vType);
     }
 
     public static <T, V> Setter<T, V> createSetter(Class<T> clazz, String setterName, Class<V> vType) {

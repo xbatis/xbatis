@@ -33,16 +33,16 @@ public interface BasicUpdateMapper extends BasicBaseMapper {
      * 局部修改（精准修改，只修改set过的和updateDefaultValueFillAlways=true的字段）
      *
      * @param entity 目标实体类
-     * @param proxy  实体类proxy实例
+     * @param consumer  实体类proxy实例Consumer
      * @param <E>    实体类类型
      * @return 修改条数
      */
-    default <E> int partialUpdate(E entity, Consumer<E> proxy) {
+    default <E> int partialUpdate(E entity, Consumer<E> consumer) {
         Set<String> updateFields = new HashSet<>();
-        E e2 = UpdateProxyUtil.of(entity, field -> {
+        E proxy = UpdateProxyUtil.of(entity, field -> {
             updateFields.add(field);
         });
-        proxy.accept(e2);
+        consumer.accept(proxy);
         if (updateFields.isEmpty()) {
             return 0;
         }

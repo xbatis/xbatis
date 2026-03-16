@@ -72,5 +72,45 @@ public class PropertyNamer {
         return result.toString();
     }
 
+    /**
+     * 首字母小写
+     *
+     * @return 首字母小写后的名称
+     */
+    public static String firstToLower(String name) {
+        if (name == null || name.isEmpty()) {
+            return name;
+        }
+
+        char first = name.charAt(0);
+        if (Character.isLowerCase(first)) {
+            return name;
+        }
+
+        char[] chars = name.toCharArray();
+        chars[0] = Character.toLowerCase(first);
+        return new String(chars);
+    }
+
+    /**
+     * 首字母大写
+     *
+     * @return 首字母大写后的名称
+     */
+    public static String firstToUpperCase(String name) {
+        if (name == null || name.isEmpty()) {
+            return name;
+        }
+
+        char first = name.charAt(0);
+        if (Character.isUpperCase(first)) {
+            return name;
+        }
+
+        char[] chars = name.toCharArray();
+        chars[0] = Character.toUpperCase(first);
+        return new String(chars);
+    }
+
 
 }
