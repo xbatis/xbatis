@@ -286,7 +286,7 @@ public interface Dao<T, ID> {
      * @param proxy  实体类proxy实例
      * @return 修改条数
      */
-    <T> int partialUpdate(T entity, Consumer<T> proxy);
+    int partialUpdate(T entity, Consumer<T> proxy);
 
     /**
      * 实体类修改

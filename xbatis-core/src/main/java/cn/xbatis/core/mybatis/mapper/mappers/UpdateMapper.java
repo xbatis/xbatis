@@ -30,10 +30,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      *
      * @param entity 目标实体类
      * @param proxy  实体类proxy实例
-     * @param <E>    实体类类型
      * @return 修改条数
      */
-    default <E> int partialUpdate(E entity, Consumer<E> proxy) {
+    default int partialUpdate(T entity, Consumer<T> proxy) {
         return getBasicMapper().partialUpdate(entity, proxy);
     }
 
