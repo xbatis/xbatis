@@ -28,12 +28,11 @@
     <packaging>pom</packaging>
     <modules>
         <module>xbatis-bom</module>
+        <module>xbatis-parent</module>
         <module>xbatis-annotation</module>
-        <module>xbatis-core</module>
         <module>xbatis-sql-api</module>
         <module>xbatis-sql-api-impl</module>
-        <module>xbatis-parent</module>
-        <module>xbatis-benchmark</module>
+        <module>xbatis-core</module>
     </modules>
 
     <properties>
