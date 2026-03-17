@@ -500,6 +500,10 @@ public class ResultInfo {
                         if (str.startsWith("'")) {
                             return str.substring(1, str.length() - 1);
                         } else {
+                            if (str.startsWith("{") && str.endsWith("}")) {
+                                //适配旧的
+                                str = str.substring(1, str.length() - 1);
+                            }
                             TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(str);
                             if (Objects.isNull(tableFieldInfo)) {
                                 throw buildException(clazz, field, annotationName, annotationPropertyName, str + " is not a entity field");
