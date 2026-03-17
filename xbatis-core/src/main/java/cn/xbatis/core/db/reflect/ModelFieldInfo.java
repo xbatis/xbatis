@@ -55,6 +55,9 @@ public class ModelFieldInfo {
         if (field.isAnnotationPresent(ModelEntityField.class)) {
             ModelEntityField modelEntityField = field.getAnnotation(ModelEntityField.class);
             entityFieldName = modelEntityField.value();
+            if (entityFieldName.isEmpty()) {
+                entityFieldName = field.getName();
+            }
             this.forceUpdate = modelEntityField.forceUpdate();
             this.ignoreDefaultValue = modelEntityField.ignoreDefaultValue();
         } else {

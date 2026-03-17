@@ -26,10 +26,10 @@ public @interface ModelEntityField {
 
     /**
      * 用于解决名字不一样的问题
-     *
+     * 不写就是当前字段名
      * @return 实体类属性
      */
-    String value();
+    String value() default "";
 
     /**
      * 强制修改
