@@ -220,6 +220,10 @@ public class MethodsCallParser {
             }).findFirst();
         }
 
+        if (first == null || !first.isPresent()) {
+            throw new RuntimeException("can't find method:" + name + " in " + (target instanceof Class ? target : target.getClass()));
+        }
+
         try {
             Method method = first.get();
             MethodHandle methodHandle = LOOKUP.unreflect(method);
