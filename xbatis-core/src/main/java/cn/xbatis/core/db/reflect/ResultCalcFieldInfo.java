@@ -16,6 +16,7 @@ package cn.xbatis.core.db.reflect;
 
 import cn.xbatis.db.annotations.ResultCalcField;
 import db.sql.api.Cmd;
+import db.sql.api.cmd.basic.Alias;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.CmdTemplate;
@@ -23,6 +24,7 @@ import db.sql.api.impl.tookit.SqlUtil;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
+import java.util.stream.Collectors;
 
 public class ResultCalcFieldInfo extends ResultFieldInfo {
 
@@ -71,6 +73,25 @@ public class ResultCalcFieldInfo extends ResultFieldInfo {
     }
 
     public Cmd getCmd(CmdFactory cmdFactory) {
+        if (this.sql.startsWith("[") && this.sql.endsWith("]")) {
+            Cmd cmd = (Cmd) ResultInfo.METHODS_CALL_PARSER.parse(this.sql.substring(1, this.sql.length() - 1), args -> {
+                return args.stream().map(i -> {
+                    if (i instanceof String) {
+                        String str = (String) i;
+                        if (str.startsWith("'")) {
+                            return str.substring(1, str.length() - 1);
+                        } else {
+                            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(str);
+                            return cmdFactory.field(tableInfo.getType(), tableFieldInfo.getField().getName());
+                        }
+                    }
+                    return i;
+                }).collect(Collectors.toList());
+            });
+            ((Alias) cmd).as(getMappingColumnName());
+            return cmd;
+        }
+
         if (tableFieldInfos.length == 0) {
             return Methods.column(this.sql).as(getMappingColumnName());
         }

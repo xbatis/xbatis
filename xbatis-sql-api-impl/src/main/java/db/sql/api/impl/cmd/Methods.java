@@ -388,6 +388,17 @@ public final class Methods {
     }
 
     /**
+     * count条数 函数
+     *
+     * @param column 列
+     * @return Count
+     */
+    public static Count count(Number column) {
+        Objects.requireNonNull(column);
+        return new Count(value(column));
+    }
+
+    /**
      * count(1) 条数 函数
      *
      * @return Count1
@@ -415,6 +426,18 @@ public final class Methods {
     public static Count count(Cmd column, boolean distinct) {
         Objects.requireNonNull(column);
         return new Count(column, distinct);
+    }
+
+    /**
+     * count条数 函数
+     *
+     * @param column   列
+     * @param distinct 是否去重
+     * @return Count
+     */
+    public static Count count(Number column, boolean distinct) {
+        Objects.requireNonNull(column);
+        return new Count(value(column), distinct);
     }
 
     /**

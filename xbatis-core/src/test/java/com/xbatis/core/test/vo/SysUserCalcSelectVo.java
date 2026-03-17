@@ -25,7 +25,7 @@ public class SysUserCalcSelectVo {
 
     private Integer id;
 
-    @ResultCalcField("count(1)")
+    @ResultCalcField("[count(if(in(id,1,2,3),0,1))]")
     private Integer count1;
 
     @ResultCalcField("sum({id}+1)")

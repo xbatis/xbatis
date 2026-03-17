@@ -19,6 +19,8 @@ import cn.xbatis.core.exception.NotTableFieldException;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.annotations.*;
+import db.sql.api.impl.cmd.Methods;
+import db.sql.api.tookit.MethodsCallParser;
 import lombok.Data;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -64,6 +66,13 @@ public class ResultInfo {
      * 类上的PutValues注解
      */
     private final Map<Class, List<CreatedEventInfo>> createdEventInfos;
+
+    public final static MethodsCallParser METHODS_CALL_PARSER = new MethodsCallParser(Methods.class, true, (name) -> {
+        if (name.equals("if")) {
+            return "if_";
+        }
+        return name;
+    });
 
     public ResultInfo(Class<?> clazz) {
 
@@ -474,47 +483,72 @@ public class ResultInfo {
         List<TableFieldInfo> tableFieldInfoList = new ArrayList<>();
 
 
-        StringBuilder sql = new StringBuilder();
+
         int startIndex = 0;
 
         int pos = -1;
         String annotationName = ResultCalcField.class.getSimpleName();
         String annotationPropertyName = "value";
 
-        while (true) {
-            int start = value.indexOf("{", startIndex);
-            if (start == -1) {
-                if (sql.length() == 0 && value.length() <= 2) {
-                    throw buildException(clazz, field, ResultCalcField.class.getSimpleName(), annotationPropertyName, "format error");
-                } else {
-                    sql.append(value, startIndex, value.length());
-                    break;
+        String sql;
+        if (value.startsWith("[") && value.endsWith("]")) {
+            //这里只是检测
+            METHODS_CALL_PARSER.parse(value.substring(1, value.length() - 1), args -> {
+                return args.stream().map(i -> {
+                    if (i instanceof String) {
+                        String str = (String) i;
+                        if (str.startsWith("'")) {
+                            return str.substring(1, str.length() - 1);
+                        } else {
+                            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(str);
+                            if (Objects.isNull(tableFieldInfo)) {
+                                throw buildException(clazz, field, annotationName, annotationPropertyName, str + " is not a entity field");
+                            }
+                            return Methods.column(tableFieldInfo.getColumnName());
+                        }
+                    }
+                    return i;
+                }).collect(Collectors.toList());
+            });
+            sql = value;
+        } else {
+            StringBuilder sqlBuilder = new StringBuilder();
+            while (true) {
+                int start = value.indexOf("{", startIndex);
+                if (start == -1) {
+                    if (sqlBuilder.length() == 0 && value.length() <= 2) {
+                        throw buildException(clazz, field, ResultCalcField.class.getSimpleName(), annotationPropertyName, "format error");
+                    } else {
+                        sqlBuilder.append(value, startIndex, value.length());
+                        break;
+                    }
                 }
-            }
-            int end = value.indexOf("}", start);
-            if (end == -1) {
-                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
-            }
-            String property = value.substring(start + 1, end);
+                int end = value.indexOf("}", start);
+                if (end == -1) {
+                    throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+                }
+                String property = value.substring(start + 1, end);
 
-            String[] arr = property.split("\\.");
-            if (arr.length > 2) {
-                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
-            }
+                String[] arr = property.split("\\.");
+                if (arr.length > 2) {
+                    throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+                }
 
-            property = arr[arr.length - 1];
-            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
-            if (Objects.isNull(tableFieldInfo)) {
-                throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
+                property = arr[arr.length - 1];
+                TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
+                if (Objects.isNull(tableFieldInfo)) {
+                    throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
+                }
+                sqlBuilder.append(value, startIndex, start);
+                sqlBuilder.append("{").append(++pos).append("}");
+                tableFieldInfoList.add(tableFieldInfo);
+                startIndex = end + 1;
             }
-            sql.append(value, startIndex, start);
-            sql.append("{").append(++pos).append("}");
-            tableFieldInfoList.add(tableFieldInfo);
-            startIndex = end + 1;
+            sql = sqlBuilder.toString();
         }
 
         TableFieldInfo[] tableFieldInfos = tableFieldInfoList.toArray(new TableFieldInfo[0]);
-        resultFieldInfos.add(new ResultCalcFieldInfo(clazz, storey, tableInfo, tableFieldInfos, field, resultCalcField, sql.toString()));
+        resultFieldInfos.add(new ResultCalcFieldInfo(clazz, storey, tableInfo, tableFieldInfos, field, resultCalcField, sql));
 
         return tableCount;
     }
