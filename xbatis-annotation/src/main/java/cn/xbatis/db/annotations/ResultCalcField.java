@@ -37,6 +37,13 @@ public @interface ResultCalcField {
     String value();
 
     /**
+     * as 后的别名
+     *
+     * @return
+     */
+    String as() default "";
+
+    /**
      * 对应的实体类,默认使用@ResultEntity上的实体
      *
      * @return 对应的实体类

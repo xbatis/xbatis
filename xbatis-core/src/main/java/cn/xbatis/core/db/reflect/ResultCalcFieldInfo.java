@@ -38,13 +38,16 @@ public class ResultCalcFieldInfo extends ResultFieldInfo {
 
     private final String sql;
 
+    private final ResultCalcField annotation;
+
     public ResultCalcFieldInfo(Class type, int storey, TableInfo tableInfo, TableFieldInfo[] tableFieldInfos, Field field, ResultCalcField resultCalcField, String sql) {
-        super(true, type, field, SqlUtil.getAsName(type, field), getTypeHandler(field, resultCalcField), resultCalcField.jdbcType());
+        super(true, type, field, resultCalcField.as().isEmpty() ? SqlUtil.getAsName(type, field) : resultCalcField.as(), getTypeHandler(field, resultCalcField), resultCalcField.jdbcType());
         this.type = type;
         this.tableInfo = tableInfo;
         this.tableFieldInfos = tableFieldInfos;
         this.storey = storey;
         this.sql = sql;
+        this.annotation = resultCalcField;
     }
 
     static Class<? extends TypeHandler<?>> getTypeHandler(Field field, ResultCalcField resultCalcField) {
@@ -101,5 +104,9 @@ public class ResultCalcFieldInfo extends ResultFieldInfo {
             cmds[i] = cmdFactory.field(tableInfo.getType(), tableFieldInfo.getField().getName());
         }
         return CmdTemplate.create(true, this.sql, cmds).as(getMappingColumnName());
+    }
+
+    public ResultCalcField getAnnotation() {
+        return annotation;
     }
 }
