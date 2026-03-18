@@ -488,6 +488,7 @@ public class ResultInfo {
 
         String sql;
         if (value.startsWith("[") && value.endsWith("]")) {
+            final XbatisTable table = new XbatisTable(tableInfo);
             //这里只是检测
             METHODS_CALL_PARSER.parse(value.substring(1, value.length() - 1), args -> {
                 return args.stream().map(i -> {
@@ -504,7 +505,7 @@ public class ResultInfo {
                             if (Objects.isNull(tableFieldInfo)) {
                                 throw buildException(clazz, field, annotationName, annotationPropertyName, str + " is not a entity field");
                             }
-                            return new XbatisTableField(new XbatisTable(tableInfo), tableFieldInfo);
+                            return new XbatisTableField(table, tableFieldInfo);
                         }
                     }
                     return i;

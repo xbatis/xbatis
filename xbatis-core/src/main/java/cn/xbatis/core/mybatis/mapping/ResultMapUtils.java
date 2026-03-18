@@ -40,7 +40,7 @@ public final class ResultMapUtils {
     }
 
     public static ResultMap getResultMap(MybatisConfiguration configuration, Class clazz) {
-        String id = "mp-" + MybatisIdUtil.convertIdPath(clazz.getName());
+        String id = "x-" + MybatisIdUtil.convertIdPath(clazz.getName());
         if (configuration.hasResultMap(id)) {
             return configuration.getResultMap(id);
         }
@@ -139,7 +139,7 @@ public final class ResultMapUtils {
         resultMappings.addAll(createResultMapping(configuration, resultInfo.getResultFieldInfos()));
 
         //内嵌字段（多个） 构建
-        resultMappings.addAll(createNestedResultMapping(configuration, resultInfo.getNestedResultInfos(), "mp-" + MybatisIdUtil.convertIdPath(clazz.getName())));
+        resultMappings.addAll(createNestedResultMapping(configuration, resultInfo.getNestedResultInfos(), "x-" + MybatisIdUtil.convertIdPath(clazz.getName())));
         return Collections.unmodifiableList(resultMappings);
     }
 
