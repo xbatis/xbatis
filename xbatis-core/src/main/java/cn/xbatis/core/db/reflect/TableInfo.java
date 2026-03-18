@@ -162,6 +162,7 @@ public class TableInfo {
 
 
         for (Field field : fieldList) {
+            field.setAccessible(true);
             TableFieldInfo tableFieldInfo = new TableFieldInfo(entity, annotation, field);
             tableFieldInfos.add(tableFieldInfo);
             tableFieldInfoMap.put(field.getName(), tableFieldInfo);

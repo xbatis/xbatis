@@ -40,6 +40,7 @@ public class OrderByInfo {
 
         Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
         for (Field field : fieldList) {
+            field.setAccessible(true);
             OrderByItem orderByItem = this.parseOrderByAnnotation(clazz, orderByTarget.storey(), field, orderByTarget, tableInfoMap);
             if (orderByItem == null) {
                 continue;

@@ -110,6 +110,7 @@ public class ResultInfo {
 
         List<Field> fieldList = FieldUtil.getFields(clazz);
         for (Field field : fieldList) {
+            field.setAccessible(true);
             String fieldPath = path + "." + field.getName();
 
             FieldInfo fieldInfo = new FieldInfo(root, field);
@@ -268,6 +269,7 @@ public class ResultInfo {
         }
 
         for (Field field : FieldUtil.getFields(targetType)) {
+            field.setAccessible(true);
             String fieldPath = path + "." + field.getName();
             FieldInfo fieldInfo = new FieldInfo(root, field);
             Map<Class<? extends Annotation>, Annotation> annotationMap = AnnotationUtil.getAnnotations(root, field, fieldInfo.getTypeClass()

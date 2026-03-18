@@ -107,7 +107,10 @@ public class ModelInfo {
             throw new NotTableClassException(model, "", entity);
         }
 
-        List<ModelFieldInfo> modelFieldInfos = FieldUtil.getFields(model).stream().map(field -> new ModelFieldInfo(entity, model, field)).collect(Collectors.toList());
+        List<ModelFieldInfo> modelFieldInfos = FieldUtil.getFields(model).stream().map(field -> {
+            field.setAccessible(true);
+            return new ModelFieldInfo(entity, model, field);
+        }).collect(Collectors.toList());
 
         this.modelFieldInfoMap = modelFieldInfos.stream().collect(Collectors.toMap((item) -> item.getField().getName(), account -> account));
 

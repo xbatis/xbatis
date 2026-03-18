@@ -51,6 +51,7 @@ public class ConditionInfo {
 
         Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
         for (Field field : fieldList) {
+            field.setAccessible(true);
             cn.xbatis.db.annotations.Conditions conditions = field.getAnnotation(cn.xbatis.db.annotations.Conditions.class);
             if (conditions != null) {
                 List<ConditionItem> subList = new ArrayList<>();
