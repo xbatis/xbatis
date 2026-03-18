@@ -16,6 +16,8 @@ package cn.xbatis.core.db.reflect;
 
 import cn.xbatis.core.exception.NotTableClassException;
 import cn.xbatis.core.exception.NotTableFieldException;
+import cn.xbatis.core.sql.executor.XbatisTable;
+import cn.xbatis.core.sql.executor.XbatisTableField;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.annotations.*;
@@ -502,7 +504,7 @@ public class ResultInfo {
                             if (Objects.isNull(tableFieldInfo)) {
                                 throw buildException(clazz, field, annotationName, annotationPropertyName, str + " is not a entity field");
                             }
-                            return Methods.column(tableFieldInfo.getColumnName());
+                            return new XbatisTableField(new XbatisTable(tableInfo), tableFieldInfo);
                         }
                     }
                     return i;

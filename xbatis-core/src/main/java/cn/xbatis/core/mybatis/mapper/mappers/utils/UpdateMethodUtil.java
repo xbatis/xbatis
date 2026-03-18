@@ -25,8 +25,8 @@ import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
-import cn.xbatis.core.sql.executor.MpTableField;
 import cn.xbatis.core.sql.executor.TableSplitUtil;
+import cn.xbatis.core.sql.executor.XbatisTableField;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.core.util.TableInfoUtil;
 import db.sql.api.DbModel;
@@ -252,9 +252,9 @@ public final class UpdateMethodUtil {
     }
 
     private static <T> int _updateBatch(UpdateChain updateChain, TableInfo tableInfo, Collection<T> list, Collection<TableFieldInfo> updateTableFieldInfos, List<TableFieldInfo> idFieldInfos, UpdateBatchStrategy<T> updateBatchStrategy) {
-        MpTableField[] idTableFields = idFieldInfos.stream().map(i -> {
+        XbatisTableField[] idTableFields = idFieldInfos.stream().map(i -> {
             return updateChain.$().field(tableInfo.getType(), i.getField().getName());
-        }).collect(Collectors.toList()).toArray(new MpTableField[0]);
+        }).collect(Collectors.toList()).toArray(new XbatisTableField[0]);
 
 
         boolean allUpdate = updateBatchStrategy.getBatchFields() == null || updateBatchStrategy.getBatchFields().length == 0;
@@ -268,7 +268,7 @@ public final class UpdateMethodUtil {
             }
 
             List<Serializable> values;
-            for (MpTableField idTableField : idTableFields) {
+            for (XbatisTableField idTableField : idTableFields) {
                 values = columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName());
                 Object idValue = idTableField.getTableFieldInfo().getValue(entity);
                 if (idValue == null) {
@@ -343,7 +343,7 @@ public final class UpdateMethodUtil {
                         for (int j = 0; j < list.size(); j++) {
                             List<Object> multiValues = new ArrayList<>();
                             for (int i = 0; i < idTableFields.length; i++) {
-                                MpTableField idTableField = idTableFields[i];
+                                XbatisTableField idTableField = idTableFields[i];
                                 multiValues.add(columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(j));
                             }
                             values.add(Methods.tpl(inTpl.toString(), multiValues.toArray()));
@@ -351,14 +351,14 @@ public final class UpdateMethodUtil {
                         update.and(Methods.in(Methods.tpl(inTpl.toString(), idTableFields), values));
 
                     } else {
-                        for (MpTableField idTableField : idTableFields) {
+                        for (XbatisTableField idTableField : idTableFields) {
                             updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
                         }
                         updateChain.andNested(chain -> {
                             for (int i = 0; i < list.size(); i++) {
                                 final int index = i;
                                 chain.orNested(o -> {
-                                    for (MpTableField idTableField : idTableFields) {
+                                    for (XbatisTableField idTableField : idTableFields) {
                                         Object value = columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index);
                                         o.eq(idTableField, value);
                                     }
@@ -371,7 +371,7 @@ public final class UpdateMethodUtil {
 
 
         } else {
-            for (MpTableField idTableField : idTableFields) {
+            for (XbatisTableField idTableField : idTableFields) {
                 updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
             }
         }
@@ -380,9 +380,9 @@ public final class UpdateMethodUtil {
                 .execute();
     }
 
-    private static ICondition buildIdCaseWhen(UpdateChain updateChain, MpTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, int index) {
+    private static ICondition buildIdCaseWhen(UpdateChain updateChain, XbatisTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, int index) {
         ConditionChain whenChain = updateChain.conditionChain().getConditionFactory().newConditionChain(null);
-        for (MpTableField idTableField : idTableFields) {
+        for (XbatisTableField idTableField : idTableFields) {
             whenChain.and(idTableField.eq(columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index)));
         }
         return whenChain;

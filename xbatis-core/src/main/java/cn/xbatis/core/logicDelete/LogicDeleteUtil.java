@@ -19,8 +19,8 @@ import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.executor.BaseUpdate;
-import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Update;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.db.annotations.LogicDelete;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.On;
@@ -160,10 +160,10 @@ public final class LogicDeleteUtil {
     /**
      * 添加逻辑删除条件
      *
-     * @param table MpTable
+     * @param table XbatisTable
      * @param on    On
      */
-    public static void addLogicDeleteCondition(MpTable table, On on) {
+    public static void addLogicDeleteCondition(XbatisTable table, On on) {
         if (!XbatisGlobalConfig.isLogicDeleteSwitchOpen()) {
             return;
         }
@@ -184,10 +184,10 @@ public final class LogicDeleteUtil {
     /**
      * 添加逻辑删除条件
      *
-     * @param table MpTable
+     * @param table XbatisTable
      * @param where Where
      */
-    public static void addLogicDeleteCondition(MpTable table, Where where) {
+    public static void addLogicDeleteCondition(XbatisTable table, Where where) {
         if (!XbatisGlobalConfig.isLogicDeleteSwitchOpen()) {
             return;
         }

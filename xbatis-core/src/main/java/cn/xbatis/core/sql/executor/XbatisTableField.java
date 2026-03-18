@@ -27,11 +27,11 @@ import db.sql.api.impl.cmd.basic.TableField;
 
 import java.util.Objects;
 
-public class MpTableField extends TableField {
+public class XbatisTableField extends TableField {
 
     private final TableFieldInfo tableFieldInfo;
 
-    public MpTableField(MpTable table, TableFieldInfo tableFieldInfo) {
+    public XbatisTableField(XbatisTable table, TableFieldInfo tableFieldInfo) {
         super(table, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId());
         this.tableFieldInfo = tableFieldInfo;
     }

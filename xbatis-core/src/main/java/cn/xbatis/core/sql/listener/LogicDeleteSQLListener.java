@@ -16,7 +16,7 @@ package cn.xbatis.core.sql.listener;
 
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.sql.executor.BaseUpdate;
-import cn.xbatis.core.sql.executor.MpTable;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.executor.IDelete;
@@ -33,7 +33,7 @@ import db.sql.api.impl.cmd.struct.Where;
 public class LogicDeleteSQLListener implements SQLListener {
 
     private void addConditionToWhere(Object source, IDataset<?, ?> dataset) {
-        if (!(dataset instanceof MpTable) || !(source instanceof IExecutor)) {
+        if (!(dataset instanceof XbatisTable) || !(source instanceof IExecutor)) {
             return;
         }
         if (source instanceof IInsert || source instanceof IDelete) {
@@ -52,14 +52,14 @@ public class LogicDeleteSQLListener implements SQLListener {
         } else {
             throw new RuntimeException("not support type:" + source.getClass());
         }
-        LogicDeleteUtil.addLogicDeleteCondition((MpTable) dataset, where);
+        LogicDeleteUtil.addLogicDeleteCondition((XbatisTable) dataset, where);
     }
 
     private void addConditionToOn(IDataset<?, ?> dataset, IOn on) {
-        if (!(dataset instanceof MpTable) || !(on instanceof On)) {
+        if (!(dataset instanceof XbatisTable) || !(on instanceof On)) {
             return;
         }
-        LogicDeleteUtil.addLogicDeleteCondition((MpTable) dataset, (On) on);
+        LogicDeleteUtil.addLogicDeleteCondition((XbatisTable) dataset, (On) on);
     }
 
     @Override

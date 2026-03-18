@@ -24,8 +24,8 @@ import cn.xbatis.core.mybatis.mapper.context.ModelUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.ModelUpdateCreateUtil;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
-import cn.xbatis.core.sql.executor.MpTableField;
 import cn.xbatis.core.sql.executor.TableSplitUtil;
+import cn.xbatis.core.sql.executor.XbatisTableField;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.db.Model;
@@ -221,9 +221,9 @@ public final class UpdateModelMethodUtil {
     }
 
     private static <M extends Model> int _updateBatch(UpdateChain updateChain, ModelInfo modelInfo, Collection<M> list, Collection<ModelFieldInfo> updateModelFieldInfos, List<ModelFieldInfo> idFieldInfos, UpdateBatchStrategy<M> updateBatchStrategy) {
-        MpTableField[] idTableFields = idFieldInfos.stream().map(i -> {
+        XbatisTableField[] idTableFields = idFieldInfos.stream().map(i -> {
             return updateChain.$().field(modelInfo.getTableInfo().getType(), i.getTableFieldInfo().getField().getName());
-        }).collect(Collectors.toList()).toArray(new MpTableField[0]);
+        }).collect(Collectors.toList()).toArray(new XbatisTableField[0]);
 
 
         boolean allUpdate = updateBatchStrategy.getBatchFields() == null || updateBatchStrategy.getBatchFields().length == 0;
@@ -305,7 +305,7 @@ public final class UpdateModelMethodUtil {
                         for (int j = 0; j < list.size(); j++) {
                             List<Object> multiValues = new ArrayList<>();
                             for (int i = 0; i < idTableFields.length; i++) {
-                                MpTableField idTableField = idTableFields[i];
+                                XbatisTableField idTableField = idTableFields[i];
                                 multiValues.add(columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(j));
                             }
                             values.add(Methods.tpl(inTpl.toString(), multiValues.toArray()));
@@ -313,14 +313,14 @@ public final class UpdateModelMethodUtil {
                         update.and(Methods.in(Methods.tpl(inTpl.toString(), idTableFields), values));
 
                     } else {
-                        for (MpTableField idTableField : idTableFields) {
+                        for (XbatisTableField idTableField : idTableFields) {
                             updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
                         }
                         updateChain.andNested(chain -> {
                             for (int i = 0; i < list.size(); i++) {
                                 final int index = i;
                                 chain.orNested(o -> {
-                                    for (MpTableField idTableField : idTableFields) {
+                                    for (XbatisTableField idTableField : idTableFields) {
                                         Object value = columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index);
                                         o.eq(idTableField, value);
                                     }
@@ -331,7 +331,7 @@ public final class UpdateModelMethodUtil {
                 });
             });
         } else {
-            for (MpTableField idTableField : idTableFields) {
+            for (XbatisTableField idTableField : idTableFields) {
                 updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
             }
         }
@@ -341,9 +341,9 @@ public final class UpdateModelMethodUtil {
     }
 
 
-    private static ICondition buildIdCaseWhen(UpdateChain updateChain, MpTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, int index) {
+    private static ICondition buildIdCaseWhen(UpdateChain updateChain, XbatisTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, int index) {
         ConditionChain whenChain = updateChain.conditionChain().getConditionFactory().newConditionChain(null);
-        for (MpTableField idTableField : idTableFields) {
+        for (XbatisTableField idTableField : idTableFields) {
             whenChain.and(idTableField.eq(columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index)));
         }
         return whenChain;

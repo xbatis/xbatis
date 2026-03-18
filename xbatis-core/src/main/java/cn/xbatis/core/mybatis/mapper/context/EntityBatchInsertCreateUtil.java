@@ -22,8 +22,8 @@ import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
-import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.TableSplitUtil;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.IdAutoType;
@@ -130,8 +130,8 @@ public class EntityBatchInsertCreateUtil {
         //设置insert 列
         for (TableFieldInfo tableFieldInfo : saveFieldInfoSet) {
             MybatisCmdFactory cmdFactory = insert.$();
-            if (table instanceof MpTable) {
-                insert.fields(cmdFactory.field((MpTable) table, tableFieldInfo));
+            if (table instanceof XbatisTable) {
+                insert.fields(cmdFactory.field((XbatisTable) table, tableFieldInfo));
             } else {
                 insert.fields(insert.$().field(table, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId()));
             }
@@ -142,7 +142,7 @@ public class EntityBatchInsertCreateUtil {
         boolean containId = false;
 
         if (tableInfo.isSplitTable()) {
-            TableSplitUtil.splitHandle((MpTable) table, tableInfo.getSplitFieldInfo().getValue(Arrays.stream(insertData).findFirst().get()));
+            TableSplitUtil.splitHandle((XbatisTable) table, tableInfo.getSplitFieldInfo().getValue(Arrays.stream(insertData).findFirst().get()));
         }
 
         for (T t : insertData) {

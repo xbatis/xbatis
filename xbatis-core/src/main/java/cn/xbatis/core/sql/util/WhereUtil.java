@@ -19,8 +19,8 @@ import cn.xbatis.core.db.reflect.ModelInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.CmdParamUtil;
 import cn.xbatis.core.sql.MybatisCmdFactory;
-import cn.xbatis.core.sql.executor.MpTableField;
 import cn.xbatis.core.sql.executor.Where;
+import cn.xbatis.core.sql.executor.XbatisTableField;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.Cmd;
@@ -198,11 +198,11 @@ public final class WhereUtil {
             Objects.requireNonNull(id, "id can't be null");
         }
         appendWhereWithIdTableField(where, tableInfo, idTableField -> {
-            MpTableField idMpTableField = (MpTableField) idTableField;
+            XbatisTableField idXbatisTableField = (XbatisTableField) idTableField;
             List<Cmd> values = new ArrayList<>(ids.length);
             for (Serializable id : ids) {
                 Objects.requireNonNull(id, "id can't be null");
-                values.add(CmdParamUtil.build(idMpTableField.getTableFieldInfo(), id));
+                values.add(CmdParamUtil.build(idXbatisTableField.getTableFieldInfo(), id));
             }
             where.and(Methods.in(idTableField, values));
         });
@@ -219,11 +219,11 @@ public final class WhereUtil {
         Objects.requireNonNull(ids, "id can't be null");
         ids.forEach(id -> Objects.requireNonNull(id, "id can't be null"));
         appendWhereWithIdTableField(where, tableInfo, idTableField -> {
-            MpTableField idMpTableField = (MpTableField) idTableField;
+            XbatisTableField idXbatisTableField = (XbatisTableField) idTableField;
             List<Cmd> values = new ArrayList<>();
             for (Serializable id : ids) {
                 Objects.requireNonNull(id, "id can't be null");
-                values.add(CmdParamUtil.build(idMpTableField.getTableFieldInfo(), id));
+                values.add(CmdParamUtil.build(idXbatisTableField.getTableFieldInfo(), id));
             }
             where.and(Methods.in(idTableField, values));
         });

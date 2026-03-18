@@ -17,7 +17,7 @@ package cn.xbatis.core.tenant;
 import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.mapper.context.CmdParamUtil;
 import cn.xbatis.core.sql.executor.MpDatasetField;
-import cn.xbatis.core.sql.executor.MpTable;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.Model;
 import db.sql.api.Cmd;
@@ -134,10 +134,10 @@ public final class TenantUtil {
     /**
      * 添加租户条件
      *
-     * @param table MpTable
+     * @param table XbatisTable
      * @param on    On
      */
-    public static void addTenantCondition(MpTable table, On on) {
+    public static void addTenantCondition(XbatisTable table, On on) {
         Serializable tid = TenantUtil.getTenantId();
         if (Objects.isNull(tid)) {
             return;
@@ -164,10 +164,10 @@ public final class TenantUtil {
     /**
      * 添加租户条件
      *
-     * @param table MpTable
+     * @param table XbatisTable
      * @param where Where
      */
-    public static void addTenantCondition(MpTable table, Where where) {
+    public static void addTenantCondition(XbatisTable table, Where where) {
         Serializable tid = TenantUtil.getTenantId();
         if (Objects.isNull(tid)) {
             return;

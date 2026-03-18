@@ -61,7 +61,7 @@ public class MybatisCmdFactory extends CmdFactory {
     }
 
     @Override
-    public MpTable table(Class entity, int storey) {
+    public XbatisTable table(Class entity, int storey) {
         if (storey > 1) {
             //如果前面那个表没设置 则 从1 到 storey 初始化 以保证顺序
             if (this.cacheTable(entity, storey - 1) == null) {
@@ -70,9 +70,9 @@ public class MybatisCmdFactory extends CmdFactory {
                 }
             }
         }
-        return (MpTable) this.tableCache.computeIfAbsent(storey + entity.getName(), key -> {
+        return (XbatisTable) this.tableCache.computeIfAbsent(storey + entity.getName(), key -> {
             TableInfo tableInfo = getTableInfo(entity);
-            return new MpTable(tableInfo, tableAs(storey, ++tableNums));
+            return new XbatisTable(tableInfo, tableAs(storey, ++tableNums));
         });
     }
 
@@ -103,7 +103,7 @@ public class MybatisCmdFactory extends CmdFactory {
 
     @Override
     public TableField field(Class entity, String fieldName, int storey) {
-        MpTable table = table(entity, storey);
+        XbatisTable table = table(entity, storey);
         TableFieldInfo tableFieldInfo = table.getTableInfo().getFieldInfo(fieldName);
         if (Objects.isNull(tableFieldInfo)) {
             throw new RuntimeException("property " + fieldName + " is not a column");
@@ -111,8 +111,8 @@ public class MybatisCmdFactory extends CmdFactory {
         return this.field(table, tableFieldInfo);
     }
 
-    public MpTableField field(MpTable table, TableFieldInfo tableFieldInfo) {
-        return new MpTableField(table, tableFieldInfo);
+    public XbatisTableField field(XbatisTable table, TableFieldInfo tableFieldInfo) {
+        return new XbatisTableField(table, tableFieldInfo);
     }
 
     @Override
@@ -130,8 +130,8 @@ public class MybatisCmdFactory extends CmdFactory {
         TableInfo tableInfo = getTableInfo(fieldInfo.getType());
         TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldInfo.getName());
 
-        if (dataset instanceof MpTable) {
-            return (DATASET_FIELD) new MpTableField((MpTable) dataset, tableFieldInfo);
+        if (dataset instanceof XbatisTable) {
+            return (DATASET_FIELD) new XbatisTableField((XbatisTable) dataset, tableFieldInfo);
         } else if (dataset instanceof Table) {
             return (DATASET_FIELD) new TableField((Table) dataset, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId());
         }
@@ -140,9 +140,9 @@ public class MybatisCmdFactory extends CmdFactory {
 
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
-        if (dataset instanceof MpTable) {
-            MpTable mpTable = (MpTable) dataset;
-            return (DATASET_FIELD) mpTable.$(columnName);
+        if (dataset instanceof XbatisTable) {
+            XbatisTable xbatisTable = (XbatisTable) dataset;
+            return (DATASET_FIELD) xbatisTable.$(columnName);
         }
         return super.field(dataset, columnName);
     }

@@ -118,7 +118,7 @@ public class EntityInsertCreateUtil {
         insert = insert == null ? new Insert() : insert;
 
         insert.$().cacheTableInfo(tableInfo);
-        MpTable table = (MpTable) insert.$().table(tableInfo.getType());
+        XbatisTable table = (XbatisTable) insert.$().table(tableInfo.getType());
         insert.insert(table);
 
         if (tableInfo.isSplitTable()) {
@@ -150,7 +150,7 @@ public class EntityInsertCreateUtil {
             }
 
             if (isNeedInsert) {
-                insert.fields(new MpTableField(table, tableFieldInfo));
+                insert.fields(new XbatisTableField(table, tableFieldInfo));
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {

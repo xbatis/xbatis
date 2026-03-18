@@ -21,9 +21,9 @@ import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
-import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.TableSplitUtil;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.core.util.TableInfoUtil;
@@ -73,7 +73,7 @@ public class SaveOrUpdateModelMethodUtil {
 
         Query<T> query = new Query<>(checkWhere);
         query.$().cacheTableInfo(modelInfo.getTableInfo());
-        MpTable table = (MpTable) query.$(modelInfo.getEntityType());
+        XbatisTable table = (XbatisTable) query.$(modelInfo.getEntityType());
 
         if (modelInfo.getTableInfo().isSplitTable()) {
             Object splitValue = modelInfo.getSplitFieldInfo().getValue(model);

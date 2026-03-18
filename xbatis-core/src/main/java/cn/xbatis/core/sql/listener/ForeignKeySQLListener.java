@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.sql.listener;
 
-import cn.xbatis.core.sql.executor.MpTable;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.sql.util.ForeignKeyUtil;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.IDataset;
@@ -29,12 +29,12 @@ public class ForeignKeySQLListener implements SQLListener {
 
     @Override
     public void onJoin(Object source, JoinMode mode, IDataset<?, ?> mainTable, IDataset<?, ?> secondTable, IOn<?, ?, ?, ?, ?, ?, ?> on) {
-        if (!(mainTable instanceof MpTable) || !(secondTable instanceof MpTable)) {
+        if (!(mainTable instanceof XbatisTable) || !(secondTable instanceof XbatisTable)) {
             return;
         }
         if (on.conditionChain().hasContent()) {
             return;
         }
-        ForeignKeyUtil.addForeignKeyCondition((MpTable) mainTable, (MpTable) secondTable, (ConditionChain) on.conditionChain());
+        ForeignKeyUtil.addForeignKeyCondition((XbatisTable) mainTable, (XbatisTable) secondTable, (ConditionChain) on.conditionChain());
     }
 }

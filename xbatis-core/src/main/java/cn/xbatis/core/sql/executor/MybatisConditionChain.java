@@ -49,10 +49,10 @@ public class MybatisConditionChain extends ConditionChain {
             return true;
         }
         Condition c = (Condition) condition;
-        if (!(c.getField() instanceof MpTableField)) {
+        if (!(c.getField() instanceof XbatisTableField)) {
             return true;
         }
-        MpTableField tableField = (MpTableField) c.getField();
+        XbatisTableField tableField = (XbatisTableField) c.getField();
         if (!tableField.getTableFieldInfo().getTableFieldAnnotation().exists()) {
             return false;
         }
@@ -64,14 +64,14 @@ public class MybatisConditionChain extends ConditionChain {
             return;
         }
         Condition c = (Condition) condition;
-        if (!(c.getField() instanceof MpTableField)) {
+        if (!(c.getField() instanceof XbatisTableField)) {
             return;
         }
-        MpTableField tableField = (MpTableField) c.getField();
+        XbatisTableField tableField = (XbatisTableField) c.getField();
         if (!tableField.getTableFieldInfo().isTableSplitKey()) {
             return;
         }
-        MpTable table = (MpTable) tableField.getTable();
+        XbatisTable table = (XbatisTable) tableField.getTable();
         if (!TableSplitUtil.isNeedSplitHandle(table)) {
             return;
         }

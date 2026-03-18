@@ -17,7 +17,7 @@ package cn.xbatis.core.sql.util;
 import cn.xbatis.core.db.reflect.ForeignInfo;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
-import cn.xbatis.core.sql.executor.MpTable;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 
 /**
@@ -36,7 +36,7 @@ public final class ForeignKeyUtil {
      * @param secondTable    副表
      * @param conditionChain 条件类
      */
-    public static void addForeignKeyCondition(MpTable mainTable, MpTable secondTable, ConditionChain conditionChain) {
+    public static void addForeignKeyCondition(XbatisTable mainTable, XbatisTable secondTable, ConditionChain conditionChain) {
         TableInfo mainTableInfo = mainTable.getTableInfo();
         TableInfo secondTableInfo = secondTable.getTableInfo();
         ForeignInfo foreignInfo;

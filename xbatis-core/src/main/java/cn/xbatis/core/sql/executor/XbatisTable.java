@@ -22,20 +22,20 @@ import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.tookit.LambdaUtil;
 
-public class MpTable extends db.sql.api.impl.cmd.basic.Table {
+public class XbatisTable extends db.sql.api.impl.cmd.basic.Table {
 
     protected final TableInfo tableInfo;
 
     protected boolean allowSplitTable;
 
-    public MpTable(TableInfo tableInfo) {
+    public XbatisTable(TableInfo tableInfo) {
         super(tableInfo.getTableName(), tableInfo.getIdColumnNames(), null);
         this.tableInfo = tableInfo;
         this.schema = tableInfo.getSchema();
         this.allowSplitTable = tableInfo.isSplitTable();
     }
 
-    public MpTable(TableInfo tableInfo, String alias) {
+    public XbatisTable(TableInfo tableInfo, String alias) {
         super(tableInfo.getTableName(), tableInfo.getIdColumnNames(), alias);
         this.tableInfo = tableInfo;
         this.schema = tableInfo.getSchema();
@@ -54,7 +54,7 @@ public class MpTable extends db.sql.api.impl.cmd.basic.Table {
     public <E> TableField $(Getter<E> column) {
         LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
         if (fieldInfo.getType() == tableInfo.getType()) {
-            return new MpTableField(this, tableInfo.getFieldInfo(fieldInfo.getName()));
+            return new XbatisTableField(this, tableInfo.getFieldInfo(fieldInfo.getName()));
         }
         return super.$(TableInfoUtil.getColumnName(column));
     }

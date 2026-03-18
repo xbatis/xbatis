@@ -19,8 +19,8 @@ import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.executor.Delete;
-import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.TableSplitUtil;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.OptimisticLockUtil;
 import db.sql.api.DbType;
@@ -65,7 +65,7 @@ public final class DeleteMethodUtil {
 
         return delete(basicMapper, tableInfo, WhereUtil.create(tableInfo, w -> {
             if (tableInfo.isSplitTable()) {
-                MpTable table = (MpTable) w.getConditionFactory().getCmdFactory().table(tableInfo.getType(), 1);
+                XbatisTable table = (XbatisTable) w.getConditionFactory().getCmdFactory().table(tableInfo.getType(), 1);
                 if (TableSplitUtil.isNeedSplitHandle(table)) {
                     Object splitValue = tableInfo.getSplitFieldInfo().getValue(entity);
                     if (Objects.isNull(splitValue)) {
@@ -128,18 +128,18 @@ public final class DeleteMethodUtil {
      * @return 影响数量
      */
     public static int truncate(BasicMapper basicMapper, TableInfo tableInfo) {
-        MpTable mpTable = new MpTable(tableInfo);
+        XbatisTable xbatisTable = new XbatisTable(tableInfo);
         XbatisGlobalConfig.getSQLListeners().stream().filter(Objects::nonNull).forEach(listener -> {
-            listener.onTruncate(mpTable);
+            listener.onTruncate(xbatisTable);
         });
         return basicMapper.dbAdapt(selectorCall -> selectorCall.when(DbType.DB2, (dbType) -> {
-            return basicMapper.execute("TRUNCATE TABLE " + mpTable.getName(dbType) + " IMMEDIATE");
+            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getName(dbType) + " IMMEDIATE");
         }).when(DbType.SQLITE, (dbType) -> {
-            int cnt = basicMapper.execute("DELETE FROM " + mpTable.getName(dbType));
-            basicMapper.execute("UPDATE SQLITE_SEQUENCE SET SEQ = 0 WHERE name = '" + mpTable.getName() + "'");
+            int cnt = basicMapper.execute("DELETE FROM " + xbatisTable.getName(dbType));
+            basicMapper.execute("UPDATE SQLITE_SEQUENCE SET SEQ = 0 WHERE name = '" + xbatisTable.getName() + "'");
             return cnt;
         }).otherwise((dbType) -> {
-            return basicMapper.execute("TRUNCATE TABLE " + mpTable.getName(dbType));
+            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getName(dbType));
         }));
     }
 }

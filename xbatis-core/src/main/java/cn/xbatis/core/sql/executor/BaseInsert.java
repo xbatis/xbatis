@@ -123,7 +123,7 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
 
     /**************以上为去除警告************/
 
-    private void splitTableHandle(MpTable table) {
+    private void splitTableHandle(XbatisTable table) {
         if (!TableSplitUtil.isNeedSplitHandle(table)) {
             //无需处理分表操作 返回
             return;
@@ -133,8 +133,8 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
         int splitTableKeyIndex = -1;
         for (int i = 0; i < insertFields.size(); i++) {
             TableField item = insertFields.get(i);
-            if (item instanceof MpTableField) {
-                MpTableField tableField = (MpTableField) item;
+            if (item instanceof XbatisTableField) {
+                XbatisTableField tableField = (XbatisTableField) item;
                 if (tableField.getTableFieldInfo().isTableSplitKey()) {
                     splitTableKeyIndex = i;
                 }
@@ -166,8 +166,8 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         this.selectorExecute(context.getDbType());
-        if (getInsertTable().getTable() instanceof MpTable) {
-            MpTable table = (MpTable) getInsertTable().getTable();
+        if (getInsertTable().getTable() instanceof XbatisTable) {
+            XbatisTable table = (XbatisTable) getInsertTable().getTable();
             this.splitTableHandle(table);
         }
 

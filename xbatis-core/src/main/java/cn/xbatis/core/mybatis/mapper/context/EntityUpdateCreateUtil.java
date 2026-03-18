@@ -19,9 +19,9 @@ import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.MybatisCmdFactory;
-import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.Update;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.StringPool;
@@ -72,7 +72,7 @@ public class EntityUpdateCreateUtil {
         boolean hasPutConditionBefore = where.hasContent();
 
         MybatisCmdFactory $ = update.$();
-        MpTable table = (MpTable) $.table(entity.getClass());
+        XbatisTable table = (XbatisTable) $.table(entity.getClass());
 
         if (TableSplitUtil.isNeedSplitHandle(table)) {
             Object splitValue = tableInfo.getSplitFieldInfo().getValue(entity);

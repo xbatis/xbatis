@@ -19,8 +19,8 @@ import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.executor.BaseInsert;
 import cn.xbatis.core.sql.executor.Insert;
-import cn.xbatis.core.sql.executor.MpTable;
 import cn.xbatis.core.sql.executor.TableSplitUtil;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.tenant.TenantUtil;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.IdAutoType;
@@ -77,7 +77,7 @@ public class ModelBatchInsertCreateUtil {
         TableInfo tableInfo = modelInfo.getTableInfo();
 
         insert.$().cacheTableInfo(tableInfo);
-        MpTable table = (MpTable) insert.$().table(tableInfo.getType());
+        XbatisTable table = (XbatisTable) insert.$().table(tableInfo.getType());
         insert.insert(table);
 
         Set<String> saveFieldSet;
@@ -126,8 +126,8 @@ public class ModelBatchInsertCreateUtil {
         //设置insert 列
         for (ModelFieldInfo modelFieldInfo : saveFieldInfoSet) {
             MybatisCmdFactory cmdFactory = insert.$();
-            if (table instanceof MpTable) {
-                insert.fields(cmdFactory.field((MpTable) table, modelFieldInfo.getTableFieldInfo()));
+            if (table instanceof XbatisTable) {
+                insert.fields(cmdFactory.field((XbatisTable) table, modelFieldInfo.getTableFieldInfo()));
             } else {
                 insert.fields(insert.$().field(table, modelFieldInfo.getTableFieldInfo().getColumnName(), modelFieldInfo.getTableFieldInfo().isTableId()));
             }

@@ -17,7 +17,7 @@ package cn.xbatis.core.sql.util;
 
 import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.sql.MybatisCmdFactory;
-import cn.xbatis.core.sql.executor.MpTable;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.Table;
 import db.sql.api.Cmd;
@@ -66,7 +66,7 @@ public final class SelectClassUtil {
             buildNestedSelect(query, resultInfo.getNestedResultInfos(), cmdList, throwExceptionWhenNonEntityRefField);
         } else if (clazz.isAnnotationPresent(Table.class)) {
             MybatisCmdFactory cmdFactory = (MybatisCmdFactory) query.$();
-            MpTable table = cmdFactory.table(clazz, storey);
+            XbatisTable table = cmdFactory.table(clazz, storey);
             for (TableFieldInfo tableFieldInfo : table.getTableInfo().getTableFieldInfos()) {
                 if (tableFieldInfo.getTableFieldAnnotation().select() && tableFieldInfo.getTableFieldAnnotation().exists()) {
                     cmdList.add(cmdFactory.field(table, tableFieldInfo));

@@ -89,8 +89,8 @@ public class TableSplitUtil {
         return null;
     }
 
-    public static boolean isNeedSplitHandle(MpTable mpTable) {
-        return mpTable.allowSplitTable;
+    public static boolean isNeedSplitHandle(XbatisTable xbatisTable) {
+        return xbatisTable.allowSplitTable;
     }
 
     /**
@@ -112,8 +112,8 @@ public class TableSplitUtil {
         return splitter.split(tableInfo.getTableName(), v);
     }
 
-    private static String getSplitTableName(MpTable mpTable, Object value) {
-        TableInfo tableInfo = mpTable.tableInfo;
+    private static String getSplitTableName(XbatisTable xbatisTable, Object value) {
+        TableInfo tableInfo = xbatisTable.tableInfo;
         TableSplitter splitter = tableInfo.getTableSplitter();
         Object v = getSplitValue(value, splitter);
         if (v == null) {
@@ -128,12 +128,12 @@ public class TableSplitUtil {
                     continue;
                 }
                 if (splitTableName != null && !splitTableName.equals(name)) {
-                    if (mpTable.getTableInfo().isSplitTableStrict()) {
+                    if (xbatisTable.getTableInfo().isSplitTableStrict()) {
                         throw new SplitTableException("cross-region");
                     }
                     //包含多个分区 直接设置为原始表；且不允许 分表了
-                    mpTable.allowSplitTable = false;
-                    mpTable.setName(tableInfo.getTableName());
+                    xbatisTable.allowSplitTable = false;
+                    xbatisTable.setName(tableInfo.getTableName());
                     return null;
                 }
                 splitTableName = name;
@@ -148,27 +148,27 @@ public class TableSplitUtil {
     }
 
 
-    public static void splitHandle(MpTable mpTable, Object value) {
+    public static void splitHandle(XbatisTable xbatisTable, Object value) {
         if (value == null) {
             return;
         }
-        if (!isNeedSplitHandle(mpTable)) {
+        if (!isNeedSplitHandle(xbatisTable)) {
             return;
         }
-        String splitTableName = getSplitTableName(mpTable, value);
+        String splitTableName = getSplitTableName(xbatisTable, value);
         if (splitTableName == null) {
             return;
         }
-        if (!mpTable.getName().equals(mpTable.getTableInfo().getTableName()) && !mpTable.getName().equals(splitTableName)) {
-            if (mpTable.getTableInfo().isSplitTableStrict()) {
+        if (!xbatisTable.getName().equals(xbatisTable.getTableInfo().getTableName()) && !xbatisTable.getName().equals(splitTableName)) {
+            if (xbatisTable.getTableInfo().isSplitTableStrict()) {
                 throw new SplitTableException("cross-region");
             }
             // 包含多个分区 直接设置为原始表；且不允许 分表了
-            mpTable.setName(mpTable.getTableInfo().getTableName());
-            mpTable.allowSplitTable = false;
+            xbatisTable.setName(xbatisTable.getTableInfo().getTableName());
+            xbatisTable.allowSplitTable = false;
             return;
         }
 
-        mpTable.setName(splitTableName);
+        xbatisTable.setName(splitTableName);
     }
 }

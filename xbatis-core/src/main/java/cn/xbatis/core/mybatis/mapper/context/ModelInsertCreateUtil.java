@@ -123,7 +123,7 @@ public class ModelInsertCreateUtil {
         TableInfo tableInfo = modelInfo.getTableInfo();
 
         insert.$().cacheTableInfo(tableInfo);
-        MpTable table = (MpTable) insert.$().table(tableInfo.getType());
+        XbatisTable table = (XbatisTable) insert.$().table(tableInfo.getType());
         insert.insert(table);
 
         if (tableInfo.isSplitTable()) {
@@ -150,7 +150,7 @@ public class ModelInsertCreateUtil {
             }
 
             if (isNeedInsert) {
-                insert.fields(new MpTableField(table, modelFieldInfo.getTableFieldInfo()));
+                insert.fields(new XbatisTableField(table, modelFieldInfo.getTableFieldInfo()));
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {

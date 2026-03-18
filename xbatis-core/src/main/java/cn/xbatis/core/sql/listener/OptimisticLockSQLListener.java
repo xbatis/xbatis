@@ -15,7 +15,7 @@
 package cn.xbatis.core.sql.listener;
 
 import cn.xbatis.core.sql.executor.BaseUpdate;
-import cn.xbatis.core.sql.executor.MpTable;
+import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.core.util.OptimisticLockUtil;
 import db.sql.api.cmd.basic.IDataset;
@@ -28,19 +28,19 @@ public class OptimisticLockSQLListener implements SQLListener {
 
     @Override
     public void onUpdate(Object source, IDataset<?, ?> dataset) {
-        if (!(dataset instanceof MpTable) || !(source instanceof BaseUpdate)) {
+        if (!(dataset instanceof XbatisTable) || !(source instanceof BaseUpdate)) {
             return;
         }
-        MpTable mpTable = (MpTable) dataset;
+        XbatisTable xbatisTable = (XbatisTable) dataset;
 
         if (source instanceof UpdateChain) {
             UpdateChain update = (UpdateChain) source;
             if (update.isOptimisticLock()) {
-                OptimisticLockUtil.versionPlus1(mpTable.getTableInfo(), update);
+                OptimisticLockUtil.versionPlus1(xbatisTable.getTableInfo(), update);
             }
         } else {
             BaseUpdate<?> update = (BaseUpdate<?>) source;
-            OptimisticLockUtil.versionPlus1(mpTable.getTableInfo(), update);
+            OptimisticLockUtil.versionPlus1(xbatisTable.getTableInfo(), update);
         }
 
     }
