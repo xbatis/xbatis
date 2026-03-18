@@ -32,9 +32,9 @@ public interface BasicUpdateMapper extends BasicBaseMapper {
     /**
      * 局部修改（精准修改，只修改set过的和updateDefaultValueFillAlways=true的字段）
      *
-     * @param entity 目标实体类
-     * @param consumer  实体类proxy实例Consumer
-     * @param <E>    实体类类型
+     * @param entity   目标实体类
+     * @param consumer 实体类proxy实例Consumer
+     * @param <E>      实体类类型
      * @return 修改条数
      */
     default <E> int partialUpdate(E entity, Consumer<E> consumer) {

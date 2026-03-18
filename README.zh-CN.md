@@ -53,23 +53,24 @@ API。
 ### 3.1 Maven 坐标示例
 
 ```xml
+
 <dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>cn.xbatis</groupId>
-      <artifactId>xbatis-spring-boot-parent</artifactId>
-      <version>1.9.9-M2</version>
-      <type>pom</type>
-      <scope>import</scope>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>cn.xbatis</groupId>
+            <artifactId>xbatis-spring-boot-parent</artifactId>
+            <version>1.9.9-M2</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
 </dependencyManagement>
 
 <dependencies>
-  <dependency>
+<dependency>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis-spring-boot3-starter</artifactId>
-  </dependency>
+</dependency>
 </dependencies>
 ```
 
@@ -86,6 +87,7 @@ spring:
 ### 3.3 启动骨架示例
 
 ```java
+
 @SpringBootApplication
 @MapperScan("com.xx.xxx.mapper")
 public class XbatisApplication {
@@ -185,6 +187,7 @@ public class XbatisApplication {
   实体类、Mapper、Service 的典型写法：
 
 ```java
+
 @Data
 @Table
 public class SysUser {
@@ -196,7 +199,8 @@ public class SysUser {
     private LocalDateTime createTime;
 }
 
-public interface SysUserMapper extends MybatisMapper<SysUser> {}
+public interface SysUserMapper extends MybatisMapper<SysUser> {
+}
 
 @Service
 public class TestService {
@@ -211,11 +215,31 @@ public class TestService {
     }
 }
 
-> 分页器 `Pager` 位于 `cn.xbatis.core.mybatis.mapper.context.Pager`，实现接口 `cn.xbatis.page.IPager`，常用构造与方法包括：
-> - 静态工厂：`Pager.of(size)`、`Pager.of(number, size)`。
-> - `setExecuteCount(boolean)`：控制是否执行总量统计。
-> - `paging(Pager)`：链式 API 传入 `Pager`，结果中可通过 `getResults()`、`getTotal()`、`getNumber()`、`getSize()`、`getTotalPage()` 等方法读取信息。
-> - `PagerGetSetUtil` 支持按照 `PagerField` 动态读写扩展字段。
+>分页器 `Pager`位于 `cn.xbatis.core.mybatis.mapper.context.Pager`，实现接口 `cn.xbatis.page.IPager`，常用构造与方法包括：
+        >-静态工厂：`Pager.
+
+of(size)`、`Pager.
+
+of(number, size)`。
+        >- `
+
+setExecuteCount(boolean)`：控制是否执行总量统计。
+        >- `
+
+paging(Pager)`：
+链式 API
+传入 `Pager`，结果中可通过 `
+
+getResults()`、`
+
+getTotal()`、`
+
+getNumber()`、`
+
+getSize()`、`
+
+getTotalPage()`等方法读取信息。
+        >- `PagerGetSetUtil`支持按照 `PagerField`动态读写扩展字段。
 ```
 
 ---
@@ -249,8 +273,10 @@ public class TestService {
 示例：
 
 ```java
+
 @Table(databaseCaseRule = DatabaseCaseRule.UPPERCASE)
-public class SysUser { }
+public class SysUser {
+}
 ```
 
 ### 5.2 `@TableId`（`cn.xbatis.db.annotations.TableId`）
@@ -319,7 +345,7 @@ public class SysUser { }
 - `@ResultField`
 
   | 属性 | 是否可空 | 默认值 | 说明 |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `value` | 是 | – | 可指定一个或多个列名，支持从多个列取值 |
   | `jdbcType` | 是 | – | 指定 JDBC 类型 |
   | `typeHandler` | 是 | – | 指定类型处理器 |
@@ -327,7 +353,7 @@ public class SysUser { }
 - `@Fetch`
 
   | 属性 | 是否可空 | 默认值 | 说明 |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `column` | 是 | – | 指定列作为匹配条件；与 `property` 二选一，优先 `column` |
   | `property` | 否 | – | 源实体属性名 |
   | `source` | 否 | – | 源实体类型 |
@@ -404,7 +430,7 @@ public class SysUser { }
 - `@SplitTable`
 
   | 属性 | 是否可空 | 默认值 | 说明 |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `value` | 否 | – | 指定 `TableSplitter` 实现类，用来根据分表键计算真实表名 |
 
 - `@SplitTableKey`：标记实体中的分表字段，仅支持单列，用于在运行时传入分片值。
@@ -413,6 +439,7 @@ public class SysUser { }
 
 ```java
 boolean support(Class<?> type);
+
 String split(String sourceTableName, Object splitValue);
 ```
 
@@ -547,15 +574,27 @@ xbatis 的 `save`/`saveBatch`/`InsertChain` 支持跨数据库的重复键策略
 
 ```java
 MultiPk entity = new MultiPk();
-entity.setId1(1);
-entity.setId2(2);
-entity.setName("init");
+entity.
 
-mapper.save(entity, strategy -> {
-    strategy.onConflict(action -> action.doNothing()); // 忽略
-    // 或者针对冲突进行更新（覆盖全部字段）
-    // strategy.onConflict(action -> action.doUpdate(update -> update.overwriteAll()));
-});
+setId1(1);
+entity.
+
+setId2(2);
+entity.
+
+setName("init");
+
+mapper.
+
+save(entity, strategy ->{
+        strategy.
+
+onConflict(action ->action.
+
+doNothing()); // 忽略
+        // 或者针对冲突进行更新（覆盖全部字段）
+        // strategy.onConflict(action -> action.doUpdate(update -> update.overwriteAll()));
+        });
 ```
 
 #### 多条写入
@@ -564,14 +603,28 @@ mapper.save(entity, strategy -> {
 List<MultiPk> list = List.of(entity1, entity2);
 
 // mapper.save(List<T>, ...)
-mapper.save(list, strategy ->
-        strategy.onConflict(action -> action.doUpdate(update -> update.overwrite(MultiPk::getName)))
-);
+mapper.
+
+save(list, strategy ->
+        strategy.
+
+onConflict(action ->action.
+
+doUpdate(update ->update.
+
+overwrite(MultiPk::getName)))
+        );
 
 // mapper.saveBatch(List<T>, ...)
-mapper.saveBatch(list, strategy ->
-        strategy.onConflict(action -> action.doNothing())
-);
+        mapper.
+
+saveBatch(list, strategy ->
+        strategy.
+
+onConflict(action ->action.
+
+doNothing())
+        );
 ```
 
 `overwriteAll()` 表示更新全部列；也可以通过 `overwrite(Entity::getField)` 精准控制更新列。
@@ -580,10 +633,22 @@ mapper.saveBatch(list, strategy ->
 
 ```java
 InsertChain.of(sysUserMapper)
-    .insert(SysUser.class)
-    .values(Arrays.asList("basic", "123456"))
-    .onConflict(action -> action.doUpdate(update -> update.overwrite(SysUser::getPassword)))
-    .execute();
+    .
+
+insert(SysUser .class)
+    .
+
+values(Arrays.asList("basic", "123456"))
+        .
+
+onConflict(action ->action.
+
+doUpdate(update ->update.
+
+overwrite(SysUser::getPassword)))
+        .
+
+execute();
 ```
 
 如果需要按数据库类型自定义冲突行为，可结合 `dbAdapt` 在策略内做差异化处理。
@@ -604,16 +669,16 @@ InsertChain.of(sysUserMapper)
 
 ```java
 SysUserRoleVo vo = QueryChain.of(sysUserMapper)
-    .select(SysUser.class, SysRole.class)
-    .from(SysUser.class)
-    .join(SysUser::getRoleId, SysRole::getId)
-    .eq(SysUser::getId, 1)
-    .like(SysUser::getUserName, "abc")
-    .groupBy(SysUser::getId)
-    .having(SysUser::getId, c -> c.count().gt(0))
-    .orderBy(SysUser::getId)
-    .returnType(SysUserRoleVo.class)
-    .get();
+        .select(SysUser.class, SysRole.class)
+        .from(SysUser.class)
+        .join(SysUser::getRoleId, SysRole::getId)
+        .eq(SysUser::getId, 1)
+        .like(SysUser::getUserName, "abc")
+        .groupBy(SysUser::getId)
+        .having(SysUser::getId, c -> c.count().gt(0))
+        .orderBy(SysUser::getId)
+        .returnType(SysUserRoleVo.class)
+        .get();
 ```
 
 关键能力：
@@ -645,13 +710,25 @@ SysUserRoleVo vo = QueryChain.of(sysUserMapper)
 
 ```java
 InsertChain.of(sysUserMapper)
-    .insert(SysUser.class)
-    .fields(SysUser::getUserName, SysUser::getRoleId)
-    .fromSelect(Query.create()
-        .select(SysUser2::getUserName, SysUser2::getRoleId)
-        .from(SysUser2.class)
+    .
+
+insert(SysUser .class)
+    .
+
+fields(SysUser::getUserName, SysUser::getRoleId)
+    .
+
+fromSelect(Query.create()
+        .
+
+select(SysUser2::getUserName, SysUser2::getRoleId)
+        .
+
+from(SysUser2 .class)
     )
-    .execute();
+            .
+
+execute();
 ```
 
 也可通过 `values` 多次追加批量数据。
@@ -662,13 +739,13 @@ InsertChain.of(sysUserMapper)
 
 ```java
 SysUser user = UpdateChain.of(sysUserMapper)
-    .update(SysUser.class)
-    .set(SysUser::getUserName, "new name")
-    .set(SysUser::getVersion, c -> c.plus(1))
-    .eq(SysUser::getId, 1)
-    .returning(SysUser.class)
-    .returnType(SysUser.class)
-    .executeAndReturning();
+        .update(SysUser.class)
+        .set(SysUser::getUserName, "new name")
+        .set(SysUser::getVersion, c -> c.plus(1))
+        .eq(SysUser::getId, 1)
+        .returning(SysUser.class)
+        .returnType(SysUser.class)
+        .executeAndReturning();
 ```
 
 ### 7.4 DeleteChain
@@ -677,10 +754,10 @@ SysUser user = UpdateChain.of(sysUserMapper)
 
 ```java
 List<SysUser> removed = DeleteChain.of(sysUserMapper)
-    .in(SysUser::getId, 1, 2)
-    .returning(SysUser.class)
-    .returnType(SysUser.class)
-    .executeAndReturningList();
+        .in(SysUser::getId, 1, 2)
+        .returning(SysUser.class)
+        .returnType(SysUser.class)
+        .executeAndReturningList();
 ```
 
 ---
@@ -696,6 +773,7 @@ List<SysUser> removed = DeleteChain.of(sysUserMapper)
 - 示例：
 
 ```java
+
 @Data
 @ConditionTarget(SysUser.class)
 public class QueryREQ {
@@ -705,11 +783,11 @@ public class QueryREQ {
     private String userName;
 
     @Conditions(
-        logic = Logic.OR,
-        value = {
-            @Condition(property = SysUser.Fields.userName, value = Condition.Type.LIKE),
-            @Condition(property = SysUser.Fields.password, value = Condition.Type.LIKE)
-        }
+            logic = Logic.OR,
+            value = {
+                    @Condition(property = SysUser.Fields.userName, value = Condition.Type.LIKE),
+                    @Condition(property = SysUser.Fields.password, value = Condition.Type.LIKE)
+            }
     )
     private String keyword;
 }
@@ -733,9 +811,18 @@ public class QueryREQ {
 
 ```java
 QueryChain.of(sysUserMapper)
-    .select(SysUser::getRoleId, c -> Methods.tpl("count({0})+{1}", c, "1"))
-    .and(GetterFields.of(SysUser::getId, SysUser::getId),
-         cs -> Methods.cTpl("{0}+{1}={2}", cs[0], cs[1], 2));
+    .
+
+select(SysUser::getRoleId, c ->Methods.
+
+tpl("count({0})+{1}",c, "1"))
+        .
+
+and(GetterFields.of(SysUser::getId, SysUser::getId),
+
+cs ->Methods.
+
+cTpl("{0}+{1}={2}",cs[0], cs[1], 2));
 ```
 
 ---
@@ -748,13 +835,31 @@ QueryChain.of(sysUserMapper)
 
 ```java
 QueryChain.of(sysUserMapper)
-    .select(SysUser::getId)
-    .dbAdapt((query, selector) -> selector
-        .when(DbType.H2, db -> query.eq(SysUser::getId, 3))
-        .when(DbType.MYSQL, db -> query.eq(SysUser::getId, 2))
-        .otherwise(db -> query.eq(SysUser::getId, 1))
-    )
-    .get();
+    .
+
+select(SysUser::getId)
+    .
+
+dbAdapt((query, selector) ->selector
+        .
+
+when(DbType.H2, db ->query.
+
+eq(SysUser::getId, 3))
+        .
+
+when(DbType.MYSQL, db ->query.
+
+eq(SysUser::getId, 2))
+        .
+
+otherwise(db ->query.
+
+eq(SysUser::getId, 1))
+        )
+        .
+
+get();
 ```
 
 - 也可直接在 Mapper 层使用 `mapper.dbAdapt(selector -> {...})` 编写完全不同流程。
@@ -791,11 +896,17 @@ QueryChain.of(sysUserMapper)
 - 全局开关 `setLogicDeleteSwitch(true/false)`，局部可使用：
 
 ```java
-try (LogicDeleteSwitch ignored = LogicDeleteSwitch.with(false)) {
-    mapper.getById(1);
+try(LogicDeleteSwitch ignored = LogicDeleteSwitch.with(false)){
+        mapper.
+
+getById(1);
 }
 // 或
-LogicDeleteUtil.execute(false, () -> mapper.getById(1));
+        LogicDeleteUtil.
+
+execute(false,() ->mapper.
+
+getById(1));
 ```
 
 - 注意：`DeleteChain` 默认执行物理删除，只有 `Mapper` 的删除方法受逻辑删除控制。
@@ -822,8 +933,14 @@ LogicDeleteUtil.execute(false, () -> mapper.getById(1));
 - 自定义动态值示例：
 
 ```java
-XbatisGlobalConfig.setDynamicValue("{day7}", (clazz, type) -> new LocalDate[]{
-    LocalDate.now().minusDays(7), LocalDate.now()
+XbatisGlobalConfig.setDynamicValue("{day7}",(clazz, type) ->new LocalDate[]{
+        LocalDate.
+
+now().
+
+minusDays(7),LocalDate.
+
+now()
 });
 ```
 
@@ -831,12 +948,14 @@ XbatisGlobalConfig.setDynamicValue("{day7}", (clazz, type) -> new LocalDate[]{
 - 全局监听：
 
 ```java
-XbatisGlobalConfig.setGlobalOnInsertListener(entity -> {
-    // 统一填充创建人等
-});
-XbatisGlobalConfig.setGlobalOnUpdateListener(entity -> {
-    // 统一填充更新人等
-});
+XbatisGlobalConfig.setGlobalOnInsertListener(entity ->{
+        // 统一填充创建人等
+        });
+        XbatisGlobalConfig.
+
+setGlobalOnUpdateListener(entity ->{
+        // 统一填充更新人等
+        });
 ```
 
 ---
@@ -847,12 +966,13 @@ XbatisGlobalConfig.setGlobalOnUpdateListener(entity -> {
 - 框架仍兼容传统 MyBatis XML，可通过命名约定在单 Mapper 模式下调用：
 
 ```xml
+
 <mapper namespace="xxx.MybatisBasicMapper">
-  <select id="SysRole:selectByIds" resultType="com.xbatis.core.test.DO.SysRole">
-    select * from t_sys_role
-    where id >= #{id} and id <= #{id2}
-    order by id asc
-  </select>
+    <select id="SysRole:selectByIds" resultType="com.xbatis.core.test.DO.SysRole">
+        select * from t_sys_role
+        where id >= #{id} and id<= #{id2}
+        order by id asc
+    </select>
 </mapper>
 ```
 
@@ -860,8 +980,8 @@ XbatisGlobalConfig.setGlobalOnUpdateListener(entity -> {
 
 ```java
 List<SysRole> roleList = mybatisBasicMapper.withSqlSession(
-    SysRole.class, "selectByIds", params,
-    (statement, p, sqlSession) -> sqlSession.selectList(statement, p)
+        SysRole.class, "selectByIds", params,
+        (statement, p, sqlSession) -> sqlSession.selectList(statement, p)
 );
 ```
 
@@ -911,9 +1031,9 @@ public class ApiApplication {
 @Profile("dev")
 @Configuration
 @XbatisPojoCheckScan(
-    basePackages = "com.example.api.dto",
-    modelPackages = "com.example.api.model",
-    resultEntityPackages = "com.example.api.vo"
+        basePackages = "com.example.api.dto",
+        modelPackages = "com.example.api.model",
+        resultEntityPackages = "com.example.api.vo"
 )
 public class XbatisSafeCheckConfig {
 }
@@ -924,7 +1044,7 @@ public class XbatisSafeCheckConfig {
 - 注解属性说明（`org.mybatis.spring.boot.autoconfigure.XbatisPojoCheckScan`）：
 
   | 属性名 | 说明 |
-        | --- | --- |
+          | --- | --- |
   | `basePackages` | 基础包扫描路径 |
   | `modelPackages` | Model 实现所在包，缺省时使用 `basePackages` |
   | `resultEntityPackages` | VO（`@ResultEntity`）包路径，缺省时使用 `basePackages` |
@@ -1008,9 +1128,15 @@ SysUser user = QueryChain.of(sysUserMapper)
 
 ```java
 QueryChain.of(sysUserMapper)
-    .eq(SysUser::getId, id, Objects::nonNull)
-    .like(SysUser::getUserName, userName, StringUtils::isNotBlank)
-    .get();
+    .
+
+eq(SysUser::getId, id, Objects::nonNull)
+    .
+
+like(SysUser::getUserName, userName, StringUtils::isNotBlank)
+    .
+
+get();
 ```
 
 ### VO 自动映射
@@ -1024,14 +1150,32 @@ QueryChain.of(sysUserMapper)
 
 ```java
 QueryChain.of(sysUserMapper)
-    .select(SysUser::getId, SysUser::getUserName)
-    .connect(query -> query.exists(SubQuery.create()
-        .select1()
-        .from(SysUser.class)
-        .eq(SysUser::getId, query.$(SysUser::getId))
-        .isNotNull(SysUser::getPassword)
-        .limit(1)))
-    .list();
+    .
+
+select(SysUser::getId, SysUser::getUserName)
+    .
+
+connect(query ->query.
+
+exists(SubQuery.create()
+        .
+
+select1()
+        .
+
+from(SysUser .class)
+        .
+
+eq(SysUser::getId, query.$(SysUser::getId))
+        .
+
+isNotNull(SysUser::getPassword)
+        .
+
+limit(1)))
+        .
+
+list();
 ```
 
 ### 推荐的数据库函数调用方式

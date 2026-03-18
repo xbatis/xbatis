@@ -259,11 +259,11 @@ public class SysUser { }
 
 ### 5.2 `@TableId` (`cn.xbatis.db.annotations.TableId`)
 
-| Property        | Nullable | Default           | Description                                                          |
-|-----------------|----------|-------------------|----------------------------------------------------------------------|
-| `value`         | Yes      | `IdAutoType.AUTO` | Primary key strategy: `AUTO`, `NONE`, `SQL`, `GENERATOR`             |
-| `dbType`        | Yes      | –                 | Target database type for differentiating strategies                  |
-| `sql`           | Yes      | –                 | Required when `value = SQL`; custom SQL for ID retrieval             |
+| Property    | Nullable | Default           | Description                                                          |
+|-------------|----------|-------------------|----------------------------------------------------------------------|
+| `value`     | Yes      | `IdAutoType.AUTO` | Primary key strategy: `AUTO`, `NONE`, `SQL`, `GENERATOR`             |
+| `dbType`    | Yes      | –                 | Target database type for differentiating strategies                  |
+| `sql`       | Yes      | –                 | Required when `value = SQL`; custom SQL for ID retrieval             |
 | `generator` | Yes      | –                 | Required when `value = GENERATOR`; refers to registered ID generator |
 
 Repeatable to accommodate multiple database strategies.
@@ -329,7 +329,7 @@ Besides local listeners, register global handlers via `XbatisGlobalConfig.setGlo
 - `@ResultField`:
 
   | Property | Nullable | Default | Description |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `value` | Yes | – | Column(s) mapped to the field; supports multi-column inputs |
   | `jdbcType` | Yes | – | JDBC type |
   | `typeHandler` | Yes | – | Custom type handler |
@@ -337,7 +337,7 @@ Besides local listeners, register global handlers via `XbatisGlobalConfig.setGlo
 - `@Fetch`:
 
   | Property | Nullable | Default | Description |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `column` | Yes | – | Matching column; alternate to `property`, takes precedence |
   | `property` | No | – | Source entity property |
   | `source` | No | – | Source entity type |
@@ -363,7 +363,7 @@ Besides local listeners, register global handlers via `XbatisGlobalConfig.setGlo
 - `@NestedResultEntity` (`cn.xbatis.db.annotations.NestedResultEntity`):
 
   | Property | Nullable | Default | Description |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `target` | Yes | – | Target entity; defaults to `@ResultEntity` target |
   | `storey` | Yes | `1` | Storage level; differentiate layers in self-joins |
   Declaring VO fields as nested objects automatically fills nested results recursively.
@@ -371,14 +371,14 @@ Besides local listeners, register global handlers via `XbatisGlobalConfig.setGlo
 - `@NestedResultEntityField` (`cn.xbatis.db.annotations.NestedResultEntityField`):
 
   | Property | Nullable | Default | Description |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `value` | Yes | – | Field name inside the nested entity |
   Use when VO field names differ from entity fields. Works well with Lombok `@FieldNameConstants`.
 
 - `@ResultCalcField` (`cn.xbatis.db.annotations.ResultCalcField`):
 
   | Property | Nullable | Default | Description |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `value` | No | – | Calculation SQL, e.g., `count(1)`, `sum({id})` |
   | `target` | Yes | – | Target entity; defaults to `@ResultEntity` target |
   | `storey` | Yes | `1` | Storage level |
@@ -387,7 +387,7 @@ Besides local listeners, register global handlers via `XbatisGlobalConfig.setGlo
 - `@PutEnumValue` (`cn.xbatis.db.annotations.PutEnumValue`):
 
   | Property | Nullable | Default | Description |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `source` | No | – | Source entity |
   | `property` | No | – | Field storing enum code |
   | `storey` | Yes | `1` | Storage level |
@@ -401,7 +401,7 @@ Besides local listeners, register global handlers via `XbatisGlobalConfig.setGlo
 - `@PutValue` (`cn.xbatis.db.annotations.PutValue`):
 
   | Property | Nullable | Default | Description |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `source` | No | – | Source entity |
   | `property` | No | – | Source field |
   | `storey` | Yes | `1` | Storage level |
@@ -421,7 +421,7 @@ VOs.
 - `@SplitTable`:
 
   | Property | Nullable | Default | Description |
-        | --- | --- | --- | --- |
+          | --- | --- | --- | --- |
   | `value` | No | – | `TableSplitter` implementation used to compute actual table name |
 
 - `@SplitTableKey`: marks the sharding key field; supports a single column and takes sharding input at runtime.
@@ -951,7 +951,7 @@ public class XbatisSafeCheckConfig {
 - Annotation attributes (`org.mybatis.spring.boot.autoconfigure.XbatisPojoCheckScan`):
 
   | Attribute | Description |
-        | --- | --- |
+          | --- | --- |
   | `basePackages` | Base package path |
   | `modelPackages` | Model implementations; defaults to `basePackages` |
   | `resultEntityPackages` | VO (`@ResultEntity`) package; defaults to `basePackages` |

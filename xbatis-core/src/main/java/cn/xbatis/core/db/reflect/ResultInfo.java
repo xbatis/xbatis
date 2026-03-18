@@ -32,47 +32,40 @@ import java.util.stream.Collectors;
 @Data
 public class ResultInfo {
 
-    /**
-     * 所有的 FetchInfo 包括内嵌的
-     */
-    private final Map<Class, List<FetchInfo>> fetchInfoMap;
-
-    /**
-     * 所有的 PutValue注解的信息 包括内嵌的
-     */
-    private final Map<Class, List<PutValueInfo>> putValueInfoMap;
-
-    /**
-     * 所有的 PutEnumValue注解的信息 包括内嵌的
-     */
-    private final Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap;
-
-    /**
-     * 所有的 ResultFieldInfo 不包括内嵌的
-     */
-    private final List<ResultFieldInfo> resultFieldInfos;
-
-    /**
-     * 内嵌信息
-     */
-    private final List<NestedResultInfo> nestedResultInfos;
-
-    /**
-     * 表对应的前缀 包括内嵌的
-     */
-    private final Map<Class, Map<Integer, String>> tablePrefixes;
-
-    /**
-     * 类上的PutValues注解
-     */
-    private final Map<Class, List<CreatedEventInfo>> createdEventInfos;
-
     public final static MethodsCallParser METHODS_CALL_PARSER = new MethodsCallParser(Methods.class, true, (name) -> {
         if (name.equals("if")) {
             return "if_";
         }
         return name;
     });
+    /**
+     * 所有的 FetchInfo 包括内嵌的
+     */
+    private final Map<Class, List<FetchInfo>> fetchInfoMap;
+    /**
+     * 所有的 PutValue注解的信息 包括内嵌的
+     */
+    private final Map<Class, List<PutValueInfo>> putValueInfoMap;
+    /**
+     * 所有的 PutEnumValue注解的信息 包括内嵌的
+     */
+    private final Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap;
+    /**
+     * 所有的 ResultFieldInfo 不包括内嵌的
+     */
+    private final List<ResultFieldInfo> resultFieldInfos;
+    /**
+     * 内嵌信息
+     */
+    private final List<NestedResultInfo> nestedResultInfos;
+    /**
+     * 表对应的前缀 包括内嵌的
+     */
+    private final Map<Class, Map<Integer, String>> tablePrefixes;
+    /**
+     * 类上的PutValues注解
+     */
+    private final Map<Class, List<CreatedEventInfo>> createdEventInfos;
 
     public ResultInfo(Class<?> clazz) {
 
@@ -483,7 +476,6 @@ public class ResultInfo {
 
 
         List<TableFieldInfo> tableFieldInfoList = new ArrayList<>();
-
 
 
         int startIndex = 0;

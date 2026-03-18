@@ -32,6 +32,7 @@ public final class LambdaUtil {
 
     private static final Map<GetterFun, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
     private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap(1000);
+    private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     private LambdaUtil() {
 
@@ -123,27 +124,6 @@ public final class LambdaUtil {
         return type.substring(2, type.indexOf(";"));
     }
 
-    public static class LambdaFieldInfo<T> {
-
-        private final Class<T> type;
-        private final String name;
-
-        public LambdaFieldInfo(Class<T> type, String name) {
-            this.type = type;
-            this.name = name;
-        }
-
-        public Class<T> getType() {
-            return type;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-    private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-
     public static <T, V> Setter<T, V> createGetterByField(Class<T> clazz, String field, Class<V> vType) {
         try {
             return createSetter(clazz, "get" + PropertyNamer.firstToUpperCase(field), vType);
@@ -197,6 +177,25 @@ public final class LambdaUtil {
             return (SETTER) factory.invoke();
         } catch (Throwable e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static class LambdaFieldInfo<T> {
+
+        private final Class<T> type;
+        private final String name;
+
+        public LambdaFieldInfo(Class<T> type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+
+        public Class<T> getType() {
+            return type;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 
