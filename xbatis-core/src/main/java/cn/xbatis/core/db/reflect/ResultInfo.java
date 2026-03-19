@@ -22,6 +22,7 @@ import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.annotations.*;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.tookit.MethodCallNode;
 import db.sql.api.tookit.MethodsCallParser;
 import lombok.Data;
 import org.apache.ibatis.type.TypeHandler;
@@ -34,8 +35,10 @@ import java.util.stream.Collectors;
 @Data
 public class ResultInfo {
 
-    public final static MethodsCallParser METHODS_CALL_PARSER = new MethodsCallParser(Methods.class, true, (name) -> {
-        if (name.equals("if")) {
+    public final static MethodsCallParser METHODS_CALL_PARSER = new MethodsCallParser();
+
+    public final static XbatisMethodsCallParser METHODS_METHODS_CALL_PARSER = new XbatisMethodsCallParser(Methods.class, true, name -> {
+        if ("if".equals(name)) {
             return "if_";
         }
         return name;
@@ -486,32 +489,34 @@ public class ResultInfo {
         String annotationName = ResultCalcField.class.getSimpleName();
         String annotationPropertyName = "value";
 
-        String sql;
+        Object sql;
         if (value.startsWith("[") && value.endsWith("]")) {
             final XbatisTable table = new XbatisTable(tableInfo);
-            //这里只是检测
-            METHODS_CALL_PARSER.parse(value.substring(1, value.length() - 1), args -> {
-                return args.stream().map(i -> {
-                    if (i instanceof String) {
-                        String str = (String) i;
-                        if (str.startsWith("'")) {
-                            return str.substring(1, str.length() - 1);
-                        } else {
-                            if (str.startsWith("{") && str.endsWith("}")) {
-                                //适配旧的
-                                str = str.substring(1, str.length() - 1);
-                            }
-                            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(str);
-                            if (Objects.isNull(tableFieldInfo)) {
-                                throw buildException(clazz, field, annotationName, annotationPropertyName, str + " is not a entity field");
-                            }
-                            return new XbatisTableField(table, tableFieldInfo);
+            MethodCallNode methodCallNode = METHODS_CALL_PARSER.parse(value.substring(1, value.length() - 1));
+            if (methodCallNode == null) {
+                throw buildException(clazz, field, ResultCalcField.class.getSimpleName(), annotationPropertyName, "format error");
+            }
+
+            METHODS_METHODS_CALL_PARSER.parser(methodCallNode, arg -> {
+                if (arg instanceof String) {
+                    String str = (String) arg;
+                    if (str.startsWith("'")) {
+                        return str.substring(1, str.length() - 1);
+                    } else {
+                        if (str.startsWith("{") && str.endsWith("}")) {
+                            //适配旧的
+                            str = str.substring(1, str.length() - 1);
                         }
+                        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(str);
+                        if (Objects.isNull(tableFieldInfo)) {
+                            throw buildException(clazz, field, annotationName, annotationPropertyName, str + " is not a entity field");
+                        }
+                        return new XbatisTableField(table, tableFieldInfo);
                     }
-                    return i;
-                }).collect(Collectors.toList());
+                }
+                return arg;
             });
-            sql = value;
+            sql = methodCallNode;
         } else {
             StringBuilder sqlBuilder = new StringBuilder();
             while (true) {

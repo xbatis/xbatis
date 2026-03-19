@@ -21,10 +21,10 @@ import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.CmdTemplate;
 import db.sql.api.impl.tookit.SqlUtil;
+import db.sql.api.tookit.MethodCallNode;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
-import java.util.stream.Collectors;
 
 public class ResultCalcFieldInfo extends ResultFieldInfo {
 
@@ -36,17 +36,17 @@ public class ResultCalcFieldInfo extends ResultFieldInfo {
 
     private final Class type;
 
-    private final String sql;
+    private final Object value;
 
     private final ResultCalcField annotation;
 
-    public ResultCalcFieldInfo(Class type, int storey, TableInfo tableInfo, TableFieldInfo[] tableFieldInfos, Field field, ResultCalcField resultCalcField, String sql) {
+    public ResultCalcFieldInfo(Class type, int storey, TableInfo tableInfo, TableFieldInfo[] tableFieldInfos, Field field, ResultCalcField resultCalcField, Object value) {
         super(true, type, field, resultCalcField.as().isEmpty() ? SqlUtil.getAsName(type, field) : resultCalcField.as(), getTypeHandler(field, resultCalcField), resultCalcField.jdbcType());
         this.type = type;
         this.tableInfo = tableInfo;
         this.tableFieldInfos = tableFieldInfos;
         this.storey = storey;
-        this.sql = sql;
+        this.value = value;
         this.annotation = resultCalcField;
     }
 
@@ -76,34 +76,38 @@ public class ResultCalcFieldInfo extends ResultFieldInfo {
     }
 
     public Cmd getCmd(CmdFactory cmdFactory) {
-        if (this.sql.startsWith("[") && this.sql.endsWith("]")) {
-            Cmd cmd = (Cmd) ResultInfo.METHODS_CALL_PARSER.parse(this.sql.substring(1, this.sql.length() - 1), args -> {
-                return args.stream().map(i -> {
-                    if (i instanceof String) {
-                        String str = (String) i;
-                        if (str.startsWith("'")) {
-                            return str.substring(1, str.length() - 1);
-                        } else {
-                            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(str);
-                            return cmdFactory.field(tableInfo.getType(), tableFieldInfo.getField().getName());
+        if (this.value instanceof MethodCallNode) {
+            MethodCallNode methodCallNode = (MethodCallNode) this.value;
+            Cmd cmd = (Cmd) ResultInfo.METHODS_METHODS_CALL_PARSER.parser(methodCallNode, arg -> {
+                if (arg instanceof String) {
+                    String str = (String) arg;
+                    if (str.startsWith("'")) {
+                        return str.substring(1, str.length() - 1);
+                    } else {
+                        if (str.startsWith("{") && str.endsWith("}")) {
+                            //适配旧的
+                            str = str.substring(1, str.length() - 1);
                         }
+                        return cmdFactory.field(this.tableInfo.getType(), str, this.storey);
                     }
-                    return i;
-                }).collect(Collectors.toList());
+                }
+                return arg;
             });
             ((Alias) cmd).as(getMappingColumnName());
             return cmd;
         }
 
+        String sql = (String) this.value;
+
         if (tableFieldInfos.length == 0) {
-            return Methods.column(this.sql).as(getMappingColumnName());
+            return Methods.column(sql).as(getMappingColumnName());
         }
         Cmd[] cmds = new Cmd[tableFieldInfos.length];
         for (int i = 0; i < cmds.length; i++) {
             TableFieldInfo tableFieldInfo = tableFieldInfos[i];
-            cmds[i] = cmdFactory.field(tableInfo.getType(), tableFieldInfo.getField().getName());
+            cmds[i] = cmdFactory.field(tableInfo.getType(), tableFieldInfo.getField().getName(), this.storey);
         }
-        return CmdTemplate.create(true, this.sql, cmds).as(getMappingColumnName());
+        return CmdTemplate.create(true, sql, cmds).as(getMappingColumnName());
     }
 
     public ResultCalcField getAnnotation() {

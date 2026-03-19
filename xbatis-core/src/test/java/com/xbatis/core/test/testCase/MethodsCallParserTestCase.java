@@ -14,22 +14,14 @@
 
 package com.xbatis.core.test.testCase;
 
-import db.sql.api.impl.cmd.Methods;
 import db.sql.api.tookit.MethodsCallParser;
 import org.junit.jupiter.api.Test;
-
-import java.util.stream.Collectors;
 
 public class MethodsCallParserTestCase extends BaseTest {
 
     @Test
     public void testMethodsCallParser() {
-        MethodsCallParser parser = new MethodsCallParser(Methods.class, true, (name) -> {
-            if (name.equals("if")) {
-                return "if_";
-            }
-            return name;
-        });
+        MethodsCallParser parser = new MethodsCallParser();
 
         // 测试用例
         String[] testCases = {
@@ -40,19 +32,7 @@ public class MethodsCallParserTestCase extends BaseTest {
         System.out.println("========== 基本测试 ==========");
         for (String test : testCases) {
             try {
-                Object result = parser.parse(test, (args) -> {
-                    return args.stream().map(i -> {
-                        if (i instanceof String) {
-                            String str = (String) i;
-                            if (str.startsWith("'")) {
-                                return str.substring(1, str.length() - 1);
-                            } else {
-                                return Methods.column(str);
-                            }
-                        }
-                        return i;
-                    }).collect(Collectors.toList());
-                });
+                Object result = parser.parse(test);
                 System.out.printf("%-40s -> %s%n", test, result);
             } catch (Exception e) {
                 e.printStackTrace();

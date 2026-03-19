@@ -15,70 +15,43 @@
 package db.sql.api.tookit;
 
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 正确的递归下降解析器
  * 支持：函数嵌套、字符串、数字、标识符
  */
 public class MethodsCallParser {
-
-    private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-    private final Function<String, String> functionNameConverter;
-    private final Object target;
-    private final boolean isStatic;
-    private final Map<String, List<Method>> methodMap;
     private String input;
     private int pos;
     private char currentChar;
 
-    public MethodsCallParser(Object target, boolean isStatic, Function<String, String> functionNameConverter) {
-        this.target = target;
-        this.isStatic = isStatic;
-        this.functionNameConverter = functionNameConverter;
-        Class functionClass = target instanceof Class ? (Class) target : target.getClass();
-        this.methodMap = Arrays.stream(functionClass.getMethods())
-                .filter(i -> isStatic ? Modifier.isStatic(i.getModifiers()) : true)
-                .collect(Collectors.groupingBy(i -> i.getName() + "." + i.getParameterCount()));
+    public MethodsCallParser() {
 
-        this.methodMap.putAll(Arrays.stream(functionClass.getMethods())
-                .filter(i -> isStatic ? Modifier.isStatic(i.getModifiers()) : true)
-                .filter(i -> {
-                    if (i.getParameterCount() == 0) {
-                        return false;
-                    }
-                    for (Class type : i.getParameterTypes()) {
-                        if (type.isArray()) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
-                .collect(Collectors.groupingBy(i -> i.getName())));
-        System.out.println(methodMap);
+    }
+
+    public static void main(String[] args2) {
+        MethodsCallParser aa = new MethodsCallParser();
+
+        System.out.println(aa.parse("sum(ifNull(count(name),1))"));
     }
 
     /**
      * 解析入口
      */
-    public Object parse(String input, Function<List<Object>, List<Object>> argsConverter) {
+    public MethodCallNode parse(String input) {
         this.input = input;
         this.pos = 0;
         this.currentChar = input.length() > 0 ? input.charAt(0) : '\0';
-        return parseExpression(argsConverter);
+        return (MethodCallNode) parseExpression();
     }
 
     /**
      * 解析表达式
      */
-    private Object parseExpression(Function<List<Object>, List<Object>> argsConverter) {
+    private Object parseExpression() {
         skipWhitespace();
 
         if (pos >= input.length()) {
@@ -86,7 +59,7 @@ public class MethodsCallParser {
         }
 
         // 解析最左侧的元素
-        Object left = parsePrimary(argsConverter);
+        Object left = parsePrimary();
         skipWhitespace();
 
         // 这里可以扩展处理运算符，比如 + - * / 等
@@ -98,7 +71,7 @@ public class MethodsCallParser {
     /**
      * 解析基本元素：函数调用、标识符、数字、字符串
      */
-    private Object parsePrimary(Function<List<Object>, List<Object>> argsConverter) {
+    private Object parsePrimary() {
         skipWhitespace();
 
         if (pos >= input.length()) {
@@ -114,7 +87,7 @@ public class MethodsCallParser {
 
             // 如果后面跟着 '('，则是函数调用
             if (pos < input.length() && currentChar == '(') {
-                return parseFunction(name, argsConverter);
+                return parseFunction(name);
             } else {
                 return name; // 普通标识符
             }
@@ -133,7 +106,7 @@ public class MethodsCallParser {
         // 括号表达式
         if (c == '(') {
             advance(); // 跳过 '('
-            Object expr = parseExpression(argsConverter);
+            Object expr = parseExpression();
             skipWhitespace();
 
             if (pos >= input.length() || currentChar != ')') {
@@ -144,103 +117,6 @@ public class MethodsCallParser {
         }
 
         throw new RuntimeException("意外的字符: '" + c + "' 在位置 " + pos);
-    }
-
-    /**
-     * 解析函数调用
-     */
-    private Object parseFunction(String name, Function<List<Object>, List<Object>> argsConverter) {
-        // 跳过 '('
-        advance();
-
-        List<Object> args = new ArrayList<>();
-
-        // 解析参数列表
-        while (pos < input.length() && currentChar != ')') {
-            skipWhitespace();
-
-            // 解析一个参数
-            Object arg = parseExpression(argsConverter);
-            args.add(arg);
-
-            skipWhitespace();
-
-            // 如果是逗号，继续解析下一个参数
-            if (pos < input.length() && currentChar == ',') {
-                advance(); // 跳过 ','
-                // 继续循环
-            } else if (pos < input.length() && currentChar == ')') {
-                // 参数结束，跳出循环
-                break;
-            }
-        }
-
-        // 检查右括号
-        if (pos >= input.length() || currentChar != ')') {
-            throw new RuntimeException("函数 '" + name + "' 缺少右括号");
-        }
-        advance(); // 跳过 ')'
-
-        final Object[] finalArgs = argsConverter.apply(args).toArray(new Object[0]);
-        name = functionNameConverter.apply(name);
-        List<Method> methods = methodMap.get(name + "." + finalArgs.length);
-        Optional<Method> first = null;
-        if (methods != null) {
-            first = methods.stream().filter(method -> {
-                Class<?>[] parameterTypes = method.getParameterTypes();
-                if (parameterTypes.length < finalArgs.length) {
-                    return false;
-                }
-
-                for (int i = 0; i < parameterTypes.length; i++) {
-                    Class<?> parameterType = parameterTypes[i];
-                    if (!parameterType.isAssignableFrom(finalArgs[i].getClass())) {
-                        return false;
-                    }
-                }
-                return true;
-            }).findFirst();
-        }
-
-
-        if (first == null || !first.isPresent()) {
-            methods = methodMap.get(name);
-            first = methods.stream().filter(method -> {
-                Class<?>[] parameterTypes = method.getParameterTypes();
-                for (int i = 0; i < parameterTypes.length; i++) {
-                    Class<?> parameterType = parameterTypes[i];
-                    if (parameterType.isArray()) {
-                        return true;
-                    }
-                    if (!parameterType.isAssignableFrom(finalArgs[i].getClass())) {
-                        return false;
-                    }
-                }
-                return true;
-            }).findFirst();
-        }
-
-        if (first == null || !first.isPresent()) {
-            throw new RuntimeException("can't find method:" + name + " in " + (target instanceof Class ? target : target.getClass()));
-        }
-
-        try {
-            Method method = first.get();
-            MethodHandle methodHandle = LOOKUP.unreflect(method);
-            if (target instanceof Class) {
-                return methodHandle.invokeWithArguments(finalArgs);
-            }
-            if (Modifier.isStatic(method.getModifiers())) {
-                return methodHandle.invokeWithArguments(target.getClass(), finalArgs);
-            }
-            return methodHandle.invokeWithArguments(finalArgs);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -322,5 +198,43 @@ public class MethodsCallParser {
     private void advance() {
         pos++;
         currentChar = pos < input.length() ? input.charAt(pos) : '\0';
+    }
+
+    /**
+     * 解析函数调用
+     */
+    private Object parseFunction(String name) {
+        // 跳过 '('
+        advance();
+
+        List<Object> args = new ArrayList<>();
+
+        // 解析参数列表
+        while (pos < input.length() && currentChar != ')') {
+            skipWhitespace();
+
+            // 解析一个参数
+            Object arg = parseExpression();
+            args.add(arg);
+
+            skipWhitespace();
+
+            // 如果是逗号，继续解析下一个参数
+            if (pos < input.length() && currentChar == ',') {
+                advance(); // 跳过 ','
+                // 继续循环
+            } else if (pos < input.length() && currentChar == ')') {
+                // 参数结束，跳出循环
+                break;
+            }
+        }
+
+        // 检查右括号
+        if (pos >= input.length() || currentChar != ')') {
+            throw new RuntimeException("函数 '" + name + "' 缺少右括号");
+        }
+        advance(); // 跳过 ')'
+
+        return new MethodCallNode(name, args);
     }
 }
