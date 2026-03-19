@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.sql.executor;
 
+import cn.xbatis.core.sql.MybatisCmdFactory;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.SqlUtil;
@@ -29,6 +30,15 @@ public class SubQuery extends BaseSubQuery<SubQuery> {
 
     public SubQuery(String alias) {
         super(alias);
+    }
+
+    public SubQuery(MybatisCmdFactory cmdFactory) {
+        super(cmdFactory);
+    }
+
+    public SubQuery(String alias, MybatisCmdFactory cmdFactory) {
+        super(cmdFactory);
+        this.alias = alias;
     }
 
     public SubQuery(Where where) {

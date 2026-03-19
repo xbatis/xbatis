@@ -706,11 +706,9 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         }
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
 
-        return Methods.exists(cmdFactory.createSubQuery()
-                .select1()
-                .from(lambdaFieldInfo.getType())
-                .eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey))
-        );
+        return Methods.exists(this.buildExistsOrNotExistsSubQuery(this, lambdaFieldInfo.getType(), (Consumer<ISubQuery>) existsQuery -> {
+            existsQuery.eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey));
+        }));
     }
 
 
@@ -729,11 +727,9 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
-        return Methods.notExists(cmdFactory.createSubQuery()
-                .select1()
-                .from(lambdaFieldInfo.getType())
-                .eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey))
-        );
+        return Methods.notExists(this.buildExistsOrNotExistsSubQuery(this, lambdaFieldInfo.getType(), (Consumer<ISubQuery>) existsQuery -> {
+            existsQuery.eq(targetGetter, cmdFactory.field(sourceGetter, sourceStorey));
+        }));
     }
 
     @Override

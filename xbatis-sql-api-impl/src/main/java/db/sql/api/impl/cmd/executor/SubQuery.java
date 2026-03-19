@@ -14,6 +14,7 @@
 
 package db.sql.api.impl.cmd.executor;
 
+import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.impl.cmd.CmdFactory;
 
 /**
@@ -22,12 +23,20 @@ import db.sql.api.impl.cmd.CmdFactory;
 public class SubQuery extends AbstractSubQuery<SubQuery, CmdFactory> {
 
     public SubQuery() {
-        this(null);
-
+        this(new CmdFactory(ICmdFactory.SUB_QUERY_TABLE_AS_PREFIX, 1, true));
     }
 
     public SubQuery(String alias) {
-        super(new CmdFactory("st"));
+        this(new CmdFactory(ICmdFactory.SUB_QUERY_TABLE_AS_PREFIX, 1, true));
+        this.alias = alias;
+    }
+
+    public SubQuery(CmdFactory cmdFactory) {
+        super(cmdFactory);
+    }
+
+    public SubQuery(String alias, CmdFactory cmdFactory) {
+        this(cmdFactory);
         this.alias = alias;
     }
 

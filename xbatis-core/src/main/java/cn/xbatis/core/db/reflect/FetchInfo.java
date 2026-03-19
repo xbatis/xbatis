@@ -20,6 +20,7 @@ import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.annotations.Fetch;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.Table;
+import db.sql.api.cmd.ICmdFactory;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
@@ -271,7 +272,7 @@ public class FetchInfo {
                 tableAliasName = arr[0];
             } else {
                 tableInfo = targetTableInfo;
-                tableAliasName = middleTableInfo != null ? "target" : "t";
+                tableAliasName = middleTableInfo != null ? "target" : ICmdFactory.QUERY_TABLE_AS_PREFIX;
             }
 
             TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
@@ -325,7 +326,7 @@ public class FetchInfo {
                     tableAliasName = arr[0];
                 } else {
                     tableInfo = targetTableInfo;
-                    tableAliasName = middleTableInfo != null ? "target" : "t";
+                    tableAliasName = middleTableInfo != null ? "target" : ICmdFactory.QUERY_TABLE_AS_PREFIX;
                 }
 
                 property = arr[arr.length - 1];
@@ -360,7 +361,7 @@ public class FetchInfo {
                 tableAliasName = arr[0];
             } else {
                 tableInfo = targetTableInfo;
-                tableAliasName = middleTableInfo != null ? "target" : "t";
+                tableAliasName = middleTableInfo != null ? "target" : ICmdFactory.QUERY_TABLE_AS_PREFIX;
             }
 
             TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);

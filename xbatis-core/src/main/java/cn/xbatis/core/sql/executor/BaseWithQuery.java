@@ -19,6 +19,7 @@ import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.util.SelectClassUtil;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
+import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.IOrderByDirection;
@@ -37,7 +38,7 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
     private String alias;
 
     public BaseWithQuery(String name) {
-        super(new MybatisCmdFactory("wt"));
+        super(new MybatisCmdFactory(ICmdFactory.WITH_QUERY_TABLE_AS_PREFIX, 1, false));
         this.name = name;
     }
 

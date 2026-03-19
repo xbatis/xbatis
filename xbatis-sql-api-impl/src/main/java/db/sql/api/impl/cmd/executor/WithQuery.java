@@ -14,6 +14,7 @@
 
 package db.sql.api.impl.cmd.executor;
 
+import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.DatasetField;
 
@@ -23,7 +24,7 @@ import db.sql.api.impl.cmd.basic.DatasetField;
 public class WithQuery extends AbstractWithQuery<WithQuery, CmdFactory> implements db.sql.api.cmd.basic.IDataset<WithQuery, DatasetField> {
 
     public WithQuery(String alias) {
-        super(new CmdFactory("wt"));
+        super(new CmdFactory(ICmdFactory.WITH_QUERY_TABLE_AS_PREFIX, 1, false));
         this.alias = alias;
     }
 

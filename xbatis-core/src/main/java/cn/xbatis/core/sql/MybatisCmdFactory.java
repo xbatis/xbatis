@@ -18,6 +18,7 @@ import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.sql.executor.*;
 import cn.xbatis.db.Model;
 import db.sql.api.Getter;
+import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.impl.cmd.CmdFactory;
@@ -40,11 +41,11 @@ public class MybatisCmdFactory extends CmdFactory {
     protected final Map<Class<?>, TableInfo> tableInfoCache = new HashMap<>(5);
 
     public MybatisCmdFactory() {
-        super();
+        this(ICmdFactory.QUERY_TABLE_AS_PREFIX, 1, false);
     }
 
-    public MybatisCmdFactory(String tableAsPrefix) {
-        super(tableAsPrefix);
+    public MybatisCmdFactory(String tableAsPrefix, int deepLevel, boolean forSubQuery) {
+        super(tableAsPrefix, deepLevel, forSubQuery);
     }
 
     public TableInfo getTableInfo(Class<?> entityClass) {
@@ -148,7 +149,10 @@ public class MybatisCmdFactory extends CmdFactory {
     }
 
     @Override
-    public SubQuery createSubQuery() {
-        return new SubQuery();
+    public SubQuery createSubQuery(int deepLevel) {
+        if (deepLevel > 1) {
+            return new SubQuery(new MybatisCmdFactory("d" + deepLevel + ICmdFactory.SUB_QUERY_TABLE_AS_PREFIX, deepLevel, true));
+        }
+        return new SubQuery(new MybatisCmdFactory(ICmdFactory.SUB_QUERY_TABLE_AS_PREFIX, deepLevel, true));
     }
 }

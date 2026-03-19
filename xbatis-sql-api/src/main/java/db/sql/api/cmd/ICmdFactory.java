@@ -28,6 +28,26 @@ import java.util.function.Function;
 public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
         , TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> {
 
+    String QUERY_TABLE_AS_PREFIX = "t";
+
+    String SUB_QUERY_TABLE_AS_PREFIX = "st";
+
+    String WITH_QUERY_TABLE_AS_PREFIX = "wq";
+
+    /**
+     * 获取当前深度
+     *
+     * @return
+     */
+    int getDeepLevel();
+
+    /**
+     * 是否专门给SubQuery用的
+     *
+     * @return
+     */
+    boolean isForSubQuery();
+
     default TABLE table(Class<?> entity) {
         return this.table(entity, 1);
     }
@@ -150,10 +170,10 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
 
     /**
      * 创建子查询
-     *
+     * @param deepLevel 深度
      * @return 子查询 Cmd
      */
-    ISubQuery createSubQuery();
+    ISubQuery createSubQuery(int deepLevel);
 
     /**
      * 创建 Exists Or NotExists 的 子查询

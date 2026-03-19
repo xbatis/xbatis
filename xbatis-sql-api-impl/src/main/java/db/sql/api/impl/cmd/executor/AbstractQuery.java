@@ -919,5 +919,31 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         }
         return QuerySQLUtil.buildQuerySQL(context, module, parent, this, sqlBuilder, this.sortedCmds());
     }
+
+    /**
+     * 给表设置别名
+     *
+     * @param entity 实体
+     * @param as     别名
+     * @param <T>    实体类类型
+     * @return 自己
+     */
+    public <T> SELF tableAs(Class<T> entity, String as) {
+        return tableAs(entity, 1, as);
+    }
+
+    /**
+     * 给表设置别名
+     *
+     * @param entity 实体
+     * @param storey 层级
+     * @param as     别名
+     * @param <T>    实体类类型
+     * @return 自己
+     */
+    public <T> SELF tableAs(Class<T> entity, int storey, String as) {
+        conditionFactory.getCmdFactory().table(entity, storey).as(as);
+        return (SELF) this;
+    }
 }
 

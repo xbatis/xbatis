@@ -20,6 +20,7 @@ import cn.xbatis.core.sql.util.SelectClassUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
+import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.IOrderByDirection;
@@ -35,7 +36,16 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
     protected String alias;
 
     public BaseSubQuery(String alias) {
-        super(new MybatisCmdFactory("st"));
+        super(new MybatisCmdFactory(ICmdFactory.SUB_QUERY_TABLE_AS_PREFIX, 1, true));
+        this.alias = alias;
+    }
+
+    public BaseSubQuery(MybatisCmdFactory cmdFactory) {
+        super(cmdFactory);
+    }
+
+    public BaseSubQuery(String alias, MybatisCmdFactory cmdFactory) {
+        super(cmdFactory);
         this.alias = alias;
     }
 
@@ -88,32 +98,6 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
     @Override
     public List<SQLListener> getSQLListeners() {
         return XbatisGlobalConfig.getSQLListeners();
-    }
-
-    /**
-     * 给表设置别名
-     *
-     * @param entity 实体
-     * @param as     别名
-     * @param <T>    实体类类型
-     * @return 自己
-     */
-    public <T> Q tableAs(Class<T> entity, String as) {
-        return tableAs(entity, 1, as);
-    }
-
-    /**
-     * 给表设置别名
-     *
-     * @param entity 实体
-     * @param storey 层级
-     * @param as     别名
-     * @param <T>    实体类类型
-     * @return 自己
-     */
-    public <T> Q tableAs(Class<T> entity, int storey, String as) {
-        conditionFactory.getCmdFactory().table(entity, storey).as(as);
-        return (Q) this;
     }
 
     /**************以下为去除警告************/

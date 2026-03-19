@@ -22,12 +22,14 @@ import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.executor.ISubQuery;
+import db.sql.api.cmd.executor.IWithQuery;
 import db.sql.api.impl.cmd.basic.AllField;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 import db.sql.api.impl.cmd.executor.SubQuery;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.util.HashMap;
@@ -40,21 +42,45 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
 
     protected final Map<String, Table> tableCache = new HashMap<>(5);
 
+    protected boolean forSubQuery = false;
+
     private final String tableAsPrefix;
 
     protected int tableNums = 0;
 
+    protected int deepLevel = 1;
+
     public CmdFactory() {
-        this("t");
+        this(ICmdFactory.QUERY_TABLE_AS_PREFIX, 1, false);
     }
 
-    public CmdFactory(String tableAsPrefix) {
+    public CmdFactory(String tableAsPrefix, int deepLevel, boolean forSubQuery) {
+        if (deepLevel < 1) {
+            throw new IllegalArgumentException("deepLevel must be > 0");
+        }
+        this.deepLevel = deepLevel;
         this.tableAsPrefix = tableAsPrefix;
+        this.forSubQuery = forSubQuery;
+    }
+
+    @Override
+    public int getDeepLevel() {
+        return deepLevel;
+    }
+
+    @Override
+    public boolean isForSubQuery() {
+        return forSubQuery;
     }
 
     protected String tableAs(int storey, int tableNums) {
-        return this.tableAsPrefix +
-                (tableNums == 1 ? "" : tableNums);
+        if (tableNums == 1) {
+            return this.tableAsPrefix;
+        }
+        if (this.deepLevel == 1) {
+            return this.tableAsPrefix + this.tableNums;
+        }
+        return this.tableAsPrefix + "$" + this.tableNums;
     }
 
     public ConditionFactory createConditionFactory() {
@@ -161,13 +187,33 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
     }
 
     @Override
-    public AbstractSubQuery<?, ?> createSubQuery() {
-        return new SubQuery();
+    public AbstractSubQuery<?, ?> createSubQuery(int deepLevel) {
+        if (deepLevel > 1) {
+            return new SubQuery(new CmdFactory("d" + deepLevel + ICmdFactory.SUB_QUERY_TABLE_AS_PREFIX, deepLevel, true));
+        }
+        return new SubQuery(new CmdFactory(ICmdFactory.SUB_QUERY_TABLE_AS_PREFIX, deepLevel, true));
+    }
+
+    protected <T> ISubQuery createDeepSubQuery(T executor) {
+        if (!(executor instanceof IWithQuery) && executor instanceof ISubQuery) {
+            ISubQuery query = (ISubQuery) executor;
+            return this.createSubQuery(query.$().getDeepLevel() + 1);
+        } else if (executor instanceof ConditionChain) {
+            ConditionChain conditionChain = (ConditionChain) executor;
+            CmdFactory cmdFactory = conditionChain.getConditionFactory().getCmdFactory();
+            int deepLevel = cmdFactory.getDeepLevel();
+            if (cmdFactory.isForSubQuery()) {
+                deepLevel++;
+            }
+            return this.createSubQuery(deepLevel);
+        } else {
+            return this.createSubQuery(1);
+        }
     }
 
     @Override
     public <T, E> ISubQuery createExistsOrNotExistsSubQuery(T executor, Class<E> entity, BiConsumer<T, ISubQuery> consumer) {
-        ISubQuery subQuery = this.createSubQuery();
+        ISubQuery subQuery = createDeepSubQuery(executor);
         subQuery.from(entity);
 
         if (consumer != null) {
@@ -183,7 +229,7 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
 
     @Override
     public <T, E1, E2> ISubQuery createExistsOrNotExistsSubQuery(T executor, Getter<E1> sourceGetter, int sourceStorey, Getter<E2> targetGetter, BiConsumer<T, ISubQuery> consumer) {
-        ISubQuery subQuery = this.createSubQuery();
+        ISubQuery subQuery = createDeepSubQuery(executor);
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(targetGetter);
         subQuery.from(lambdaFieldInfo.getType());
         subQuery.eq(targetGetter, this.field(sourceGetter, sourceStorey));
@@ -200,7 +246,7 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
 
     @Override
     public <T, E> ISubQuery createInOrNotInSubQuery(T executor, Getter<E> selectGetter, BiConsumer<T, ISubQuery> consumer) {
-        ISubQuery subQuery = this.createSubQuery();
+        ISubQuery subQuery = this.createDeepSubQuery(executor);
         subQuery.select(selectGetter);
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(selectGetter);
         subQuery.from(lambdaFieldInfo.getType());
