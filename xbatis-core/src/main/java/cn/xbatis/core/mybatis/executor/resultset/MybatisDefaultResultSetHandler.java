@@ -778,4 +778,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         throw new RuntimeException("未适配");
     }
+
+    @Override
+    protected String prependPrefix(String columnName, String prefix) {
+        if (prefix == null || prefix.isEmpty() || columnName == null || columnName.isEmpty()) {
+            return columnName;
+        }
+        return prefix + columnName;
+    }
 }

@@ -1015,7 +1015,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
     // DISCRIMINATOR
     //
 
-    private String prependPrefix(String columnName, String prefix) {
+    protected String prependPrefix(String columnName, String prefix) {
         if (columnName == null || columnName.isEmpty() || prefix == null || prefix.isEmpty()) {
             return columnName;
         }

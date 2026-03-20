@@ -27,11 +27,16 @@ import java.util.*;
 public final class FieldUtil {
 
     public static boolean isResultMappingField(Field field) {
-        if (Modifier.isStatic(field.getModifiers())) {
+        int mod = field.getModifiers();
+        if (Modifier.isStatic(mod)) {
             return false;
         }
 
-        if (Modifier.isFinal(field.getModifiers())) {
+        if (Modifier.isFinal(mod)) {
+            return false;
+        }
+
+        if(Modifier.isTransient(mod)){
             return false;
         }
         return !field.isAnnotationPresent(Ignore.class);
@@ -44,13 +49,19 @@ public final class FieldUtil {
      * @return 是否是忽略字段
      */
     private static boolean isIgnoreField(Field field) {
-        if (Modifier.isStatic(field.getModifiers())) {
+        int mod = field.getModifiers();
+        if (Modifier.isStatic(mod)) {
             return false;
         }
 
-        if (Modifier.isFinal(field.getModifiers())) {
+        if (Modifier.isFinal(mod)) {
             return false;
         }
+
+        if(Modifier.isTransient(mod)){
+            return false;
+        }
+
         return field.isAnnotationPresent(Ignore.class);
     }
 
