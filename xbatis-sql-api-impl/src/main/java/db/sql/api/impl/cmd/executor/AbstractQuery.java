@@ -27,6 +27,7 @@ import db.sql.api.cmd.executor.IWithQuery;
 import db.sql.api.cmd.struct.Joins;
 import db.sql.api.cmd.struct.query.Unions;
 import db.sql.api.cmd.struct.query.Withs;
+import db.sql.api.function.ThreeConsumer;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.Methods;
@@ -157,9 +158,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.$().field(dataset, columnName);
     }
 
-    protected <E, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, Getter<E> getter) {
-        return this.$().field(dataset, getter);
-    }
+    protected int joinDeepLevel = 0;
+
 
     @Override
     public <T> SELF fetchFilter(Getter<T> getter, Consumer<Where> where) {
@@ -340,8 +340,15 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.select(this.$(dataset, columnName));
     }
 
-    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
-        return this.select(f.apply(this.$(dataset, column)));
+    protected <E, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, Getter<E> getter) {
+        if (dataset instanceof AbstractSubQuery) {
+            AbstractSubQuery subQuery = (AbstractSubQuery) dataset;
+            DatasetField datasetField = subQuery.$outerField(getter, true, false);
+            if (datasetField != null) {
+                return (DATASET_FIELD) datasetField;
+            }
+        }
+        return this.$().field(dataset, getter);
     }
 
     @Override
@@ -414,6 +421,248 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     public SELF crossJoin(Class<?> mainTable, int mainTableStorey) {
         return this.crossJoin($.table(mainTable, mainTableStorey));
     }
+
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        if (f == null) {
+            return this.select(this.$(dataset, column));
+        }
+        return this.select(f.apply(this.$(dataset, column)));
+    }
+
+    /**
+     * join 子查询
+     *
+     * @param mode            join 模式
+     * @param mainOnGetter    主表的getter 方法
+     * @param mainTableStorey 主表的层级
+     * @param subOnGetter     子查询的on 字段
+     * @param consumer        消费函数
+     * @param <T>             主表的类型
+     * @param <T2>            子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF join(JoinMode mode, Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> consumer) {
+
+        LambdaUtil.LambdaFieldInfo mainLambdaFieldInfo = LambdaUtil.getFieldInfo(mainOnGetter);
+        Table mainTable = $.table(mainLambdaFieldInfo.getType(), mainTableStorey);
+        AbstractSubQuery<?, ?> abstractSubQuery = (AbstractSubQuery<?, ?>) $.createDeepSubQuery(this);
+        SELF THIS = (SELF) this;
+        final int deepLevel = ++joinDeepLevel;
+        this.join(mode, mainTable, abstractSubQuery, on -> {
+            LambdaUtil.LambdaFieldInfo subLambdaFieldInfo = LambdaUtil.getFieldInfo(subOnGetter);
+            TableField subOnField = abstractSubQuery.$(subLambdaFieldInfo.getType(), subLambdaFieldInfo.getName());
+            abstractSubQuery.from(subLambdaFieldInfo.getType());
+            consumer.accept(THIS, abstractSubQuery, on);
+            if (abstractSubQuery.getSelect() == null || !abstractSubQuery.getSelect().getSelectField().contains(subOnField)) {
+                abstractSubQuery.select(subOnField);
+            }
+            on.eq($(mainLambdaFieldInfo.getType(), mainLambdaFieldInfo.getName(), mainTableStorey), abstractSubQuery.$outerField(subOnGetter));
+            if (abstractSubQuery.getAlias() == null) {
+                if (deepLevel > 1) {
+                    abstractSubQuery.as("jsq" + abstractSubQuery.$().getDeepLevel());
+                } else {
+                    abstractSubQuery.as("jsq");
+                }
+            }
+        });
+        return THIS;
+    }
+
+    /**
+     * join 子查询
+     *
+     * @param mode            join 模式
+     * @param mainOnGetter    主表的getter 方法
+     * @param mainTableStorey 主表的层级
+     * @param subOnGetter     子查询的on 字段
+     * @param consumer        消费函数
+     * @param <T>             主表的类型
+     * @param <T2>            子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF join(JoinMode mode, Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> threrConsumer = (query, subquery, on) -> {
+            consumer.accept(query, subquery);
+        };
+        return join(mode, mainOnGetter, mainTableStorey, subOnGetter, threrConsumer);
+    }
+
+    /**
+     * left join 子查询
+     *
+     * @param mainOnGetter 主表的getter 方法
+     * @param subOnGetter  子查询的on 字段
+     * @param consumer     消费函数
+     * @param <T>          主表的类型
+     * @param <T2>         子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF leftJoin(Getter<T> mainOnGetter, Getter<T2> subOnGetter, ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> consumer) {
+        return this.join(JoinMode.LEFT, mainOnGetter, 1, subOnGetter, consumer);
+    }
+
+    /**
+     * left join 子查询
+     *
+     * @param mainOnGetter    主表的getter 方法
+     * @param mainTableStorey 主表的层级
+     * @param subOnGetter     子查询的on 字段
+     * @param consumer        消费函数
+     * @param <T>             主表的类型
+     * @param <T2>            子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF leftJoin(Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> consumer) {
+        return this.join(JoinMode.LEFT, mainOnGetter, mainTableStorey, subOnGetter, consumer);
+    }
+
+    /**
+     * inner join 子查询
+     *
+     * @param mainOnGetter 主表的getter 方法
+     * @param subOnGetter  子查询的on 字段
+     * @param consumer     消费函数
+     * @param <T>          主表的类型
+     * @param <T2>         子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF innerJoin(Getter<T> mainOnGetter, Getter<T2> subOnGetter, ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> consumer) {
+        return this.join(JoinMode.INNER, mainOnGetter, 1, subOnGetter, consumer);
+    }
+
+    /**
+     * inner join 子查询
+     *
+     * @param mainOnGetter    主表的getter 方法
+     * @param mainTableStorey 主表的层级
+     * @param subOnGetter     子查询的on 字段
+     * @param consumer        消费函数
+     * @param <T>             主表的类型
+     * @param <T2>            子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF innerJoin(Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> consumer) {
+        return this.join(JoinMode.INNER, mainOnGetter, mainTableStorey, subOnGetter, consumer);
+    }
+
+    /**
+     * right join 子查询
+     *
+     * @param mainOnGetter 主表的getter 方法
+     * @param subOnGetter  子查询的on 字段
+     * @param consumer     消费函数
+     * @param <T>          主表的类型
+     * @param <T2>         子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF rightJoin(Getter<T> mainOnGetter, Getter<T2> subOnGetter, ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> consumer) {
+        return this.join(JoinMode.INNER, mainOnGetter, 1, subOnGetter, consumer);
+    }
+
+    /**
+     * right join 子查询
+     *
+     * @param mainOnGetter    主表的getter 方法
+     * @param mainTableStorey 主表的层级
+     * @param subOnGetter     子查询的on 字段
+     * @param consumer        消费函数
+     * @param <T>             主表的类型
+     * @param <T2>            子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF rightJoin(Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> consumer) {
+        return this.join(JoinMode.INNER, mainOnGetter, mainTableStorey, subOnGetter, consumer);
+    }
+
+    // ---
+
+    /**
+     * left join 子查询
+     *
+     * @param mainOnGetter 主表的getter 方法
+     * @param subOnGetter  子查询的on 字段
+     * @param consumer     消费函数
+     * @param <T>          主表的类型
+     * @param <T2>         子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF leftJoin(Getter<T> mainOnGetter, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.join(JoinMode.LEFT, mainOnGetter, 1, subOnGetter, consumer);
+    }
+
+    /**
+     * left join 子查询
+     *
+     * @param mainOnGetter    主表的getter 方法
+     * @param mainTableStorey 主表的层级
+     * @param subOnGetter     子查询的on 字段
+     * @param consumer        消费函数
+     * @param <T>             主表的类型
+     * @param <T2>            子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF leftJoin(Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.join(JoinMode.LEFT, mainOnGetter, mainTableStorey, subOnGetter, consumer);
+    }
+
+    /**
+     * inner join 子查询
+     *
+     * @param mainOnGetter 主表的getter 方法
+     * @param subOnGetter  子查询的on 字段
+     * @param consumer     消费函数
+     * @param <T>          主表的类型
+     * @param <T2>         子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF innerJoin(Getter<T> mainOnGetter, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.join(JoinMode.INNER, mainOnGetter, 1, subOnGetter, consumer);
+    }
+
+    /**
+     * inner join 子查询
+     *
+     * @param mainOnGetter    主表的getter 方法
+     * @param mainTableStorey 主表的层级
+     * @param subOnGetter     子查询的on 字段
+     * @param consumer        消费函数
+     * @param <T>             主表的类型
+     * @param <T2>            子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF innerJoin(Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.join(JoinMode.INNER, mainOnGetter, mainTableStorey, subOnGetter, consumer);
+    }
+
+    /**
+     * right join 子查询
+     *
+     * @param mainOnGetter 主表的getter 方法
+     * @param subOnGetter  子查询的on 字段
+     * @param consumer     消费函数
+     * @param <T>          主表的类型
+     * @param <T2>         子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF rightJoin(Getter<T> mainOnGetter, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.join(JoinMode.INNER, mainOnGetter, 1, subOnGetter, consumer);
+    }
+
+    /**
+     * right join 子查询
+     *
+     * @param mainOnGetter    主表的getter 方法
+     * @param mainTableStorey 主表的层级
+     * @param subOnGetter     子查询的on 字段
+     * @param consumer        消费函数
+     * @param <T>             主表的类型
+     * @param <T2>            子查询的类型
+     * @return 自己
+     */
+    public <T, T2> SELF rightJoin(Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
+        return this.join(JoinMode.INNER, mainOnGetter, mainTableStorey, subOnGetter, consumer);
+    }
+
 
     @Override
     public Where $where() {

@@ -39,11 +39,4 @@ public class SubQuery extends AbstractSubQuery<SubQuery, CmdFactory> {
         this(cmdFactory);
         this.alias = alias;
     }
-
-    @Override
-    public SubQuery as(String alias) {
-        throw new RuntimeException("not support");
-    }
-
-
 }

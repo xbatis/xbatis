@@ -15,7 +15,6 @@
 package cn.xbatis.core.mybatis.mapper;
 
 
-import cn.xbatis.core.function.ThreeFunction;
 import cn.xbatis.core.mybatis.mapper.context.*;
 import cn.xbatis.core.mybatis.mapper.mappers.basic.*;
 import cn.xbatis.core.mybatis.provider.TablePrefixUtil;
@@ -30,6 +29,7 @@ import cn.xbatis.page.PageUtil;
 import cn.xbatis.page.PagerField;
 import db.sql.api.DbType;
 import db.sql.api.IDbType;
+import db.sql.api.function.ThreeFunction;
 import db.sql.api.impl.cmd.executor.SelectorCall;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.cursor.Cursor;

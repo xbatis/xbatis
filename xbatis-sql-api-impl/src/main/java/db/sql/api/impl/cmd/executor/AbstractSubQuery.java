@@ -74,6 +74,11 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
         return alias;
     }
 
+    public SELF as(String alias) {
+        this.alias = alias;
+        return (SELF) this;
+    }
+
     @Override
     public DatasetField $(String columnName) {
         return new DatasetField(this, columnName);
@@ -128,7 +133,7 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
      * @return DatasetField
      */
     public <E> DatasetField $outerField(Getter<E> getter) {
-        return this.$outerField(getter, false);
+        return this.$outerField(getter, false, true);
     }
 
     /**
@@ -136,10 +141,11 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
      *
      * @param getter
      * @param depth  是否深度引用，非深度引用只是 别名.getter的对应的列名；如果是深度的匹配（只能针对那些没有包装过的字段）
+     * @param throwExWhenNotFound 找不到抛异常
      * @param <E>
      * @return DatasetField
      */
-    public <E> DatasetField $outerField(Getter<E> getter, boolean depth) {
+    public <E> DatasetField $outerField(Getter<E> getter, boolean depth, boolean throwExWhenNotFound) {
         if (!depth) {
             return super.$(this, getter);
         }
@@ -147,6 +153,9 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
         DatasetField datasetField = this.$outerField(this, this, tableField);
         if (Objects.nonNull(datasetField)) {
             return datasetField;
+        }
+        if (!throwExWhenNotFound) {
+            return null;
         }
         throw new RuntimeException("cannot find dataset field");
     }

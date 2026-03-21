@@ -194,7 +194,7 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
         return new SubQuery(new CmdFactory(ICmdFactory.SUB_QUERY_TABLE_AS_PREFIX, deepLevel, true));
     }
 
-    protected <T> ISubQuery createDeepSubQuery(T executor) {
+    public <T> ISubQuery createDeepSubQuery(T executor) {
         if (!(executor instanceof IWithQuery) && executor instanceof ISubQuery) {
             ISubQuery query = (ISubQuery) executor;
             return this.createSubQuery(query.$().getDeepLevel() + 1);

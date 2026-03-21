@@ -265,6 +265,30 @@ public class JoinTest extends BaseTest {
         }
     }
 
+    @Test
+    public void joinSubQuery3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .innerJoin(SysUser::getRole_id, SysRole::getId)
+                    .innerJoin(SysUser::getRole_id, SysRole::getId, (query, subQuery) -> {
+                        subQuery.select(SysRole::getId, SysRole::getName);
+                        query.select(subQuery, SysRole::getName);
+                        query.orderBy(subQuery, SysRole::getId);
+                    })
+                    .innerJoin(SysUser::getRole_id, SysRole::getId, (query, subQuery, on) -> {
+                        subQuery.select(SysRole::getId, SysRole::getName);
+                        query.select(subQuery, SysRole::getName);
+                        query.orderBy(subQuery, SysRole::getId);
+                    })
+                    .eq(SysUser::getRole_id, 1)
+
+                    .list();
+            assertEquals(2, list.size(), "from entity and join subquery");
+        }
+    }
+
 
     @Test
     public void joinSelf2() {
