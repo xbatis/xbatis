@@ -273,7 +273,7 @@ public class JoinTest extends BaseTest {
                     .from(SysUser.class)
                     .innerJoin(SysUser::getRole_id, SysRole::getId)
                     .innerJoin(SysUser::getRole_id, SysRole::getId, (query, subQuery) -> {
-                        subQuery.select(SysRole::getId, SysRole::getName);
+                        subQuery.select(SysRole::getName);
                         query.select(subQuery, SysRole::getName);
                         query.orderBy(subQuery, SysRole::getId);
                     })
