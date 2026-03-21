@@ -452,7 +452,9 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
             LambdaUtil.LambdaFieldInfo subLambdaFieldInfo = LambdaUtil.getFieldInfo(subOnGetter);
             TableField subOnField = abstractSubQuery.$(subLambdaFieldInfo.getType(), subLambdaFieldInfo.getName());
             abstractSubQuery.from(subLambdaFieldInfo.getType());
-            consumer.accept(THIS, abstractSubQuery, on);
+            if (consumer != null) {
+                consumer.accept(THIS, abstractSubQuery, on);
+            }
             if (abstractSubQuery.getSelect() == null || !abstractSubQuery.getSelect().getSelectField().contains(subOnField)) {
                 abstractSubQuery.select(subOnField);
             }
@@ -481,9 +483,12 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @return 自己
      */
     public <T, T2> SELF join(JoinMode mode, Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
-        ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> threrConsumer = (query, subquery, on) -> {
-            consumer.accept(query, subquery);
-        };
+        ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> threrConsumer = null;
+        if (consumer != null) {
+            threrConsumer = (query, subquery, on) -> {
+                consumer.accept(query, subquery);
+            };
+        }
         return join(mode, mainOnGetter, mainTableStorey, subOnGetter, threrConsumer);
     }
 
