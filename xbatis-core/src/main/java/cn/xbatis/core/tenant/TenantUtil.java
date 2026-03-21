@@ -16,7 +16,7 @@ package cn.xbatis.core.tenant;
 
 import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.mapper.context.CmdParamUtil;
-import cn.xbatis.core.sql.executor.MpDatasetField;
+import cn.xbatis.core.sql.executor.XabtisDatasetField;
 import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.Model;
@@ -150,14 +150,14 @@ public final class TenantUtil {
         if (tid instanceof TenantId) {
             TenantId tenantId = (TenantId) tid;
             if (tenantId.isMultiValue()) {
-                on.extConditionChain().in(new MpDatasetField(table, tenantIdFieldInfo), tenantId.getValues());
+                on.extConditionChain().in(new XabtisDatasetField(table, tenantIdFieldInfo), tenantId.getValues());
                 onWhere(tableInfo.getType(), on.extConditionChain());
                 return;
             }
             tid = tenantId.getValues()[0];
         }
 
-        on.extConditionChain().eq(new MpDatasetField(table, tenantIdFieldInfo), tid);
+        on.extConditionChain().eq(new XabtisDatasetField(table, tenantIdFieldInfo), tid);
         onWhere(tableInfo.getType(), on.extConditionChain());
     }
 
@@ -186,14 +186,14 @@ public final class TenantUtil {
                     values.add(CmdParamUtil.build(tenantIdFieldInfo, id));
                 }
 
-                where.extConditionChain().and(Methods.in(new MpDatasetField(table, tenantIdFieldInfo), values));
+                where.extConditionChain().and(Methods.in(new XabtisDatasetField(table, tenantIdFieldInfo), values));
                 onWhere(tableInfo.getType(), where.extConditionChain());
                 return;
             }
             tid = tenantId.getValues()[0];
         }
 
-        where.extConditionChain().eq(new MpDatasetField(table, tenantIdFieldInfo), CmdParamUtil.build(tenantIdFieldInfo, tid));
+        where.extConditionChain().eq(new XabtisDatasetField(table, tenantIdFieldInfo), CmdParamUtil.build(tenantIdFieldInfo, tid));
         onWhere(tableInfo.getType(), where.extConditionChain());
     }
 

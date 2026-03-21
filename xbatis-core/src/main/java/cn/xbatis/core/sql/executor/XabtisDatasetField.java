@@ -29,11 +29,11 @@ import org.apache.ibatis.type.TypeHandler;
 
 import java.util.Objects;
 
-public class MpDatasetField extends DatasetField {
+public class XabtisDatasetField extends DatasetField {
 
     private final TableFieldInfo tableFieldInfo;
 
-    public MpDatasetField(IDataset dataset, TableFieldInfo tableFieldInfo) {
+    public XabtisDatasetField(IDataset dataset, TableFieldInfo tableFieldInfo) {
         super(dataset, tableFieldInfo.getColumnName());
         this.tableFieldInfo = tableFieldInfo;
     }

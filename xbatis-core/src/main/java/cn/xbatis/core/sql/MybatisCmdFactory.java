@@ -136,7 +136,7 @@ public class MybatisCmdFactory extends CmdFactory {
         } else if (dataset instanceof Table) {
             return (DATASET_FIELD) new TableField((Table) dataset, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId());
         }
-        return (DATASET_FIELD) new MpDatasetField(dataset, tableFieldInfo);
+        return (DATASET_FIELD) new XabtisDatasetField(dataset, tableFieldInfo);
     }
 
     @Override
