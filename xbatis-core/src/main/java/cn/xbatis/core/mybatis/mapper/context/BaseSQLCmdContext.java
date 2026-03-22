@@ -26,9 +26,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdContext<E> {
-
-    protected MybatisSqlBuilderContext sqlBuilderContext;
-
+    protected List<Object> parameters;
     protected String sql;
     protected E execution;
     protected IDbType dbType;
@@ -57,14 +55,15 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
         if (Objects.nonNull(sql)) {
             return sql;
         }
-        sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
+        MybatisSqlBuilderContext sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
         sql = getExecution().sql(null, null, sqlBuilderContext, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(getExecution().cmds()))).toString();
+        this.parameters = sqlBuilderContext.getParams();
         return sql;
     }
 
     @Override
     public List<Object> getParameters() {
-        return sqlBuilderContext.getParams();
+        return this.parameters;
     }
 
     public IDbType getDbType() {

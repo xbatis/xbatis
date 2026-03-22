@@ -62,7 +62,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     protected final Class<T> mapperInterface;
     private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
     protected Map<ShareVariableName, Object> shareVariables = new HashMap<>();
-    private volatile IDbType dbType;
+    private IDbType dbType;
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);

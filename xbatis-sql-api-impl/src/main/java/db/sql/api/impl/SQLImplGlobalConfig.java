@@ -24,7 +24,7 @@ public final class SQLImplGlobalConfig {
 
     private static final Object NULL = new Object();
     private final static Map<IDbType, Object> DATABASE_CASE_RULES = new ConcurrentHashMap<>();
-    private static volatile Object DATABASE_CASE_RULE = NULL;
+    private static Object DATABASE_CASE_RULE = NULL;
 
     /**
      * 数据库命名规则 默认 不处理

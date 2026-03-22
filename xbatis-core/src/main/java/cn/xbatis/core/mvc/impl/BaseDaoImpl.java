@@ -46,9 +46,14 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     protected M mapper;
 
-    private volatile Class<T> entityType;
-    private volatile Class<ID> idType;
-    private volatile TableInfo tableInfo;
+    private Class<T> entityType;
+    private Class<ID> idType;
+    private TableInfo tableInfo;
+    private boolean idTypeNotPass;
+
+    public BaseDaoImpl() {
+        this.loadGenericType();
+    }
 
     protected M getMapper() {
         return mapper;
@@ -61,37 +66,32 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     abstract BasicMapper getBasicMapper();
 
     protected TableInfo getTableInfo() {
-        if (tableInfo == null) {
-            tableInfo = Tables.get(getEntityType());
-        }
         return tableInfo;
     }
 
     private void loadGenericType() {
         List<?> genericTypes = GenericUtil.getGenericSuperClass(this.getClass());
-        entityType = (Class<T>) genericTypes.get(genericTypes.size() - 2);
-        idType = (Class<ID>) genericTypes.get(genericTypes.size() - 1);
+        this.entityType = (Class<T>) genericTypes.get(genericTypes.size() - 2);
+        this.idType = (Class<ID>) genericTypes.get(genericTypes.size() - 1);
+        this.tableInfo = Tables.get(entityType);
+
+        if (idType == null || idType == Void.class) {
+            this.idTypeNotPass = true;
+        }
     }
 
     @Override
     public Class<T> getEntityType() {
-        if (entityType == null) {
-            this.loadGenericType();
-        }
         return entityType;
     }
 
     @Override
     public Class<ID> getIdType() {
-        if (idType == null) {
-            this.loadGenericType();
-        }
         return idType;
     }
 
     protected void checkIdType() {
-        Class<ID> clazz = getIdType();
-        if (clazz == null || clazz == Void.class) {
+        if (idTypeNotPass) {
             throw new RuntimeException("Not Supported");
         }
     }

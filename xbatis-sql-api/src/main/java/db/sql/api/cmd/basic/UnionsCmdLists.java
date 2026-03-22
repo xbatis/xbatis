@@ -19,13 +19,13 @@ import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.tookit.CmdUtils;
 
-import java.util.List;
+import java.util.Collection;
 
 public class UnionsCmdLists implements Cmd {
 
-    private final List<CmdList> cmdList;
+    private final Collection<CmdList> cmdList;
 
-    public UnionsCmdLists(List<CmdList> cmdList) {
+    public UnionsCmdLists(Collection<CmdList> cmdList) {
         this.cmdList = cmdList;
     }
 

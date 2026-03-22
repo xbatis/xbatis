@@ -27,7 +27,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public interface IExecutor<T extends IExecutor,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
@@ -89,8 +88,8 @@ public interface IExecutor<T extends IExecutor,
         if (cmdList == null || cmdList.isEmpty()) {
             return cmdList;
         }
-        Comparator<Cmd> comparator = comparator();
-        cmdList = cmdList.stream().sorted(comparator).collect(Collectors.toList());
+
+        Collections.sort(cmdList, comparator());
         return cmdList;
     }
 

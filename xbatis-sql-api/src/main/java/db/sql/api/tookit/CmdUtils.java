@@ -19,21 +19,22 @@ import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.NoAfterDelimiter;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 public final class CmdUtils {
 
-    public static StringBuilder join(SqlBuilderContext context, StringBuilder builder, List<? extends Cmd> cmdList) {
+    public static StringBuilder join(SqlBuilderContext context, StringBuilder builder, Collection<? extends Cmd> cmdList) {
         return join(null, null, context, builder, cmdList);
     }
 
-    public static StringBuilder join(Cmd module, Cmd user, SqlBuilderContext context, StringBuilder builder, List<? extends Cmd> cmdList) {
+    public static StringBuilder join(Cmd module, Cmd user, SqlBuilderContext context, StringBuilder builder, Collection<? extends Cmd> cmdList) {
         return join(module, user, context, builder, cmdList, null);
     }
 
-    public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, List<? extends Cmd> cmdList, char[] delimiter) {
+    public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Collection<? extends Cmd> cmdList, char[] delimiter) {
         if (cmdList == null || cmdList.isEmpty()) {
             return builder;
         }

@@ -56,8 +56,9 @@ public class SQLCmdInsertContext<T extends BaseInsert, DATA> extends BaseSQLCmdC
         if (Objects.nonNull(sql)) {
             return sql;
         }
-        sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
+        MybatisSqlBuilderContext sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
         sql = XbatisGlobalConfig.getSQLBuilder().buildInsertSQL(getExecution(), sqlBuilderContext).toString();
+        this.parameters = sqlBuilderContext.getParams();
         return sql;
     }
 
