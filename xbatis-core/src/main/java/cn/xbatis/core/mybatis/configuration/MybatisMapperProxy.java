@@ -57,14 +57,14 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
             return super.doInvoke(proxy, method, args);
         }
         switch (method.getName()) {
-            case ENTITY_TYPE_METHOD_NAME:
-                return this.entityType;
-            case MAPPER_TYPE_METHOD_NAME:
-                return this.mapperInterface;
-            case TABLE_INFO_METHOD_NAME:
-                return this.tableInfo;
             case GET_BASIC_MAPPER_METHOD_NAME:
                 return getBasicMapper();
+            case ENTITY_TYPE_METHOD_NAME:
+                return this.entityType;
+            case TABLE_INFO_METHOD_NAME:
+                return this.tableInfo;
+            case MAPPER_TYPE_METHOD_NAME:
+                return this.mapperInterface;
         }
 
         return super.doInvoke(proxy, method, args);
