@@ -30,14 +30,6 @@ public interface IOrderByGetterMethod<SELF extends IOrderByGetterMethod, TABLE e
         return this.orderBy(ascOrderByDirection(), column, storey);
     }
 
-    default <T> SELF orderByDesc(Getter<T> column) {
-        return this.orderBy(descOrderByDirection(), column, 1);
-    }
-
-    default <T> SELF orderByDesc(Getter<T> column, int storey) {
-        return this.orderBy(descOrderByDirection(), column, storey);
-    }
-
     default <T> SELF orderBy(boolean when, Getter<T> column) {
         if (!when) {
             return (SELF) this;
@@ -50,20 +42,6 @@ public interface IOrderByGetterMethod<SELF extends IOrderByGetterMethod, TABLE e
             return (SELF) this;
         }
         return this.orderBy(ascOrderByDirection(), column, storey);
-    }
-
-    default <T> SELF orderByDesc(boolean when, Getter<T> column) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderBy(descOrderByDirection(), column, 1);
-    }
-
-    default <T> SELF orderByDesc(boolean when, Getter<T> column, int storey) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderBy(descOrderByDirection(), column, storey);
     }
 
     default <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column) {

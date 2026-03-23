@@ -332,7 +332,25 @@ public class QueryTest extends BaseTest {
     }
 
     @Test
-    public void orderbyTest() {
+    public void orderbyAscTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, SysUser::getUserName, SysUser::getRole_id)
+                    .from(SysUser.class)
+                    .orderByAsc(SysUser::getRole_id, SysUser::getId)
+                    .limit(1)
+                    .get();
+            SysUser eqSysUser = new SysUser();
+            eqSysUser.setId(1);
+            eqSysUser.setUserName("admin");
+            eqSysUser.setRole_id(0);
+            assertEquals(sysUser, eqSysUser, "orderbyasc");
+        }
+    }
+
+    @Test
+    public void orderbyDescTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUser = QueryChain.of(sysUserMapper)

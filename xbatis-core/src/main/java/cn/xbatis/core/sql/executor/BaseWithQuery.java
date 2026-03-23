@@ -281,6 +281,42 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
 
     @Override
     @SafeVarargs
+    public final <T> Q orderByAsc(Getter<T>... columns) {
+        return super.orderByAsc(columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByAsc(int storey, Getter<T>... columns) {
+        return super.orderByAsc(storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByAsc(boolean when, Getter<T>... columns) {
+        return super.orderByAsc(when, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderByAsc(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.orderByAsc(dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByAsc(boolean when, int storey, Getter<T>... columns) {
+        return super.orderByAsc(when, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderByAsc(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.orderByAsc(when, dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
     public final Q orderByDesc(Cmd... cmds) {
         return super.orderByDesc(cmds);
     }

@@ -33,14 +33,6 @@ public interface IOrderByGetterFunMethod<SELF extends IOrderByGetterFunMethod, T
         return this.orderBy(ascOrderByDirection(), column, storey, f);
     }
 
-    default <T> SELF orderByDesc(Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
-        return this.orderBy(descOrderByDirection(), column, 1, f);
-    }
-
-    default <T> SELF orderByDesc(Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
-        return this.orderBy(descOrderByDirection(), column, storey, f);
-    }
-
     default <T> SELF orderBy(boolean when, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
         if (!when) {
             return (SELF) this;
@@ -53,20 +45,6 @@ public interface IOrderByGetterFunMethod<SELF extends IOrderByGetterFunMethod, T
             return (SELF) this;
         }
         return this.orderBy(ascOrderByDirection(), column, storey, f);
-    }
-
-    default <T> SELF orderByDesc(boolean when, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderBy(descOrderByDirection(), column, 1, f);
-    }
-
-    default <T> SELF orderByDesc(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderBy(descOrderByDirection(), column, storey, f);
     }
 
     default <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {

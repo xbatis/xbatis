@@ -37,19 +37,6 @@ public interface IOrderByDatasetMultiGetterMethod<SELF extends IOrderByDatasetMu
     }
 
     @SuppressWarnings("unchecked")
-    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDesc(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
-        return this.orderBy(dataset, descOrderByDirection(), columns);
-    }
-
-    @SuppressWarnings("unchecked")
-    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDesc(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderBy(dataset, descOrderByDirection(), columns);
-    }
-
-    @SuppressWarnings("unchecked")
     <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T>... columns);
 
     @SuppressWarnings("unchecked")

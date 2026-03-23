@@ -72,56 +72,6 @@ public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extend
         return this.orderBy(columns);
     }
 
-    default SELF orderByDesc(COLUMN column) {
-        return this.orderBy(descOrderByDirection(), column);
-    }
-
-    default SELF orderByDesc(boolean when, COLUMN column) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderByDesc(column);
-    }
-
-    default SELF orderByDesc(Supplier<COLUMN> supplier) {
-        COLUMN column = supplier.get();
-        if (column == null) {
-            return (SELF) this;
-        }
-        return this.orderByDesc(column);
-    }
-
-    default SELF orderByDesc(boolean when, Supplier<COLUMN> supplier) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderByDesc(supplier);
-    }
-
-    @SuppressWarnings("unchecked")
-    default SELF orderByDesc(COLUMN... columns) {
-        return this.orderBy(descOrderByDirection(), columns);
-    }
-
-    @SuppressWarnings("unchecked")
-    default SELF orderByDesc(boolean when, COLUMN... columns) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderBy(columns);
-    }
-
-    default SELF orderByDesc(List<COLUMN> columns) {
-        return this.orderBy(descOrderByDirection(), columns);
-    }
-
-    default SELF orderByDesc(boolean when, List<COLUMN> columns) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderBy(columns);
-    }
-
     SELF orderBy(IOrderByDirection orderByDirection, COLUMN column);
 
     default SELF orderBy(boolean when, IOrderByDirection orderByDirection, COLUMN column) {

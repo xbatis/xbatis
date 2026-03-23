@@ -33,17 +33,6 @@ public interface IOrderByDatasetGetterMethod<SELF extends IOrderByDatasetGetterM
         return this.orderBy(dataset, ascOrderByDirection(), column);
     }
 
-    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDesc(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
-        return this.orderBy(dataset, descOrderByDirection(), column);
-    }
-
-    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDesc(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderBy(dataset, descOrderByDirection(), column);
-    }
-
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T> column) {
         return this.orderBy(dataset, orderByDirection, column, null);
     }
