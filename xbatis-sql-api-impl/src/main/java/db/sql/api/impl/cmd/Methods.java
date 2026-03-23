@@ -1352,6 +1352,21 @@ public final class Methods {
     }
 
     /**
+     * concat拼接 函数
+     *
+     * @param first  第一个concat 参数
+     * @param values 需要拼接的值
+     * @return Concat
+     */
+    @SafeVarargs
+    public static Concat concat(Object first, Object... values) {
+        Objects.requireNonNull(first);
+        Objects.requireNonNull(values);
+
+        return new Concat(cmd(first), values);
+    }
+
+    /**
      * concatWs拼接 函数
      *
      * @param column 列
