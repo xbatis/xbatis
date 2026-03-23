@@ -46,13 +46,22 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     protected M mapper;
 
-    private Class<T> entityType;
-    private Class<ID> idType;
-    private TableInfo tableInfo;
-    private boolean idTypeNotPass;
+    private final Class<T> entityType;
+    private final Class<ID> idType;
+    private final TableInfo tableInfo;
+    private final boolean idTypeNotPass;
 
     public BaseDaoImpl() {
-        this.loadGenericType();
+        List<?> genericTypes = GenericUtil.getGenericSuperClass(this.getClass());
+        this.entityType = (Class<T>) genericTypes.get(genericTypes.size() - 2);
+        this.idType = (Class<ID>) genericTypes.get(genericTypes.size() - 1);
+        this.tableInfo = Tables.get(entityType);
+
+        if (idType == null || idType == Void.class) {
+            this.idTypeNotPass = true;
+        } else {
+            this.idTypeNotPass = false;
+        }
     }
 
     protected M getMapper() {
@@ -67,17 +76,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     protected TableInfo getTableInfo() {
         return tableInfo;
-    }
-
-    private void loadGenericType() {
-        List<?> genericTypes = GenericUtil.getGenericSuperClass(this.getClass());
-        this.entityType = (Class<T>) genericTypes.get(genericTypes.size() - 2);
-        this.idType = (Class<ID>) genericTypes.get(genericTypes.size() - 1);
-        this.tableInfo = Tables.get(entityType);
-
-        if (idType == null || idType == Void.class) {
-            this.idTypeNotPass = true;
-        }
     }
 
     @Override
