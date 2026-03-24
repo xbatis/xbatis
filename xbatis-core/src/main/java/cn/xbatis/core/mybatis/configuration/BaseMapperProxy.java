@@ -16,6 +16,7 @@ package cn.xbatis.core.mybatis.configuration;
 
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.dbType.DbTypeUtil;
+import cn.xbatis.core.dbType.IDbTypeSetContext;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.ShareVariableName;
@@ -49,8 +50,6 @@ import java.util.function.Function;
 
 public class BaseMapperProxy<T> extends MapperProxy<T> {
 
-    public final static String SQL_EXECUTE = "$execute";
-
     public final static String MAP_WITH_KEY_METHOD_NAME = "$mapWithKey";
 
     public final static String DB_ADAPT_METHOD_NAME = "dbAdapt";
@@ -63,19 +62,11 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     protected final Class<T> mapperInterface;
     private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
     protected Map<ShareVariableName, Object> shareVariables = new HashMap<>();
-    private IDbType dbType;
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
         this.sqlSession = sqlSession;
         this.mapperInterface = mapperInterface;
-    }
-
-    private IDbType getDbType() {
-        if (Objects.isNull(dbType)) {
-            dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration());
-        }
-        return dbType;
     }
 
     protected BasicMapper getBasicMapperFromProxy(Object proxy) {
@@ -91,6 +82,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         if (Objects.isNull(args) || args.length == 0) {
             return;
         }
+
+        IDbType dbType = null;
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
             if (arg != null && arg instanceof Where) {
@@ -102,6 +95,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 } else if (args.length > 1) {
                     where.setMybatisParamName("param" + (i + 1));
                 }
+                if (dbType == null) {
+                    dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration());
+                }
+                where.setDbType(dbType);
             } else if (arg != null && arg instanceof Query) {
                 Parameter[] parameters = method.getParameters();
                 Param param = parameters[i].getAnnotation(Param.class);
@@ -111,7 +108,15 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 } else if (args.length > 1) {
                     query.setMybatisParamName("param" + (i + 1));
                 }
+                if (dbType == null) {
+                    dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration());
+                }
+                query.setDbType(dbType);
             }
+        }
+
+        if (dbType != null && args[0] instanceof IDbTypeSetContext) {
+            ((IDbTypeSetContext) args[0]).setDbType(dbType);
         }
     }
 
@@ -181,12 +186,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 this.wrapperParams(method, args);
                 return super.invoke(proxy, method, args);
             }
-        } else if (method.getName().equals(SQL_EXECUTE)) {
-            //Parameter[] parameters = method.getParameters();
         }
 
         if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
-            return this.getDbType();
+            return DbTypeUtil.getDbType(sqlSession.getConfiguration());
         } else if (method.isAnnotationPresent(Paging.class)) {
             this.wrapperParams(method, args);
             return paging(method, args);
@@ -194,7 +197,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             Consumer<Object> consumer = (Consumer<Object>) args[0];
             DbSelectorCall dbSelector = new DbSelectorCall();
             consumer.accept(dbSelector);
-            return dbSelector.dbExecute(this.getDbType());
+            return dbSelector.dbExecute(DbTypeUtil.getDbType(sqlSession.getConfiguration()));
         } else if (method.getName().equals(WITH_SQL_SESSION_METHOD_NAME)) {
             this.wrapperParams(method, args);
             if (args.length == 1) {

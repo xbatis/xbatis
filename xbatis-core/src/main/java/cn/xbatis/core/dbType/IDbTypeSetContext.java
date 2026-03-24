@@ -16,7 +16,7 @@ package cn.xbatis.core.dbType;
 
 import db.sql.api.IDbType;
 
-public interface IDbTypeInitContext {
+public interface IDbTypeSetContext {
 
-    void init(IDbType dbType);
+    void setDbType(IDbType dbType);
 }

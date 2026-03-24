@@ -46,7 +46,7 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
     }
 
     @Override
-    public void init(IDbType dbType) {
+    public void setDbType(IDbType dbType) {
         this.dbType = dbType;
     }
 

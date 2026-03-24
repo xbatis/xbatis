@@ -16,7 +16,7 @@ package cn.xbatis.core.mybatis.executor;
 
 import cn.xbatis.core.dbType.DbTypeUtil;
 import cn.xbatis.core.dbType.IDbTypeContext;
-import cn.xbatis.core.dbType.IDbTypeInitContext;
+import cn.xbatis.core.dbType.IDbTypeSetContext;
 import cn.xbatis.core.mybatis.mapping.ResultMapWrapper;
 import cn.xbatis.core.mybatis.provider.MybatisSQLProvider;
 import cn.xbatis.core.mybatis.provider.PreparedSQLProvider;
@@ -46,10 +46,12 @@ public final class MappedStatementUtil {
                 SQLCmdSqlSource sqlSource = new SQLCmdSqlSource(ms.getConfiguration(), providerMethod);
                 MetaObject msMetaObject = ms.getConfiguration().newMetaObject(ms);
                 msMetaObject.setValue("sqlSource", sqlSource);
+                return ms;
             } else if (PreparedSQLProvider.class.isAssignableFrom(providerType)) {
                 PreparedSQLSqlSource sqlSource = new PreparedSQLSqlSource(ms.getConfiguration());
                 MetaObject msMetaObject = ms.getConfiguration().newMetaObject(ms);
                 msMetaObject.setValue("sqlSource", sqlSource);
+                return ms;
             }
         }
         return ms;
@@ -74,10 +76,9 @@ public final class MappedStatementUtil {
         }
 
         //设置到里面去
-        if (notInParameter && parameterObject instanceof IDbTypeInitContext) {
-            ((IDbTypeInitContext) parameterObject).init(dbType);
+        if (notInParameter && parameterObject instanceof IDbTypeSetContext) {
+            ((IDbTypeSetContext) parameterObject).setDbType(dbType);
         }
-
         return dbType;
     }
 }

@@ -41,12 +41,12 @@ public class MybatisSQLProvider {
     }
 
     public static String save(BaseSQLCmdContext insertContext, IDbType dbType) {
-        insertContext.init(dbType);
+        insertContext.setDbType(dbType);
         return insertContext.sql(dbType);
     }
 
     public static String update(SQLCmdUpdateContext updateContext, IDbType dbType) {
-        updateContext.init(dbType);
+        updateContext.setDbType(dbType);
         String sql = updateContext.sql(dbType);
         db.sql.api.impl.cmd.struct.Where where = updateContext.getExecution().getWhere();
         if (where == null || (!where.hasContent() && !where.extConditionChain().hasContent())) {
@@ -69,7 +69,7 @@ public class MybatisSQLProvider {
 
 
     public static String delete(SQLCmdDeleteContext deleteContext, IDbType dbType) {
-        deleteContext.init(dbType);
+        deleteContext.setDbType(dbType);
         String sql = deleteContext.sql(dbType);
         db.sql.api.impl.cmd.struct.Where where = deleteContext.getExecution().getWhere();
         if (where == null || !where.hasContent()) {
@@ -116,18 +116,18 @@ public class MybatisSQLProvider {
 
 
     public static String countFromQuery(SQLCmdCountFromQueryContext queryContext, IDbType dbType) {
-        queryContext.init(dbType);
+        queryContext.setDbType(dbType);
         return queryContext.sql(dbType);
     }
 
     public static String cmdQuery(SQLCmdQueryContext queryContext, IDbType dbType) {
-        queryContext.init(dbType);
+        queryContext.setDbType(dbType);
         handlerPrefixMapping(queryContext);
         return queryContext.sql(dbType);
     }
 
     public static String getByIdCmdQuery(SQLCmdQueryContext queryContext, IDbType dbType) {
-        queryContext.init(dbType);
+        queryContext.setDbType(dbType);
         return queryContext.sql(dbType);
     }
 
@@ -142,7 +142,7 @@ public class MybatisSQLProvider {
     }
 
     public static String cmdCount(SQLCmdCountQueryContext queryContext, IDbType dbType) {
-        queryContext.init(dbType);
+        queryContext.setDbType(dbType);
         return queryContext.sql(dbType);
     }
 }

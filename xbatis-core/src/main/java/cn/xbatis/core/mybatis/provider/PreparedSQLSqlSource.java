@@ -39,9 +39,8 @@ public class PreparedSQLSqlSource implements SqlSource {
 
         if (parameterObject instanceof PreparedContext) {
             IDbType dbType = MappedStatementUtil.getDbType(configuration, parameterObject, null);
-            preparedContext.init(dbType);
+            preparedContext.setDbType(dbType);
         }
-
 
         return new BoundSql(this.configuration, preparedContext.getSql(), Collections.singletonList(new ParameterMapping
                 .Builder(configuration, "name", Object.class)

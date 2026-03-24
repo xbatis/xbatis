@@ -49,11 +49,16 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
     }
 
     @Override
-    public void init(IDbType dbType) {
-        super.init(dbType);
+    public void setDbType(IDbType dbType) {
+        super.setDbType(dbType);
+    }
+
+    @Override
+    public String sql(IDbType dbType) {
         if (Objects.isNull(this.execution)) {
             this.execution = ModelBatchInsertCreateUtil.create(insert, this.modelInfo, this.getInsertData(), saveBatchStrategy, dbType, useBatchExecutor, defaultValueContext);
         }
+        return super.sql(dbType);
     }
 
     @Override

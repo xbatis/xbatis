@@ -48,11 +48,16 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T> i
     }
 
     @Override
-    public void init(IDbType dbType) {
-        super.init(dbType);
+    public void setDbType(IDbType dbType) {
+        super.setDbType(dbType);
+    }
+
+    @Override
+    public String sql(IDbType dbType) {
         if (Objects.isNull(this.execution)) {
             this.execution = createCmd(dbType);
         }
+        return super.sql(dbType);
     }
 
     private BaseInsert createCmd(IDbType dbType) {

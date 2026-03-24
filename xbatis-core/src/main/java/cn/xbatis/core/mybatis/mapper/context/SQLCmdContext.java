@@ -16,14 +16,14 @@ package cn.xbatis.core.mybatis.mapper.context;
 
 
 import cn.xbatis.core.dbType.IDbTypeContext;
-import cn.xbatis.core.dbType.IDbTypeInitContext;
+import cn.xbatis.core.dbType.IDbTypeSetContext;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.executor.Executor;
 
 import java.util.List;
 
-public interface SQLCmdContext<E extends Executor> extends PreparedParameterContext, IDbTypeContext, IDbTypeInitContext {
+public interface SQLCmdContext<E extends Executor> extends PreparedParameterContext, IDbTypeContext, IDbTypeSetContext {
 
     E getExecution();
 

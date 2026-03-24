@@ -24,19 +24,19 @@ import org.apache.ibatis.session.Configuration;
 public class PagingCountSqlSource implements SqlSource {
 
     private final Configuration configuration;
-    private final SqlSource sqlSource;
+    private final SqlSource delegate;
     private final boolean optimize;
 
 
-    public PagingCountSqlSource(Configuration configuration, SqlSource sqlSource, boolean optimize) {
+    public PagingCountSqlSource(Configuration configuration, SqlSource delegate, boolean optimize) {
         this.configuration = configuration;
-        this.sqlSource = sqlSource;
+        this.delegate = delegate;
         this.optimize = optimize;
     }
 
     @Override
     public BoundSql getBoundSql(Object parameterObject) {
-        BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
+        BoundSql boundSql = delegate.getBoundSql(parameterObject);
         IDbType dbType = MappedStatementUtil.getDbType(configuration, parameterObject, boundSql);
         String sql = PagingUtil.getCountSQL(dbType, boundSql.getSql(), optimize);
         return new PagingBoundSql(dbType, this.configuration, sql, boundSql);

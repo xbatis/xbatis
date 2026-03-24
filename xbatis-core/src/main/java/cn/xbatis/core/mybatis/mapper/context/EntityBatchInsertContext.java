@@ -49,11 +49,16 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert,
 
 
     @Override
-    public void init(IDbType dbType) {
-        super.init(dbType);
+    public void setDbType(IDbType dbType) {
+        super.setDbType(dbType);
+    }
+
+    @Override
+    public String sql(IDbType dbType) {
         if (Objects.isNull(this.execution)) {
             this.execution = EntityBatchInsertCreateUtil.create(insert, this.tableInfo, this.getInsertData(), saveBatchStrategy, dbType, useBatchExecutor, defaultValueContext);
         }
+        return super.sql(dbType);
     }
 
     @Override
