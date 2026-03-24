@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.mybatis.provider;
 
-import cn.xbatis.core.dbType.DbTypeUtil;
+import cn.xbatis.core.mybatis.executor.MappedStatementUtil;
 import cn.xbatis.core.util.PagingUtil;
 import cn.xbatis.page.IPager;
 import db.sql.api.IDbType;
@@ -49,10 +49,7 @@ public class PagingListSqlSource implements SqlSource {
                 pager = (IPager<?>) params.get("arg0");
             }
         }
-        return new PagingBoundSql(this.configuration, PagingUtil.getLimitedSQL(getDbType(), pager, sql), boundSql);
-    }
-
-    public IDbType getDbType() {
-        return DbTypeUtil.getDbType(configuration);
+        IDbType dbType = MappedStatementUtil.getDbType(configuration, parameterObject, boundSql);
+        return new PagingBoundSql(dbType, this.configuration, PagingUtil.getLimitedSQL(dbType, pager, sql), boundSql);
     }
 }

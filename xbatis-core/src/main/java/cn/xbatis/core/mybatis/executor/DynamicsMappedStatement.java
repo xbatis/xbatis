@@ -18,11 +18,11 @@ import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import cn.xbatis.core.mybatis.configuration.MybatisMapperProxy;
 import cn.xbatis.core.mybatis.mapper.context.*;
 import cn.xbatis.core.mybatis.mapping.ResultMapWrapper;
-import cn.xbatis.core.mybatis.provider.SQLCmdSqlSource;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
+import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -33,22 +33,20 @@ import java.util.Objects;
 
 public class DynamicsMappedStatement {
 
-    public final static String MAPPED_STATEMENT_DB_KEY_NAME = "(dbType)";
-
-    public static MappedStatement wrapMappedStatement(MappedStatement ms, Object parameterObject) {
+    public static MappedStatement wrapMappedStatement(MappedStatement ms, Object parameterObject, BoundSql boundSql) {
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
-            return createInsertMappedStatement(ms, parameterObject);
+            return createInsertMappedStatement(ms, parameterObject, boundSql);
         } else if (ms.getSqlCommandType() != SqlCommandType.SELECT) {
             return ms;
         } else if (parameterObject instanceof SelectPreparedContext) {
             SelectPreparedContext selectPreparedContext = (SelectPreparedContext) parameterObject;
-            return createQueryMappedStatement(selectPreparedContext.getReturnType(), ms);
+            return createQueryMappedStatement(selectPreparedContext.getReturnType(), ms, parameterObject, boundSql);
         } else if (parameterObject instanceof SQLCmdUpdateContext && ms.getSqlCommandType() == SqlCommandType.SELECT) {
             SQLCmdUpdateContext context = (SQLCmdUpdateContext) parameterObject;
             if (context.getExecution() instanceof UpdateChain) {
                 UpdateChain updateChain = (UpdateChain) context.getExecution();
                 if (updateChain.getReturnType() != null) {
-                    return createQueryMappedStatement(updateChain.getReturnType(), ms);
+                    return createQueryMappedStatement(updateChain.getReturnType(), ms, parameterObject, boundSql);
                 }
             }
             return ms;
@@ -57,7 +55,7 @@ public class DynamicsMappedStatement {
             if (context.getExecution() instanceof DeleteChain) {
                 DeleteChain deleteChain = (DeleteChain) context.getExecution();
                 if (deleteChain.getReturnType() != null) {
-                    return createQueryMappedStatement(deleteChain.getReturnType(), ms);
+                    return createQueryMappedStatement(deleteChain.getReturnType(), ms, parameterObject, boundSql);
                 }
             }
             return ms;
@@ -72,7 +70,7 @@ public class DynamicsMappedStatement {
                 if (Objects.isNull(query.getReturnType())) {
                     return ms;
                 }
-                return createQueryMappedStatement(query.getReturnType(), ms);
+                return createQueryMappedStatement(query.getReturnType(), ms, parameterObject, boundSql);
             }
             return ms;
         } else if (!(parameterObject instanceof SQLCmdQueryContext)) {
@@ -82,10 +80,10 @@ public class DynamicsMappedStatement {
         if (Objects.isNull(queryContext.getExecution().getReturnType())) {
             return ms;
         }
-        return createQueryMappedStatement(queryContext.getExecution().getReturnType(), ms);
+        return createQueryMappedStatement(queryContext.getExecution().getReturnType(), ms, parameterObject, boundSql);
     }
 
-    private static MappedStatement createInsertMappedStatement(MappedStatement ms, Object parameterObject) {
+    private static MappedStatement createInsertMappedStatement(MappedStatement ms, Object parameterObject, BoundSql boundSql) {
         //这里是通用mapper 需要在运行时处理
         if (!(parameterObject instanceof SQLCmdInsertContext)) {
             return ms;
@@ -95,9 +93,7 @@ public class DynamicsMappedStatement {
             return ms;
         }
 
-        SQLCmdSqlSource sqlCmdSqlSource = (SQLCmdSqlSource) ms.getSqlSource();
-
-        String id = MybatisIdUtil.convertIdPath(sqlCmdInsertContext.getEntityType().getName()) + "-" + sqlCmdSqlSource.getDbType() + "-" + MAPPED_STATEMENT_DB_KEY_NAME + "@" + MybatisIdUtil.convertIdPath(ms.getId());
+        String id = XbatisIdUtil.convertNewStatementIdPath(sqlCmdInsertContext.getEntityType(), ms, parameterObject, boundSql);
 
         if (ms.getConfiguration().hasStatement(id)) {
             return ms.getConfiguration().getMappedStatement(id);
@@ -116,7 +112,7 @@ public class DynamicsMappedStatement {
                 .cache(ms.getCache());
         MappedStatement newMappedStatement = msBuilder.build();
         try {
-            TableIdGeneratorWrapper.addEntityKeyGenerator(newMappedStatement, sqlCmdInsertContext.getEntityType());
+            TableIdGeneratorWrapper.addEntityKeyGenerator(newMappedStatement, sqlCmdInsertContext.getEntityType(), parameterObject, boundSql);
             if (ms.getConfiguration().hasStatement(id)) {
                 return ms.getConfiguration().getMappedStatement(id);
             }
@@ -133,8 +129,9 @@ public class DynamicsMappedStatement {
         return ms;
     }
 
-    private static MappedStatement createQueryMappedStatement(Class returnTypeClass, MappedStatement ms) {
-        String id = MybatisIdUtil.convertIdPath(returnTypeClass.getName()) + "@" + MybatisIdUtil.convertIdPath(ms.getId());
+    private static MappedStatement createQueryMappedStatement(Class returnTypeClass, MappedStatement ms, Object parameterObject, BoundSql boundSql) {
+
+        String id = XbatisIdUtil.convertNewStatementIdPath(returnTypeClass, ms, parameterObject, boundSql);
         if (ms.getConfiguration().hasStatement(id)) {
             return ms.getConfiguration().getMappedStatement(id);
         }

@@ -15,7 +15,9 @@
 package cn.xbatis.core.mybatis.provider;
 
 
+import cn.xbatis.core.mybatis.executor.MappedStatementUtil;
 import cn.xbatis.core.mybatis.mapper.context.PreparedContext;
+import db.sql.api.IDbType;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlSource;
@@ -34,6 +36,13 @@ public class PreparedSQLSqlSource implements SqlSource {
     @Override
     public BoundSql getBoundSql(Object parameterObject) {
         PreparedContext preparedContext = (PreparedContext) parameterObject;
+
+        if (parameterObject instanceof PreparedContext) {
+            IDbType dbType = MappedStatementUtil.getDbType(configuration, parameterObject, null);
+            preparedContext.init(dbType);
+        }
+
+
         return new BoundSql(this.configuration, preparedContext.getSql(), Collections.singletonList(new ParameterMapping
                 .Builder(configuration, "name", Object.class)
                 .build()), parameterObject);

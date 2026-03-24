@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
+ *  Copyright (c) 2024-2026, Ai东 (abc-127@live.cn) xbatis.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -12,18 +12,11 @@
  *
  */
 
-package cn.xbatis.core.mybatis.mapper.context;
+package cn.xbatis.core.dbType;
 
-public class SelectPreparedContext<T> extends PreparedContext {
+import db.sql.api.IDbType;
 
-    private Class<T> returnType;
+public interface IDbTypeContext {
 
-    public SelectPreparedContext(Class<T> returnType, String sql, Object[] params) {
-        super(sql, params);
-        this.returnType = returnType;
-    }
-
-    public Class<T> getReturnType() {
-        return returnType;
-    }
+    IDbType getDbType();
 }

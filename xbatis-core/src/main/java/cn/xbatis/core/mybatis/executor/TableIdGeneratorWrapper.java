@@ -20,19 +20,16 @@ import cn.xbatis.core.db.reflect.Tables;
 import cn.xbatis.core.exception.NotTableClassException;
 import cn.xbatis.core.mybatis.executor.keygen.MybatisJdbc3KeyGenerator;
 import cn.xbatis.core.mybatis.executor.keygen.MybatisSelectKeyGenerator;
-import cn.xbatis.core.mybatis.provider.SQLCmdSqlSource;
 import cn.xbatis.core.util.GenericUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableId;
+import db.sql.api.IDbType;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.util.Collections;
@@ -58,7 +55,7 @@ public class TableIdGeneratorWrapper {
         }
     }
 
-    public static void addEntityKeyGenerator(MappedStatement ms, Class entityClass) {
+    public static void addEntityKeyGenerator(MappedStatement ms, Class entityClass, Object parameterObject, BoundSql boundSql) {
         String selectKeyId = ms.getId() + SelectKeyGenerator.SELECT_KEY_SUFFIX;
         if (ms.getConfiguration().hasKeyGenerator(selectKeyId)) {
             return;
@@ -71,7 +68,7 @@ public class TableIdGeneratorWrapper {
             try {
                 TableInfo tableInfo = Tables.get(entityClass);
                 if (tableInfo.getIdFieldInfos().size() == 1) {
-                    addEntityKeyGenerator(ms, selectKeyId, tableInfo);
+                    addEntityKeyGenerator(ms, selectKeyId, tableInfo, parameterObject, boundSql);
                 }
             } catch (NotTableClassException e) {
                 //忽略
@@ -79,10 +76,10 @@ public class TableIdGeneratorWrapper {
         }
     }
 
-    public static void addEntityKeyGenerator(MappedStatement ms, String selectKeyId, TableInfo tableInfo) {
+    public static void addEntityKeyGenerator(MappedStatement ms, String selectKeyId, TableInfo tableInfo, Object parameterObject, BoundSql boundSql) {
         KeyGenerator keyGenerator;
-        SQLCmdSqlSource sqlCmdSqlSource = (SQLCmdSqlSource) ms.getSqlSource();
-        TableId tableId = TableIds.get(tableInfo.getType(), sqlCmdSqlSource.getDbType());
+        IDbType dbType = MappedStatementUtil.getDbType(ms.getConfiguration(), parameterObject, boundSql);
+        TableId tableId = TableIds.get(tableInfo.getType(), dbType);
         switch (tableId.value()) {
             //数据库默认自增
             case AUTO: {

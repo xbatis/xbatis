@@ -16,7 +16,7 @@ package cn.xbatis.core.mybatis.mapping;
 
 import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
-import cn.xbatis.core.mybatis.executor.MybatisIdUtil;
+import cn.xbatis.core.mybatis.executor.XbatisIdUtil;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.ResultField;
@@ -39,8 +39,8 @@ public final class ResultMapUtils {
 
     }
 
-    public static ResultMap getResultMap(MybatisConfiguration configuration, Class clazz) {
-        String id = "x-" + MybatisIdUtil.convertIdPath(clazz.getName());
+    public static ResultMap addAndGetResultMap(MybatisConfiguration configuration, Class clazz) {
+        String id = XbatisIdUtil.convertResultMapIdPath(clazz.getName());
         if (configuration.hasResultMap(id)) {
             return configuration.getResultMap(id);
         }
@@ -139,7 +139,7 @@ public final class ResultMapUtils {
         resultMappings.addAll(createResultMapping(configuration, resultInfo.getResultFieldInfos()));
 
         //内嵌字段（多个） 构建
-        resultMappings.addAll(createNestedResultMapping(configuration, resultInfo.getNestedResultInfos(), "x-" + MybatisIdUtil.convertIdPath(clazz.getName())));
+        resultMappings.addAll(createNestedResultMapping(configuration, resultInfo.getNestedResultInfos(), XbatisIdUtil.convertResultMapIdPath(clazz.getName())));
         return Collections.unmodifiableList(resultMappings);
     }
 

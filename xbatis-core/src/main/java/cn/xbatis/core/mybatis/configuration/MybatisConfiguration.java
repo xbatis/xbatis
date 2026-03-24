@@ -31,6 +31,8 @@ import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.xbatis.core.util.GenericUtil;
 import cn.xbatis.db.annotations.Table;
 import org.apache.ibatis.binding.MapperProxyFactory;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.builder.ResultMapResolver;
 import org.apache.ibatis.executor.CachingExecutor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
@@ -47,6 +49,7 @@ import org.apache.ibatis.type.TypeHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 
@@ -113,8 +116,38 @@ public class MybatisConfiguration extends Configuration {
     }
 
     @Override
+    public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {
+        MetaObject metaObject = this.newMetaObject(resultMapResolver);
+        String extend = (String) metaObject.getValue("extend");
+        if ("$xbatis".equals(extend)) {
+
+            MapperBuilderAssistant assistant = (MapperBuilderAssistant) metaObject.getValue("assistant");
+            String id = (String) metaObject.getValue("id");
+            Class<?> type = (Class) metaObject.getValue("type");
+            Discriminator discriminator = (Discriminator) metaObject.getValue("discriminator");
+            List<ResultMapping> resultMappings = (List<ResultMapping>) metaObject.getValue("resultMappings");
+            Boolean autoMapping = (Boolean) metaObject.getValue("autoMapping");
+
+            extend = XbatisIdUtil.convertResultMapIdPath(type.getName());
+            //预加载
+            ResultMapUtils.addAndGetResultMap(this, type);
+            try {
+                Constructor<ResultMapResolver> constructor = ResultMapResolver.class.getConstructor(MapperBuilderAssistant.class, String.class, Class.class, String.class,
+                        Discriminator.class, List.class, Boolean.class);
+                ResultMapResolver newResolver = constructor.newInstance(assistant, id, type, extend, discriminator, resultMappings, autoMapping);
+                resultMapResolver = newResolver;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        super.addIncompleteResultMap(resultMapResolver);
+    }
+
+
+    @Override
     public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-        mappedStatement = DynamicsMappedStatement.wrapMappedStatement(mappedStatement, parameterObject);
+        mappedStatement = DynamicsMappedStatement.wrapMappedStatement(mappedStatement, parameterObject, boundSql);
         StatementHandler statementHandler = new MybatisRoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
         return (StatementHandler) this.interceptorChain.pluginAll(statementHandler);
     }
@@ -219,7 +252,7 @@ public class MybatisConfiguration extends Configuration {
                     throw new NotTableClassException(list.get(0));
                 }
             }
-            ResultMapUtils.getResultMap(this, entityOptional.get());
+            ResultMapUtils.addAndGetResultMap(this, entityOptional.get());
         }
 
         super.addMapper(type);

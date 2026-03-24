@@ -14,15 +14,21 @@
 
 package cn.xbatis.core.mybatis.executor;
 
+import cn.xbatis.core.dbType.DbTypeUtil;
+import cn.xbatis.core.dbType.IDbTypeContext;
+import cn.xbatis.core.dbType.IDbTypeInitContext;
 import cn.xbatis.core.mybatis.mapping.ResultMapWrapper;
 import cn.xbatis.core.mybatis.provider.MybatisSQLProvider;
 import cn.xbatis.core.mybatis.provider.PreparedSQLProvider;
 import cn.xbatis.core.mybatis.provider.PreparedSQLSqlSource;
 import cn.xbatis.core.mybatis.provider.SQLCmdSqlSource;
 import cn.xbatis.core.util.PagingUtil;
+import db.sql.api.IDbType;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
+import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Method;
 
@@ -47,5 +53,31 @@ public final class MappedStatementUtil {
             }
         }
         return ms;
+    }
+
+    public static IDbType getDbType(Configuration configuration, Object parameterObject, BoundSql boundSql) {
+        IDbType dbType = null;
+        boolean notInParameter = true;
+        if (parameterObject instanceof IDbTypeContext) {
+            dbType = ((IDbTypeContext) parameterObject).getDbType();
+            if (dbType != null) {
+                notInParameter = false;
+            }
+        }
+
+        if (dbType == null && boundSql != null && boundSql instanceof IDbTypeContext) {
+            dbType = ((IDbTypeContext) parameterObject).getDbType();
+        }
+
+        if (dbType == null) {
+            dbType = DbTypeUtil.getDbType(configuration);
+        }
+
+        //设置到里面去
+        if (notInParameter && parameterObject instanceof IDbTypeInitContext) {
+            ((IDbTypeInitContext) parameterObject).init(dbType);
+        }
+
+        return dbType;
     }
 }

@@ -21,7 +21,6 @@ import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.ShareVariableName;
 import cn.xbatis.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdContext;
-import cn.xbatis.core.mybatis.mapper.context.SelectPreparedContext;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInvocation;
 import cn.xbatis.core.mybatis.mapper.mappers.BaseMapper;
@@ -49,6 +48,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BaseMapperProxy<T> extends MapperProxy<T> {
+
+    public final static String SQL_EXECUTE = "$execute";
 
     public final static String MAP_WITH_KEY_METHOD_NAME = "$mapWithKey";
 
@@ -101,7 +102,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 } else if (args.length > 1) {
                     where.setMybatisParamName("param" + (i + 1));
                 }
-                where.setDbType(getDbType());
             } else if (arg != null && arg instanceof Query) {
                 Parameter[] parameters = method.getParameters();
                 Param param = parameters[i].getAnnotation(Param.class);
@@ -111,7 +111,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 } else if (args.length > 1) {
                     query.setMybatisParamName("param" + (i + 1));
                 }
-                query.setDbType(getDbType());
             }
         }
     }
@@ -179,11 +178,11 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 }
                 return super.invoke(proxy, method, args);
             } else if (PreparedSQLProvider.class.isAssignableFrom(provider)) {
-                SelectPreparedContext selectPreparedContext = (SelectPreparedContext) args[0];
-                selectPreparedContext.initWithDbType(getDbType());
                 this.wrapperParams(method, args);
                 return super.invoke(proxy, method, args);
             }
+        } else if (method.getName().equals(SQL_EXECUTE)) {
+            //Parameter[] parameters = method.getParameters();
         }
 
         if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {

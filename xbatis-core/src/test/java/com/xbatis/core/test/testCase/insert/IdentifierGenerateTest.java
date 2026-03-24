@@ -147,6 +147,10 @@ public class IdentifierGenerateTest extends BaseTest {
             idTestMapper.save(idTestList);
             System.out.println(idTestList);
 
+            QueryChain.of(idTestMapper).list().forEach(id -> {
+                System.out.println(id);
+            });
+
             assertEquals("1", idTest.getId());
             assertEquals("2", idTest2.getId());
             assertNotNull(idTestMapper.getById(idTest.getId()));

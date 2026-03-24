@@ -16,6 +16,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xbatis.core.test.mapper.SysRoleMapper">
 
+    <!-- extends="$xbatis" 可以让resultMap直接类继承type对应xbatis的resultMap；不需要额外写任何的配置；需要覆盖的，就配置 -->
     <resultMap id="sysRole" type="com.xbatis.core.test.DO.SysRole">
         <id column="id" property="id"/>
     </resultMap>

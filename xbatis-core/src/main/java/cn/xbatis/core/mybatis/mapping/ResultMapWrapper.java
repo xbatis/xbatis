@@ -16,7 +16,7 @@ package cn.xbatis.core.mybatis.mapping;
 
 import cn.xbatis.core.db.reflect.FieldInfo;
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
-import cn.xbatis.core.mybatis.executor.MybatisIdUtil;
+import cn.xbatis.core.mybatis.executor.XbatisIdUtil;
 import cn.xbatis.core.mybatis.typeHandler.GenericTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.xbatis.core.util.FieldUtil;
@@ -49,7 +49,7 @@ public class ResultMapWrapper {
             if (!item.getResultMappings().isEmpty()) {
                 return replaceTypeHandler(configuration, item);
             }
-            String resultMapId = "x-" + MybatisIdUtil.convertIdPath(item.getType().getName());
+            String resultMapId = XbatisIdUtil.convertResultMapIdPath(item.getType().getName());
             if (configuration.hasResultMap(resultMapId)) {
                 return configuration.getResultMap(resultMapId);
             }
@@ -62,7 +62,7 @@ public class ResultMapWrapper {
                 return item;
             }
 
-            ResultMap newResultMap = ResultMapUtils.getResultMap(configuration, item.getType());
+            ResultMap newResultMap = ResultMapUtils.addAndGetResultMap(configuration, item.getType());
             if (Objects.nonNull(newResultMap)) {
                 return newResultMap;
             }

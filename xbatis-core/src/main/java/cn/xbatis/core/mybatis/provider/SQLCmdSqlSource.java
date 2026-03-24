@@ -62,14 +62,11 @@ public class SQLCmdSqlSource implements SqlSource {
         if (Objects.isNull(sqlGenerator)) {
             throw new RuntimeException("Unadapted: Unknown SQL method: " + methodName);
         }
-        String sql = sqlGenerator.apply(parameterObject, getDbType());
-        return new BoundSql(this.configuration, sql, Collections.singletonList(new ParameterMapping
+
+        IDbType dbType = DbTypeUtil.getDbType(this.configuration);
+        String sql = sqlGenerator.apply(parameterObject, dbType);
+        return new DbTypeBoundSql(dbType, this.configuration, sql, Collections.singletonList(new ParameterMapping
                 .Builder(configuration, "name", Object.class)
                 .build()), parameterObject);
     }
-
-    public IDbType getDbType() {
-        return DbTypeUtil.getDbType(configuration);
-    }
-
 }

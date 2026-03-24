@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Map;
 
 
-public class PagingBoundSql extends DbTypeBoundSql {
+public class PagingCountBoundSql extends DbTypeBoundSql {
 
     private final String sql;
 
     private final BoundSql delegate;
 
-    public PagingBoundSql(IDbType dbType, Configuration configuration, String sql, BoundSql delegate) {
+    public PagingCountBoundSql(IDbType dbType, Configuration configuration, String sql, BoundSql delegate) {
         super(dbType, configuration, null, null, null);
         this.sql = sql;
         this.delegate = delegate;

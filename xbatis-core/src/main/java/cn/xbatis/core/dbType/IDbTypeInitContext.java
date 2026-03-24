@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
+ *  Copyright (c) 2024-2026, Ai东 (abc-127@live.cn) xbatis.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -12,15 +12,11 @@
  *
  */
 
-package cn.xbatis.core.mybatis.executor;
+package cn.xbatis.core.dbType;
 
-import java.util.regex.Pattern;
+import db.sql.api.IDbType;
 
-public final class MybatisIdUtil {
+public interface IDbTypeInitContext {
 
-    private static final Pattern PATTERN = Pattern.compile("\\.");
-
-    public static String convertIdPath(String str) {
-        return PATTERN.matcher(str).replaceAll("-");
-    }
+    void init(IDbType dbType);
 }

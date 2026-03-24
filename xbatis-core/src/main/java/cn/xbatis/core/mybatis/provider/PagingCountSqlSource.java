@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.mybatis.provider;
 
-import cn.xbatis.core.dbType.DbTypeUtil;
+import cn.xbatis.core.mybatis.executor.MappedStatementUtil;
 import cn.xbatis.core.util.PagingUtil;
 import db.sql.api.IDbType;
 import org.apache.ibatis.mapping.BoundSql;
@@ -27,6 +27,7 @@ public class PagingCountSqlSource implements SqlSource {
     private final SqlSource sqlSource;
     private final boolean optimize;
 
+
     public PagingCountSqlSource(Configuration configuration, SqlSource sqlSource, boolean optimize) {
         this.configuration = configuration;
         this.sqlSource = sqlSource;
@@ -36,12 +37,8 @@ public class PagingCountSqlSource implements SqlSource {
     @Override
     public BoundSql getBoundSql(Object parameterObject) {
         BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
-        String sql = PagingUtil.getCountSQL(getDbType(), boundSql.getSql(), optimize);
-        return new PagingBoundSql(this.configuration, sql, boundSql);
-    }
-
-
-    public IDbType getDbType() {
-        return DbTypeUtil.getDbType(configuration);
+        IDbType dbType = MappedStatementUtil.getDbType(configuration, parameterObject, boundSql);
+        String sql = PagingUtil.getCountSQL(dbType, boundSql.getSql(), optimize);
+        return new PagingBoundSql(dbType, this.configuration, sql, boundSql);
     }
 }

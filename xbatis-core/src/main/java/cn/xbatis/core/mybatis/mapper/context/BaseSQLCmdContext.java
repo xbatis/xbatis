@@ -66,6 +66,7 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
         return this.parameters;
     }
 
+    @Override
     public IDbType getDbType() {
         return dbType;
     }
