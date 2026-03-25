@@ -19,7 +19,6 @@ import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
-import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
@@ -57,12 +56,7 @@ public class Concat extends BasicFunction<Concat> {
             if (i != 0 && delimiter != null) {
                 builder.append(delimiter);
             }
-            Cmd value = cmds[i];
             builder = cmds[i].sql(module, parent, context, builder);
-
-            if (value.getClass() == BasicValue.class && (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS)) {
-                builder.append(SqlConst.CAST_TEXT);
-            }
         }
         return builder;
     }
@@ -74,7 +68,7 @@ public class Concat extends BasicFunction<Concat> {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
-            CmdUtils.join(module, parent, context, sqlBuilder, this.values, CONCAT_SPLIT_SYMBOL);
+            CmdUtils.join(module, this, context, sqlBuilder, this.values, CONCAT_SPLIT_SYMBOL);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         }

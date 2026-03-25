@@ -131,6 +131,7 @@
                 <version>3.2.3</version>
                 <configuration>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <skipAfterFailureCount>1</skipAfterFailureCount>
                 </configuration>
             </plugin>
             <plugin>

@@ -194,7 +194,8 @@ public final class SqlConst {
     public static final char[] SKIP_LOCKED = " SKIP LOCKED".toCharArray();
     public static final char[] DOUBLE_QUOT = "\"".toCharArray();
 
-    public static final char[] CAST_TEXT = "::VARCHAR".toCharArray();
+    public static final char[] CAST_TEXT = "::TEXT".toCharArray();
+    public static final char[] CAST_VARCHAR = "::VARCHAR".toCharArray();
 
     public static final char[] SELF_FROM_DUAL = "SELECT * FROM DUAL".toCharArray();
 

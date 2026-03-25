@@ -19,7 +19,6 @@ import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
-import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -59,12 +58,7 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
                 builder.append(delimiter);
             }
             Cmd value = cmds[i];
-            builder = cmds[i].sql(module, parent, context, builder);
-
-            if (value.getClass() == BasicValue.class && (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS)) {
-                builder.append(SqlConst.CAST_TEXT);
-
-            }
+            builder = value.sql(module, parent, context, builder);
         }
         return builder;
     }
@@ -76,12 +70,12 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
         }
         if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2 || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            sqlBuilder = this.key.sql(module, parent, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             for (Cmd value : this.values) {
                 sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
-                sqlBuilder = this.split.sql(module, parent, context, sqlBuilder);
+                sqlBuilder = this.split.sql(module, this, context, sqlBuilder);
                 sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
-                sqlBuilder = value.sql(module, parent, context, sqlBuilder);
+                sqlBuilder = value.sql(module, this, context, sqlBuilder);
             }
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;

@@ -95,6 +95,12 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
         return this.tableCache.containsKey(storey + entity.getName());
     }
 
+    public void clearTableAs() {
+        tableCache.entrySet().stream().forEach(entry -> {
+            entry.getValue().setAlias(null);
+        });
+    }
+
     @Override
     public Table table(Class<?> entity, int storey) {
         if (storey > 1) {

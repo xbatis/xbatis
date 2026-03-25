@@ -16,7 +16,6 @@ package cn.xbatis.core.mybatis.configuration;
 
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.dbType.DbTypeUtil;
-import cn.xbatis.core.dbType.IDbTypeSetContext;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.ShareVariableName;
@@ -27,28 +26,25 @@ import cn.xbatis.core.mybatis.mapper.intercept.MethodInvocation;
 import cn.xbatis.core.mybatis.mapper.mappers.BaseMapper;
 import cn.xbatis.core.mybatis.provider.MybatisSQLProvider;
 import cn.xbatis.core.mybatis.provider.PreparedSQLProvider;
-import cn.xbatis.core.sql.executor.Query;
-import cn.xbatis.core.sql.executor.Where;
 import cn.xbatis.db.annotations.Paging;
 import cn.xbatis.page.IPager;
 import cn.xbatis.page.PagerField;
-import db.sql.api.IDbType;
 import db.sql.api.function.ThreeFunction;
 import db.sql.api.impl.cmd.executor.DbSelectorCall;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ParamNameResolver;
 import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BaseMapperProxy<T> extends MapperProxy<T> {
+
+    public final static String EXECUTE_METHOD_NAME = "$execute";
 
     public final static String MAP_WITH_KEY_METHOD_NAME = "$mapWithKey";
 
@@ -76,48 +72,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             return ((MybatisMapper) proxy).getBasicMapper();
         }
         return null;
-    }
-
-    private void wrapperParams(Method method, Object[] args) {
-        if (Objects.isNull(args) || args.length == 0) {
-            return;
-        }
-
-        IDbType dbType = null;
-        for (int i = 0; i < args.length; i++) {
-            Object arg = args[i];
-            if (arg != null && arg instanceof Where) {
-                Parameter[] parameters = method.getParameters();
-                Param param = parameters[i].getAnnotation(Param.class);
-                Where where = (Where) arg;
-                if (param != null) {
-                    where.setMybatisParamName(param.value());
-                } else if (args.length > 1) {
-                    where.setMybatisParamName("param" + (i + 1));
-                }
-                if (dbType == null) {
-                    dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration());
-                }
-                where.setDbType(dbType);
-            } else if (arg != null && arg instanceof Query) {
-                Parameter[] parameters = method.getParameters();
-                Param param = parameters[i].getAnnotation(Param.class);
-                Query query = (Query) arg;
-                if (param != null) {
-                    query.setMybatisParamName(param.value());
-                } else if (args.length > 1) {
-                    query.setMybatisParamName("param" + (i + 1));
-                }
-                if (dbType == null) {
-                    dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration());
-                }
-                query.setDbType(dbType);
-            }
-        }
-
-        if (dbType != null && args[0] instanceof IDbTypeSetContext) {
-            ((IDbTypeSetContext) args[0]).setDbType(dbType);
-        }
     }
 
     @Override
@@ -183,7 +137,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 }
                 return super.invoke(proxy, method, args);
             } else if (PreparedSQLProvider.class.isAssignableFrom(provider)) {
-                this.wrapperParams(method, args);
+
                 return super.invoke(proxy, method, args);
             }
         }
@@ -191,7 +145,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
             return DbTypeUtil.getDbType(sqlSession.getConfiguration());
         } else if (method.isAnnotationPresent(Paging.class)) {
-            this.wrapperParams(method, args);
+
             return paging(method, args);
         } else if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
             Consumer<Object> consumer = (Consumer<Object>) args[0];
@@ -199,7 +153,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             consumer.accept(dbSelector);
             return dbSelector.dbExecute(DbTypeUtil.getDbType(sqlSession.getConfiguration()));
         } else if (method.getName().equals(WITH_SQL_SESSION_METHOD_NAME)) {
-            this.wrapperParams(method, args);
             if (args.length == 1) {
                 Function<SqlSession, ?> function = (Function<SqlSession, ?>) args[0];
                 return function.apply(this.sqlSession);
@@ -237,7 +190,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 throw new RuntimeException("NOT SUPPORTED");
             }
         }
-        this.wrapperParams(method, args);
         return super.invoke(proxy, method, args);
 
     }

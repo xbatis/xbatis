@@ -60,8 +60,10 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
     }
 
     public void setMybatisParamName(String mybatisParamName) {
-        if (mybatisParamName != null || !mybatisParamName.isEmpty()) {
+        if (mybatisParamName != null && !mybatisParamName.isEmpty()) {
             this.mybatisParamNamespace = mybatisParamName + ".";
+        } else {
+            this.mybatisParamNamespace = "";
         }
     }
 

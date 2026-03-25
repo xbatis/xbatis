@@ -18,15 +18,13 @@ import cn.xbatis.core.dbType.DbTypeUtil;
 import cn.xbatis.core.dbType.IDbTypeContext;
 import cn.xbatis.core.dbType.IDbTypeSetContext;
 import cn.xbatis.core.mybatis.mapping.ResultMapWrapper;
-import cn.xbatis.core.mybatis.provider.MybatisSQLProvider;
-import cn.xbatis.core.mybatis.provider.PreparedSQLProvider;
-import cn.xbatis.core.mybatis.provider.PreparedSQLSqlSource;
-import cn.xbatis.core.mybatis.provider.SQLCmdSqlSource;
+import cn.xbatis.core.mybatis.provider.*;
 import cn.xbatis.core.util.PagingUtil;
 import db.sql.api.IDbType;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 
@@ -53,6 +51,11 @@ public final class MappedStatementUtil {
                 msMetaObject.setValue("sqlSource", sqlSource);
                 return ms;
             }
+        } else {
+            SqlSource sqlSource = new NormalSqlSource(ms.getConfiguration(), ms.getSqlSource());
+            MetaObject msMetaObject = ms.getConfiguration().newMetaObject(ms);
+            msMetaObject.setValue("sqlSource", sqlSource);
+            return ms;
         }
         return ms;
     }

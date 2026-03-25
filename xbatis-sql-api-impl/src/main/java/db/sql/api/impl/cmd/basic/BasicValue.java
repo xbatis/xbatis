@@ -22,6 +22,8 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.struct.query.ISelect;
 import db.sql.api.impl.cmd.condition.Like;
+import db.sql.api.impl.cmd.dbFun.Concat;
+import db.sql.api.impl.cmd.dbFun.ConcatWs;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
@@ -30,15 +32,16 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.chrono.ChronoLocalDate;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
 
 public class BasicValue extends AbstractField<BasicValue> {
 
     private Object value;
 
-    public BasicValue() {
-
-    }
+    private static final Set<Class> INTEGRAL_NUMBER_MAP = new HashSet<>();
 
     public BasicValue(Object value) {
         this.value = value;
@@ -52,20 +55,39 @@ public class BasicValue extends AbstractField<BasicValue> {
         this.value = value;
     }
 
-    @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (this.value == null) {
-            throw new IllegalArgumentException("BasicValue's value is null");
-        }
-        Object originValue = this.value;
+    private Object finalValue;
 
+    private static boolean isNumber(Object value) {
+        return value instanceof Number;
+    }
+
+    public Object getFinalValue() {
+        if (this.finalValue != null) {
+            return this.finalValue;
+        }
+        Object originValue = value;
         if (value instanceof ValueWrap) {
             originValue = ((ValueWrap) value).getOriginValue();
+        } else if (value instanceof Supplier) {
+            originValue = ((Supplier<?>) value).get();
+        }
+        this.finalValue = originValue;
+        return originValue;
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        Object originValue = this.getFinalValue();
+        if (originValue == null) {
+            throw new IllegalArgumentException("BasicValue's value is null");
         }
 
-        if (Objects.nonNull(originValue) && originValue instanceof String && parent instanceof Like && ((Like) parent).getMode() != LikeMode.NONE) {
+        if (originValue instanceof String && parent instanceof Like && ((Like) parent).getMode() != LikeMode.NONE) {
             originValue = originValue.toString().replaceAll("%", "\\\\%").replaceAll("_", "\\\\_%");
+        } else if (parent instanceof Concat || parent instanceof Like || parent instanceof ConcatWs) {
+            originValue = originValue.toString();
         }
+
         if (context.getSqlMode() == SQLMode.PRINT) {
             if (originValue instanceof Number) {
                 sqlBuilder.append(originValue);
@@ -73,10 +95,10 @@ public class BasicValue extends AbstractField<BasicValue> {
                 if (originValue instanceof Date) {
                     originValue = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) originValue);
                 }
-                sqlBuilder.append(SqlConst.SINGLE_QUOT).append(originValue).append(SqlConst.SINGLE_QUOT);
+                sqlBuilder.append(SqlConst.SINGLE_QUOT).append(originValue.toString().replaceAll("\\'", "\\\\'")).append(SqlConst.SINGLE_QUOT);
             }
         } else {
-            if (module instanceof ISelect && context.getDbType() == DbType.DB2) {
+            if (parent instanceof ISelect && context.getDbType() == DbType.DB2) {
                 String castType;
                 if (value instanceof Date || value instanceof ChronoLocalDate) {
                     castType = "DATE";
@@ -87,17 +109,16 @@ public class BasicValue extends AbstractField<BasicValue> {
                 } else if (value instanceof Long) {
                     castType = "BIGINT";
                 } else if (value instanceof Float || value instanceof Double || value instanceof BigDecimal) {
-                    castType = "DECIMAL";
+                    castType = "DECIMAL(20,6)";
                 } else if (value instanceof Boolean) {
                     castType = "BOOLEAN";
                 } else {
                     castType = "VARCHAR";
                 }
-                sqlBuilder.append("CAST(").append(context.addParam(value)).append(" AS " + castType + ")");
+                sqlBuilder.append("CAST(").append(context.addParam(originValue)).append(" AS " + castType + ")");
             } else {
                 sqlBuilder.append(context.addParam(value));
             }
-
         }
 
         if (parent instanceof Select) {

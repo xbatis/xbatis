@@ -31,9 +31,12 @@ public class PreparedContext implements PreparedParameterContext, IDbTypeSetCont
 
     private IDbType dbType;
 
+    private final Object[] originalParams;
+
     public PreparedContext(String sql, Object[] params) {
         this.sql = sql;
         this.params = Arrays.asList(params);
+        this.originalParams = params;
     }
 
     @Override
@@ -77,5 +80,7 @@ public class PreparedContext implements PreparedParameterContext, IDbTypeSetCont
         return this.dbType;
     }
 
-
+    public Object[] getOriginalParams() {
+        return originalParams;
+    }
 }

@@ -188,7 +188,10 @@ public class DbRunnerTest extends BaseTest {
     public void cmdUpdateTest3() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            int cnt = sysUserMapper.execute("update t_sys_user t set password='123' where ? and ?", WhereUtil.create().in(SysUser::getId, 1, 2), Methods.TRUE());
+            int cnt = sysUserMapper.execute("update t_sys_user set password='123' where ? and ?", WhereUtil.create().in(SysUser::getId, 1, 2), Methods.TRUE());
+            assertEquals(2, cnt);
+
+            cnt = sysUserMapper.execute("update t_sys_user set password='123' where ? and ?", WhereUtil.create().in(SysUser::getId, 1, 2), Methods.TRUE());
             assertEquals(2, cnt);
         }
     }

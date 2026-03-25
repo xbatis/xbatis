@@ -63,8 +63,10 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     }
 
     public void setMybatisParamName(String mybatisParamName) {
-        if (mybatisParamName != null || !mybatisParamName.isEmpty()) {
+        if (mybatisParamName != null && !mybatisParamName.isEmpty()) {
             this.mybatisParamNamespace = mybatisParamName + ".";
+        } else {
+            this.mybatisParamNamespace = "";
         }
     }
 

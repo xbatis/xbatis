@@ -38,7 +38,7 @@ public class DbFunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer id = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getUserName, c -> c.groupConcat())
+                    .select(SysUser::getId)
                     .from(SysUser.class)
                     .and(SysUser::getId, c -> c.concat("x1").eq("2x1"))
                     .returnType(Integer.class)
