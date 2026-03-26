@@ -66,7 +66,7 @@ public class SQLCmdSqlSource implements SqlSource {
         IDbType dbType = DbTypeUtil.getDbType(this.configuration);
         String sql = sqlGenerator.apply(parameterObject, dbType);
         return new DbTypeBoundSql(dbType, this.configuration, sql, Collections.singletonList(new ParameterMapping
-                .Builder(configuration, "name", Object.class)
+                .Builder(configuration, "xbatis", String.class)
                 .build()), parameterObject);
     }
 }

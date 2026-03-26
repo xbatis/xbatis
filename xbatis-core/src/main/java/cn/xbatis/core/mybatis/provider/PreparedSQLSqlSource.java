@@ -54,7 +54,7 @@ public class PreparedSQLSqlSource implements SqlSource {
         IDbType dbType = MappedStatementUtil.getDbType(configuration, parameterObject, null);
         preparedContext.setDbType(dbType);
         return new BoundSql(this.configuration, preparedContext.getSql(), Collections.singletonList(new ParameterMapping
-                .Builder(configuration, "name", Object.class)
+                .Builder(configuration, "xbatis", String.class)
                 .build()), parameterObject);
     }
 }

@@ -18,8 +18,8 @@ import java.util.List;
 
 public interface PreparedParameterContext {
 
-    default String getName() {
-        return "xbatis.context";
+    default String getXbatis() {
+        return "xbatis";
     }
 
     List<Object> getParameters();

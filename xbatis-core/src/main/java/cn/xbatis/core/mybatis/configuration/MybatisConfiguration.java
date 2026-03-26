@@ -24,7 +24,6 @@ import cn.xbatis.core.mybatis.executor.statement.MybatisRoutingStatementHandler;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.context.PreparedParameterContext;
-import cn.xbatis.core.mybatis.mapper.context.XbatisContextUtil;
 import cn.xbatis.core.mybatis.mapping.ResultMapUtils;
 import cn.xbatis.core.mybatis.typeHandler.EnumTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
@@ -160,9 +159,12 @@ public class MybatisConfiguration extends Configuration {
         if (parameterObject instanceof PreparedParameterContext) {
             return (ParameterHandler) interceptorChain.pluginAll(new PreparedParameterHandler(this, (PreparedParameterContext) parameterObject));
         }
-        if (parameterObject instanceof Map && XbatisContextUtil.getQueryExecution(parameterObject) != null) {
-            //兼容 其他框架修改参数的情况 例如PageHelper
-            return (ParameterHandler) interceptorChain.pluginAll(new OtherFrameworkPreparedParameterHandler(this, boundSql, (Map) parameterObject));
+        if (parameterObject instanceof Map) {
+            Map<String, Object> map = (Map<String, Object>) parameterObject;
+            if (map.containsKey("xbatis") && (map.containsKey(PageHelper.PAGE_PARAMETER_FIRST) || map.containsKey(PageHelper.PAGE_PARAMETER_SECOND))) {
+                //兼容 其他框架修改参数的情况 例如PageHelper
+                return (ParameterHandler) interceptorChain.pluginAll(new OtherFrameworkPreparedParameterHandler(this, boundSql, (Map) parameterObject));
+            }
         }
         return super.newParameterHandler(ms, parameterObject, boundSql);
     }
