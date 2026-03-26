@@ -39,6 +39,9 @@ public final class SelectClassUtil {
                 .forEach(item -> {
                     if (item instanceof ResultTableFieldInfo) {
                         ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
+                        if (!resultTableFieldInfo.getTableFieldInfo().isExists()) {
+                            return;
+                        }
                         Cmd tableField = query.$().field(resultTableFieldInfo.getTableInfo().getType(), resultTableFieldInfo.getTableFieldInfo().getField().getName(), resultTableFieldInfo.getStorey());
                         if (!cmdList.contains(tableField)) {
                             cmdList.add(tableField);
@@ -68,7 +71,7 @@ public final class SelectClassUtil {
             MybatisCmdFactory cmdFactory = (MybatisCmdFactory) query.$();
             XbatisTable table = cmdFactory.table(clazz, storey);
             for (TableFieldInfo tableFieldInfo : table.getTableInfo().getTableFieldInfos()) {
-                if (tableFieldInfo.getTableFieldAnnotation().select() && tableFieldInfo.getTableFieldAnnotation().exists()) {
+                if (tableFieldInfo.getTableFieldAnnotation().select() && tableFieldInfo.isExists()) {
                     cmdList.add(cmdFactory.field(table, tableFieldInfo));
                 }
             }
