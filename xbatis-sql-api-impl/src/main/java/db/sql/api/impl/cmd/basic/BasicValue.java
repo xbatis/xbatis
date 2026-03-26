@@ -98,7 +98,7 @@ public class BasicValue extends AbstractField<BasicValue> {
                 sqlBuilder.append(SqlConst.SINGLE_QUOT).append(originValue.toString().replaceAll("\\'", "\\\\'")).append(SqlConst.SINGLE_QUOT);
             }
         } else {
-            if (parent instanceof ISelect && context.getDbType() == DbType.DB2) {
+            if (module instanceof ISelect && context.getDbType() == DbType.DB2) {
                 String castType;
                 if (value instanceof Date || value instanceof ChronoLocalDate) {
                     castType = "DATE";
