@@ -34,6 +34,8 @@ public class Select implements ISelect<Select> {
 
     private final List<Cmd> selectFields = new ArrayList<>(6);
 
+    private List<Cmd> selectIgnoreFields;
+
     private boolean distinct = false;
 
     private Integer top;
@@ -45,7 +47,13 @@ public class Select implements ISelect<Select> {
 
     @Override
     public Select selectIgnore(Cmd column) {
-        selectFields.remove(column);
+        if (selectFields.remove(column)) {
+            return this;
+        }
+        if (selectIgnoreFields == null) {
+            selectIgnoreFields = new ArrayList<>();
+        }
+        selectIgnoreFields.add(column);
         return this;
     }
 
@@ -86,6 +94,10 @@ public class Select implements ISelect<Select> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (selectIgnoreFields != null && !this.selectIgnoreFields.isEmpty()) {
+            this.selectFields.removeAll(selectIgnoreFields);
+            this.selectIgnoreFields.clear();
+        }
         if (!(parent instanceof Function)) {
             sqlBuilder.append(SqlConst.SELECT);
         }
