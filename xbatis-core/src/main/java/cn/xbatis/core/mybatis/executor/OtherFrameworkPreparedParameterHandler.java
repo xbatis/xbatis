@@ -66,12 +66,23 @@ public class OtherFrameworkPreparedParameterHandler implements ParameterHandler 
             if (PageHelper.PAGE_PARAMETER_SECOND.equals(parameterMapping.getProperty())) {
                 hasPageHelperSecondParam = true;
             }
+            if (hasPageHelperFirstParam && hasPageHelperSecondParam) {
+                break;
+            }
         }
-        if (hasPageHelperFirstParam && parameterObject.containsKey(PageHelper.PAGE_PARAMETER_FIRST)) {
-            ps.setObject(++index, parameterObject.get(PageHelper.PAGE_PARAMETER_FIRST));
+
+        if (hasPageHelperFirstParam) {
+            Object value = parameterObject.get(PageHelper.PAGE_PARAMETER_FIRST);
+            if (value != null) {
+                ps.setObject(++index, value);
+            }
         }
-        if (hasPageHelperSecondParam && parameterObject.containsKey(PageHelper.PAGE_PARAMETER_SECOND)) {
-            ps.setObject(++index, parameterObject.get(PageHelper.PAGE_PARAMETER_SECOND));
+
+        if (hasPageHelperSecondParam) {
+            Object value = parameterObject.get(PageHelper.PAGE_PARAMETER_SECOND);
+            if (value != null) {
+                ps.setObject(++index, value);
+            }
         }
     }
 }
