@@ -161,7 +161,7 @@ public class MybatisConfiguration extends Configuration {
         }
         if (parameterObject instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) parameterObject;
-            if (map.containsKey("xbatis") && (map.containsKey(PageHelper.PAGE_PARAMETER_FIRST) || map.containsKey(PageHelper.PAGE_PARAMETER_SECOND))) {
+            if (map.containsKey("xbatis")) {
                 //兼容 其他框架修改参数的情况 例如PageHelper
                 return (ParameterHandler) interceptorChain.pluginAll(new OtherFrameworkPreparedParameterHandler(this, boundSql, (Map) parameterObject));
             }

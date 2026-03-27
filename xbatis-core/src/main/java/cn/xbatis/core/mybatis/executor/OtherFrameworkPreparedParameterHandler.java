@@ -53,10 +53,10 @@ public class OtherFrameworkPreparedParameterHandler implements ParameterHandler 
             index = ParameterHandleUtil.setParameters(configuration, ps, (Object[]) params);
         }
 
-        this.pageHelperSetParameters(ps, index);
+        this.setOtherFrameworkParameters(ps, index);
     }
 
-    private void pageHelperSetParameters(PreparedStatement ps, int index) throws SQLException {
+    private void setOtherFrameworkParameters(PreparedStatement ps, int index) throws SQLException {
         boolean hasPageHelperFirstParam = false;
         boolean hasPageHelperSecondParam = false;
         for (ParameterMapping parameterMapping : boundSql.getParameterMappings()) {
