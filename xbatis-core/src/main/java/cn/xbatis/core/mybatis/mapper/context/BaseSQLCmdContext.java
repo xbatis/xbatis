@@ -46,11 +46,6 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
     }
 
     @Override
-    public void setDbType(IDbType dbType) {
-        this.dbType = dbType;
-    }
-
-    @Override
     public String sql(IDbType dbType) {
         if (Objects.nonNull(sql)) {
             return sql;
@@ -69,6 +64,11 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
     @Override
     public IDbType getDbType() {
         return dbType;
+    }
+
+    @Override
+    public void setDbType(IDbType dbType) {
+        this.dbType = dbType;
     }
 
     @Override

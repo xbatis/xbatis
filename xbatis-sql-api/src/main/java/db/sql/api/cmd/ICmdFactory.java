@@ -170,6 +170,7 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
 
     /**
      * 创建子查询
+     *
      * @param deepLevel 深度
      * @return 子查询 Cmd
      */

@@ -41,11 +41,8 @@ import java.util.function.Function;
 public class CmdFactory implements ICmdFactory<Table, TableField> {
 
     protected final Map<String, Table> tableCache = new HashMap<>(5);
-
-    protected boolean forSubQuery = false;
-
     private final String tableAsPrefix;
-
+    protected boolean forSubQuery = false;
     protected int tableNums = 0;
 
     protected int deepLevel = 1;

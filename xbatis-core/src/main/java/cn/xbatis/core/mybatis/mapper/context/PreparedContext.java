@@ -25,18 +25,35 @@ import java.util.List;
 
 public class PreparedContext implements PreparedParameterContext, IDbTypeSetContext, IDbTypeContext {
 
-    private String sql;
-
-    private List<Object> params;
-
-    private IDbType dbType;
-
     private final Object[] originalParams;
+    private String sql;
+    private List<Object> params;
+    private IDbType dbType;
 
     public PreparedContext(String sql, Object[] params) {
         this.sql = sql;
         this.params = Arrays.asList(params);
         this.originalParams = params;
+    }
+
+    public String getSql() {
+        if (this.dbType == null) {
+            throw new NullPointerException("dbType is not initialized");
+        }
+        return sql;
+    }
+
+    @Override
+    public List<Object> getParameters() {
+        if (this.dbType == null) {
+            throw new NullPointerException("dbType is not initialized");
+        }
+        return this.params;
+    }
+
+    @Override
+    public IDbType getDbType() {
+        return this.dbType;
     }
 
     @Override
@@ -56,28 +73,6 @@ public class PreparedContext implements PreparedParameterContext, IDbTypeSetCont
             this.sql = (String) objs[0];
             this.params = (List<Object>) objs[1];
         }
-    }
-
-
-    public String getSql() {
-        if (this.dbType == null) {
-            throw new NullPointerException("dbType is not initialized");
-        }
-        return sql;
-    }
-
-    @Override
-    public List<Object> getParameters() {
-        if (this.dbType == null) {
-            throw new NullPointerException("dbType is not initialized");
-        }
-        return this.params;
-    }
-
-
-    @Override
-    public IDbType getDbType() {
-        return this.dbType;
     }
 
     public Object[] getOriginalParams() {

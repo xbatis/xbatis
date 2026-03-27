@@ -112,6 +112,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     protected Map<String, Consumer<Where>> fetchFilters;
 
     protected Map<String, Boolean> fetchEnables;
+    protected int joinDeepLevel = 0;
 
     public AbstractQuery(CMD_FACTORY $) {
         this.$ = $;
@@ -157,9 +158,6 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     protected <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
         return this.$().field(dataset, columnName);
     }
-
-    protected int joinDeepLevel = 0;
-
 
     @Override
     public <T> SELF fetchFilter(Getter<T> getter, Consumer<Where> where) {

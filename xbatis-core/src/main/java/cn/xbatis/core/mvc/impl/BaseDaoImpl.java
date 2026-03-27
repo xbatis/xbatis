@@ -44,12 +44,11 @@ import java.util.function.Consumer;
 
 public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T, ID> {
 
-    protected M mapper;
-
     private final Class<T> entityType;
     private final Class<ID> idType;
     private final TableInfo tableInfo;
     private final boolean idTypeNotPass;
+    protected M mapper;
 
     public BaseDaoImpl() {
         List<?> genericTypes = GenericUtil.getGenericSuperClass(this.getClass());

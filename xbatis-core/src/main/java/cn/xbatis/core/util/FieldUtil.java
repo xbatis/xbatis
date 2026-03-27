@@ -36,7 +36,7 @@ public final class FieldUtil {
             return false;
         }
 
-        if(Modifier.isTransient(mod)){
+        if (Modifier.isTransient(mod)) {
             return false;
         }
         return !field.isAnnotationPresent(Ignore.class);
@@ -58,7 +58,7 @@ public final class FieldUtil {
             return false;
         }
 
-        if(Modifier.isTransient(mod)){
+        if (Modifier.isTransient(mod)) {
             return false;
         }
 

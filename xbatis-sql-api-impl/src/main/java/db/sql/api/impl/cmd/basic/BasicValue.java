@@ -32,9 +32,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.chrono.ChronoLocalDate;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class BasicValue extends AbstractField<BasicValue> {
@@ -45,16 +43,16 @@ public class BasicValue extends AbstractField<BasicValue> {
         this.value = value;
     }
 
+    private static boolean isNumber(Object value) {
+        return value instanceof Number;
+    }
+
     public Object getValue() {
         return value;
     }
 
     public void setValue(Object value) {
         this.value = value;
-    }
-
-    private static boolean isNumber(Object value) {
-        return value instanceof Number;
     }
 
     public Object getFinalValue() {
