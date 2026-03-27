@@ -18,7 +18,6 @@ import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import cn.xbatis.core.mybatis.configuration.MybatisMapperProxy;
 import cn.xbatis.core.mybatis.mapper.context.*;
 import cn.xbatis.core.mybatis.mapping.ResultMapWrapper;
-import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -62,18 +61,12 @@ public class DynamicsMappedStatement {
         } else if (ms.getResultMaps().get(0).getType() != Object.class && !ms.getId().endsWith(MybatisMapperProxy.MAP_WITH_KEY_METHOD_NAME)) {
             return ms;
         } else if (parameterObject != null && parameterObject instanceof Map && ms.getSqlCommandType() == SqlCommandType.SELECT) {
-            //兼容 PageHelper
+            //兼容其他框架 例如：PageHelper
             Map<String, Object> parameterMap = (Map<String, Object>) parameterObject;
             if (parameterMap.containsKey("xbatis")) {
-                Object execution = XbatisContextUtil.getExecution(parameterMap);
-                if (execution != null && execution instanceof BaseQuery) {
-                    BaseQuery<?, ?> query = (BaseQuery) execution;
-                    if (Objects.isNull(query.getReturnType())) {
-                        return ms;
-                    }
-                    return createQueryMappedStatement(query.getReturnType(), ms, parameterObject, boundSql);
-                } else if (parameterMap.containsKey("returnType")) {
-                    return createQueryMappedStatement((Class) parameterMap.get("returnType"), ms, parameterObject, boundSql);
+                Class returnType = XbatisContextUtil.getReturnType(parameterObject);
+                if (returnType != null) {
+                    return createQueryMappedStatement(returnType, ms, parameterObject, boundSql);
                 }
             }
             return ms;

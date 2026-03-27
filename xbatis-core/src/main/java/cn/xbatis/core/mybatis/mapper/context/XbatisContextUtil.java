@@ -47,6 +47,29 @@ public class XbatisContextUtil {
         return null;
     }
 
+    public static Class<?> getReturnType(Object parameterObject) {
+        if (parameterObject instanceof SQLCmdContext) {
+            Executor execution = ((SQLCmdContext) parameterObject).getExecution();
+            if (execution instanceof BaseQuery) {
+                return ((BaseQuery) execution).getReturnType();
+            }
+            return null;
+        }
+        if (parameterObject instanceof Map) {
+            Map parameterMap = (Map) parameterObject;
+            Object returnType = parameterMap.get("returnType");
+            if (returnType != null && returnType instanceof Class) {
+                return (Class) returnType;
+            }
+            Object execution = parameterMap.get("execution");
+            if (execution != null && execution instanceof BaseQuery) {
+                return ((BaseQuery) execution).getReturnType();
+            }
+        }
+        return null;
+    }
+
+
     public static IDbType getDbType(Object parameterObject) {
         if (parameterObject instanceof SQLCmdQueryContext) {
             return ((SQLCmdQueryContext) parameterObject).getDbType();
