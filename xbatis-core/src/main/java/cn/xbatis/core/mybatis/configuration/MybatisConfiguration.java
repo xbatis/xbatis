@@ -131,6 +131,8 @@ public class MybatisConfiguration extends Configuration {
             //预加载
             ResultMapUtils.addAndGetResultMap(this, type);
             try {
+                resultMappings.addAll(this.getResultMap(extend).getResultMappings());
+                extend = null;
                 Constructor<ResultMapResolver> constructor = ResultMapResolver.class.getConstructor(MapperBuilderAssistant.class, String.class, Class.class, String.class,
                         Discriminator.class, List.class, Boolean.class);
                 ResultMapResolver newResolver = constructor.newInstance(assistant, id, type, extend, discriminator, resultMappings, autoMapping);
