@@ -54,13 +54,25 @@ public class PagehelperTest extends BaseTest {
     public void test() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             List<SysUser> list;
+
             PageHelper.startPage(1, 10);
             SysUserMapper mapper = session.getMapper(SysUserMapper.class);
+            list = mapper.listPagehelper();
+            assertTrue(list instanceof Page);
+            PageInfo pageInfo = new PageInfo(list);
+            assertEquals(pageInfo.getTotal(), 3);
+
+            for (SysUser sysUser : list) {
+                System.out.println(sysUser.getRole_id().intValue());
+            }
+
+            PageHelper.startPage(1, 10);
+            mapper = session.getMapper(SysUserMapper.class);
             list = mapper.selectList(SysUser.class, "select * from t_sys_user t where ?", WhereUtil.create(where -> {
                 where.gte(SysUser::getId, 1);
             }));
             assertTrue(list instanceof Page);
-            PageInfo pageInfo = new PageInfo(list);
+            pageInfo = new PageInfo(list);
             assertEquals(pageInfo.getTotal(), 3);
 
             for (SysUser sysUser : list) {

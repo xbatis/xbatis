@@ -57,6 +57,8 @@ public interface SysUserMapper extends MybatisMapper<SysUser> {
         return this.countAll();
     }
 
+    @Select("select * from t_sys_user")
+    List<SysUser> listPagehelper();
 
     @Flush
     List<SysUser> listPagehelper2(Integer id);
