@@ -41,8 +41,6 @@ public class BasicValue extends AbstractField<BasicValue> {
 
     private Object value;
 
-    private static final Set<Class> INTEGRAL_NUMBER_MAP = new HashSet<>();
-
     public BasicValue(Object value) {
         this.value = value;
     }
@@ -55,23 +53,17 @@ public class BasicValue extends AbstractField<BasicValue> {
         this.value = value;
     }
 
-    private Object finalValue;
-
     private static boolean isNumber(Object value) {
         return value instanceof Number;
     }
 
     public Object getFinalValue() {
-        if (this.finalValue != null) {
-            return this.finalValue;
-        }
         Object originValue = value;
         if (value instanceof ValueWrap) {
             originValue = ((ValueWrap) value).getOriginValue();
         } else if (value instanceof Supplier) {
             originValue = ((Supplier<?>) value).get();
         }
-        this.finalValue = originValue;
         return originValue;
     }
 
