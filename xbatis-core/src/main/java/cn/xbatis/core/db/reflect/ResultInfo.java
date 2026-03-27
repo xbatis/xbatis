@@ -88,12 +88,12 @@ public class ResultInfo {
         ResultEntity resultEntity = clazz.getAnnotation(ResultEntity.class);
         Objects.requireNonNull(resultEntity);
         ParseResult parseResult = new ParseResult();
-        parseResultEntity(clazz, "", parseResult, clazz, resultEntity);
+        parseResultEntity(clazz, "", parseResult, clazz, resultEntity, false);
         return parseResult;
     }
 
 
-    private static void parseResultEntity(Class root, String path, ParseResult parseResult, Class<?> clazz, ResultEntity resultEntity) {
+    private static void parseResultEntity(Class root, String path, ParseResult parseResult, Class<?> clazz, ResultEntity resultEntity, boolean deepField) {
         if (clazz.isAnnotationPresent(CreatedEvent.class)) {
             parseResult.createdEventInfos.add(new CreatedEventInfo(clazz, clazz.getAnnotation(CreatedEvent.class)));
         }
@@ -179,11 +179,11 @@ public class ResultInfo {
             }
 
             ResultEntityField resultEntityField = (ResultEntityField) annotationMap.get(ResultEntityField.class);
-            tableCount = parseResultEntityField(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, resultEntityField, tableCount);
+            tableCount = parseResultEntityField(root, fieldPath, parseResult, resultEntity.storey(), resultEntityTableInfo, parseResult.resultFieldInfos, clazz, field, resultEntityField, tableCount, deepField);
         }
     }
 
-    private static int parseResultEntityField(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, ResultEntityField resultEntityField, int tableCount) {
+    private static int parseResultEntityField(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, ResultEntityField resultEntityField, int tableCount, boolean deepField) {
         TableInfo tableInfo;
         TableFieldInfo tableFieldInfo;
         String tableFieldName;
@@ -232,7 +232,7 @@ public class ResultInfo {
         //获取前缀
         String tablePrefix = getTablePrefix(parseResult.tablePrefixes, entity, storey);
         //表字段
-        resultFieldInfos.add(new ResultTableFieldInfo(clazz, storey, tablePrefix, tableInfo, tableFieldInfo, field));
+        resultFieldInfos.add(new ResultTableFieldInfo(clazz, storey, tablePrefix, tableInfo, tableFieldInfo, field, !deepField));
 
         return tableCount;
     }
@@ -320,7 +320,7 @@ public class ResultInfo {
 
             if (field.isAnnotationPresent(ResultEntityField.class)) {
                 ResultEntityField resultEntityField = (ResultEntityField) annotationMap.get(ResultEntityField.class);
-                tableCount = parseResultEntityField(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, resultEntityField, tableCount);
+                tableCount = parseResultEntityField(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), targetType, field, resultEntityField, tableCount, true);
                 continue;
             }
 
@@ -367,7 +367,7 @@ public class ResultInfo {
         String tablePrefix = getTablePrefix(parseResult.tablePrefixes, currentTableInfo.getType(), parentStorey);
 
         //表字段
-        nestedResultInfo.getResultFieldInfos().add(new ResultTableFieldInfo(clazz, parentStorey, tablePrefix, currentTableInfo, tableFieldInfo, field));
+        nestedResultInfo.getResultFieldInfos().add(new ResultTableFieldInfo(clazz, parentStorey, tablePrefix, currentTableInfo, tableFieldInfo, field, false));
         return tableCount;
     }
 
@@ -423,7 +423,7 @@ public class ResultInfo {
             //获取前缀
             String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), storey);
 
-            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, fetchTableInfo, fetchFieldInfo, field));
+            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, fetchTableInfo, fetchFieldInfo, field, false));
             valueColumn = tablePrefix + fetchFieldInfo.getColumnName();
         }
 
@@ -606,7 +606,7 @@ public class ResultInfo {
             //获取前缀
             String tablePrefix = getTablePrefix(parseResult.tablePrefixes, putTableInfo.getType(), storey);
 
-            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, putTableInfo, fetchFieldInfo, field));
+            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, putTableInfo, fetchFieldInfo, field, false));
 
             valuesColumn[i] = tablePrefix + fetchFieldInfo.getColumnName();
             valuesTypeHandler[i] = fetchFieldInfo.getTypeHandler();
@@ -657,7 +657,7 @@ public class ResultInfo {
         //获取前缀
         String tablePrefix = getTablePrefix(parseResult.tablePrefixes, putEnumTableInfo.getType(), storey);
 
-        resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, putEnumTableInfo, putEnumFieldInfo, field));
+        resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, putEnumTableInfo, putEnumFieldInfo, field, false));
 
         String valueColumn = tablePrefix + putEnumFieldInfo.getColumnName();
         TypeHandler<?> valueTypeHandler = putEnumFieldInfo.getTypeHandler();

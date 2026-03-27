@@ -29,12 +29,12 @@ public class ResultTableFieldInfo extends ResultFieldInfo {
 
     private final Class type;
 
-    public ResultTableFieldInfo(Class type, int storey, String tablePrefix, TableInfo tableInfo, TableFieldInfo tableFieldInfo, Field field) {
-        this(true, type, storey, tablePrefix, tableInfo, tableFieldInfo, field);
+    public ResultTableFieldInfo(Class type, int storey, String tablePrefix, TableInfo tableInfo, TableFieldInfo tableFieldInfo, Field field, boolean fieldNameMapping) {
+        this(true, type, storey, tablePrefix, tableInfo, tableFieldInfo, field, fieldNameMapping);
     }
 
-    public ResultTableFieldInfo(boolean resultMapping, Class type, int storey, String tablePrefix, TableInfo tableInfo, TableFieldInfo tableFieldInfo, Field field) {
-        super(resultMapping, type, field, tablePrefix + tableFieldInfo.getColumnName(), getTypeHandler(field, tableFieldInfo), tableFieldInfo.getTableFieldAnnotation().jdbcType());
+    public ResultTableFieldInfo(boolean resultMapping, Class type, int storey, String tablePrefix, TableInfo tableInfo, TableFieldInfo tableFieldInfo, Field field, boolean fieldNameMapping) {
+        super(resultMapping, type, field, tablePrefix + tableFieldInfo.getColumnName(), getTypeHandler(field, tableFieldInfo), tableFieldInfo.getTableFieldAnnotation().jdbcType(), fieldNameMapping);
         this.type = type;
         this.tableInfo = tableInfo;
         this.tableFieldInfo = tableFieldInfo;
@@ -65,4 +65,6 @@ public class ResultTableFieldInfo extends ResultFieldInfo {
     public TableInfo getTableInfo() {
         return tableInfo;
     }
+
+
 }

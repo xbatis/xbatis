@@ -26,6 +26,9 @@ public class ResultFieldInfo {
 
     private final boolean resultMapping;
 
+    //字段名是否映射
+    private final boolean fieldNameMapping;
+
     /**
      * 字段
      */
@@ -54,7 +57,7 @@ public class ResultFieldInfo {
     private String[] otherMappingColumnNames;
 
     public ResultFieldInfo(Class clazz, Field field, ResultField resultField) {
-        this(true, clazz, field, getColumnName(clazz, field, resultField), getTypeHandler(field, resultField), resultField.jdbcType());
+        this(true, clazz, field, getColumnName(clazz, field, resultField), getTypeHandler(field, resultField), resultField.jdbcType(), true);
         if (resultField.value().length > 1) {
             this.otherMappingColumnNames = new String[resultField.value().length - 1];
             for (int i = 1; i < resultField.value().length; i++) {
@@ -63,8 +66,9 @@ public class ResultFieldInfo {
         }
     }
 
-    public ResultFieldInfo(boolean resultMapping, Class clazz, Field field, String mappingColumnName, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
+    public ResultFieldInfo(boolean resultMapping, Class clazz, Field field, String mappingColumnName, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, boolean fieldNameMapping) {
         this.resultMapping = resultMapping;
+        this.fieldNameMapping = fieldNameMapping;
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.mappingColumnName = mappingColumnName;
@@ -90,6 +94,10 @@ public class ResultFieldInfo {
 
     public boolean isResultMapping() {
         return resultMapping;
+    }
+
+    public boolean isFieldNameMapping() {
+        return fieldNameMapping;
     }
 
     public JdbcType getJdbcType() {
