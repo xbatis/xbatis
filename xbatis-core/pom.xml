@@ -162,6 +162,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>6.1.1</version>
+            <scope>test</scope>
+        </dependency>
+
         <!--json optional start-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

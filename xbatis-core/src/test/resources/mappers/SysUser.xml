@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xbatis.core.test.mapper.SysUserMapper">
+
+    <resultMap id="sysUser" type="com.xbatis.core.test.DO.SysUser" extends="$xbatis">
+        <id property="id" column="id"/>
+        <result property="role_id" column="role_id2"/>
+    </resultMap>
+
+    <select id="getOne1" resultMap="sysUser">
+        select id, role_id role_id2, create_time
+        from t_sys_user t
+        limit 1
+    </select>
+
+    <select id="listPagehelper2" resultMap="sysUser">
+        select id, role_id role_id2, create_time
+        from t_sys_user t
+        where id > #{value}
+    </select>
+
+    <select id="listPagehelper3" resultMap="sysUser">
+        select id, role_id role_id2, create_time
+        from t_sys_user t
+        where id > #{arg0}
+          and id > #{id2}
+    </select>
+
+    <select id="listPagehelper4" resultMap="sysUser">
+        select id, role_id role_id2, create_time
+        from t_sys_user t
+        where ${arg0.whereScript}
+          and ${id2.whereScript}
+    </select>
+</mapper>

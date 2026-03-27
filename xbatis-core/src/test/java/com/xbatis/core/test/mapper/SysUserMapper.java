@@ -18,7 +18,10 @@ package com.xbatis.core.test.mapper;
 import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.testCase.mapperMethodInterceptor.MapperLimit;
+import db.sql.api.impl.cmd.struct.Where;
+import org.apache.ibatis.annotations.Flush;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.mapping.ResultSetType;
@@ -53,4 +56,14 @@ public interface SysUserMapper extends MybatisMapper<SysUser> {
     default Integer javaLimitAnnotationCount() {
         return this.countAll();
     }
+
+
+    @Flush
+    List<SysUser> listPagehelper2(Integer id);
+
+    @Flush
+    List<SysUser> listPagehelper3(Integer id1, @Param("id2") Integer id2);
+
+    @Flush
+    List<SysUser> listPagehelper4(Where id1, @Param("id2") Where id2);
 }
