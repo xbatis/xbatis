@@ -73,10 +73,15 @@ public final class ResultMapUtils {
 
     private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, boolean isTableId, FieldInfo fieldInfo, String columnName, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandler, boolean fieldNameMapping) {
         List<ResultMapping> list = new ArrayList<>();
-        list.add(configuration.buildResultMapping(isTableId, fieldInfo, columnName, jdbcType, typeHandler));
-        list.add(configuration.buildResultMapping(isTableId, fieldInfo, SqlUtil.getAsName(fieldInfo.getClazz(), fieldInfo.getField()), jdbcType, typeHandler));
-        if (fieldNameMapping && !columnName.equals(fieldInfo.getField().getName())) {
+        Set<String> mappedColumn = new HashSet<>();
+        if (mappedColumn.add(columnName)) {
             list.add(configuration.buildResultMapping(isTableId, fieldInfo, columnName, jdbcType, typeHandler));
+        }
+
+        list.add(configuration.buildResultMapping(isTableId, fieldInfo, SqlUtil.getAsName(fieldInfo.getClazz(), fieldInfo.getField()), jdbcType, typeHandler));
+
+        if (fieldNameMapping && mappedColumn.add(fieldInfo.getField().getName())) {
+            list.add(configuration.buildResultMapping(isTableId, fieldInfo, fieldInfo.getField().getName(), jdbcType, typeHandler));
         }
         return list;
     }
@@ -110,24 +115,27 @@ public final class ResultMapUtils {
             }
 
             JdbcType jdbcType = JdbcType.UNDEFINED;
+            Set<String> mappedColumns = new HashSet<>();
             if (field.isAnnotationPresent(ResultField.class)) {
                 ResultField resultField = field.getAnnotation(ResultField.class);
                 jdbcType = resultField.jdbcType();
                 typeHandler = resultField.typeHandler();
-                if (resultField.value().length != 1 || !resultField.value()[0].isEmpty()) {
-                    for (String columnName : resultField.value()) {
+                for (String columnName : resultField.value()) {
+                    if (!columnName.isEmpty() && mappedColumns.add(columnName)) {
                         resultMappings.add(configuration.buildResultMapping(false, fieldInfo, columnName, jdbcType, typeHandler));
                     }
-                    resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), jdbcType, typeHandler));
-                    resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), jdbcType, typeHandler));
-                    resultMappings.add(configuration.buildResultMapping(false, fieldInfo, PropertyNamer.camelToUnderscore(field.getName()), jdbcType, typeHandler));
-                    return;
                 }
             }
 
-            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), jdbcType, typeHandler));
             resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), jdbcType, typeHandler));
-            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, PropertyNamer.camelToUnderscore(field.getName()), jdbcType, typeHandler));
+            if (mappedColumns.add(field.getName())) {
+                resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), jdbcType, typeHandler));
+            }
+
+            String underscore = PropertyNamer.camelToUnderscore(field.getName());
+            if (mappedColumns.add(underscore)) {
+                resultMappings.add(configuration.buildResultMapping(false, fieldInfo, underscore, jdbcType, typeHandler));
+            }
         });
 
         return Collections.unmodifiableList(resultMappings);
@@ -224,21 +232,21 @@ public final class ResultMapUtils {
         List<ResultMapping> resultMappingList = new ArrayList<>(5);
 
         Set<String> mappedColumn = new HashSet<>();
-
-        String sqlAsName = SqlUtil.getAsName(resultFieldInfo.getFieldInfo().getClazz(), resultFieldInfo.getFieldInfo().getField());
-        ResultMapping resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getFieldInfo(), sqlAsName, resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
-        resultMappingList.add(resultMapping);
-        mappedColumn.add(sqlAsName);
-
-        if (!mappedColumn.contains(resultFieldInfo.getMappingColumnName())) {
+        ResultMapping resultMapping;
+        if (mappedColumn.add(resultFieldInfo.getMappingColumnName())) {
             resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getFieldInfo(), resultFieldInfo.getMappingColumnName(), resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
             resultMappingList.add(resultMapping);
-            mappedColumn.add(resultFieldInfo.getMappingColumnName());
+        }
+
+        String sqlAsName = SqlUtil.getAsName(resultFieldInfo.getFieldInfo().getClazz(), resultFieldInfo.getFieldInfo().getField());
+        if (mappedColumn.add(sqlAsName)) {
+            resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getFieldInfo(), sqlAsName, resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
+            resultMappingList.add(resultMapping);
         }
 
         if (resultFieldInfo.getOtherMappingColumnNames() != null) {
             for (String otherMappingColumnName : resultFieldInfo.getOtherMappingColumnNames()) {
-                if (mappedColumn.contains(otherMappingColumnName)) {
+                if (otherMappingColumnName.isEmpty() || !mappedColumn.add(otherMappingColumnName)) {
                     continue;
                 }
                 resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getFieldInfo(), otherMappingColumnName, resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
@@ -247,10 +255,9 @@ public final class ResultMapUtils {
             }
         }
 
-        if (resultFieldInfo.isFieldNameMapping() && !mappedColumn.contains(resultFieldInfo.getField().getName())) {
+        if (resultFieldInfo.isFieldNameMapping() && mappedColumn.add(resultFieldInfo.getField().getName())) {
             resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getFieldInfo(), resultFieldInfo.getField().getName(), resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
             resultMappingList.add(resultMapping);
-            mappedColumn.add(resultFieldInfo.getField().getName());
         }
 
         return resultMappingList;
