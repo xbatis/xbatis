@@ -33,6 +33,7 @@ import db.sql.api.impl.cmd.struct.ext.NotExists;
 import db.sql.api.impl.cmd.struct.ext.NotIn;
 import db.sql.api.impl.cmd.struct.query.Returning;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -292,6 +293,119 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
         return (SELF) this;
     }
 
+    /**
+     * 多列in操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF in(List<T> list, Getter<T>... getters) {
+        return IDelete.super.in(list, getters);
+    }
+
+    /**
+     * 多列in操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF in(boolean when, List<T> list, Getter<T>... getters) {
+        return IDelete.super.in(when, list, getters);
+    }
+
+    /**
+     * 多列in操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF in(List<T> list, int storey, Getter<T>... getters) {
+        return IDelete.super.in(list, storey, getters);
+    }
+
+    /**
+     * 多列in操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF in(boolean when, List<T> list, int storey, Getter<T>... getters) {
+        return IDelete.super.in(when, list, storey, getters);
+    }
+
+
+    /**
+     * 多列notIn操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF notIn(List<T> list, Getter<T>... getters) {
+        return IDelete.super.notIn(list, getters);
+    }
+
+    /**
+     * 多列notIn操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF notIn(boolean when, List<T> list, Getter<T>... getters) {
+        return IDelete.super.notIn(when, list, getters);
+    }
+
+    /**
+     * 多列notIn操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @Override
+    @SafeVarargs
+    public final <T> SELF notIn(List<T> list, int storey, Getter<T>... getters) {
+        return IDelete.super.notIn(list, storey, getters);
+    }
+
+    /**
+     * 多列in操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF notIn(boolean when, List<T> list, int storey, Getter<T>... getters) {
+        return IDelete.super.notIn(when, list, storey, getters);
+    }
 
     public DeleteTable getDeleteTable() {
         return deleteTable;

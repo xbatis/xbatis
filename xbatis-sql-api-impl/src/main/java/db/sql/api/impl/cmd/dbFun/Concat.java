@@ -47,13 +47,13 @@ public class Concat extends BasicFunction<Concat> {
         this.values = vs;
     }
 
-    private static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, char[] delimiter) {
+    private static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, char delimiter) {
         if (Objects.isNull(cmds) || cmds.length < 1) {
             return builder;
         }
         int length = cmds.length;
         for (int i = 0; i < length; i++) {
-            if (i != 0 && delimiter != null) {
+            if (i != 0) {
                 builder.append(delimiter);
             }
             builder = cmds[i].sql(module, parent, context, builder);

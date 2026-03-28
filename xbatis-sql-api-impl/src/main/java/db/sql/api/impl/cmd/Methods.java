@@ -37,13 +37,57 @@ import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlUtil;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * 数据库方法集合
  */
 public final class Methods {
+
+    /**
+     * 行
+     *
+     * @return Row
+     */
+    @SafeVarargs
+    public static Row row(Cmd... columns) {
+        return new Row(columns);
+    }
+
+    /**
+     * row 的 values
+     *
+     * @param values     值
+     * @param columnSize 列的个数
+     * @return RowValues
+     */
+    public static RowValues rowValues(List<Cmd> values, int columnSize) {
+        return new RowValues(values, columnSize);
+    }
+
+    /**
+     * row 的 values
+     *
+     * @param list    对象集合
+     * @param getters 对象列值的读取 getter
+     * @param <T>     对象类型
+     * @return RowValues
+     */
+    public static <T> RowValues rowValues(List<T> list, Getter<T>... getters) {
+        List<Cmd> values = new ArrayList<>();
+        if (list != null && !list.isEmpty()) {
+            for (T item : list) {
+                for (Getter<T> getter : getters) {
+                    Object v = getter.apply(item);
+                    values.add(cmd(v));
+                }
+            }
+        }
+        return new RowValues(values, getters.length);
+    }
 
     /**
      * 对应SQL中的NULL

@@ -55,8 +55,8 @@ public final class SqlConst {
     public static final char[] UNION_ALL = " UNION ALL ".toCharArray();
     public static final char[] WITH = " WITH ".toCharArray();
     public static final String ALL = "*";
-    public static final char[] DOT = ".".toCharArray();
-    public static final char[] DELIMITER = " , ".toCharArray();
+    public static final char DOT = '.';
+    public static final char DELIMITER = ',';
 
     public static final char[] CONCAT_SPLIT_SYMBOL = " || ".toCharArray();
     public static final char[] INTERVAL = "INTERVAL ".toCharArray();
@@ -103,8 +103,8 @@ public final class SqlConst {
     public static final char[] NOT_LIKE = " NOT LIKE ".toCharArray();
     public static final char[] I_LIKE = " ILIKE ".toCharArray();
     public static final char[] NOT_I_LIKE = " NOT ILIKE ".toCharArray();
-    public static final char[] BRACKET_LEFT = "(".toCharArray();
-    public static final char[] BRACKET_RIGHT = ")".toCharArray();
+    public static final char BRACKET_LEFT = '(';
+    public static final char BRACKET_RIGHT = ')';
     public static final char[] CONCAT = " CONCAT".toCharArray();
     public static final char[] CONCAT_WS = " CONCAT_WS".toCharArray();
     public static final char[] IF = " IF".toCharArray();
@@ -192,7 +192,7 @@ public final class SqlConst {
     public static final char[] SHARE = " SHARE".toCharArray();
     public static final char[] NO_WAIT = " NOWAIT".toCharArray();
     public static final char[] SKIP_LOCKED = " SKIP LOCKED".toCharArray();
-    public static final char[] DOUBLE_QUOT = "\"".toCharArray();
+    public static final char DOUBLE_QUOT = '\"';
 
     public static final char[] CAST_TEXT = "::TEXT".toCharArray();
     public static final char[] CAST_VARCHAR = "::VARCHAR".toCharArray();

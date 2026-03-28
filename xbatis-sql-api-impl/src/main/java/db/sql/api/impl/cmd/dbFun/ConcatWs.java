@@ -48,13 +48,13 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
         this.values = vs;
     }
 
-    private static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, char[] delimiter) {
+    private static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, char delimiter) {
         if (cmds == null || cmds.length < 1) {
             return builder;
         }
         int length = cmds.length;
         for (int i = 0; i < length; i++) {
-            if (i != 0 && delimiter != null) {
+            if (i != 0) {
                 builder.append(delimiter);
             }
             Cmd value = cmds[i];

@@ -841,4 +841,32 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     public <T, E1, E2> AbstractSubQuery<?, ?> buildInOrNotInSubQuery(T executor, Getter<E2> selectGetter, Getter<E1> sourceEqGetter, int sourceStorey, Getter<E2> targetEqGetter, Object consumer) {
         return (AbstractSubQuery<?, ?>) this.getCmdFactory().createInOrNotInSubQuery(executor, selectGetter, createBiConsumer(executor, sourceEqGetter, sourceStorey, targetEqGetter, consumer));
     }
+
+    @Override
+    public <T> ICondition in(List<T> list, int storey, Getter<T>... getters) {
+        if (this.isIgnoreNull()) {
+            if (list == null || list.isEmpty()) {
+                return null;
+            }
+        }
+        Cmd[] columns = new Cmd[getters.length];
+        for (int i = 0; i < getters.length; i++) {
+            columns[i] = Methods.cmd(this.getCmdFactory().field(getters[i], storey));
+        }
+        return Methods.in(Methods.row(columns),Methods.rowValues(list, getters));
+    }
+
+    @Override
+    public <T> ICondition notIn(List<T> list, int storey, Getter<T>... getters) {
+        if (this.isIgnoreNull()) {
+            if (list == null || list.isEmpty()) {
+                return null;
+            }
+        }
+        Cmd[] columns = new Cmd[getters.length];
+        for (int i = 0; i < getters.length; i++) {
+            columns[i] = Methods.cmd(this.getCmdFactory().field(getters[i], storey));
+        }
+        return Methods.notIn(Methods.row(columns),Methods.rowValues(list, getters));
+    }
 }

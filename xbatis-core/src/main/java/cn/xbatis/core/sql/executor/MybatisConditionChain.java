@@ -17,7 +17,6 @@ package cn.xbatis.core.sql.executor;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.basic.Condition;
-import db.sql.api.impl.cmd.basic.Connector;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 
 public class MybatisConditionChain extends ConditionChain {
@@ -31,9 +30,9 @@ public class MybatisConditionChain extends ConditionChain {
     }
 
     @Override
-    protected void appendCondition(Connector connector, ICondition condition) {
+    public void appendCondition(ICondition condition) {
         if (isCanAppendToConditionChain(condition)) {
-            super.appendCondition(connector, condition);
+            super.appendCondition(condition);
         }
         this.handleTableSplit(condition);
     }

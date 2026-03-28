@@ -15,6 +15,7 @@
 package db.sql.api.cmd.struct.conditionChain;
 
 
+import db.sql.api.cmd.basic.Connector;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.executor.method.condition.IConditionMethods;
 import db.sql.api.cmd.struct.Nested;
@@ -42,6 +43,20 @@ public interface IConditionChain<SELF extends IConditionChain,
     boolean hasContent();
 
     SELF newInstance();
+
+    /**
+     * 追加条件
+     *
+     * @param condition
+     */
+    void appendCondition(ICondition condition);
+
+    /**
+     * 获取条件的连接符
+     *
+     * @return
+     */
+    Connector getConnector();
 
     /**
      * 清空条件

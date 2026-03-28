@@ -1197,5 +1197,119 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         conditionFactory.getCmdFactory().table(entity, storey).as(as);
         return (SELF) this;
     }
+
+    /**
+     * 多列in操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF in(List<T> list, Getter<T>... getters) {
+        return IQuery.super.in(list, getters);
+    }
+
+    /**
+     * 多列in操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF in(boolean when, List<T> list, Getter<T>... getters) {
+        return IQuery.super.in(when, list, getters);
+    }
+
+    /**
+     * 多列in操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF in(List<T> list, int storey, Getter<T>... getters) {
+        return IQuery.super.in(list, storey, getters);
+    }
+
+    /**
+     * 多列in操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF in(boolean when, List<T> list, int storey, Getter<T>... getters) {
+        return IQuery.super.in(when, list, storey, getters);
+    }
+
+
+    /**
+     * 多列notIn操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF notIn(List<T> list, Getter<T>... getters) {
+        return IQuery.super.notIn(list, getters);
+    }
+
+    /**
+     * 多列notIn操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF notIn(boolean when, List<T> list, Getter<T>... getters) {
+        return IQuery.super.notIn(when, list, getters);
+    }
+
+    /**
+     * 多列notIn操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @Override
+    @SafeVarargs
+    public final <T> SELF notIn(List<T> list, int storey, Getter<T>... getters) {
+        return IQuery.super.notIn(list, storey, getters);
+    }
+
+    /**
+     * 多列in操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    @SafeVarargs
+    public final <T> SELF notIn(boolean when, List<T> list, int storey, Getter<T>... getters) {
+        return IQuery.super.notIn(when, list, storey, getters);
+    }
 }
 

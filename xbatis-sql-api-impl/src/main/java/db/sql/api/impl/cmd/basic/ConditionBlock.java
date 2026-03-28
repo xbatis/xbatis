@@ -16,6 +16,7 @@ package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.Connector;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;

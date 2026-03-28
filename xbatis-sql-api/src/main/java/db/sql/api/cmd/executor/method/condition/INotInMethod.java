@@ -14,11 +14,13 @@
 
 package db.sql.api.cmd.executor.method.condition;
 
+import db.sql.api.Getter;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.cmd.executor.method.condition.compare.INotInGetterCompare;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 public interface INotInMethod<RV, COLUMN> extends INotInGetterCompare<RV> {
 
@@ -27,4 +29,61 @@ public interface INotInMethod<RV, COLUMN> extends INotInGetterCompare<RV> {
     RV notIn(COLUMN column, Serializable... values);
 
     RV notIn(COLUMN column, Collection<? extends Serializable> values);
+
+    /**
+     * 多列notIn操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    default <T> RV notIn(List<T> list, Getter<T>... getters) {
+        return notIn(list, 1, getters);
+    }
+
+    /**
+     * 多列notIn操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    default <T> RV notIn(boolean when, List<T> list, Getter<T>... getters) {
+        if (when) {
+            return (RV) this;
+        }
+        return notIn(list, 1, getters);
+    }
+
+    /**
+     * 多列notIn操作方法
+     *
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+
+    <T> RV notIn(List<T> list, int storey, Getter<T>... getters);
+
+    /**
+     * 多列in操作方法
+     *
+     * @param when    当true 才生效
+     * @param list    数据集合，里面必须是实体类数据
+     * @param storey  实体类的层级
+     * @param getters 列的getter方法
+     * @param <T>     实体类类型
+     * @return 自己
+     */
+    default <T> RV notIn(boolean when, List<T> list, int storey, Getter<T>... getters) {
+        if (when) {
+            return (RV) this;
+        }
+        return notIn(list, storey, getters);
+    }
 }

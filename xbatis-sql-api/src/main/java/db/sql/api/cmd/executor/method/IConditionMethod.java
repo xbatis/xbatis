@@ -25,6 +25,7 @@ import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -512,6 +513,54 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     @Override
     default <T1, T2> SELF notExists(boolean when, Getter<T1> sourceGetter, int sourceStorey, Getter<T2> targetGetter) {
         conditionChain().notExists(when, sourceGetter, sourceStorey, targetGetter);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF in(List<T> list, Getter<T>... getters) {
+        conditionChain().in(list, getters);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF in(boolean when, List<T> list, Getter<T>... getters) {
+        conditionChain().in(when, list, getters);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF in(List<T> list, int storey, Getter<T>... getters) {
+        conditionChain().in(list, storey, getters);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF in(boolean when, List<T> list, int storey, Getter<T>... getters) {
+        conditionChain().in(when, list, storey, getters);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF notIn(List<T> list, Getter<T>... getters) {
+        conditionChain().notIn(list, getters);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF notIn(boolean when, List<T> list, Getter<T>... getters) {
+        conditionChain().notIn(when, list, getters);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF notIn(List<T> list, int storey, Getter<T>... getters) {
+        conditionChain().notIn(list, storey, getters);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF notIn(boolean when, List<T> list, int storey, Getter<T>... getters) {
+        conditionChain().notIn(when, list, storey, getters);
         return (SELF) this;
     }
 }

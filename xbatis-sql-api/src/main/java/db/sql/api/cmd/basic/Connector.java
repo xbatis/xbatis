@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
+ *  Copyright (c) 2024-2026, Ai东 (abc-127@live.cn) xbatis.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -12,8 +12,11 @@
  *
  */
 
-package db.sql.api.impl.cmd.basic;
+package db.sql.api.cmd.basic;
 
+/**
+ * 逻辑拼接符
+ */
 public enum Connector {
     AND,
     OR

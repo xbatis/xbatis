@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public final class CmdUtils {
 
@@ -31,10 +32,22 @@ public final class CmdUtils {
     }
 
     public static StringBuilder join(Cmd module, Cmd user, SqlBuilderContext context, StringBuilder builder, Collection<? extends Cmd> cmdList) {
-        return join(module, user, context, builder, cmdList, null);
+        return join(module, user, context, builder, cmdList, (Consumer) null);
+    }
+
+    public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Collection<? extends Cmd> cmdList, char delimiter) {
+        return join(module, parent, context, builder, cmdList, s -> s.append(delimiter));
     }
 
     public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Collection<? extends Cmd> cmdList, char[] delimiter) {
+        return join(module, parent, context, builder, cmdList, s -> s.append(delimiter));
+    }
+
+    public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Collection<? extends Cmd> cmdList, String delimiter) {
+        return join(module, parent, context, builder, cmdList, s -> s.append(delimiter));
+    }
+
+    public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Collection<? extends Cmd> cmdList, Consumer<StringBuilder> delimiter) {
         if (cmdList == null || cmdList.isEmpty()) {
             return builder;
         }
@@ -49,14 +62,28 @@ public final class CmdUtils {
 
             if (delimiter != null) {
                 if (!(cmd instanceof NoAfterDelimiter)) {
-                    builder.append(delimiter);
+                    if (delimiter != null) {
+                        delimiter.accept(builder);
+                    }
                 }
             }
         }
         return builder;
     }
 
+    public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, char delimiter) {
+        return join(module, parent, context, builder, cmds, s -> s.append(delimiter));
+    }
+
     public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, char[] delimiter) {
+        return join(module, parent, context, builder, cmds, s -> s.append(delimiter));
+    }
+
+    public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, String delimiter) {
+        return join(module, parent, context, builder, cmds, s -> s.append(delimiter));
+    }
+
+    public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, Consumer<StringBuilder> delimiter) {
         if (cmds == null || cmds.length < 1) {
             return builder;
         }
@@ -64,7 +91,9 @@ public final class CmdUtils {
         for (int i = 0; i < length; i++) {
             if (i != 0 && delimiter != null) {
                 if (!(cmds[i - 1] instanceof NoAfterDelimiter)) {
-                    builder.append(delimiter);
+                    if (delimiter != null) {
+                        delimiter.accept(builder);
+                    }
                 }
             }
             builder = cmds[i].sql(module, parent, context, builder);
@@ -72,13 +101,13 @@ public final class CmdUtils {
         return builder;
     }
 
-    public static StringBuilder join(StringBuilder builder, String[] strs, char[] delimiter) {
+    public static StringBuilder join(StringBuilder builder, String[] strs, char delimiter) {
         if (strs == null || strs.length < 1) {
             return builder;
         }
         int length = strs.length;
         for (int i = 0; i < length; i++) {
-            if (i != 0 && delimiter != null) {
+            if (i != 0) {
                 builder.append(delimiter);
             }
             builder.append(strs[i]);

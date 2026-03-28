@@ -1089,6 +1089,17 @@ public interface FunctionInterface extends Cmd {
         return Methods.notILike(mode, this, value);
     }
 
+
+    /**
+     * 条件判断（IN包含判断）
+     *
+     * @param value 匹配值
+     * @return Ne
+     */
+    default In in(Object value) {
+        return Methods.in(this, value);
+    }
+
     /**
      * 条件判断（IN包含判断）
      *
@@ -1096,7 +1107,7 @@ public interface FunctionInterface extends Cmd {
      * @return Ne
      */
     default In in(Serializable... values) {
-        return Methods.in(this, (Object[]) values);
+        return Methods.in(this, values);
     }
 
     /**
@@ -1110,6 +1121,17 @@ public interface FunctionInterface extends Cmd {
         return Methods.in(this, values);
     }
 
+
+    /**
+     * 条件判断（NOT IN包含判断）
+     *
+     * @param value 匹配值
+     * @return Ne
+     */
+    default NotIn notIn(Object value) {
+        return Methods.notIn(this, value);
+    }
+
     /**
      * 条件判断（NOT IN不包含判断）
      *
@@ -1117,7 +1139,7 @@ public interface FunctionInterface extends Cmd {
      * @return Ne
      */
     default NotIn notIn(Serializable... values) {
-        return Methods.notIn(this, (Object[]) values);
+        return Methods.notIn(this, values);
     }
 
     /**

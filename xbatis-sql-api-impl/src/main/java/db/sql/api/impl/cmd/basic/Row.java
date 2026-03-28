@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024-2025, Ai东 (abc-127@live.cn) xbatis.
+ *  Copyright (c) 2024-2026, Ai东 (abc-127@live.cn) xbatis.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
@@ -12,43 +12,39 @@
  *
  */
 
-package db.sql.api.cmd.struct.query;
+package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.impl.cmd.dbFun.FunctionInterface;
+import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+public class Row implements FunctionInterface {
 
-public class Withs<WITH extends IWith<WITH>> implements Cmd {
+    private final Cmd[] columns;
 
-    private List<WITH> withs;
-
-    public void add(WITH with) {
-        if (withs == null) {
-            withs = new ArrayList<>(2);
+    public Row(Cmd[] columns) {
+        if (columns == null || columns.length == 0) {
+            throw new IllegalArgumentException("columns is empty");
         }
-        withs.add(with);
+        this.columns = columns;
     }
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (withs == null || withs.isEmpty()) {
+        if (columns.length == 1) {
+            sqlBuilder = CmdUtils.join(module, this, context, sqlBuilder, columns, SqlConst.DELIMITER);
             return sqlBuilder;
         }
-        sqlBuilder.append(" WITH ");
-        CmdUtils.join(module, this, context, sqlBuilder, this.withs, ',');
+        sqlBuilder.append(SqlConst.BRACKET_LEFT);
+        sqlBuilder = CmdUtils.join(module, this, context, sqlBuilder, columns, SqlConst.DELIMITER);
+        sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }
 
     @Override
     public boolean contain(Cmd cmd) {
-        return CmdUtils.contain(cmd, this.withs);
-    }
-
-    public List<WITH> getWiths() {
-        return Collections.unmodifiableList(this.withs);
+        return CmdUtils.contain(cmd, columns);
     }
 }
