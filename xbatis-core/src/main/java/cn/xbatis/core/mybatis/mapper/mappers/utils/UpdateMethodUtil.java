@@ -352,9 +352,9 @@ public final class UpdateMethodUtil {
                         update.and(Methods.in(Methods.tpl(inTpl.toString(), (Cmd[]) idTableFields), values));
 
                     } else {
-                        for (XbatisTableField idTableField : idTableFields) {
-                            updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
-                        }
+//                        for (XbatisTableField idTableField : idTableFields) {
+//                            updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
+//                        }
                         updateChain.andNested(chain -> {
                             for (int i = 0; i < list.size(); i++) {
                                 final int index = i;
