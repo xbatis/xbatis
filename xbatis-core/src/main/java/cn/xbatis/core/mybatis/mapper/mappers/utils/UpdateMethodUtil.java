@@ -23,6 +23,7 @@ import cn.xbatis.core.exception.OptimisticLockException;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateContext;
 import cn.xbatis.core.mybatis.mapper.context.EntityUpdateCreateUtil;
+import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateBatchInMode;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateBatchStrategy;
 import cn.xbatis.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.xbatis.core.sql.executor.TableSplitUtil;
@@ -327,10 +328,11 @@ public final class UpdateMethodUtil {
             updateChain.set(tableField, sqlCase);
         }
 
-
         if (idTableFields.length > 1) {
-            if (updateBatchStrategy.isUseForceMultiRowIn()) {
+            if (updateBatchStrategy.getUpdateBatchInMode() == UpdateBatchInMode.FORCE_MULTI_ROW) {
                 wrapUseMultiRowIn(updateChain, idTableFields, columnUpdateValues, list);
+            } else if (updateBatchStrategy.getUpdateBatchInMode() == UpdateBatchInMode.NOT_MULTI_ROW) {
+                wrapUseNormalIn(updateChain, idTableFields, columnUpdateValues, list);
             } else {
                 updateChain.dbAdapt((update, selector) -> {
                     selector.otherwise(dbType -> {
@@ -338,20 +340,7 @@ public final class UpdateMethodUtil {
                                 dbType == DbType.PGSQL || dbType.getDbModel() == DbModel.PGSQL) {
                             wrapUseMultiRowIn(updateChain, idTableFields, columnUpdateValues, list);
                         } else {
-                            for (XbatisTableField idTableField : idTableFields) {
-                                updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
-                            }
-                            updateChain.andNested(chain -> {
-                                for (int i = 0; i < list.size(); i++) {
-                                    final int index = i;
-                                    chain.orNested(o -> {
-                                        for (XbatisTableField idTableField : idTableFields) {
-                                            Object value = columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index);
-                                            o.eq(idTableField, value);
-                                        }
-                                    });
-                                }
-                            });
+                            wrapUseNormalIn(updateChain, idTableFields, columnUpdateValues, list);
                         }
                     });
                 });
@@ -364,6 +353,23 @@ public final class UpdateMethodUtil {
 
         return updateChain
                 .execute();
+    }
+
+    private static void wrapUseNormalIn(UpdateChain updateChain, XbatisTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, Collection list) {
+        for (XbatisTableField idTableField : idTableFields) {
+            updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
+        }
+        updateChain.andNested(chain -> {
+            for (int i = 0; i < list.size(); i++) {
+                final int index = i;
+                chain.orNested(o -> {
+                    for (XbatisTableField idTableField : idTableFields) {
+                        Object value = columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index);
+                        o.eq(idTableField, value);
+                    }
+                });
+            }
+        });
     }
 
     private static void wrapUseMultiRowIn(UpdateChain update, XbatisTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, Collection list) {
