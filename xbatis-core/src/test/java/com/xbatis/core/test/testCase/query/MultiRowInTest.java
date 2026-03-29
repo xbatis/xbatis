@@ -98,7 +98,9 @@ public class MultiRowInTest extends BaseTest {
                     //多列in操作，针对list里非实体类的方式
                     .and(getters(MultiPk::getId1, MultiPk::getId2), cs -> row(cs).in(rowValues(list, MultiPk::getId1, MultiPk::getId2)))
 
+                    //多列not in操作，针对list里是实体类的方式
                     .notIn(notInList, MultiPk::getId1, MultiPk::getId2)
+                    //多列not in操作，针对list里非实体类的方式
                     .and(getters(MultiPk::getId1, MultiPk::getId2), cs -> row(cs).notIn(rowValues(notInList, MultiPk::getId1, MultiPk::getId2)))
 
                     .list();
