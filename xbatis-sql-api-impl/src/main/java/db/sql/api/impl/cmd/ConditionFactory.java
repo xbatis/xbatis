@@ -853,7 +853,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         for (int i = 0; i < getters.length; i++) {
             columns[i] = Methods.cmd(this.getCmdFactory().field(getters[i], storey));
         }
-        return Methods.in(Methods.row(columns),Methods.rowValues(list, getters));
+        return Methods.in(Methods.row(columns), Methods.rowValues(list, getters));
     }
 
     @Override
@@ -867,6 +867,6 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         for (int i = 0; i < getters.length; i++) {
             columns[i] = Methods.cmd(this.getCmdFactory().field(getters[i], storey));
         }
-        return Methods.notIn(Methods.row(columns),Methods.rowValues(list, getters));
+        return Methods.notIn(Methods.row(columns), Methods.rowValues(list, getters));
     }
 }
