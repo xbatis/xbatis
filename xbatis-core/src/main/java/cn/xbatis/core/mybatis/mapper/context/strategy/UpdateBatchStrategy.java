@@ -31,6 +31,7 @@ public class UpdateBatchStrategy<T> {
     private Getter<T>[] batchFields;
     private boolean ignoreNull;
     private boolean ignoreDefaultValue;
+    private boolean useForceMultiRowIn;
 
     public static <T> UpdateBatchStrategy<T> create() {
         return new UpdateBatchStrategy<>();
@@ -91,4 +92,21 @@ public class UpdateBatchStrategy<T> {
         this.ignoreDefaultValue = ignoreDefaultValue;
         return this;
     }
+
+    /**
+     * 设置是否强制使用多列in的方式
+     *
+     * @param useMultiRowIn
+     * @return
+     */
+    public UpdateBatchStrategy<T> useMultiRowIn(boolean useMultiRowIn) {
+        this.useForceMultiRowIn = useMultiRowIn;
+        return this;
+    }
+
+    public boolean isUseForceMultiRowIn() {
+        return useForceMultiRowIn;
+    }
+
+
 }

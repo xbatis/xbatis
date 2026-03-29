@@ -329,48 +329,33 @@ public final class UpdateMethodUtil {
 
 
         if (idTableFields.length > 1) {
-            updateChain.dbAdapt((update, selector) -> {
-                selector.otherwise(dbType -> {
-                    if (dbType == DbType.H2 || dbType == DbType.SQLITE || dbType == DbType.KING_BASE || dbType == DbType.GAUSS ||
-                            dbType == DbType.PGSQL || dbType.getDbModel() == DbModel.PGSQL) {
-                        //支持双列 in
-                        StringBuilder inTpl = new StringBuilder("(");
-
-                        for (int i = 0; i < idTableFields.length; i++) {
-                            inTpl.append("{").append(i).append("},");
-                        }
-                        inTpl.deleteCharAt(inTpl.length() - 1).append(")");
-                        List<Object> values = new ArrayList<>();
-                        for (int j = 0; j < list.size(); j++) {
-                            List<Object> multiValues = new ArrayList<>();
-                            for (int i = 0; i < idTableFields.length; i++) {
-                                XbatisTableField idTableField = idTableFields[i];
-                                multiValues.add(columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(j));
+            if (updateBatchStrategy.isUseForceMultiRowIn()) {
+                wrapUseMultiRowIn(updateChain, idTableFields, columnUpdateValues, list);
+            } else {
+                updateChain.dbAdapt((update, selector) -> {
+                    selector.otherwise(dbType -> {
+                        if (dbType == DbType.H2 || dbType == DbType.SQLITE || dbType == DbType.KING_BASE || dbType == DbType.GAUSS ||
+                                dbType == DbType.PGSQL || dbType.getDbModel() == DbModel.PGSQL) {
+                            wrapUseMultiRowIn(updateChain, idTableFields, columnUpdateValues, list);
+                        } else {
+                            for (XbatisTableField idTableField : idTableFields) {
+                                updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
                             }
-                            values.add(Methods.tpl(inTpl.toString(), multiValues.toArray()));
+                            updateChain.andNested(chain -> {
+                                for (int i = 0; i < list.size(); i++) {
+                                    final int index = i;
+                                    chain.orNested(o -> {
+                                        for (XbatisTableField idTableField : idTableFields) {
+                                            Object value = columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index);
+                                            o.eq(idTableField, value);
+                                        }
+                                    });
+                                }
+                            });
                         }
-                        update.and(Methods.in(Methods.tpl(inTpl.toString(), (Cmd[]) idTableFields), values));
-
-                    } else {
-//                        for (XbatisTableField idTableField : idTableFields) {
-//                            updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
-//                        }
-                        updateChain.andNested(chain -> {
-                            for (int i = 0; i < list.size(); i++) {
-                                final int index = i;
-                                chain.orNested(o -> {
-                                    for (XbatisTableField idTableField : idTableFields) {
-                                        Object value = columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(index);
-                                        o.eq(idTableField, value);
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    });
                 });
-            });
-
-
+            }
         } else {
             for (XbatisTableField idTableField : idTableFields) {
                 updateChain.in(idTableField, columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()));
@@ -379,6 +364,26 @@ public final class UpdateMethodUtil {
 
         return updateChain
                 .execute();
+    }
+
+    private static void wrapUseMultiRowIn(UpdateChain update, XbatisTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, Collection list) {
+        //支持双列 in
+        StringBuilder inTpl = new StringBuilder("(");
+
+        for (int i = 0; i < idTableFields.length; i++) {
+            inTpl.append("{").append(i).append("},");
+        }
+        inTpl.deleteCharAt(inTpl.length() - 1).append(")");
+        List<Object> values = new ArrayList<>();
+        for (int j = 0; j < list.size(); j++) {
+            List<Object> multiValues = new ArrayList<>();
+            for (int i = 0; i < idTableFields.length; i++) {
+                XbatisTableField idTableField = idTableFields[i];
+                multiValues.add(columnUpdateValues.get(idTableField.getTableFieldInfo().getColumnName()).get(j));
+            }
+            values.add(Methods.tpl(inTpl.toString(), multiValues.toArray()));
+        }
+        update.and(Methods.in(Methods.tpl(inTpl.toString(), (Cmd[]) idTableFields), values));
     }
 
     private static ICondition buildIdCaseWhen(UpdateChain updateChain, XbatisTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, int index) {
