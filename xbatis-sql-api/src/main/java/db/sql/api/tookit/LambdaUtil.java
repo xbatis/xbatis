@@ -124,11 +124,11 @@ public final class LambdaUtil {
         return type.substring(2, type.indexOf(";"));
     }
 
-    public static <T, V> Setter<T, V> createGetterByField(Class<T> clazz, String field, Class<V> vType) {
+    public static <T, V> GetterFun<T, V> createGetterByField(Class<T> clazz, String field, Class<V> vType) {
         try {
-            return createSetter(clazz, "get" + PropertyNamer.firstToUpperCase(field), vType);
+            return createGetter(clazz, "get" + PropertyNamer.firstToUpperCase(field), vType);
         } catch (RuntimeException e) {
-            return createSetter(clazz, "is" + PropertyNamer.firstToUpperCase(field), vType);
+            return createGetter(clazz, "is" + PropertyNamer.firstToUpperCase(field), vType);
         }
     }
 
