@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 public final class LambdaUtil {
 
-    private static final Map<GetterFun, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
+    private static final Map<Object, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
     private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap(1000);
     private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
@@ -124,16 +124,19 @@ public final class LambdaUtil {
         return type.substring(2, type.indexOf(";"));
     }
 
-    public static <T, V> GetterFun<T, V> createGetterByField(Class<T> clazz, String field, Class<V> vType) {
-        try {
-            return createGetter(clazz, "get" + PropertyNamer.firstToUpperCase(field), vType);
-        } catch (RuntimeException e) {
-            return createGetter(clazz, "is" + PropertyNamer.firstToUpperCase(field), vType);
+    public static <T, R> Getter<T> createGetterByField(Class<T> clazz, String field, Class<R> rType) {
+        if (Boolean.class.equals(clazz)) {
+            try {
+                return createGetter(Getter.class, clazz, "is" + PropertyNamer.firstToUpperCase(field), rType);
+            } catch (Exception ignored) {
+
+            }
         }
+        return createGetter(Getter.class, clazz, "get" + PropertyNamer.firstToUpperCase(field), rType);
     }
 
-    public static <T, R> GetterFun<T, R> createGetter(Class<T> clazz, String getterName, Class<R> rType) {
-        return createGetter(GetterFun.class, clazz, getterName, rType);
+    public static <T, R> Getter<T> createGetter(Class<T> clazz, String getterName, Class<R> rType) {
+        return createGetter(Getter.class, clazz, getterName, rType);
     }
 
     public static <GETTER extends Function<T, R>, T, R> GETTER createGetter(Class<GETTER> getterClass, Class<T> clazz, String getterName, Class<R> rType) {
@@ -197,6 +200,10 @@ public final class LambdaUtil {
         public String getName() {
             return name;
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println();
     }
 
 }
