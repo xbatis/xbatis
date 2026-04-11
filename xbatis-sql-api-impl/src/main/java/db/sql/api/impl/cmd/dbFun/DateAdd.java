@@ -44,7 +44,15 @@ public class DateAdd extends BasicFunction<DateAdd> {
             sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        } else if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
+        } else if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.KING_BASE) {
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append('+');
+            sqlBuilder.append(SqlConst.INTERVAL).append(SqlConst.SINGLE_QUOT).append(this.n).append(SqlConst.SINGLE_QUOT);
+            sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
+        }  else if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.GAUSS) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append("+'");
@@ -61,14 +69,6 @@ public class DateAdd extends BasicFunction<DateAdd> {
             sqlBuilder.append(n);
             sqlBuilder.append(SqlConst.DELIMITER);
             sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
-            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
-            return sqlBuilder;
-        } else if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.KING_BASE) {
-            sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
-            sqlBuilder.append('+');
-            sqlBuilder.append(SqlConst.INTERVAL).append(SqlConst.SINGLE_QUOT).append(this.n).append(SqlConst.SINGLE_QUOT);
-            sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         } else if (context.getDbType() == DbType.DB2) {
