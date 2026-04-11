@@ -30,6 +30,8 @@ public class ToJSON extends BasicFunction<ToJSON> {
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.SQLITE
                 || context.getDbType() == DbType.MARIA_DB
+                || context.getDbType() == DbType.DB2
+                || context.getDbType() == DbType.DM
                 || context.getDbType() == DbType.ORACLE || context.getDbType().getDbModel() == DbModel.ORACLE
                 || context.getDbType() == DbType.SQL_SERVER) {
             this.key.sql(module, this, context, sqlBuilder);
