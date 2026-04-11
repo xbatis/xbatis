@@ -182,7 +182,7 @@ public class UpdateTest extends BaseDaoTest {
             assertEquals(cnt, 1);
             if (TestDataSource.DB_TYPE == DbType.H2) {
                 assertEquals(getDao(sysUserMapper).getById(3).getUserName(), "xx123");
-            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE.getDbModel() == DbModel.MYSQL) {
+            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE == MyDbType.LIKE_MYSQL) {
                 assertEquals(getDao(sysUserMapper).getById(2).getUserName(), "xx123");
             } else {
                 assertEquals(getDao(sysUserMapper).getById(1).getUserName(), "xx123");

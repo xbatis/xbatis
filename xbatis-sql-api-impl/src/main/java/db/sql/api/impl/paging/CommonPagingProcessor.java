@@ -38,10 +38,22 @@ public class CommonPagingProcessor implements IPagingProcessor {
 
     private StringBuilder sql(SqlBuilderContext sqlBuilderContext, Cmd module, Cmd parent, IQuery query, StringBuilder parentSQL, Limit limit) {
         IDbType dbType = sqlBuilderContext.getDbType();
+
         if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.SQL_SERVER || dbType == DbType.ORACLE) {
-            return parentSQL.append(SqlConst.OFFSET).append(limit.getOffset()).append(SqlConst.ROWS_FETCH_NEXT).append(limit.getLimit()).append(SqlConst.ROWS_ONLY);
+            sqlBuilderContext.addParam(limit.getOffset());
+            sqlBuilderContext.addParam(limit.getLimit());
+            return parentSQL.append(SqlConst.OFFSET).append(SqlConst.PLACEHOLDER).append(SqlConst.ROWS_FETCH_NEXT).append(SqlConst.PLACEHOLDER).append(SqlConst.ROWS_ONLY);
         }
-        parentSQL.append(SqlConst.LIMIT).append(limit.getLimit()).append(SqlConst.OFFSET).append(limit.getOffset());
+
+        Object limitValue = limit.getLimit();
+        Object offsetValue = limit.getOffset();
+        if (sqlBuilderContext.getSqlMode() != SQLMode.PRINT) {
+            limitValue = SqlConst.PLACEHOLDER;
+            offsetValue = SqlConst.PLACEHOLDER;
+            sqlBuilderContext.addParam(limit.getLimit());
+            sqlBuilderContext.addParam(limit.getOffset());
+        }
+        parentSQL.append(SqlConst.LIMIT).append(limitValue).append(SqlConst.OFFSET).append(offsetValue);
         return parentSQL;
     }
 }

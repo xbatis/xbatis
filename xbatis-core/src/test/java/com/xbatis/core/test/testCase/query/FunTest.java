@@ -750,7 +750,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void jsonExtract() {
-        if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+        if (TestDataSource.DB_TYPE == DbType.H2) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -761,21 +761,13 @@ public class FunTest extends BaseTest {
 
             String xx = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
-                    .dbAdapt((queryChain, selector) -> {
-                        selector.when(new IDbType[]{DbType.MYSQL, DbType.MARIA_DB, MyDbType.LIKE_MYSQL}, () -> {
-                            queryChain.select(SysUser::getUserName, c -> c.mysql().jsonExtract("$.obj.title"));
-                        });
-                    })
+                    .select(SysUser::getUserName, c -> c.toJSON().jsonExtract("obj", "title"))
                     .eq(SysUser::getId, 1)
+                    .and(SysUser::getUserName, c -> c.toJSON().jsonExtract("obj", "title").eq("xx"))
                     .returnType(String.class)
                     .get();
 
-            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE) {
-                assertEquals(xx, "\"xx\"");
-            } else {
-                assertEquals(xx, "\"xx\"");
-            }
-
+            assertEquals("xx", xx);
         }
     }
 

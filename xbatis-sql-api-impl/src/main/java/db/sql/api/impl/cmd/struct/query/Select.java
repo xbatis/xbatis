@@ -42,6 +42,10 @@ public class Select implements ISelect<Select> {
 
     @Override
     public List<Cmd> getSelectField() {
+        if (this.selectIgnoreFields != null && !this.selectIgnoreFields.isEmpty()) {
+            selectFields.removeAll(this.selectIgnoreFields);
+            this.selectIgnoreFields.clear();
+        }
         return selectFields;
     }
 

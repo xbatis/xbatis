@@ -165,11 +165,4 @@ public @interface Fetch {
      * @return 缓存名称
      */
     String cacheName() default "";
-
-    /**
-     * 合并处理的名字;默认不合并；只用于返回1条且1列的Fetch合并
-     *
-     * @return
-     */
-    String mergeGroup() default "";
 }

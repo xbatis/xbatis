@@ -65,16 +65,16 @@ public class ConflictAction<T> implements IConflictAction<T>, Cmd {
             throw new IllegalStateException("conflict action not set");
         }
         if (this.conflictUpdate == null) {
-            if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
-                sqlBuilder.append(" DO NOTHING");
-            } else if (context.getDbType() == DbType.GAUSS) {
+            if (context.getDbType() == DbType.GAUSS) {
                 sqlBuilder.append(" UPDATE NOTHING");
+            } else if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
+                sqlBuilder.append(" DO NOTHING");
             }
         } else {
-            if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
-                sqlBuilder.append(" DO UPDATE");
-            } else if (context.getDbType() == DbType.GAUSS) {
+            if (context.getDbType() == DbType.GAUSS) {
                 sqlBuilder.append(" UPDATE");
+            } else if (context.getDbType().getDbModel() == DbModel.PGSQL || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
+                sqlBuilder.append(" DO UPDATE");
             }
             this.conflictUpdate.sql(module, this, context, sqlBuilder);
         }

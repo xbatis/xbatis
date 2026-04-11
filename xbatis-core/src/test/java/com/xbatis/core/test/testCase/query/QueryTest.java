@@ -161,11 +161,11 @@ public class QueryTest extends BaseTest {
             });
 
             if (TestDataSource.DB_TYPE == DbType.H2) {
-                assertEquals(sysUser.getId(), 1);
-            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE.getDbModel() == DbModel.MYSQL) {
-                assertEquals(sysUser.getId(), 2);
+                assertEquals(1, sysUser.getId());
+            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE == MyDbType.LIKE_MYSQL) {
+                assertEquals(2, sysUser.getId());
             } else {
-                assertEquals(sysUser.getId(), 3);
+                assertEquals(3, sysUser.getId());
             }
         }
     }

@@ -15,6 +15,7 @@
 package db.sql.api.impl.paging;
 
 import db.sql.api.Cmd;
+import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.Alias;
 import db.sql.api.cmd.basic.IDatasetField;
@@ -22,6 +23,7 @@ import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.condition.In;
 import db.sql.api.impl.cmd.struct.Limit;
 import db.sql.api.impl.cmd.struct.update.UpdateSet;
+import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
 import java.util.List;
@@ -80,9 +82,18 @@ public class OracleRowNumPagingProcessor implements IPagingProcessor {
             newSql.append("*");
         }
 
+        Object limitValue = limit.getLimit();
+        Object offsetValue = limit.getOffset();
+        if (sqlBuilderContext.getSqlMode() != SQLMode.PRINT) {
+            limitValue = SqlConst.PLACEHOLDER;
+            offsetValue = SqlConst.PLACEHOLDER;
+            sqlBuilderContext.addParam(limit.getLimit() + limit.getOffset());
+            sqlBuilderContext.addParam(limit.getOffset());
+        }
+
         return newSql.append("  FROM ( SELECT IT.*,ROWNUM ").append(rnName).append(" FROM (")
                 .append(sql).append(") IT WHERE ROWNUM <= ")
-                .append(limit.getLimit() + limit.getOffset())
-                .append(") ").append(alias).append(" WHERE ").append(alias).append(".").append(rnName).append(" >").append(limit.getOffset());
+                .append(limitValue)
+                .append(") ").append(alias).append(" WHERE ").append(alias).append(".").append(rnName).append(" >").append(offsetValue);
     }
 }

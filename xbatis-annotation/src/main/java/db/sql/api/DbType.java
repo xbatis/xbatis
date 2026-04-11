@@ -25,7 +25,7 @@ public enum DbType implements IDbType {
 
     MYSQL(Name.MYSQL, new KeywordWrap("`", "`"), ":mysql:"),
 
-    MARIA_DB(Name.MARIA_DB, new KeywordWrap("`", "`"), ":mariadb:"),
+    MARIA_DB(Name.MARIA_DB, new KeywordWrap("`", "`"), DbModel.MYSQL, ":mariadb:"),
 
     SQL_SERVER(Name.SQL_SERVER, new KeywordWrap("[", "]"), ":sqlserver:"),
 
@@ -33,13 +33,13 @@ public enum DbType implements IDbType {
 
     DM(Name.DM, new KeywordWrap("\"", "\"", true), ":dm:"),
 
-    GAUSS(Name.GAUSS, new KeywordWrap("\"", "\""), ":opengauss:", ":gaussdb:"),
+    GAUSS(Name.GAUSS, new KeywordWrap("\"", "\""), DbModel.PGSQL, ":opengauss:", ":gaussdb:"),
 
     H2(Name.H2, new KeywordWrap("`", "`"), ":h2:"),
 
     SQLITE(Name.SQLITE, new KeywordWrap("\"", "\""), ":sqlite:"),
 
-    KING_BASE(Name.KING_BASE, new KeywordWrap("\"", "\"", true), ":kingbase8:"),
+    KING_BASE(Name.KING_BASE, new KeywordWrap("\"", "\"", true), DbModel.PGSQL, ":kingbase8:"),
 
     CLICK_HOUSE(Name.CLICK_HOUSE, new KeywordWrap("\"", "\"", true), ":clickhouse:"),
 

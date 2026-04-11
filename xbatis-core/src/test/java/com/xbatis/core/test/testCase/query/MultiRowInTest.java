@@ -34,7 +34,7 @@ public class MultiRowInTest extends BaseTest {
 
     @Test
     public void multiRowInTest() {
-        if (TestDataSource.DB_TYPE == DbType.H2 || TestDataSource.DB_TYPE == DbType.PGSQL) {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.PGSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -68,7 +68,7 @@ public class MultiRowInTest extends BaseTest {
 
     @Test
     public void multiRowNotInTest() {
-        if (TestDataSource.DB_TYPE == DbType.H2 || TestDataSource.DB_TYPE == DbType.PGSQL) {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.PGSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

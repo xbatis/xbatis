@@ -22,7 +22,6 @@ import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
-import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.IDbType;
 import org.apache.ibatis.session.SqlSession;
@@ -68,7 +67,7 @@ public class DeleteTest extends BaseTest {
             assertEquals(cnt, 1);
             if (TestDataSource.DB_TYPE == DbType.H2) {
                 assertNull(sysUserMapper.getById(3));
-            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE.getDbModel() == DbModel.MYSQL) {
+            } else if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE == MyDbType.LIKE_MYSQL) {
                 assertNull(sysUserMapper.getById(2));
             } else {
                 assertNull(sysUserMapper.getById(1));

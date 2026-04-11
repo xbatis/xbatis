@@ -1963,14 +1963,14 @@ public final class Methods {
     }
 
     /**
-     * mysql json 值提取操作
+     * json 值提取操作
      *
      * @param column 列
      * @param paths  指定路径
      * @return JsonExtract
      */
     @SafeVarargs
-    public static JsonExtract mysqlJsonExtract(Cmd column, String... paths) {
+    public static JsonExtract jsonExtract(Cmd column, String... paths) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(paths);
         return new JsonExtract(column, paths);
@@ -2135,6 +2135,16 @@ public final class Methods {
      */
     public static ST_Contains ST_Contains(Cmd column, ST_Point point) {
         return ST_Contains(column, (Cmd) point);
+    }
+
+    /**
+     * 转JSON
+     *
+     * @param column
+     * @return ToJSON
+     */
+    public static ToJSON toJSON(Cmd column) {
+        return new ToJSON(column);
     }
 
     /**

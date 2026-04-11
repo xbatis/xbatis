@@ -23,6 +23,8 @@ import com.github.pagehelper.PageInterceptor;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
+import com.xbatis.core.test.testCase.TestDataSource;
+import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +44,7 @@ public class PagehelperTest extends BaseTest {
         properties.setProperty("offsetAsPageNum", "true");
         properties.setProperty("rowBoundsWithCount", "true");
         properties.setProperty("reasonable", "true");
-        properties.setProperty("helperDialect", "mysql");
+        properties.setProperty("helperDialect", "h2");
         properties.setProperty("supportMethodsArguments", "true");
         properties.setProperty("params", "count=countSql");
         pageInterceptor.setProperties(properties);
@@ -52,6 +54,9 @@ public class PagehelperTest extends BaseTest {
 
     @Test
     public void test() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return ;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             List<SysUser> list;
 

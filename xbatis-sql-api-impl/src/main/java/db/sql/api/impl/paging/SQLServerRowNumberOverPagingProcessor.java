@@ -15,6 +15,7 @@
 package db.sql.api.impl.paging;
 
 import db.sql.api.Cmd;
+import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.Alias;
 import db.sql.api.cmd.basic.IDatasetField;
@@ -25,6 +26,7 @@ import db.sql.api.cmd.struct.query.Withs;
 import db.sql.api.impl.cmd.condition.In;
 import db.sql.api.impl.cmd.struct.Limit;
 import db.sql.api.impl.cmd.struct.update.UpdateSet;
+import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
 import java.util.List;
@@ -52,8 +54,13 @@ public class SQLServerRowNumberOverPagingProcessor implements IPagingProcessor {
             orderBy = new StringBuilder("ORDER BY CURRENT_TIMESTAMP");
         }
 
-        StringBuilder sql = new StringBuilder(200);
 
+        Object offsetValue = limit.getOffset();
+        if (context.getSqlMode() != SQLMode.PRINT) {
+            offsetValue = SqlConst.PLACEHOLDER;
+        }
+
+        StringBuilder sql = new StringBuilder(200);
         sql.append("SELECT TOP ").append(limit.getLimit()).append(" ");
 
         boolean handlerSelect = false;
@@ -105,7 +112,11 @@ public class SQLServerRowNumberOverPagingProcessor implements IPagingProcessor {
         }
         sql.append(CmdUtils.join(module, query, context, new StringBuilder(), afterCmds));
         sql.append(") ").append(alias);
-        sql.append(" WHERE ").append(rnName).append(" > ").append(limit.getOffset());
+
+        if (context.getSqlMode() != SQLMode.PRINT) {
+            context.addParam(limit.getOffset());
+        }
+        sql.append(" WHERE ").append(rnName).append(" > ").append(offsetValue);
 
         return parentSQL.append(sql);
     }

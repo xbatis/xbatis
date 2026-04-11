@@ -20,6 +20,8 @@ import db.sql.api.IDbType;
 
 public final class SqlConst {
 
+    public static final String PLACEHOLDER = "?";
+
     public static final String S_EMPTY = "";
 
     public static final char[] EMPTY = S_EMPTY.toCharArray();
@@ -205,8 +207,6 @@ public final class SqlConst {
 
     public static final char[] GROUP_CONCAT = " GROUP_CONCAT".toCharArray();
 
-    public static final char[] JSON_EXTRACT = " JSON_EXTRACT".toCharArray();
-
     public static final char[] JSON_CONTAINS_PATH = " JSON_CONTAINS_PATH".toCharArray();
 
     public static final char[] JSON_CONTAINS = " JSON_CONTAINS".toCharArray();
@@ -220,6 +220,10 @@ public final class SqlConst {
     public static final char[] ST_CONTAINS = " ST_Contains".toCharArray();
 
     public static final char[] ROWNUM = " ROWNUM ".toCharArray();
+
+    public static final char[] CAST = " CAST".toCharArray();
+
+    public static final char[] JSON = "JSON".toCharArray();
 
     public static String FORCE_INDEX(IDbType dbType, String indexName) {
         if (dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.MYSQL || dbType == DbType.MARIA_DB) {
@@ -524,5 +528,14 @@ public final class SqlConst {
             return " SUBSTRING";
         }
         return " SUBSTR";
+    }
+
+    public static String JSON_EXTRACT(IDbType dbType) {
+        if (dbType == DbType.PGSQL || dbType.getDbModel() == DbModel.PGSQL) {
+            return " JSON_EXTRACT_PATH_TEXT";
+        } else if (dbType == DbType.MYSQL || dbType.getDbModel() == DbModel.MYSQL || dbType == DbType.SQLITE) {
+            return " JSON_EXTRACT";
+        }
+        return " JSON_VALUE";
     }
 }

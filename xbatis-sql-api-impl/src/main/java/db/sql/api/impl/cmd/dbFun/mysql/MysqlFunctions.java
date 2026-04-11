@@ -28,20 +28,6 @@ public class MysqlFunctions {
         this.key = key;
     }
 
-    public JsonExtract jsonExtract(String... paths) {
-        if (Objects.isNull(this.key)) {
-            throw new RuntimeException("Need set json column ?");
-        }
-        return Methods.mysqlJsonExtract(this.key, paths);
-    }
-
-    public JsonExtract jsonExtract(Cmd column, String... paths) {
-        if (Objects.isNull(column)) {
-            throw new RuntimeException("Need set distinct on key ?");
-        }
-        return Methods.mysqlJsonExtract(column, paths);
-    }
-
     public JsonContainsPath jsonContainsPath(String... paths) {
         if (Objects.isNull(this.key)) {
             throw new RuntimeException("Need set json column ?");

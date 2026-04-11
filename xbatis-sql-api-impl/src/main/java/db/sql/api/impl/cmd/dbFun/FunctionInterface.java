@@ -1337,4 +1337,23 @@ public interface FunctionInterface extends Cmd {
     default ST_Contains ST_Contains(ST_Point point) {
         return ST_Contains((Cmd) point);
     }
+
+    /**
+     * 获取json里的value
+     *
+     * @param paths，json路径，支持多个，例如 "a", "b", "c" 表示获取 json.a.b.c
+     * @return JsonExtract
+     */
+    default JsonExtract jsonExtract(String... paths) {
+        return Methods.jsonExtract(this, paths);
+    }
+
+    /**
+     * 转JSON
+     *
+     * @return ToJSON
+     */
+    default ToJSON toJSON() {
+        return Methods.toJSON(this);
+    }
 }
