@@ -58,14 +58,16 @@ import java.util.stream.Stream;
 
 public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
-    private final Map<WaitFetchInfo, Map<Object, List<Object>>> singleFetchCache = new HashMap<>();
+    private final Map<FetchInfo, Map<Object, List<Object>>> singleFetchCache = new HashMap<>();
     private final Map<Method, Map> createdEventContextMap = new HashMap<>();
     private final String FETCH_MATCH_COLUMN = "m$v";
     private final List<Object> rowValues = new ArrayList<>();
     private BasicMapper basicMapper;
-    private Map<WaitFetchInfo, List<FetchObject>> needFetchValuesMap;
+    private Map<FetchInfo, List<FetchObject>> needFetchValuesMap;
     //Fetch 信息
-    private Map<Class, List<WaitFetchInfo>> fetchInfosMap;
+    private Map<Class, List<FetchInfo>> waitFetchInfosMap;
+    private Map<Class, List<FetchInfo>> filteredFetchInfosMap;
+
     private Map<String, Consumer<Where>> fetchFilters;
     private BaseQuery<?, ?> baseQuery;
     private Map<String, Boolean> fetchEnables;
@@ -100,23 +102,40 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         this.needFetchValuesMap = new HashMap<>();
                         this.basicMapper = XbatisContextUtil.getBasicMapper(parameterObject);
 
-
-                        // 转换FetchInfo 为 WaitFetchInfo
-                        this.fetchInfosMap = new HashMap<>();
-                        resultInfo.getFetchInfoMap().forEach((key, value) -> {
-                            if (value == null || value.isEmpty()) {
-                                return;
-                            }
-                            fetchInfosMap.put(key, value.stream().map(item -> {
-                                Boolean enable;
-                                if (this.fetchEnables == null) {
-                                    enable = Boolean.FALSE;
-                                } else {
-                                    enable = this.fetchEnables.get(item.getFetchKey());
+                        if (this.fetchEnables == null || this.fetchEnables.isEmpty()) {
+                            this.waitFetchInfosMap = resultInfo.getFetchInfoMap();
+                        } else {
+                            this.waitFetchInfosMap = new HashMap<>();
+                            this.filteredFetchInfosMap = new HashMap<>();
+                            resultInfo.getFetchInfoMap().forEach((key, value) -> {
+                                if (value == null || value.isEmpty()) {
+                                    return;
                                 }
-                                return new WaitFetchInfo(enable != null && !enable, item);
-                            }).collect(Collectors.toList()));
-                        });
+                                value.stream().forEach(item -> {
+                                    Boolean enable;
+                                    if (this.fetchEnables == null) {
+                                        enable = Boolean.FALSE;
+                                    } else {
+                                        enable = this.fetchEnables.get(item.getFetchKey());
+                                    }
+                                    if (enable != null && !enable) {
+                                        List<FetchInfo> fetchInfos = filteredFetchInfosMap.get(key);
+                                        if (fetchInfos == null) {
+                                            fetchInfos = new ArrayList<>();
+                                            filteredFetchInfosMap.put(key, fetchInfos);
+                                        }
+                                        fetchInfos.add(item);
+                                    } else {
+                                        List<FetchInfo> fetchInfos = waitFetchInfosMap.get(key);
+                                        if (fetchInfos == null) {
+                                            fetchInfos = new ArrayList<>();
+                                            waitFetchInfosMap.put(key, fetchInfos);
+                                        }
+                                        fetchInfos.add(item);
+                                    }
+                                });
+                            });
+                        }
                     }
                 }
             }
@@ -313,11 +332,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, columnPrefix);
-        List<WaitFetchInfo> fetchInfos = getFetchInfo(returnType);
+        List<FetchInfo> fetchInfos = getFetchInfo(returnType);
         boolean hasFetch = false;
         if (!Objects.isNull(fetchInfos) && !fetchInfos.isEmpty()) {
             hasFetch = true;
-            rowValue = this.loadFetchValue(resultMap.getType(), new ArrayList<>(fetchInfos), rowValue, rsw.getResultSet());
+            List<FetchInfo> filteredFetchInfos = this.filteredFetchInfosMap == null ? null : this.filteredFetchInfosMap.get(returnType);
+            rowValue = this.loadFetchValue(resultMap.getType(), fetchInfos, filteredFetchInfos, rowValue, rsw.getResultSet());
         }
 
         this.putEnumValue(rowValue, rsw.getResultSet());
@@ -351,11 +371,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix, Object partialObject) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, combinedKey, columnPrefix, partialObject);
 
-        List<WaitFetchInfo> fetchInfos = getFetchInfo(resultMap.getType());
+        List<FetchInfo> fetchInfos = getFetchInfo(resultMap.getType());
         boolean hasFetch = false;
         if (!Objects.isNull(fetchInfos) && !fetchInfos.isEmpty()) {
             hasFetch = true;
-            rowValue = this.loadFetchValue(resultMap.getType(), new ArrayList<>(fetchInfos), rowValue, rsw.getResultSet());
+            List<FetchInfo> filteredFetchInfos = this.filteredFetchInfosMap == null ? null : this.filteredFetchInfosMap.get(returnType);
+            rowValue = this.loadFetchValue(resultMap.getType(), fetchInfos, filteredFetchInfos, rowValue, rsw.getResultSet());
         }
 
         this.putEnumValue(rowValue, rsw.getResultSet());
@@ -382,11 +403,11 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         this.clearObjects();
     }
 
-    private List<WaitFetchInfo> getFetchInfo(Class<?> resultType) {
-        if (Objects.isNull(fetchInfosMap) || fetchInfosMap.isEmpty()) {
+    private List<FetchInfo> getFetchInfo(Class<?> resultType) {
+        if (Objects.isNull(waitFetchInfosMap) || waitFetchInfosMap.isEmpty()) {
             return null;
         }
-        return fetchInfosMap.get(resultType);
+        return waitFetchInfosMap.get(resultType);
     }
 
     /**
@@ -443,21 +464,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         return cacheKey;
     }
 
-    public Object loadFetchValue(Class<?> resultType, List<WaitFetchInfo> fetchInfos, Object rowValue, ResultSet resultSet) {
-        //移除已禁用的Fetch
-        if (Objects.nonNull(fetchEnables)) {
-            Iterator<WaitFetchInfo> it = fetchInfos.iterator();
-            while (it.hasNext()) {
-                WaitFetchInfo waitFetchInfo = it.next();
-                if (waitFetchInfo.isFiltered()) {
-                    waitFetchInfo.getFetchInfo().setValue(rowValue, null, this.defaultValueContext);
-                    it.remove();
-                }
-            }
-        }
-
-        for (WaitFetchInfo waitFetchInfo : fetchInfos) {
-            FetchInfo fetchInfo = waitFetchInfo.getFetchInfo();
+    public Object loadFetchValue(Class<?> resultType, List<FetchInfo> fetchInfos, List<FetchInfo> filteredFetchInfos, Object rowValue, ResultSet resultSet) {
+        for (FetchInfo fetchInfo : fetchInfos) {
             Object onValue = this.getFetchOnValue(fetchInfo, resultSet);
             if (Objects.isNull(onValue)) {
                 continue;
@@ -470,7 +478,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             String cacheKey = null;
             FetchCache fetchCache = XbatisGlobalConfig.getFetchCache();
             if (fetchCache != null && !fetchInfo.getFetch().cacheName().isEmpty()) {
-                String fetchKey = waitFetchInfo.getFetchInfo().getFetchKey();
+                String fetchKey = fetchInfo.getFetchKey();
                 cacheKey = this.buildFetchCacheKey(onValue, fetchKey);
                 Object cacheValue = fetchCache.get(fetchInfo.getFetch().cacheName(), fetchInfo.getFetch(), fetchInfo.getFieldInfo(), cacheKey);
                 if (Objects.nonNull(cacheValue)) {
@@ -483,9 +491,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
 
             if (fetchInfo.isSingleFetch()) {
-                this.singleConditionFetch(rowValue, waitFetchInfo, onValue, cacheKey);
+                this.singleConditionFetch(rowValue, fetchInfo, onValue, cacheKey);
             } else {
-                List fetchObjectList = MapUtil.computeIfAbsent(needFetchValuesMap, waitFetchInfo, key -> new ArrayList<>());
+                List fetchObjectList = MapUtil.computeIfAbsent(needFetchValuesMap, fetchInfo, key -> new ArrayList<>());
                 if (fetchInfo.getFetch().propertyType() != FetchPropertyType.SIMPLE) {
                     List values = (List) getFinalMatchValue(fetchInfo, onValue);
                     if (values == null) {
@@ -497,6 +505,11 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 }
             }
         }
+        if (rowValue != null && filteredFetchInfos != null && !filteredFetchInfos.isEmpty()) {
+            for (FetchInfo fetchInfo : filteredFetchInfos) {
+                setToFetchValue(rowValue, null, fetchInfo, null);
+            }
+        }
         return rowValue;
     }
 
@@ -504,8 +517,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.isNull(this.needFetchValuesMap) || this.needFetchValuesMap.isEmpty()) {
             return;
         }
-        for (Map.Entry<WaitFetchInfo, List<FetchObject>> entry : needFetchValuesMap.entrySet()) {
-            FetchInfo fetchInfo = entry.getKey().getFetchInfo();
+        for (Map.Entry<FetchInfo, List<FetchObject>> entry : needFetchValuesMap.entrySet()) {
             List<FetchObject> fetchObjects = entry.getValue();
             Set values = new HashSet();
             for (FetchObject fetchObject : fetchObjects) {
@@ -516,11 +528,11 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 }
             }
             List<?> list = this.fetchData(entry.getKey(), (List) values.stream().collect(Collectors.toList()), false, null);
-            this.fillFetchData(fetchInfo, fetchObjects, list);
+            this.fillFetchData(entry.getKey(), fetchObjects, list);
         }
     }
 
-    private List<Object> fetchData(WaitFetchInfo waitFetchInfo, Query<?> query, List<Serializable> queryValueList) {
+    private List<Object> fetchData(FetchInfo fetchInfo, Query<?> query, List<Serializable> queryValueList) {
         if (queryValueList.isEmpty()) {
             return new ArrayList();
         }
@@ -528,7 +540,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             query.$where().getConditionChain().getConditionBlocks().clear();
         }
 
-        FetchInfo fetchInfo = waitFetchInfo.getFetchInfo();
         if (queryValueList.size() == 1) {
             if (fetchInfo.getFetch().limit() > 0 && !fetchInfo.getFetch().memoryLimit()) {
                 query.limit(fetchInfo.getFetch().limit());
@@ -548,7 +559,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         }
 
-        String fetchKey = waitFetchInfo.getFetchInfo().getFetchKey();
+        String fetchKey = fetchInfo.getFetchKey();
         if (baseQuery != null) {
             query.setFetchEnables(fetchEnables);
             query.setFetchFilters(fetchFilters);
@@ -620,11 +631,11 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         });
     }
 
-    protected List<Object> fetchData(WaitFetchInfo waitFetchInfo, List conditionList, boolean single, Consumer<Query> queryConsumer) {
+    protected List<Object> fetchData(FetchInfo fetchInfo, List conditionList, boolean single, Consumer<Query> queryConsumer) {
         if (conditionList.isEmpty()) {
             return new ArrayList();
         }
-        FetchInfo fetchInfo = waitFetchInfo.getFetchInfo();
+
         int batchSize = XbatisGlobalConfig.getFetchInBatchSize();
         List queryValueList = new ArrayList<>(batchSize);
         Query<?> query = Query.create().returnType(fetchInfo.getReturnType());
@@ -673,7 +684,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         if (conditionList.size() < batchSize) {
             //无需 分批次查
-            return fetchData(waitFetchInfo, query, (List<Serializable>) conditionList);
+            return fetchData(fetchInfo, query, (List<Serializable>) conditionList);
         }
 
         List<Object> resultList = new ArrayList<>(conditionList.size());
@@ -682,7 +693,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             queryValueList.add(conditionList.get(i));
             if ((i + 1) % batchSize == 0) {
                 //达到单次查询
-                List<Object> list = fetchData(waitFetchInfo, query, (List<Serializable>) queryValueList);
+                List<Object> list = fetchData(fetchInfo, query, (List<Serializable>) queryValueList);
                 queryValueList.clear();
                 if (!list.isEmpty()) {
                     resultList.addAll(list);
@@ -695,7 +706,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         //还有没查询的 继续查询
-        List<Object> list = fetchData(waitFetchInfo, query, (List<Serializable>) queryValueList);
+        List<Object> list = fetchData(fetchInfo, query, (List<Serializable>) queryValueList);
         queryValueList.clear();
         if (!list.isEmpty()) {
             resultList.addAll(list);
@@ -703,24 +714,24 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         return resultList;
     }
 
-    public void singleConditionFetch(Object rowValue, WaitFetchInfo waitFetchInfo, Object onValue, String cacheKey) {
+    public void singleConditionFetch(Object rowValue, FetchInfo fetchInfo, Object onValue, String cacheKey) {
         List<Object> list;
         if (Objects.nonNull(onValue)) {
             if (onValue instanceof List) {
                 final List values = (List) onValue;
-                list = singleFetchCache.computeIfAbsent(waitFetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> {
-                    return this.fetchData(waitFetchInfo, values, true, null);
+                list = singleFetchCache.computeIfAbsent(fetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> {
+                    return this.fetchData(fetchInfo, values, true, null);
                 });
             } else {
                 final List values = Collections.singletonList(onValue);
-                list = singleFetchCache.computeIfAbsent(waitFetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> {
-                    return this.fetchData(waitFetchInfo, values, true, null);
+                list = singleFetchCache.computeIfAbsent(fetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> {
+                    return this.fetchData(fetchInfo, values, true, null);
                 });
             }
         } else {
             list = new ArrayList<>();
         }
-        this.setToFetchValue(rowValue, list, waitFetchInfo.getFetchInfo(), cacheKey);
+        this.setToFetchValue(rowValue, list, fetchInfo, cacheKey);
     }
 
     protected void setToFetchValue(Object rowValue, List<?> matchValues, FetchInfo fetchInfo, String cacheKey) {
