@@ -21,6 +21,7 @@ import cn.xbatis.db.annotations.Fetch;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.Table;
 import db.sql.api.cmd.ICmdFactory;
+import db.sql.api.impl.tookit.FetchKeyUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
@@ -33,6 +34,8 @@ import java.util.*;
 @Data
 @EqualsAndHashCode
 public class FetchInfo {
+
+    private final String fetchKey;
 
     private final FieldInfo fieldInfo;
 
@@ -79,7 +82,7 @@ public class FetchInfo {
     private final Comparator<?> comparator;
 
     public FetchInfo(Class clazz, FieldInfo fieldInfo, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler) {
-
+        this.fetchKey = FetchKeyUtil.getFetchKey(clazz, fieldInfo.getField());
         this.fieldInfo = fieldInfo;
         this.fetch = fetch;
         this.writeFieldInvoker = new SetFieldInvoker(fieldInfo.getField());

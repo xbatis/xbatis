@@ -38,6 +38,7 @@ import db.sql.api.impl.cmd.struct.ext.In;
 import db.sql.api.impl.cmd.struct.ext.NotExists;
 import db.sql.api.impl.cmd.struct.ext.NotIn;
 import db.sql.api.impl.cmd.struct.query.*;
+import db.sql.api.impl.tookit.FetchKeyUtil;
 import db.sql.api.impl.tookit.QuerySQLUtil;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
@@ -162,7 +163,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     @Override
     public <T> SELF fetchFilter(Getter<T> getter, Consumer<Where> where) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
-        String key = lambdaFieldInfo.getType().getName() + "." + lambdaFieldInfo.getName();
+        String key = FetchKeyUtil.getFetchKey(lambdaFieldInfo);
         if (Objects.isNull(fetchFilters)) {
             this.fetchFilters = new HashMap<>();
         }
@@ -173,7 +174,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     @Override
     public <T> SELF fetchEnable(Getter<T> getter, Boolean enable) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
-        String key = lambdaFieldInfo.getType().getName() + "." + lambdaFieldInfo.getName();
+        String key = FetchKeyUtil.getFetchKey(lambdaFieldInfo);
         if (Objects.isNull(fetchEnables)) {
             this.fetchEnables = new HashMap<>();
         }

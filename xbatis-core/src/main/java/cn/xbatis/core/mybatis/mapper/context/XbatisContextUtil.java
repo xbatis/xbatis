@@ -23,6 +23,18 @@ import java.util.Map;
 
 public class XbatisContextUtil {
 
+    public static boolean isCmdCountFromQueryContext(Object parameterObject) {
+        if (parameterObject instanceof SQLCmdCountFromQueryContext) {
+            return true;
+        }
+        if (parameterObject instanceof Map) {
+            Map parameterMap = (Map) parameterObject;
+            Boolean isCmdCountFromQueryContext = (Boolean) parameterMap.get("cmdCountFromQueryContext");
+            return isCmdCountFromQueryContext != null && isCmdCountFromQueryContext;
+        }
+        return false;
+    }
+
     public static BaseQuery<?, ?> getQueryExecution(Object parameterObject) {
         Executor executor = getExecution(parameterObject);
         if (executor instanceof BaseQuery) {

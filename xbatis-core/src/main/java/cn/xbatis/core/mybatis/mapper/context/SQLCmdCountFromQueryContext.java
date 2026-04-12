@@ -24,6 +24,9 @@ import java.util.Objects;
 
 public class SQLCmdCountFromQueryContext extends SQLCmdQueryContext {
 
+    public boolean isCmdCountFromQueryContext() {
+        return true;
+    }
 
     public SQLCmdCountFromQueryContext(BaseQuery execution) {
         super(execution);
