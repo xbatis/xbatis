@@ -27,17 +27,17 @@ public class EntityUtil {
 
     private static final Map<String, Getter> CACHE = new ConcurrentHashMap<>();
 
-    public <T> Getter<T> createGetter(Class<T> clazz,String fieldName){
-        String cacheKey =clazz.getName()+"."+fieldName;
+    public <T> Getter<T> createGetter(Class<T> clazz, String fieldName) {
+        String cacheKey = clazz.getName() + "." + fieldName;
         Getter getter = CACHE.get(cacheKey);
-        if(getter != null){
+        if (getter != null) {
             return getter;
         }
         TableInfo tableInfo = Tables.get(clazz);
-        TableFieldInfo tableFieldInfo=tableInfo.getFieldInfo(fieldName);
+        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldName);
         if (tableFieldInfo == null) {
             return null;
         }
-        return CACHE.computeIfAbsent(cacheKey,key->LambdaUtil.createGetterByField(clazz,fieldName,tableFieldInfo.getField().getType()));
+        return CACHE.computeIfAbsent(cacheKey, key -> LambdaUtil.createGetterByField(clazz, fieldName, tableFieldInfo.getField().getType()));
     }
 }

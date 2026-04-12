@@ -183,6 +183,10 @@ public final class LambdaUtil {
         }
     }
 
+    public static void main(String[] args) {
+        System.out.println();
+    }
+
     public static class LambdaFieldInfo<T> {
 
         private final Class<T> type;
@@ -200,10 +204,6 @@ public final class LambdaUtil {
         public String getName() {
             return name;
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println();
     }
 
 }

@@ -55,7 +55,7 @@ public class PagehelperTest extends BaseTest {
     @Test
     public void test() {
         if (TestDataSource.DB_TYPE != DbType.H2) {
-            return ;
+            return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             List<SysUser> list;
