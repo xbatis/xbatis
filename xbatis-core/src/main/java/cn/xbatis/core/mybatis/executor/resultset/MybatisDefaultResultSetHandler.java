@@ -309,7 +309,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 List<String> columns = rsw.getColumnNames();
                 hasFetchMatchColumn = columns.contains(FETCH_MATCH_COLUMN);
                 if (!hasFetchMatchColumn) {
-                    hasFetchMatchColumn = columns.contains(FETCH_MATCH_COLUMN.toUpperCase());
+                    hasFetchMatchColumn = columns.contains(getUpperCase(FETCH_MATCH_COLUMN));
                 }
             }
             if (hasFetchMatchColumn) {

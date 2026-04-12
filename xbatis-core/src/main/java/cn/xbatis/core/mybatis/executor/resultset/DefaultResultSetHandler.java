@@ -452,7 +452,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         }
     }
 
-    private String getUpperCase(String column) {
+    protected String getUpperCase(String column) {
         return upperCaseColumnCache.computeIfAbsent(column, k -> k.toUpperCase(Locale.ENGLISH));
     }
 
