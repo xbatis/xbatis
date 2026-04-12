@@ -416,13 +416,23 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         return cacheKey;
     }
 
+    /**
+     * 构建
+     *
+     * @param fetchInfo
+     * @return fetch的唯一标志字符串
+     */
+    public String buildFetchKey(FetchInfo fetchInfo) {
+        return fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getFieldInfo().getField().getName();
+    }
+
     public Object loadFetchValue(Class<?> resultType, List<FetchInfo> fetchInfos, Object rowValue, ResultSet resultSet) {
         //移除已禁用的Fetch
         if (Objects.nonNull(fetchEnables)) {
             Iterator<FetchInfo> it = fetchInfos.iterator();
             while (it.hasNext()) {
                 FetchInfo fetchInfo = it.next();
-                String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getFieldInfo().getField().getName();
+                String fetchKey = this.buildFetchKey(fetchInfo);
                 Boolean fetchEnable = fetchEnables.get(fetchKey);
                 if (fetchEnable != null && !fetchEnable.booleanValue()) {
                     fetchInfo.setValue(rowValue, null, this.defaultValueContext);
@@ -444,7 +454,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             String cacheKey = null;
             FetchCache fetchCache = XbatisGlobalConfig.getFetchCache();
             if (fetchCache != null && !fetchInfo.getFetch().cacheName().isEmpty()) {
-                String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getFieldInfo().getField().getName();
+                String fetchKey = this.buildFetchKey(fetchInfo);
                 cacheKey = this.buildFetchCacheKey(onValue, fetchKey);
                 Object cacheValue = fetchCache.get(fetchInfo.getFetch().cacheName(), fetchInfo.getFetch(), fetchInfo.getFieldInfo(), cacheKey);
                 if (Objects.nonNull(cacheValue)) {
@@ -521,9 +531,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         }
 
-        String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getFieldInfo().getField().getName();
-
-
+        String fetchKey = this.buildFetchKey(fetchInfo);
         if (baseQuery != null) {
             query.setFetchEnables(fetchEnables);
             query.setFetchFilters(fetchFilters);
