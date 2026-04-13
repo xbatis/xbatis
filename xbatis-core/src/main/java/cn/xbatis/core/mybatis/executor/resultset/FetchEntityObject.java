@@ -14,26 +14,27 @@
 
 package cn.xbatis.core.mybatis.executor.resultset;
 
+import cn.xbatis.core.db.reflect.FetchInfo;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.util.List;
+
 
 @Data
-public class FetchObject {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class FetchEntityObject extends FetchObject {
 
-    private final Object matchValue;
+    private final List<FetchInfo> fetchInfos;
 
-    private final Object value;
-
-    private final String cacheKey;
-
-    protected FetchObject() {
-        this.matchValue = null;
-        this.value = null;
-        this.cacheKey = null;
+    public FetchEntityObject(Object matchValue, Object value, List<FetchInfo> fetchInfos, String cacheKey) {
+        super(matchValue, value, cacheKey);
+        this.fetchInfos = fetchInfos;
     }
 
-    public FetchObject(Object matchValue, Object value, String cacheKey) {
-        this.matchValue = matchValue;
-        this.value = value;
-        this.cacheKey = cacheKey;
+    public List<FetchInfo> getFetchInfos() {
+        return fetchInfos;
     }
 }

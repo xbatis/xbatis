@@ -57,6 +57,8 @@ public class FetchInfo {
 
     private final String targetSelect;
 
+    private final TableFieldInfo targetSelectTableFieldInfo;
+
     private final String targetOrderBy;
 
     private final String otherConditions;
@@ -101,6 +103,24 @@ public class FetchInfo {
         this.targetTableFieldInfo = (TableFieldInfo) objs[1];
 
         this.targetSelect = parseDynamicColumn(clazz, fieldInfo.getField(), middleTableInfo, targetTableInfo, "@Fetch", "targetSelectProperty", fetch.targetSelectProperty());
+
+        if (!fetch.targetSelectProperty().isEmpty()) {
+            this.targetSelectTableFieldInfo = targetTableInfo.getFieldInfo(fetch.targetSelectProperty());
+            if (this.targetSelectTableFieldInfo == null && !fetch.mergeGroup().isEmpty()) {
+                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "middleTargetProperty", " when open mergeGroup, targetSelectProperty must be entity field name");
+            }
+        } else {
+            this.targetSelectTableFieldInfo = null;
+        }
+
+        if (!fetch.mergeGroup().isEmpty()) {
+            if (this.targetSelectTableFieldInfo == null) {
+                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "targetSelectProperty", " when open mergeGroup, targetSelectProperty must be not empty");
+            }
+            if (!fetch.cacheName().isEmpty()) {
+                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "cacheName", " when open mergeGroup, cacheName must be empty, because not support cache now");
+            }
+        }
 
         this.targetOrderBy = parseOrderByColumn(clazz, fieldInfo.getField(), middleTableInfo, targetTableInfo, "@Fetch", "orderBy", fetch.orderBy());
 
@@ -398,6 +418,10 @@ public class FetchInfo {
             throw new RuntimeException(e);
         }
         return value;
+    }
+
+    public TableFieldInfo getTargetSelectTableFieldInfo() {
+        return targetSelectTableFieldInfo;
     }
 
     public Object getFieldValue(Object object) {

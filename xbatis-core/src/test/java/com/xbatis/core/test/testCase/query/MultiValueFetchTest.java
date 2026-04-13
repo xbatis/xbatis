@@ -20,6 +20,7 @@ import com.xbatis.core.test.DO.FetchAddr;
 import com.xbatis.core.test.mapper.FetchAddrMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import com.xbatis.core.test.vo.FetchAddrMergeVo;
 import com.xbatis.core.test.vo.FetchAddrVo;
 import db.sql.api.DbModel;
 import db.sql.api.DbType;
@@ -105,6 +106,40 @@ public class MultiValueFetchTest extends BaseTest {
                     .list();
 
             System.out.println(list);
+        }
+    }
+
+
+    @Test
+    public void fetchMultiMerge() {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            FetchAddrMapper mapper = session.getMapper(FetchAddrMapper.class);
+
+            List<FetchAddrMergeVo> list = QueryChain.of(mapper)
+                    .returnType(FetchAddrMergeVo.class)
+                    .list();
+
+            System.out.println(list);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+            assertEquals(list.get(2).getId(), 3);
+
+            assertEquals(list.get(0).getAddrs3(), Arrays.asList(1, 4, 1));
+            assertEquals(list.get(1).getAddrs3(), Arrays.asList(5, 1));
+            assertEquals(list.get(2).getAddrs3(), Arrays.asList(2));
+
+            assertEquals(3, list.size());
+            assertEquals(list.get(0).getNames(), Arrays.asList("江西", "南昌"));
+            assertEquals(list.get(1).getNames(), Arrays.asList("南昌", "章贡区"));
+            assertEquals(list.get(2).getNames(), Arrays.asList("江西", "兴国县"));
+
+
+            assertEquals(list.get(0).getIds(), Arrays.asList(1, 2));
+            assertEquals(list.get(1).getIds(), Arrays.asList(2, 4));
+            assertEquals(list.get(2).getIds(), Arrays.asList(1, 6));
         }
     }
 }

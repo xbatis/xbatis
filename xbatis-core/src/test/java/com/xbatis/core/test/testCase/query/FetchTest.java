@@ -41,8 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FetchTest extends BaseTest {
 
@@ -558,4 +557,92 @@ public class FetchTest extends BaseTest {
             assertEquals(list.get(0).getSysUsers().get(1).getId(), 3);
         }
     }
+
+    @Test
+    public void fetchMergeTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper mapper = session.getMapper(SysUserMapper.class);
+            QueryChain<FetchMergeSysUserVo> queryChain = QueryChain.of(mapper)
+                    .returnType(FetchMergeSysUserVo.class);
+
+            List<FetchMergeSysUserVo> list = queryChain.list();
+            System.out.println(list);
+
+
+            assertEquals(list.get(0).getRoleId(), null);
+            assertEquals(list.get(0).getRoleName(), null);
+
+            if (list.get(0).getRoleId() != null) {
+                assertNotNull(list.get(0).getRoleCreateTime());
+            }
+
+            assertEquals(list.get(1).getRoleId(), 1);
+            assertEquals(list.get(1).getRoleName(), "测试");
+
+            if (list.get(1).getRoleId() != null) {
+                assertNotNull(list.get(1).getRoleCreateTime());
+            }
+
+            assertEquals(list.get(2).getRoleId(), 1);
+            assertEquals(list.get(2).getRoleName(), "测试");
+
+            if (list.get(2).getRoleId() != null) {
+                assertNotNull(list.get(2).getRoleCreateTime());
+            }
+
+        }
+    }
+
+    @Test
+    public void fetchMerge2Test() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper mapper = session.getMapper(SysUserMapper.class);
+            QueryChain<FetchMerge2SysUserVo> queryChain = QueryChain.of(mapper)
+                    .returnType(FetchMerge2SysUserVo.class);
+
+            List<FetchMerge2SysUserVo> list = queryChain.list();
+            System.out.println(list);
+
+
+            assertEquals(list.get(0).getRoleId(), null);
+            assertEquals(list.get(0).getRoleName(), null);
+
+            if (list.get(0).getRoleId() != null) {
+                assertNotNull(list.get(0).getRoleCreateTime());
+            }
+
+            assertEquals(list.get(1).getRoleId(), 1);
+            assertEquals(list.get(1).getRoleName(), "测试");
+
+            if (list.get(1).getRoleId() != null) {
+                assertNotNull(list.get(1).getRoleCreateTime());
+            }
+
+            assertEquals(list.get(2).getRoleId(), 1);
+            assertEquals(list.get(2).getRoleName(), "测试");
+
+            if (list.get(2).getRoleId() != null) {
+                assertNotNull(list.get(2).getRoleCreateTime());
+            }
+
+        }
+    }
+
+
+    @Test
+    public void fetchMutiByMergePropertyTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<MutiFetchMergeSysUserVo> list = QueryChain.of(sysUserMapper)
+                    .select(MutiFetchMergeSysUserVo.class)
+                    .from(SysUser.class)
+                    .returnType(MutiFetchMergeSysUserVo.class)
+                    .list();
+            System.out.println(list);
+            assertEquals(Integer.valueOf(1), list.get(1).getSysRoleIds().get(0));
+            assertEquals("测试", list.get(1).getSysRoleNames().get(0));
+            assertEquals(Integer.valueOf(1), list.get(1).getSysRoleIds().size());
+        }
+    }
+
 }
