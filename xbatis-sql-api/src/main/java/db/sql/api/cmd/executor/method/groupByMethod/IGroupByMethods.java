@@ -48,7 +48,7 @@ public interface IGroupByMethods<SELF extends IGroupByMethods,
 
     SELF groupBy(String columnName);
 
-    SELF groupBy(String columnName, Function<IDatasetField, Cmd> f);
+    SELF groupBy(String columnName, Function<IDatasetField<?>, Cmd> f);
 
     default SELF groupBy(boolean when, String columnName) {
         if (!when) {
@@ -57,7 +57,7 @@ public interface IGroupByMethods<SELF extends IGroupByMethods,
         return this.groupBy(columnName);
     }
 
-    default SELF groupBy(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF groupBy(boolean when, String columnName, Function<IDatasetField<?>, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }

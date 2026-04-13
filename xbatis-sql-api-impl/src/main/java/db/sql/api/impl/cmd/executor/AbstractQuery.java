@@ -309,7 +309,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
 
     @Override
-    public SELF select(String columnName, Function<IDatasetField, Cmd> f) {
+    public SELF select(String columnName, Function<IDatasetField<?>, Cmd> f) {
         return this.select(f.apply(Methods.column(columnName)));
     }
 
@@ -746,7 +746,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF groupBy(String columnName, Function<IDatasetField, Cmd> f) {
+    public SELF groupBy(String columnName, Function<IDatasetField<?>, Cmd> f) {
         return this.groupBy(f.apply(Methods.column(columnName)));
     }
 
@@ -993,7 +993,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF orderBy(IOrderByDirection orderByDirection, String columnName, Function<IDatasetField, Cmd> f) {
+    public SELF orderBy(IOrderByDirection orderByDirection, String columnName, Function<IDatasetField<?>, Cmd> f) {
         if (Objects.isNull(f)) {
             return this.orderBy(orderByDirection, Methods.column(columnName));
         }

@@ -101,33 +101,33 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
         return this.orderBy(descOrderByDirection(), columnName);
     }
 
-    default SELF orderBy(String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF orderBy(String columnName, Function<IDatasetField<?>, Cmd> f) {
         return this.orderBy(ascOrderByDirection(), columnName, f);
     }
 
-    default SELF orderByAsc(String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF orderByAsc(String columnName, Function<IDatasetField<?>, Cmd> f) {
         return this.orderBy(ascOrderByDirection(), columnName, f);
     }
 
-    default SELF orderByDesc(String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF orderByDesc(String columnName, Function<IDatasetField<?>, Cmd> f) {
         return this.orderBy(descOrderByDirection(), columnName, f);
     }
 
-    default SELF orderBy(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF orderBy(boolean when, String columnName, Function<IDatasetField<?>, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
         return this.orderBy(ascOrderByDirection(), columnName, f);
     }
 
-    default SELF orderByAsc(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF orderByAsc(boolean when, String columnName, Function<IDatasetField<?>, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
         return this.orderBy(ascOrderByDirection(), columnName, f);
     }
 
-    default SELF orderByDesc(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF orderByDesc(boolean when, String columnName, Function<IDatasetField<?>, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
@@ -136,7 +136,7 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
 
     SELF orderBy(IOrderByDirection orderByDirection, String columnName);
 
-    SELF orderBy(IOrderByDirection orderByDirection, String columnName, Function<IDatasetField, Cmd> f);
+    SELF orderBy(IOrderByDirection orderByDirection, String columnName, Function<IDatasetField<?>, Cmd> f);
 
     @Override
     @SuppressWarnings("unchecked")
@@ -154,7 +154,7 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
         return this.orderBy(orderByDirection, columnName);
     }
 
-    default SELF orderBy(boolean when, IOrderByDirection orderByDirection, String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF orderBy(boolean when, IOrderByDirection orderByDirection, String columnName, Function<IDatasetField<?>, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }

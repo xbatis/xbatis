@@ -47,7 +47,7 @@ public interface ISelectMethods<SELF extends ISelectMethods,
 
     SELF select(String columnName);
 
-    SELF select(String columnName, Function<IDatasetField, Cmd> f);
+    SELF select(String columnName, Function<IDatasetField<?>, Cmd> f);
 
     default SELF select(boolean when, String columnName) {
         if (!when) {
@@ -56,7 +56,7 @@ public interface ISelectMethods<SELF extends ISelectMethods,
         return this.select(columnName);
     }
 
-    default SELF select(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF select(boolean when, String columnName, Function<IDatasetField<?>, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
