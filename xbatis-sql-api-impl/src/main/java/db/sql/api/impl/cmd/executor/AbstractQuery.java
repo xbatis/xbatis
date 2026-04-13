@@ -164,6 +164,12 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     public <T> SELF fetchFilter(Getter<T> getter, Consumer<Where> where) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
         String key = FetchKeyUtil.getFetchKey(lambdaFieldInfo);
+        return fetchFilter(key, where);
+    }
+
+    @Override
+    public SELF fetchFilter(String mergeGroup, Consumer<Where> where) {
+        String key = mergeGroup;
         if (Objects.isNull(fetchFilters)) {
             this.fetchFilters = new HashMap<>();
         }
@@ -175,6 +181,12 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     public <T> SELF fetchEnable(Getter<T> getter, Boolean enable) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
         String key = FetchKeyUtil.getFetchKey(lambdaFieldInfo);
+        return fetchEnable(key, enable);
+    }
+
+    @Override
+    public SELF fetchEnable(String mergeGroup, Boolean enable) {
+        String key = mergeGroup;
         if (Objects.isNull(fetchEnables)) {
             this.fetchEnables = new HashMap<>();
         }

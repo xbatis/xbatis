@@ -97,6 +97,10 @@ public interface IQuery<SELF extends IQuery
 
     <T> SELF fetchFilter(Getter<T> getter, Consumer<WHERE> where);
 
+    SELF fetchEnable(String mergeGroup, Boolean enable);
+
+    SELF fetchFilter(String mergeGroup, Consumer<WHERE> where);
+
     @Override
     default SELF with(IWithQuery... withQuerys) {
         for (IWithQuery withQuery : withQuerys) {

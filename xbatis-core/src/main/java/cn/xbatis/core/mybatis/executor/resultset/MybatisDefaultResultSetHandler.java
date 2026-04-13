@@ -118,6 +118,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                                     } else {
                                         enable = this.fetchEnables.get(item.getFetchKey());
                                     }
+                                    if ((enable == null || enable) && !item.getFetch().mergeGroup().isEmpty()) {
+                                        enable = this.fetchEnables.get(item.getFetch().mergeGroup());
+                                    }
                                     if (enable != null && !enable) {
                                         List<FetchInfo> fetchInfos = filteredFetchInfosMap.get(key);
                                         if (fetchInfos == null) {
@@ -443,25 +446,55 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
      * 构建缓存key
      *
      * @param onValue
-     * @param fetchKey
-     * @return
+     * @param mainFetchInfo 主FetchInfo
+     * @param mergeGroupFetchInfos 分组FetchInfos
+     * @return 缓存key
      */
-    public String buildFetchCacheKey(Object onValue, String fetchKey) {
+    public String buildFetchCacheKey(Object onValue, FetchInfo mainFetchInfo, List<FetchInfo> mergeGroupFetchInfos) {
         String cacheKey = null;
         if (fetchFilters != null) {
             Where where = WhereUtil.create();
-            Consumer<Where> fetchFilter = this.fetchFilters.get(fetchKey);
-            if (fetchFilter != null) {
-                fetchFilter.accept(where);
-                if (where.hasContent()) {
-                    cacheKey = onValue + "-" + SQLPrinter.sql(dbType, where);
-                }
+            this.appendWhereConditions(where, mainFetchInfo, mergeGroupFetchInfos);
+            if (where.hasContent()) {
+                cacheKey = onValue + "-" + SQLPrinter.sql(dbType, where);
             }
         }
         if (cacheKey == null && onValue != null) {
             cacheKey = onValue.toString();
         }
         return cacheKey;
+    }
+
+    /**
+     * 拼接where
+     *
+     * @param mainFetchInfo        主FetchInfo
+     * @param mergeGroupFetchInfos 分组FetchInfos
+     *
+     */
+    public void appendWhereConditions(Where where, FetchInfo mainFetchInfo, List<FetchInfo> mergeGroupFetchInfos) {
+        if (fetchFilters != null) {
+            Consumer<Where> fetchFilter;
+            if (mergeGroupFetchInfos != null) {
+                for (FetchInfo fetchInfo : mergeGroupFetchInfos) {
+                    fetchFilter = this.fetchFilters.get(fetchInfo.getFetchKey());
+                    if (fetchFilter != null) {
+                        fetchFilter.accept(where);
+                    }
+                }
+            } else {
+                fetchFilter = this.fetchFilters.get(mainFetchInfo.getFetchKey());
+                if (fetchFilter != null) {
+                    fetchFilter.accept(where);
+                }
+            }
+            if (!mainFetchInfo.getFetch().mergeGroup().isEmpty()) {
+                fetchFilter = this.fetchFilters.get(mainFetchInfo.getFetch().mergeGroup());
+                if (fetchFilter != null) {
+                    fetchFilter.accept(where);
+                }
+            }
+        }
     }
 
     public Object loadFetchValue(Class<?> resultType, List<FetchInfo> fetchInfos, List<FetchInfo> filteredFetchInfos, Object rowValue, ResultSet resultSet) {
@@ -497,8 +530,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             String cacheKey = null;
             FetchCache fetchCache = XbatisGlobalConfig.getFetchCache();
             if (fetchCache != null && !fetchInfo.getFetch().cacheName().isEmpty()) {
-                String fetchKey = fetchInfo.getFetchKey();
-                cacheKey = this.buildFetchCacheKey(onValue, fetchKey);
+                cacheKey = this.buildFetchCacheKey(onValue, fetchInfo, null);
                 Object cacheValue = fetchCache.get(fetchInfo.getFetch().cacheName(), fetchInfo.getFetch(), fetchInfo.getFieldInfo(), cacheKey);
                 if (Objects.nonNull(cacheValue)) {
                     if (cacheValue instanceof cn.xbatis.core.cache.NULL) {
@@ -547,8 +579,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 String cacheKey = null;
                 FetchCache fetchCache = XbatisGlobalConfig.getFetchCache();
                 if (fetchCache != null && !fetchInfo.getFetch().cacheName().isEmpty()) {
-                    String fetchKey = fetchInfo.getFetchKey();
-                    cacheKey = this.buildFetchCacheKey(onValue, fetchKey);
+                    cacheKey = this.buildFetchCacheKey(onValue, fetchInfo, entry.getValue());
                     Object cacheValue = fetchCache.get(fetchInfo.getFetch().cacheName(), fetchInfo.getFetch(), fetchInfo.getFieldInfo(), cacheKey);
                     if (Objects.nonNull(cacheValue)) {
                         if (cacheValue instanceof cn.xbatis.core.cache.NULL) {
@@ -599,23 +630,27 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
 
             FetchObject fetchObject = entry.getValue().get(0);
+            List<FetchInfo> mergeGroupFetchInfos;
+            if (fetchObject instanceof FetchEntityObject) {
+                FetchEntityObject fetchEntityObject = (FetchEntityObject) fetchObject;
+                mergeGroupFetchInfos = fetchEntityObject.getFetchInfos();
+            } else {
+                mergeGroupFetchInfos = null;
+            }
 
-            List<?> list = this.fetchData(entry.getKey(), (List) values.stream().collect(Collectors.toList()), false, query -> {
-                if (fetchObject instanceof FetchEntityObject) {
-                    FetchEntityObject fetchEntityObject = (FetchEntityObject) fetchObject;
-                    for (int i = 0; i < fetchEntityObject.getFetchInfos().size(); i++) {
-                        FetchInfo f = fetchEntityObject.getFetchInfos().get(i);
-                        query.select(f.getTargetSelect());
+            List<?> list = this.fetchData(entry.getKey(), (List) values.stream().collect(Collectors.toList()), false, mergeGroupFetchInfos, query -> {
+                if (mergeGroupFetchInfos != null) {
+                    for (FetchInfo fetchInfo : mergeGroupFetchInfos) {
+                        query.select(fetchInfo.getTargetSelect());
                     }
-                    query.returnType(fetchEntityObject.getFetchInfos().get(0).getTargetTableInfo().getType());
-
+                    query.returnType(mergeGroupFetchInfos.get(0).getTargetTableInfo().getType());
                 }
             });
             this.fillFetchData(entry.getKey(), fetchObjects, list);
         }
     }
 
-    private List<Object> fetchData(FetchInfo fetchInfo, Query<?> query, List<Serializable> queryValueList) {
+    private List<Object> fetchData(FetchInfo fetchInfo, Query<?> query, List<Serializable> queryValueList, List<FetchInfo> mergeGroupFetchInfos) {
         if (queryValueList.isEmpty()) {
             return new ArrayList();
         }
@@ -642,7 +677,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         }
 
-        String fetchKey = fetchInfo.getFetchKey();
         if (baseQuery != null) {
             query.setFetchEnables(fetchEnables);
             query.setFetchFilters(fetchFilters);
@@ -650,13 +684,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             if (baseQuery.isEnableLog() && (baseQuery.getLogger() != null && !baseQuery.getLogger().isEmpty())) {
                 query.log(baseQuery.getLogger() + ".$" + fetchInfo.getFieldInfo().getField().getName());
             }
-
-            if (!Objects.isNull(fetchFilters)) {
-                Consumer<Where> consumer = fetchFilters.get(fetchKey);
-                if (consumer != null) {
-                    consumer.accept(query.$where());
-                }
-            }
+            this.appendWhereConditions(query.$where(), fetchInfo, mergeGroupFetchInfos);
         }
 
         query.optimizeOptions(OptimizeOptions::disableAll);
@@ -744,7 +772,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
-    protected List<Object> fetchData(FetchInfo fetchInfo, List conditionList, boolean single, Consumer<Query> queryConsumer) {
+    protected List<Object> fetchData(FetchInfo mainFetchInfo, List conditionList, boolean single, List<FetchInfo> mergeGroupFetchInfos, Consumer<Query> queryConsumer) {
         if (conditionList.isEmpty()) {
             return new ArrayList();
         }
@@ -752,18 +780,18 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         int batchSize = XbatisGlobalConfig.getFetchInBatchSize();
         List queryValueList = new ArrayList<>(batchSize);
         Query<?> query = Query.create();
-        query.returnType(fetchInfo.getReturnType());
+        query.returnType(mainFetchInfo.getReturnType());
 
         //如果有中间表
-        if (fetchInfo.getMiddleTableInfo() != null) {
-            query.from(fetchInfo.getFetch().middle());
-            query.innerJoin(fetchInfo.getFetch().middle(), fetchInfo.getFetch().target(), on -> {
+        if (mainFetchInfo.getMiddleTableInfo() != null) {
+            query.from(mainFetchInfo.getFetch().middle());
+            query.innerJoin(mainFetchInfo.getFetch().middle(), mainFetchInfo.getFetch().target(), on -> {
                 on.getJoin().getMainTable().as("middle");
                 on.getJoin().getSecondTable().as("target");
-                on.eq(query.$(fetchInfo.getFetch().middle(), fetchInfo.getFetch().middleTargetProperty()), query.$(fetchInfo.getFetch().target(), fetchInfo.getFetch().targetProperty()));
+                on.eq(query.$(mainFetchInfo.getFetch().middle(), mainFetchInfo.getFetch().middleTargetProperty()), query.$(mainFetchInfo.getFetch().target(), mainFetchInfo.getFetch().targetProperty()));
             });
         } else {
-            query.from(fetchInfo.getTargetTableInfo().getType());
+            query.from(mainFetchInfo.getTargetTableInfo().getType());
         }
 
         if (queryConsumer != null) {
@@ -771,36 +799,36 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         if (query.getSelect() == null) {
-            if (fetchInfo.getTargetSelect() == null) {
-                query.select(fetchInfo.getReturnType());
+            if (mainFetchInfo.getTargetSelect() == null) {
+                query.select(mainFetchInfo.getReturnType());
             } else {
-                query.select(fetchInfo.getTargetSelect());
+                query.select(mainFetchInfo.getTargetSelect());
             }
         }
 
         if (!single) {
-            if (fetchInfo.getMiddleTableInfo() != null) {
-                query.select(query.$(fetchInfo.getFetch().middle(), fetchInfo.getFetch().middleSourceProperty()).as(FETCH_MATCH_COLUMN));
-            } else if (!fetchInfo.isSourceTargetMatchFieldInReturnType()) {
-                query.select(query.$(fetchInfo.getFetch().target(), fetchInfo.getFetch().targetProperty()).as(FETCH_MATCH_COLUMN));
+            if (mainFetchInfo.getMiddleTableInfo() != null) {
+                query.select(query.$(mainFetchInfo.getFetch().middle(), mainFetchInfo.getFetch().middleSourceProperty()).as(FETCH_MATCH_COLUMN));
+            } else if (!mainFetchInfo.isSourceTargetMatchFieldInReturnType()) {
+                query.select(query.$(mainFetchInfo.getFetch().target(), mainFetchInfo.getFetch().targetProperty()).as(FETCH_MATCH_COLUMN));
             }
         }
 
-        if (fetchInfo.isGroup()) {
-            if (fetchInfo.getMiddleTableInfo() != null) {
-                query.groupBy(query.$(fetchInfo.getFetch().middle(), fetchInfo.getFetch().middleSourceProperty()));
+        if (mainFetchInfo.isGroup()) {
+            if (mainFetchInfo.getMiddleTableInfo() != null) {
+                query.groupBy(query.$(mainFetchInfo.getFetch().middle(), mainFetchInfo.getFetch().middleSourceProperty()));
             } else {
-                query.groupBy(query.$(fetchInfo.getFetch().target(), fetchInfo.getFetch().targetProperty()));
+                query.groupBy(query.$(mainFetchInfo.getFetch().target(), mainFetchInfo.getFetch().targetProperty()));
             }
         }
 
-        if (Objects.nonNull(fetchInfo.getTargetOrderBy()) && !StringPool.EMPTY.equals(fetchInfo.getTargetOrderBy())) {
-            query.orderBy(OrderByDirection.NONE, fetchInfo.getTargetOrderBy());
+        if (Objects.nonNull(mainFetchInfo.getTargetOrderBy()) && !StringPool.EMPTY.equals(mainFetchInfo.getTargetOrderBy())) {
+            query.orderBy(OrderByDirection.NONE, mainFetchInfo.getTargetOrderBy());
         }
 
         if (conditionList.size() < batchSize) {
             //无需 分批次查
-            return fetchData(fetchInfo, query, (List<Serializable>) conditionList);
+            return fetchData(mainFetchInfo, query, (List<Serializable>) conditionList, null);
         }
 
         List<Object> resultList = new ArrayList<>(conditionList.size());
@@ -809,7 +837,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             queryValueList.add(conditionList.get(i));
             if ((i + 1) % batchSize == 0) {
                 //达到单次查询
-                List<Object> list = fetchData(fetchInfo, query, (List<Serializable>) queryValueList);
+                List<Object> list = fetchData(mainFetchInfo, query, (List<Serializable>) queryValueList, mergeGroupFetchInfos);
                 queryValueList.clear();
                 if (!list.isEmpty()) {
                     resultList.addAll(list);
@@ -822,7 +850,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         //还有没查询的 继续查询
-        List<Object> list = fetchData(fetchInfo, query, (List<Serializable>) queryValueList);
+        List<Object> list = fetchData(mainFetchInfo, query, (List<Serializable>) queryValueList, mergeGroupFetchInfos);
         queryValueList.clear();
         if (!list.isEmpty()) {
             resultList.addAll(list);
@@ -848,7 +876,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 values = Collections.singletonList(onValue);
             }
             list = singleFetchCache.computeIfAbsent(fetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> {
-                return this.fetchData(fetchInfo, values, true, null);
+                return this.fetchData(fetchInfo, values, true, null, null);
             });
         } else {
             list = new ArrayList<>();
@@ -876,9 +904,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
             Class returnType = fetchInfo.getTargetTableInfo().getType();
             list = singleFetchCache.computeIfAbsent(fetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> {
-                return this.fetchData(fetchInfo, values, true, query -> {
-                    for (int i = 0; i < fetchInfos.size(); i++) {
-                        FetchInfo f = fetchInfos.get(i);
+                return this.fetchData(fetchInfo, values, true, fetchInfos, query -> {
+                    for (FetchInfo f : fetchInfos) {
                         query.select(f.getTargetSelect());
                     }
                     query.returnType(returnType);
