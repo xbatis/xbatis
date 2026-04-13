@@ -568,7 +568,6 @@ public class FetchTest extends BaseTest {
             List<FetchMergeSysUserVo> list = queryChain.list();
             System.out.println(list);
 
-
             assertEquals(list.get(0).getRoleId(), null);
             assertEquals(list.get(0).getRoleName(), null);
 
@@ -583,6 +582,7 @@ public class FetchTest extends BaseTest {
                 assertNotNull(list.get(1).getRoleCreateTime());
             }
 
+            assertEquals(list.get(2).getRid(), 1);
             assertEquals(list.get(2).getRoleId(), 1);
             assertEquals(list.get(2).getRoleName(), "测试");
 
@@ -604,6 +604,7 @@ public class FetchTest extends BaseTest {
             System.out.println(list);
 
 
+            assertEquals(list.get(0).getRid(), 0);
             assertEquals(list.get(0).getRoleId(), null);
             assertEquals(list.get(0).getRoleName(), null);
 
@@ -611,6 +612,7 @@ public class FetchTest extends BaseTest {
                 assertNotNull(list.get(0).getRoleCreateTime());
             }
 
+            assertEquals(list.get(1).getRid(), 1);
             assertEquals(list.get(1).getRoleId(), 1);
             assertEquals(list.get(1).getRoleName(), "测试");
 

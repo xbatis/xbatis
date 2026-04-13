@@ -16,6 +16,7 @@ package com.xbatis.core.test.vo;
 
 import cn.xbatis.db.annotations.Fetch;
 import cn.xbatis.db.annotations.ResultEntity;
+import cn.xbatis.db.annotations.ResultEntityField;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
@@ -31,6 +32,9 @@ public class FetchMerge2SysUserVo {
     private String userName;
 
     private String password;
+
+    @ResultEntityField(property = SysUser.Fields.role_id)
+    private Integer rid;
 
     @Fetch(mergeGroup = "role", property = "role_id", target = SysRole.class, targetProperty = "id", targetSelectProperty = "id")
     private Integer roleId;
