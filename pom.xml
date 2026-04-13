@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis</artifactId>
-    <version>1.9.9-M8</version>
+    <version>1.9.9</version>
     <packaging>pom</packaging>
     <modules>
         <module>xbatis-bom</module>
@@ -40,9 +40,9 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <xbatis.version>1.9.9-M8</xbatis.version>
-        <xbatis-generator-core.version>1.1.7</xbatis-generator-core.version>
-        <xbatis-datasource-routing.version>1.1.1</xbatis-datasource-routing.version>
+        <xbatis.version>1.9.9</xbatis.version>
+        <xbatis-generator-core.version>1.1.8</xbatis-generator-core.version>
+        <xbatis-datasource-routing.version>1.1.2</xbatis-datasource-routing.version>
 
         <!-- jdbc version -->
         <h2.version>2.2.224</h2.version>
@@ -77,7 +77,7 @@
         <swagger3.version>2.2.30</swagger3.version>
 
         <!-- bean容器 -->
-        <spring-boot.version>2.7.8</spring-boot.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
         <solon.version>3.10.0</solon.version>
 
         <!-- mybatis 相关 -->
@@ -89,8 +89,8 @@
         <mybatis-thymeleaf.version>1.1.1</mybatis-thymeleaf.version>
 
         <!-- 连接池 -->
-        <beecp.verion>5.2.1</beecp.verion>
-        <druid.version>1.2.27</druid.version>
+        <beecp.verion>5.2.2</beecp.verion>
+        <druid.version>1.2.28</druid.version>
         <seata.version>2.0.0</seata.version>
 
         <!-- json 框架 -->
