@@ -27,7 +27,6 @@ public class SysUserMiddleMergeFetchVO {
     private List<Integer> sysRoleIdList;
 
 
-
     @Fetch(property = "id", middle = SysUserRoleMiddle.class
             , middleSourceProperty = SysUserRoleMiddle.Fields.userId
             , middleTargetProperty = SysUserRoleMiddle.Fields.roleId
@@ -37,8 +36,6 @@ public class SysUserMiddleMergeFetchVO {
             mergeGroup = "role"
     )
     private List<String> sysRoleNameList;
-
-
 
 
     @Fetch(property = "id", middle = SysUserRoleMiddle.class

@@ -33,10 +33,10 @@ public class MutiFetchMergeSysUserVo {
 
     private String password;
 
-    @Fetch(source = SysUser.class, property = "role_id", target = SysRole.class, targetProperty = "id",targetSelectProperty = "id", mergeGroup = "role")
+    @Fetch(source = SysUser.class, property = "role_id", target = SysRole.class, targetProperty = "id", targetSelectProperty = "id", mergeGroup = "role")
     private List<Integer> sysRoleIds;
 
-    @Fetch(source = SysUser.class, property = "role_id", target = SysRole.class, targetProperty = "id",targetSelectProperty = "name", mergeGroup = "role")
+    @Fetch(source = SysUser.class, property = "role_id", target = SysRole.class, targetProperty = "id", targetSelectProperty = "name", mergeGroup = "role")
     private List<String> sysRoleNames;
 
     private LocalDateTime create_time;

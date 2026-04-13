@@ -20,15 +20,15 @@ import java.lang.reflect.Field;
 
 public class FetchKeyUtil {
 
-    public static String getFetchKey(Class type, String fieldName){
+    public static String getFetchKey(Class type, String fieldName) {
         return type.getName() + "." + fieldName;
     }
 
-    public static String getFetchKey(Class type, Field field){
+    public static String getFetchKey(Class type, Field field) {
         return getFetchKey(type, field.getName());
     }
 
-    public static String getFetchKey(LambdaUtil.LambdaFieldInfo lambdaFieldInfo){
+    public static String getFetchKey(LambdaUtil.LambdaFieldInfo lambdaFieldInfo) {
         return getFetchKey(lambdaFieldInfo.getType(), lambdaFieldInfo.getName());
     }
 }
