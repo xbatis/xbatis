@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis</artifactId>
-    <version>1.9.9-M7</version>
+    <version>1.9.9-M8</version>
     <packaging>pom</packaging>
     <modules>
         <module>xbatis-bom</module>
@@ -40,7 +40,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <xbatis.version>1.9.9-M7</xbatis.version>
+        <xbatis.version>1.9.9-M8</xbatis.version>
         <xbatis-generator-core.version>1.1.7</xbatis-generator-core.version>
         <xbatis-datasource-routing.version>1.1.1</xbatis-datasource-routing.version>
 

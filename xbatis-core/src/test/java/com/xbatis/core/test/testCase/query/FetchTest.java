@@ -581,7 +581,7 @@ public class FetchTest extends BaseTest {
             if (list.get(1).getRoleId() != null) {
                 assertNotNull(list.get(1).getRoleCreateTime());
             }
-            
+
             assertEquals(list.get(2).getRoleId(), 1);
             assertEquals(list.get(2).getRoleName(), "测试");
 
