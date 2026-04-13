@@ -82,7 +82,7 @@ public class OracleRowNumPagingProcessor implements IPagingProcessor {
             newSql.append("*");
         }
 
-        Object limitValue = limit.getLimit();
+        Object limitValue = limit.getLimit() + limit.getOffset();
         Object offsetValue = limit.getOffset();
         if (sqlBuilderContext.getSqlMode() != SQLMode.PRINT) {
             limitValue = SqlConst.PLACEHOLDER;
