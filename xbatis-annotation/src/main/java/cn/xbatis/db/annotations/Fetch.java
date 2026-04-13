@@ -167,9 +167,10 @@ public @interface Fetch {
     String cacheName() default "";
 
     /**
-     * 合并处理的名字;默认不合并；只用于返回1条且1列的Fetch合并
-     *
-     * @return
+     * 合并处理的名字;默认不合并；目前不支持缓存cacheName
+     * 合并是指合并多个单列查询Fetch结果到结果对象中；而不是多次单独Fetch查询
+     * 目的：减少vo的创建，省事一些
+     * @return 合并处理的组名
      */
     String mergeGroup() default "";
 }
