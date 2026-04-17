@@ -200,9 +200,6 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     public void setFetchFilters(Map<String, Consumer<Where>> fetchFilters) {
-        if (Objects.nonNull(this.fetchFilters)) {
-            throw new RuntimeException("Can't call setFetchFilters when the this.fetchFilters has value");
-        }
         this.fetchFilters = fetchFilters;
     }
 
@@ -212,9 +209,6 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     public void setFetchEnables(Map<String, Boolean> fetchEnables) {
-        if (Objects.nonNull(this.fetchEnables)) {
-            throw new RuntimeException("Can't call fetchEnables when the this.fetchEnables has value");
-        }
         this.fetchEnables = fetchEnables;
     }
 

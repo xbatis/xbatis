@@ -650,7 +650,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
-    private List<Object> fetchData(FetchInfo fetchInfo, Query<?> query, List<Serializable> queryValueList, List<FetchInfo> mergeGroupFetchInfos) {
+    private List<Object> fetchDataWithQuery(FetchInfo fetchInfo, Query<?> query, List<Serializable> queryValueList, List<FetchInfo> mergeGroupFetchInfos) {
         if (queryValueList.isEmpty()) {
             return new ArrayList();
         }
@@ -677,19 +677,11 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         }
 
-        if (baseQuery != null) {
-            query.setFetchEnables(fetchEnables);
-            if (query.getFetchFilters() == null) {
-                query.setFetchFilters(fetchFilters);
-            }
-            query.log(baseQuery.isEnableLog());
-            if (baseQuery.isEnableLog() && (baseQuery.getLogger() != null && !baseQuery.getLogger().isEmpty())) {
-                query.log(baseQuery.getLogger() + ".$" + fetchInfo.getFieldInfo().getField().getName());
-            }
-            this.appendWhereConditions(query.$where(), fetchInfo, mergeGroupFetchInfos);
+        if (baseQuery.isEnableLog() && (baseQuery.getLogger() != null && !baseQuery.getLogger().isEmpty())) {
+            query.log(baseQuery.getLogger() + ".$" + fetchInfo.getFieldInfo().getField().getName());
         }
+        this.appendWhereConditions(query.$where(), fetchInfo, mergeGroupFetchInfos);
 
-        query.optimizeOptions(OptimizeOptions::disableAll);
         //增加额外条件
         if (Objects.nonNull(fetchInfo.getOtherConditions()) && !StringPool.EMPTY.equals(fetchInfo.getOtherConditions())) {
             query.and(q -> Methods.cTpl(fetchInfo.getOtherConditions()));
@@ -828,9 +820,17 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             query.orderBy(OrderByDirection.NONE, mainFetchInfo.getTargetOrderBy());
         }
 
+        if (baseQuery != null) {
+            query.setFetchEnables(fetchEnables);
+            query.setFetchFilters(fetchFilters);
+            query.log(baseQuery.isEnableLog());
+        }
+
+        query.optimizeOptions(OptimizeOptions::disableAll);
+
         if (conditionList.size() < batchSize) {
             //无需 分批次查
-            return fetchData(mainFetchInfo, query, (List<Serializable>) conditionList, null);
+            return fetchDataWithQuery(mainFetchInfo, query, (List<Serializable>) conditionList, null);
         }
 
         List<Object> resultList = new ArrayList<>(conditionList.size());
@@ -839,7 +839,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             queryValueList.add(conditionList.get(i));
             if ((i + 1) % batchSize == 0) {
                 //达到单次查询
-                List<Object> list = fetchData(mainFetchInfo, query, (List<Serializable>) queryValueList, mergeGroupFetchInfos);
+                List<Object> list = fetchDataWithQuery(mainFetchInfo, query, (List<Serializable>) queryValueList, mergeGroupFetchInfos);
                 queryValueList.clear();
                 if (!list.isEmpty()) {
                     resultList.addAll(list);
@@ -852,7 +852,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         //还有没查询的 继续查询
-        List<Object> list = fetchData(mainFetchInfo, query, (List<Serializable>) queryValueList, mergeGroupFetchInfos);
+        List<Object> list = fetchDataWithQuery(mainFetchInfo, query, (List<Serializable>) queryValueList, mergeGroupFetchInfos);
         queryValueList.clear();
         if (!list.isEmpty()) {
             resultList.addAll(list);

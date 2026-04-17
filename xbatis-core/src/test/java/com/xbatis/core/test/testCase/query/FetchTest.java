@@ -30,6 +30,7 @@ import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import com.xbatis.core.test.vo.*;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -643,6 +644,61 @@ public class FetchTest extends BaseTest {
             assertEquals(Integer.valueOf(1), list.get(1).getSysRoleIds().get(0));
             assertEquals("测试", list.get(1).getSysRoleNames().get(0));
             assertEquals(Integer.valueOf(1), list.get(1).getSysRoleIds().size());
+        }
+    }
+
+    @Test
+    public void fetchAndFetchPaging() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+
+            List<SysUser> users = new ArrayList<>();
+            for (int i = 0; i < 105; i++) {
+                SysUser sysUser = new SysUser();
+                sysUser.setId(i + 100);
+                sysUser.setRole_id(i);
+                sysUser.setUserName("user" + i);
+                sysUser.setPassword("password" + i);
+                sysUser.setCreate_time(LocalDateTime.now());
+                sysUser.setNoExists("11");
+                users.add(sysUser);
+            }
+            SysUserMapper userMapper = session.getMapper(SysUserMapper.class);
+            userMapper.saveBatch(users);
+
+
+            List<FetchAndFetchPagingVO> list = QueryChain.of(userMapper)
+                    .fetchEnable(FetchAndFetchPagingVO::getRoles, true)
+                    .fetchFilter(FetchAndFetchPagingVO::getRoles, where -> {
+                        where.and(Methods.TRUE());
+                    })
+                    .orderBy(SysUser::getId)
+                    .returnType(FetchAndFetchPagingVO.class)
+                    .list();
+            System.out.println(list);
+            assertEquals(108, list.size());
+            assertEquals(1, list.get(0).getId());
+            assertEquals(2, list.get(1).getId());
+            for (int i = 0; i < list.size(); i++) {
+                if (i == 0 || i == 3) {
+                    assertEquals(0, list.get(i).getRoles().size());
+                } else if (i == 1 || i == 4) {
+                    assertEquals(1, list.get(i).getRoles().size());
+                    assertEquals(1, list.get(i).getRoles().get(0).getId());
+                    assertEquals(1, list.get(i).getRoleId());
+                } else if (i == 2) {
+                    assertEquals(1, list.get(i).getRoles().size());
+                    assertEquals(1, list.get(i).getRoles().get(0).getId());
+                    assertEquals(1, list.get(i).getRoleId());
+                } else if (i == 5) {
+                    assertEquals(1, list.get(i).getRoles().size());
+                    assertEquals(2, list.get(i).getRoles().get(0).getId());
+                    assertEquals(2, list.get(i).getRoleId());
+                } else {
+                    assertEquals(0, list.get(i).getRoles().size());
+                    assertEquals(i + 100 - 3, list.get(i).getId());
+                    assertEquals(i - 3, list.get(i).getRoleId());
+                }
+            }
         }
     }
 
