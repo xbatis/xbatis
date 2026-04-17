@@ -679,7 +679,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         if (baseQuery != null) {
             query.setFetchEnables(fetchEnables);
-            query.setFetchFilters(fetchFilters);
+            if (query.getFetchFilters() == null) {
+                query.setFetchFilters(fetchFilters);
+            }
             query.log(baseQuery.isEnableLog());
             if (baseQuery.isEnableLog() && (baseQuery.getLogger() != null && !baseQuery.getLogger().isEmpty())) {
                 query.log(baseQuery.getLogger() + ".$" + fetchInfo.getFieldInfo().getField().getName());

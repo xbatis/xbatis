@@ -287,15 +287,18 @@ public class FetchInfo {
 
             TableInfo tableInfo;
             String tableAliasName;
+            String ascOrDesc;
             if (arr.length == 2) {
                 if (!arr[0].equals("middle") && !arr[0].equals("target")) {
                     throw buildException(clazz, field, annotationName, annotationPropertyName, "format error, table alias just can be middle or target");
                 }
                 tableInfo = arr[0].equals("middle") ? middleTableInfo : targetTableInfo;
                 tableAliasName = arr[0];
+                ascOrDesc = arr[1];
             } else {
                 tableInfo = targetTableInfo;
                 tableAliasName = middleTableInfo != null ? "target" : ICmdFactory.QUERY_TABLE_AS_PREFIX;
+                ascOrDesc = "";
             }
 
             TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
@@ -306,7 +309,7 @@ public class FetchInfo {
                 orderByJoin.append(",");
             }
             orderByJoin.append(tableAliasName).append(".");
-            orderByJoin.append(tableFieldInfo.getColumnName()).append(" ").append(ss[1]);
+            orderByJoin.append(tableFieldInfo.getColumnName()).append(" ").append(ascOrDesc);
         }
         return orderByJoin.toString();
     }
