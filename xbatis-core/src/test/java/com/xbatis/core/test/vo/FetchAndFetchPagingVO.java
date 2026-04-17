@@ -35,4 +35,9 @@ public class FetchAndFetchPagingVO {
     @Fetch(property = SysUser.Fields.role_id, target = SysRole.class, targetProperty = SysRole.Fields.id)
     private List<SysRole> roles;
 
+    @Fetch(mergeGroup = "role", property = SysUser.Fields.role_id, target = SysRole.class, targetProperty = SysRole.Fields.id, targetSelectProperty = SysRole.Fields.id)
+    private List<Integer> roleIds;
+
+    @Fetch(mergeGroup = "role", property = SysUser.Fields.role_id, target = SysRole.class, targetProperty = SysRole.Fields.id, targetSelectProperty = SysRole.Fields.name)
+    private List<String> roleNames;
 }

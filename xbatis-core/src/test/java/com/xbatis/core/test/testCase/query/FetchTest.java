@@ -699,6 +699,14 @@ public class FetchTest extends BaseTest {
                     assertEquals(i - 3, list.get(i).getRoleId());
                 }
             }
+
+            assertEquals(1, list.get(1).getRoleIds().get(0));
+            assertEquals(1, list.get(2).getRoleIds().get(0));
+            assertEquals(0, list.get(3).getRoleIds().size());
+
+            assertEquals("测试", list.get(1).getRoleNames().get(0));
+            assertEquals("测试", list.get(2).getRoleNames().get(0));
+            assertEquals("运维", list.get(5).getRoleNames().get(0));
         }
     }
 
