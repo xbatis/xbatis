@@ -771,8 +771,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             return new ArrayList();
         }
 
-        int batchSize = XbatisGlobalConfig.getFetchInBatchSize();
-        List queryValueList = new ArrayList<>(batchSize);
         Query<?> query = Query.create();
         query.returnType(mainFetchInfo.getReturnType());
 
@@ -828,34 +826,21 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         query.optimizeOptions(OptimizeOptions::disableAll);
 
+        int batchSize = XbatisGlobalConfig.getFetchInBatchSize();
+
         if (conditionList.size() < batchSize) {
             //无需 分批次查
             return fetchDataWithQuery(mainFetchInfo, query, (List<Serializable>) conditionList, null);
         }
-
-        List<Object> resultList = new ArrayList<>(conditionList.size());
         int size = conditionList.size();
-        for (int i = 0; i < size; i++) {
-            queryValueList.add(conditionList.get(i));
-            if ((i + 1) % batchSize == 0) {
-                //达到单次查询
-                List<Object> list = fetchDataWithQuery(mainFetchInfo, query, (List<Serializable>) queryValueList, mergeGroupFetchInfos);
-                queryValueList.clear();
-                if (!list.isEmpty()) {
-                    resultList.addAll(list);
-                }
+        List<Object> resultList = new ArrayList<>(conditionList.size());
+        for (int i = 0; i < size; i += batchSize) {
+            int end = Math.min(i + batchSize, size);
+            List<Serializable> subList = conditionList.subList(i, end);
+            List<Object> list = fetchDataWithQuery(mainFetchInfo, query, subList, mergeGroupFetchInfos);
+            if (!list.isEmpty()) {
+                resultList.addAll(list);
             }
-        }
-
-        if (queryValueList.isEmpty()) {
-            return resultList;
-        }
-
-        //还有没查询的 继续查询
-        List<Object> list = fetchDataWithQuery(mainFetchInfo, query, (List<Serializable>) queryValueList, mergeGroupFetchInfos);
-        queryValueList.clear();
-        if (!list.isEmpty()) {
-            resultList.addAll(list);
         }
         return resultList;
     }

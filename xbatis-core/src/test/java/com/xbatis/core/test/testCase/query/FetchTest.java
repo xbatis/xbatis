@@ -698,6 +698,8 @@ public class FetchTest extends BaseTest {
                     assertEquals(i + 100 - 3, list.get(i).getId());
                     assertEquals(i - 3, list.get(i).getRoleId());
                 }
+
+                assertEquals(0, list.get(i).getRoles2().size());
             }
 
             assertEquals(1, list.get(1).getRoleIds().get(0));
