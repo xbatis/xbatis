@@ -47,7 +47,6 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.util.MapUtil;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -650,7 +649,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
-    private List<Object> fetchDataWithQuery(FetchInfo fetchInfo, Query<?> query, List<Serializable> queryValueList, List<FetchInfo> mergeGroupFetchInfos) {
+    private List<Object> fetchDataWithQuery(FetchInfo fetchInfo, Query<?> query, List queryValueList, List<FetchInfo> mergeGroupFetchInfos) {
         if (queryValueList.isEmpty()) {
             return new ArrayList();
         }
@@ -827,16 +826,16 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         query.optimizeOptions(OptimizeOptions::disableAll);
 
         int batchSize = XbatisGlobalConfig.getFetchInBatchSize();
-
-        if (conditionList.size() < batchSize) {
-            //无需 分批次查
-            return fetchDataWithQuery(mainFetchInfo, query, (List<Serializable>) conditionList, null);
-        }
         int size = conditionList.size();
-        List<Object> resultList = new ArrayList<>(conditionList.size());
+        if (size < batchSize) {
+            //无需 分批次查
+            return fetchDataWithQuery(mainFetchInfo, query, conditionList, null);
+        }
+
+        List<Object> resultList = new ArrayList<>(size);
         for (int i = 0; i < size; i += batchSize) {
             int end = Math.min(i + batchSize, size);
-            List<Serializable> subList = conditionList.subList(i, end);
+            List<Object> subList = conditionList.subList(i, end);
             List<Object> list = fetchDataWithQuery(mainFetchInfo, query, subList, mergeGroupFetchInfos);
             if (!list.isEmpty()) {
                 resultList.addAll(list);
