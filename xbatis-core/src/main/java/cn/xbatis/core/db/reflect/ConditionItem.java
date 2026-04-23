@@ -182,8 +182,20 @@ public class ConditionItem {
             case IN: {
                 if (value instanceof Collection) {
                     conditionChain.in(tableField, (Collection) value);
-                } else {
+                } else if (value instanceof Object[]) {
                     conditionChain.in(tableField, (Object[]) value);
+                } else {
+                    conditionChain.eq(tableField, value);
+                }
+                break;
+            }
+            case NOT_IN: {
+                if (value instanceof Collection) {
+                    conditionChain.notIn(tableField, (Collection) value);
+                } else if (value instanceof Object[]) {
+                    conditionChain.notIn(tableField, (Object[]) value);
+                } else {
+                    conditionChain.ne(tableField, value);
                 }
                 break;
             }

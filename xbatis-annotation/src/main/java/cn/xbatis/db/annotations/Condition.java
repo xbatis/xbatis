@@ -90,6 +90,7 @@ public @interface Condition {
         EQ,
         NE,
         IN,
+        NOT_IN,
         LT,
         LTE,
         GT,

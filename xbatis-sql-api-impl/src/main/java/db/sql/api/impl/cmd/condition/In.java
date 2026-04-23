@@ -16,7 +16,9 @@ package db.sql.api.impl.cmd.condition;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.RowValues;
 import db.sql.api.impl.tookit.Lists;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
@@ -76,6 +78,15 @@ public class In extends BaseCondition<In, Cmd, List<Cmd>> {
     @Override
     public StringBuilder conditionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder = key.sql(module, this, context, sqlBuilder);
+        if (this.values.size() == 1) {
+            Cmd first = this.values.get(0);
+            if (!(first instanceof IQuery) && !(first instanceof RowValues)) {
+                sqlBuilder.append(SqlConst.BLANK).append(SqlConst.EQ);
+                sqlBuilder = first.sql(module, this, context, sqlBuilder);
+                sqlBuilder = sqlBuilder.append(SqlConst.BLANK);
+                return sqlBuilder;
+            }
+        }
         sqlBuilder.append(getOperator()).append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
         sqlBuilder = CmdUtils.join(module, this, context, sqlBuilder, this.values, SqlConst.DELIMITER);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
