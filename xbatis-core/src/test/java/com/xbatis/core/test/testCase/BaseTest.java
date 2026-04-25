@@ -129,6 +129,7 @@ public class BaseTest {
         configuration.addMapper(AddrArchiveMapper.class);
         configuration.addMapper(SysUserRoleMiddleMapper.class);
         configuration.addMapper(FetchAddrMapper.class);
+        configuration.addMapper(FetchMergeMapper.class);
 
 
         String mapperLocations = "classpath:/mappers/**.xml";

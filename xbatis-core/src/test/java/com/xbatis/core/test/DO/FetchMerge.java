@@ -12,19 +12,21 @@
  *
  */
 
-package cn.xbatis.core.mybatis.executor.resultset;
+package com.xbatis.core.test.DO;
 
-import cn.xbatis.db.annotations.ResultEntity;
-import cn.xbatis.db.annotations.ResultField;
+import cn.xbatis.db.annotations.Table;
+import cn.xbatis.db.annotations.TableId;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 @Data
-@ResultEntity(Void.class)
-public class FetchKeyValue {
+@Table
+@FieldNameConstants
+public class FetchMerge {
+    @TableId
+    private Integer id;
 
-    @ResultField
-    private Object key;
-
-    @ResultField
-    private Object value;
+    private Integer roleId1;
+    private Integer roleId2;
+    private Integer roleId3;
 }

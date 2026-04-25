@@ -140,6 +140,16 @@ public class MultiValueFetchTest extends BaseTest {
             assertEquals(list.get(0).getIds(), Arrays.asList(1, 2));
             assertEquals(list.get(1).getIds(), Arrays.asList(2, 4));
             assertEquals(list.get(2).getIds(), Arrays.asList(1, 6));
+
+
+            assertEquals(list.get(0).getIds(), list.get(0).getCopyIds());
+            assertEquals(list.get(1).getIds(), list.get(1).getCopyIds());
+            assertEquals(list.get(2).getIds(), list.get(2).getCopyIds());
+
+
+            assertEquals(list.get(0).getIds(), list.get(0).getCopyIds2());
+            assertEquals(list.get(1).getIds(), list.get(1).getCopyIds2());
+            assertEquals(list.get(2).getIds(), list.get(2).getCopyIds2());
         }
     }
 }

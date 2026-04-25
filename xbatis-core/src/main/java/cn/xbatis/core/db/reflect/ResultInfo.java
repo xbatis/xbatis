@@ -721,9 +721,9 @@ public class ResultInfo {
                 if (!Objects.equals(o1.getFetch().column(), o2.getFetch().column())) {
                     throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(column) not same, please check");
                 }
-                if (!Objects.equals(o1.getFetch().property(), o2.getFetch().property())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(property) not same, please check");
-                }
+//                if (!Objects.equals(o1.getFetch().property(), o2.getFetch().property())) {
+//                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(property) not same, please check");
+//                }
                 if (!Objects.equals(o1.getFetch().propertyType(), o2.getFetch().propertyType())) {
                     throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(propertyType) not same, please check");
                 }

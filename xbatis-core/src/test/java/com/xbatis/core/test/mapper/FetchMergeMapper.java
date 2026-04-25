@@ -12,28 +12,11 @@
  *
  */
 
-package cn.xbatis.core.mybatis.executor.resultset;
+package com.xbatis.core.test.mapper;
 
-import lombok.Data;
+import cn.xbatis.core.mybatis.mapper.MybatisMapper;
+import com.xbatis.core.test.DO.FetchMerge;
 
-@Data
-public class FetchObject {
-
-    private final Object matchValue;
-
-    private final Object value;
-
-    private final String cacheKey;
-
-    protected FetchObject() {
-        this.matchValue = null;
-        this.value = null;
-        this.cacheKey = null;
-    }
-
-    public FetchObject(Object matchValue, Object value, String cacheKey) {
-        this.matchValue = matchValue;
-        this.value = value;
-        this.cacheKey = cacheKey;
-    }
+public interface FetchMergeMapper extends MybatisMapper<FetchMerge> {
 }
+

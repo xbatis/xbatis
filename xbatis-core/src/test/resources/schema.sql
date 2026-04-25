@@ -317,4 +317,18 @@ CREATE TABLE IF NOT EXISTS fetch_addr
 insert into fetch_addr(addrs1, addrs2, addrs3)
 values ('1,2', '1,2,3', '["1","4","1"]'),
        ('2,4', '1,5', '["5","1"]'),
-       ('1,6', '6', '["2"]')
+       ('1,6', '6', '["2"]');
+
+
+CREATE TABLE IF NOT EXISTS fetch_merge
+(
+    id       INTEGER PRIMARY KEY auto_increment,
+    role_id1 INT,
+    role_id2 INT,
+    role_id3 INT
+);
+
+insert into fetch_merge(role_id1, role_id2, role_id3)
+values (1, 2, 3),
+       (0, 1, 2),
+       (0, 2, 3);

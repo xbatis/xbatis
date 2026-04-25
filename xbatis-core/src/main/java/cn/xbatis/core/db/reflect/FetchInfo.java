@@ -83,7 +83,14 @@ public class FetchInfo {
 
     private final Comparator<?> comparator;
 
+    private final String fetchGroup;
+
     public FetchInfo(Class clazz, FieldInfo fieldInfo, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler) {
+        if (fetch.mergeGroup().isEmpty()) {
+            this.fetchGroup = FetchKeyUtil.getFetchKey(clazz, fieldInfo.getField());
+        } else {
+            this.fetchGroup = clazz.getName() + ".$" + fetch.mergeGroup();
+        }
         this.fetchKey = FetchKeyUtil.getFetchKey(clazz, fieldInfo.getField());
         this.fieldInfo = fieldInfo;
         this.fetch = fetch;

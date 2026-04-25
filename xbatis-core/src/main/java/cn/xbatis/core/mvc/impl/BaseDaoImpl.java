@@ -142,7 +142,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
-    public T getById(ID id, Getter<T>[] selectFields) {
+    public T getById(ID id, Getter<T>... selectFields) {
         this.checkIdType();
         return GetMethodUtil.getById(getBasicMapper(), getTableInfo(), (Serializable) id, selectFields);
     }

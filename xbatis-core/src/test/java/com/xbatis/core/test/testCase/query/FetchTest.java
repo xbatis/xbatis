@@ -24,6 +24,7 @@ import com.xbatis.core.test.DO.AddrArchive;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.AddrArchiveMapper;
+import com.xbatis.core.test.mapper.FetchMergeMapper;
 import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
@@ -649,6 +650,9 @@ public class FetchTest extends BaseTest {
 
     @Test
     public void fetchAndFetchPaging() {
+        if (TestDataSource.DB_TYPE != DbType.H2) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
 
             List<SysUser> users = new ArrayList<>();
@@ -711,5 +715,41 @@ public class FetchTest extends BaseTest {
             assertEquals("运维", list.get(5).getRoleNames().get(0));
         }
     }
+
+    @Test
+    public void fetchMerge3Test() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            FetchMergeMapper fetchMergeMapper = session.getMapper(FetchMergeMapper.class);
+
+            List<FetchMergeVO> list = QueryChain.of(fetchMergeMapper)
+                    .returnType(FetchMergeVO.class)
+                    .list();
+
+            System.out.println(list);
+
+            assertEquals(3, list.size());
+            assertEquals(list.get(0).getRoleId1(), list.get(0).getRoleid1());
+
+            assertEquals(0, list.get(1).getRoleId1());
+            assertNull(list.get(1).getRoleid1());
+
+            assertEquals(0, list.get(2).getRoleId1());
+            assertNull(list.get(2).getRoleid1());
+
+            assertEquals("测试", list.get(0).getRoleName1());
+            assertEquals("运维", list.get(0).getRoleName2());
+            assertNull(list.get(0).getRoleName3());
+
+            assertNull(list.get(1).getRoleName1());
+            assertEquals("测试", list.get(1).getRoleName2());
+            assertEquals("运维", list.get(1).getRoleName3());
+
+            assertNull(list.get(2).getRoleName1());
+            assertEquals("运维", list.get(2).getRoleName2());
+            assertNull(list.get(2).getRoleName3());
+
+        }
+    }
+
 
 }

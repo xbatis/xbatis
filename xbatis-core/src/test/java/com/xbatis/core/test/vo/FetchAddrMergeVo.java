@@ -48,4 +48,22 @@ public class FetchAddrMergeVo extends FetchAddr {
     private List<String> names;
 
 
+    @Fetch(property = Fields.addrs1,
+            propertyType = FetchPropertyType.MULTI,
+            target = Addr.class,
+            targetProperty = Addr.Fields.id,
+            targetSelectProperty = Addr.Fields.id
+    )
+    private List<Integer> copyIds;
+
+
+    @Fetch(property = Fields.addrs1,
+            propertyType = FetchPropertyType.MULTI,
+            target = Addr.class,
+            targetProperty = Addr.Fields.id,
+            targetSelectProperty = Addr.Fields.id
+    )
+    private List<Integer> copyIds2;
+
+
 }
