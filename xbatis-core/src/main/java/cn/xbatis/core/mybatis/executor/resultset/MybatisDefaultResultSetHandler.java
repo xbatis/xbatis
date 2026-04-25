@@ -17,6 +17,7 @@ package cn.xbatis.core.mybatis.executor.resultset;
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.cache.FetchCache;
 import cn.xbatis.core.db.reflect.*;
+import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdCountFromQueryContext;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
@@ -25,6 +26,7 @@ import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.*;
+import cn.xbatis.db.FetchLogicDeleteStrategy;
 import cn.xbatis.db.FetchPropertyType;
 import cn.xbatis.db.annotations.ResultEntity;
 import db.sql.api.IDbType;
@@ -535,7 +537,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
                 FetchCache fetchCache = XbatisGlobalConfig.getFetchCache();
                 if (fetchCache != null && !fetchInfo.getFetch().cacheName().isEmpty()) {
-                    cacheKey = this.buildFetchCacheKey(onValue, fetchInfo, entry.getValue());
+                    cacheKey = this.buildFetchCacheKey(finalOnValue, fetchInfo, entry.getValue());
                     Object cacheValue = fetchCache.get(fetchInfo.getFetch().cacheName(), fetchInfo.getFetch(), fetchInfo.getFieldInfo(), cacheKey);
                     if (Objects.nonNull(cacheValue)) {
                         if (cacheValue instanceof cn.xbatis.core.cache.NULL) {
@@ -562,7 +564,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 } else {
                     onValues.add(finalOnValue);
                 }
-                fetchPuts.add(new FetchPut(rowValue, toMatchValue(finalOnValue), fetchInfo, this.buildFetchCacheKey(finalOnValue, fetchInfo, entry.getValue())));
+
+                fetchPuts.add(new FetchPut(rowValue, toMatchValue(finalOnValue), fetchInfo, cacheKey));
             }
 
             if (!fetchPuts.isEmpty()) {
@@ -703,7 +706,15 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.nonNull(fetchInfo.getOtherConditions()) && !StringPool.EMPTY.equals(fetchInfo.getOtherConditions())) {
             query.and(q -> Methods.cTpl(fetchInfo.getOtherConditions()));
         }
-        return (List) basicMapper.list(query);
+
+        switch (fetchInfo.getFetch().logicDeleteStrategy()) {
+            case DEFAULT:
+                return (List) basicMapper.list(query);
+            default:
+                return LogicDeleteUtil.execute(fetchInfo.getFetch().logicDeleteStrategy() == FetchLogicDeleteStrategy.INCLUDE, () -> {
+                    return (List) basicMapper.list(query);
+                });
+        }
     }
 
     protected <T> List<T> fetchData(FetchInfo mainFetchInfo, Collection conditionList, boolean single, List<FetchInfo> mergeGroupFetchInfos, Consumer<Query> queryConsumer) {

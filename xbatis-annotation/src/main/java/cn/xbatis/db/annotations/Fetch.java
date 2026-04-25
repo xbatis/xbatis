@@ -14,6 +14,7 @@
 
 package cn.xbatis.db.annotations;
 
+import cn.xbatis.db.FetchLogicDeleteStrategy;
 import cn.xbatis.db.FetchPropertyType;
 
 import java.lang.annotation.*;
@@ -174,4 +175,11 @@ public @interface Fetch {
      * @return 合并处理的组名
      */
     String mergeGroup() default "";
+
+    /**
+     * 逻辑删除 策略
+     *
+     * @return 逻辑删除 策略
+     */
+    FetchLogicDeleteStrategy logicDeleteStrategy() default FetchLogicDeleteStrategy.DEFAULT;
 }
