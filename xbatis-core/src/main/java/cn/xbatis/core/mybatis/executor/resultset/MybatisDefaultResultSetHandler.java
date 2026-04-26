@@ -835,45 +835,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         this.setToFetchValue(rowValue, list, fetchInfo, cacheKey);
     }
 
-    /**
-     * 单条件合并Fetch查询
-     *
-     * @param rowValue
-     * @param fetchInfos
-     * @param onValue
-     * @param cacheKey
-     */
-    public void singleConditionMergeFetch(Object rowValue, List<FetchInfo> fetchInfos, Object onValue, String cacheKey) {
-        FetchInfo fetchInfo = fetchInfos.get(0);
-        List<Object> list;
-        if (Objects.nonNull(onValue)) {
-            final List values;
-            if (onValue instanceof List) {
-                values = (List) onValue;
-            } else {
-                values = Collections.singletonList(onValue);
-            }
-            Class returnType = fetchInfo.getTargetTableInfo().getType();
-            list = singleFetchCache.computeIfAbsent(fetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> {
-                return this.fetchData(fetchInfo, values, true, fetchInfos, query -> {
-                    for (FetchInfo f : fetchInfos) {
-                        query.select(f.getTargetSelect());
-                    }
-                    query.returnType(returnType);
-                });
-            });
-            for (FetchInfo f : fetchInfos) {
-                List<Object> fvList = list.stream().map(row -> {
-                    return fetchInfo.getTargetTableInfo().getFieldInfo(f.getFetch().targetSelectProperty()).getValue(row);
-                }).collect(Collectors.toList());
-                this.setToFetchValue(rowValue, fvList, f, cacheKey);
-            }
-        } else {
-            list = new ArrayList<>();
-            this.setToFetchValue(rowValue, list, fetchInfo, cacheKey);
-        }
-    }
-
     protected void setToFetchValue(Object rowValue, List<?> matchValues, FetchInfo fetchInfo, String cacheKey) {
         if (fetchInfo.getFieldInfo().isCollection()) {
             if (Objects.isNull(matchValues) || matchValues.isEmpty()) {
