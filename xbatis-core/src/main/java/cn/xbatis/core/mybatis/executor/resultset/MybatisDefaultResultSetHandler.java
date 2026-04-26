@@ -614,12 +614,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         Object result;
                         if (i instanceof FetchTargetValue) {
                             FetchTargetValue fetchTargetValue = (FetchTargetValue) i;
-                            matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
+                            matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getFinalClass());
                             result = fetchTargetValue.getTarget();
                         } else {
                             try {
                                 matchValue = firstFetchInfo.getSourceTargetMatchFieldGetter().invoke(i, null);
-                                matchValue = TypeConvertUtil.convert(matchValue, firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
+                                matchValue = TypeConvertUtil.convert(matchValue, firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getFinalClass());
                             } catch (IllegalAccessException e) {
                                 throw new RuntimeException(e);
                             }
@@ -667,12 +667,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         Object result;
                         if (i instanceof FetchTargetValue) {
                             FetchTargetValue fetchTargetValue = (FetchTargetValue) i;
-                            matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
+                            matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getFinalClass());
                             result = fetchTargetValue.getTarget();
                         } else {
                             try {
                                 matchValue = firstFetchInfo.getSourceTargetMatchFieldGetter().invoke(i, null);
-                                matchValue = TypeConvertUtil.convert(matchValue, firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
+                                matchValue = TypeConvertUtil.convert(matchValue, firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getFinalClass());
                             } catch (IllegalAccessException e) {
                                 throw new RuntimeException(e);
                             }
@@ -688,6 +688,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         } else {
                             for (FetchPut fetchPut : needPutFetchPuts) {
                                 Object value = fetchPut.getFetchInfo().getTargetSelectTableFieldInfo().getValue(result);
+                                value = TypeConvertUtil.convert(value,fetchPut.getFetchInfo().getFieldInfo().getFinalClass());
                                 fetchPut.putValue(matchValue, value);
                             }
                         }
