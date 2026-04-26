@@ -644,28 +644,52 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     } else {
                         list = this.fetchData(secondEntry.getValue().get(0), values, false, secondEntry.getValue(), query -> {
                             if (secondEntry.getValue() != null) {
-                                Set<String> selected = new HashSet<>();
-                                for (FetchInfo fetchInfo : secondEntry.getValue()) {
-                                    if (selected.contains(fetchInfo.getTargetSelect())) {
-                                        continue;
+                                if (firstFetchInfo.getTargetSelect() == null) {
+                                    query.select(firstFetchInfo.getFieldInfo().getFinalClass());
+                                    query.returnType(firstFetchInfo.getFieldInfo().getFinalClass());
+                                } else {
+                                    Set<String> selected = new HashSet<>();
+                                    for (FetchInfo fetchInfo : secondEntry.getValue()) {
+                                        if (selected.contains(fetchInfo.getTargetSelect())) {
+                                            continue;
+                                        }
+                                        selected.add(fetchInfo.getTargetSelect());
+                                        query.select(fetchInfo.getTargetSelect());
                                     }
-                                    selected.add(fetchInfo.getTargetSelect());
-                                    query.select(fetchInfo.getTargetSelect());
+                                    query.returnType(secondEntry.getValue().get(0).getTargetTableInfo().getType());
                                 }
-                                query.returnType(secondEntry.getValue().get(0).getTargetTableInfo().getType());
                             }
                         });
                     }
 
                     list.stream().forEach(i -> {
-                        FetchTargetValue fetchTargetValue = (FetchTargetValue) i;
-                        Object matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
-                        Object result = fetchTargetValue.getTarget();
+                        Object matchValue;
+                        Object result;
+                        if (i instanceof FetchTargetValue) {
+                            FetchTargetValue fetchTargetValue = (FetchTargetValue) i;
+                            matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
+                            result = fetchTargetValue.getTarget();
+                        } else {
+                            try {
+                                matchValue = firstFetchInfo.getSourceTargetMatchFieldGetter().invoke(i, null);
+                                matchValue = TypeConvertUtil.convert(matchValue, firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
+                            } catch (IllegalAccessException e) {
+                                throw new RuntimeException(e);
+                            }
+                            result = i;
+                        }
+
 
                         List<FetchPut> needPutFetchPuts = waitFetchPutValueMap.get(secondEntry.getKey()).get(matchValue);
-                        for (FetchPut fetchPut : needPutFetchPuts) {
-                            Object value = fetchPut.getFetchInfo().getTargetSelectTableFieldInfo().getValue(result);
-                            fetchPut.putValue(matchValue, value);
+                        if (firstFetchInfo.getTargetSelect() == null) {
+                            for (FetchPut fetchPut : needPutFetchPuts) {
+                                fetchPut.putValue(matchValue, result);
+                            }
+                        } else {
+                            for (FetchPut fetchPut : needPutFetchPuts) {
+                                Object value = fetchPut.getFetchInfo().getTargetSelectTableFieldInfo().getValue(result);
+                                fetchPut.putValue(matchValue, value);
+                            }
                         }
                     });
 

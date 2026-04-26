@@ -748,6 +748,19 @@ public class FetchTest extends BaseTest {
             assertEquals("运维", list.get(2).getRoleName2());
             assertNull(list.get(2).getRoleName3());
 
+
+            assertEquals("测试", list.get(0).getRole1().getName());
+            assertEquals("运维", list.get(0).getRole2().getName());
+            assertNull(list.get(0).getRole3());
+
+            assertNull(list.get(1).getRole1());
+            assertEquals("测试", list.get(1).getRole2().getName());
+            assertEquals("运维", list.get(1).getRole3().getName());
+
+            assertNull(list.get(2).getRole1());
+            assertEquals("运维", list.get(2).getRole2().getName());
+            assertNull(list.get(2).getRole3());
+
         }
     }
 

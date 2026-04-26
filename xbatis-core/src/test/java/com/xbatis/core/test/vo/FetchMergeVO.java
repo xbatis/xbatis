@@ -37,4 +37,15 @@ public class FetchMergeVO extends FetchMerge {
 
     @Fetch(mergeGroup = "role", property = Fields.roleId3, target = SysRole.class, targetProperty = SysRole.Fields.id, targetSelectProperty = SysRole.Fields.name)
     private String roleName3;
+
+    @Fetch(mergeGroup = "role2", property = Fields.roleId1, target = SysRole.class, targetProperty = SysRole.Fields.id)
+    private SysRole role1;
+
+    @Fetch(mergeGroup = "role2", property = Fields.roleId2, target = SysRole.class, targetProperty = SysRole.Fields.id)
+    private SysRole role2;
+
+    @Fetch(mergeGroup = "role2", property = Fields.roleId3, target = SysRole.class, targetProperty = SysRole.Fields.id)
+    private SysRole role3;
+
+
 }

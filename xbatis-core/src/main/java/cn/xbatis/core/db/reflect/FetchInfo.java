@@ -114,7 +114,7 @@ public class FetchInfo {
         if (!fetch.targetSelectProperty().isEmpty()) {
             this.targetSelectTableFieldInfo = targetTableInfo.getFieldInfo(fetch.targetSelectProperty());
             if (this.targetSelectTableFieldInfo == null && !fetch.mergeGroup().isEmpty()) {
-                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "middleTargetProperty", " when open mergeGroup, targetSelectProperty must be entity field name");
+                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "middleTargetProperty", " when set mergeGroup, targetSelectProperty must be entity field name");
             }
         } else {
             this.targetSelectTableFieldInfo = null;
@@ -122,10 +122,14 @@ public class FetchInfo {
 
         if (!fetch.mergeGroup().isEmpty()) {
             if (this.targetSelectTableFieldInfo == null) {
-                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "targetSelectProperty", " when open mergeGroup, targetSelectProperty must be not empty");
+                throw buildException(clazz, fieldInfo.getField(), "@Fetch", " when targetSelectProperty not set", ",the fetch field type must be same");
+            } else {
+                if (fieldInfo.getTypeClass().getPackage().getName().startsWith("java.lang")) {
+                    throw buildException(clazz, fieldInfo.getField(), "@Fetch", " when targetSelectProperty set", ",the fetch field type must be java.lang type");
+                }
             }
-            if (!fetch.cacheName().isEmpty()) {
-                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "cacheName", " when open mergeGroup, cacheName must be empty, because not support cache now");
+            if (!fetch.cacheName().isEmpty() && this.targetSelectTableFieldInfo != null) {
+                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "cacheName", " when set mergeGroup,whe targetSelectProperty set, cacheName must be empty, because not support cache now");
             }
         }
 
