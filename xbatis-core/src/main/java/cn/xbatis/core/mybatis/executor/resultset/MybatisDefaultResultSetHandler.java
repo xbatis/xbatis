@@ -69,6 +69,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     private Map<Class, Map<String, List<FetchInfo>>> waitFetchGroupInfoMap;
     private Map<String, Set<Object>> waitFetchOnValusMap;
     private Map<String, List<FetchPut>> waitFetchPutMap;
+    private Map<String, List<FetchPut>> waitFetchPutValueMap;
 
     private Map<String, Consumer<Where>> fetchFilters;
     private Map<String, Boolean> fetchEnables;
@@ -105,6 +106,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     if (Objects.nonNull(resultInfo.getFetchInfoMap()) && !resultInfo.getFetchInfoMap().isEmpty()) {
                         this.waitFetchOnValusMap = new HashMap<>();
                         this.waitFetchPutMap = new HashMap<>();
+                        this.waitFetchPutValueMap = new HashMap<>();
 
                         this.basicMapper = XbatisContextUtil.getBasicMapper(parameterObject);
 
@@ -175,6 +177,14 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 }
             });
             waitFetchPutMap.clear();
+        }
+        if (waitFetchPutValueMap != null) {
+            waitFetchPutValueMap.entrySet().stream().forEach(i -> {
+                if (i.getValue() != null) {
+                    i.getValue().clear();
+                }
+            });
+            waitFetchPutValueMap.clear();
         }
     }
 
@@ -551,7 +561,16 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     onValues.add(finalOnValue);
                 }
 
-                fetchPuts.add(new FetchPut(rowValue, finalOnValue, fetchInfo, cacheKey));
+                FetchPut fetchPut = new FetchPut(rowValue, finalOnValue, fetchInfo, cacheKey);
+                fetchPuts.add(fetchPut);
+
+                if (finalOnValue instanceof Collection) {
+                    for (Object v : (Collection) finalOnValue) {
+                        waitFetchPutValueMap.computeIfAbsent(entry.getKey() + "&" + v, k -> new ArrayList<>()).add(fetchPut);
+                    }
+                } else {
+                    waitFetchPutValueMap.computeIfAbsent(entry.getKey() + "&" + finalOnValue, k -> new ArrayList<>()).add(fetchPut);
+                }
             }
 
             if (!fetchPuts.isEmpty()) {
@@ -572,17 +591,16 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             return;
         }
         for (Map.Entry<Class, Map<String, List<FetchInfo>>> entry : waitFetchGroupInfoMap.entrySet()) {
-            for (Map.Entry<String, List<FetchInfo>> entry2 : entry.getValue().entrySet()) {
-                List<FetchPut> fetchPuts = waitFetchPutMap.get(entry2.getKey());
+            for (Map.Entry<String, List<FetchInfo>> secondEntry : entry.getValue().entrySet()) {
+                List<FetchPut> fetchPuts = waitFetchPutMap.get(secondEntry.getKey());
                 if (fetchPuts == null || fetchPuts.isEmpty()) {
                     continue;
                 }
 
-                Set<Object> values = this.waitFetchOnValusMap.get(entry2.getKey());
-                if (entry2.getValue().size() == 1) {
-
+                Set<Object> values = this.waitFetchOnValusMap.get(secondEntry.getKey());
+                if (secondEntry.getValue().size() == 1) {
                     //非分组
-                    FetchInfo firstFetchInfo = entry2.getValue().get(0);
+                    FetchInfo firstFetchInfo = secondEntry.getValue().get(0);
                     List list;
                     if (values == null || values.isEmpty()) {
                         list = new ArrayList();
@@ -607,7 +625,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                             result = i;
                         }
 
-                        for (FetchPut fetchPut : fetchPuts) {
+                        List<FetchPut> needPutFetchPuts = waitFetchPutValueMap.get(secondEntry.getKey() + "&" + matchValue);
+                        for (FetchPut fetchPut : needPutFetchPuts) {
                             fetchPut.putValue(matchValue, result);
                         }
                     });
@@ -617,36 +636,37 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     }
                 } else {
                     // 有分组fetch
+                    FetchInfo firstFetchInfo = secondEntry.getValue().get(0);
                     List list;
                     if (values == null || values.isEmpty()) {
                         list = new ArrayList();
                     } else {
-                        list = this.fetchData(entry2.getValue().get(0), values, false, entry2.getValue(), query -> {
-                            if (entry2.getValue() != null) {
+                        list = this.fetchData(secondEntry.getValue().get(0), values, false, secondEntry.getValue(), query -> {
+                            if (secondEntry.getValue() != null) {
                                 Set<String> selected = new HashSet<>();
-                                for (FetchInfo fetchInfo : entry2.getValue()) {
+                                for (FetchInfo fetchInfo : secondEntry.getValue()) {
                                     if (selected.contains(fetchInfo.getTargetSelect())) {
                                         continue;
                                     }
                                     selected.add(fetchInfo.getTargetSelect());
                                     query.select(fetchInfo.getTargetSelect());
                                 }
-                                query.returnType(entry2.getValue().get(0).getTargetTableInfo().getType());
+                                query.returnType(secondEntry.getValue().get(0).getTargetTableInfo().getType());
                             }
                         });
                     }
 
+                    list.stream().forEach(i -> {
+                        FetchTargetValue fetchTargetValue = (FetchTargetValue) i;
+                        Object matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
+                        Object result = fetchTargetValue.getTarget();
 
-                    for (FetchPut fetchPut : fetchPuts) {
-                        list.stream().forEach(i -> {
-                            FetchTargetValue fetchTargetValue = (FetchTargetValue) i;
-                            Object matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), fetchPut.getFetchInfo().getTargetTableFieldInfo().getFieldInfo().getTypeClass());
-                            Object result = fetchTargetValue.getTarget();
-
+                        List<FetchPut> needPutFetchPuts = waitFetchPutValueMap.get(secondEntry.getKey() + "&" + matchValue);
+                        for (FetchPut fetchPut : needPutFetchPuts) {
                             Object value = fetchPut.getFetchInfo().getTargetSelectTableFieldInfo().getValue(result);
                             fetchPut.putValue(matchValue, value);
-                        });
-                    }
+                        }
+                    });
 
                     fetchPuts.stream().forEach(j -> {
                         setToFetchValue(j.getRowValue(), j.getValues().stream().filter(Objects::nonNull).collect(Collectors.toList()), j.getFetchInfo(), j.getCacheKey());
