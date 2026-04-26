@@ -387,7 +387,7 @@ public class ResultInfo {
      */
     private static int parseFetch(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, Fetch fetch, int tableCount) {
         String valueColumn = fetch.column();
-        TypeHandler<?> valueTypeHandler = null;
+
         if (StringPool.EMPTY.equals(valueColumn)) {
             TableFieldInfo fetchFieldInfo;
             TableInfo fetchTableInfo;
@@ -415,7 +415,7 @@ public class ResultInfo {
             if (Objects.isNull(fetchFieldInfo)) {
                 throw new NotTableFieldException(clazz, path, fetchTableInfo.getType(), fetch.property());
             }
-            valueTypeHandler = fetchFieldInfo.getTypeHandler();
+
             //以字段为基础的查询
             //创建前缀
             tableCount = createPrefix(fetchTableInfo.getType(), storey, parseResult.tablePrefixes, tableCount);
@@ -436,7 +436,7 @@ public class ResultInfo {
             }
         }
 
-        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, fieldInfo, fetch, returnType, valueColumn, valueTypeHandler));
+        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, fieldInfo, fetch, returnType, valueColumn));
         return tableCount;
     }
 

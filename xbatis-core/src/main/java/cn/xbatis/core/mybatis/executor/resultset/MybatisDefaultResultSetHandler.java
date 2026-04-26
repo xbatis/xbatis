@@ -409,6 +409,15 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         return waitFetchGroupInfoMap.get(resultType);
     }
 
+    private TypeHandler<?> getFetchOnValueTypeHandler(FetchInfo fetchInfo) {
+        TypeHandler<?> typeHandler = fetchInfo.getTargetTableFieldInfo().getTypeHandler();
+        if (typeHandler == null) {
+            typeHandler = mappedStatement.getConfiguration().getTypeHandlerRegistry().getTypeHandler(fetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
+            fetchInfo.setOnValueTypeHandler(typeHandler);
+        }
+        return typeHandler;
+    }
+
     /**
      * 获取Fetch的on的值
      *
@@ -419,19 +428,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     public Object getFetchOnValue(FetchInfo fetchInfo, ResultSet resultSet) {
         Object onValue;
         try {
+            TypeHandler<?> typeHandler = getFetchOnValueTypeHandler(fetchInfo);
             if (fetchInfo.getFetch().propertyType() == FetchPropertyType.SIMPLE) {
-                if (Objects.nonNull(fetchInfo.getValueTypeHandler())) {
-                    onValue = fetchInfo.getValueTypeHandler().getResult(resultSet, fetchInfo.getValueColumn());
-                } else {
-                    onValue = resultSet.getObject(fetchInfo.getValueColumn());
-                    if (onValue != null && !(onValue instanceof Number)) {
-                        onValue = onValue.toString();
-                    }
-                }
+                onValue = typeHandler.getResult(resultSet, fetchInfo.getValueColumn());
             } else {
                 onValue = resultSet.getString(fetchInfo.getValueColumn());
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -496,22 +498,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
-    /**
-     * 转成匹配值；如果是单个就是string，如果是集合 则转为Set 集合
-     *
-     * @param onValue
-     * @return 匹配值
-     */
-    private Object toMatchValue(Object onValue) {
-        if (onValue == null) {
-            return null;
-        }
-        if (onValue instanceof Collection) {
-            return ((Collection) onValue).stream().map(i -> i.toString()).collect(Collectors.toList());
-        }
-        return onValue.toString();
-    }
-
     public Object loadFetchValue(Class<?> resultType, Map<String, List<FetchInfo>> fetchMap, List<FetchInfo> filteredFetchInfos, Object rowValue, ResultSet resultSet) {
         for (Map.Entry<String, List<FetchInfo>> entry : fetchMap.entrySet()) {
             List<FetchPut> fetchPuts = new ArrayList<>();
@@ -535,9 +521,13 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     continue;
                 }
 
+                if (Objects.isNull(rowValue)) {
+                    rowValue = configuration.getObjectFactory().create(resultType);
+                }
+
                 FetchCache fetchCache = XbatisGlobalConfig.getFetchCache();
                 if (fetchCache != null && !fetchInfo.getFetch().cacheName().isEmpty()) {
-                    cacheKey = this.buildFetchCacheKey(finalOnValue, fetchInfo, entry.getValue());
+                    cacheKey = this.buildFetchCacheKey(onValue, fetchInfo, entry.getValue());
                     Object cacheValue = fetchCache.get(fetchInfo.getFetch().cacheName(), fetchInfo.getFetch(), fetchInfo.getFieldInfo(), cacheKey);
                     if (Objects.nonNull(cacheValue)) {
                         if (cacheValue instanceof cn.xbatis.core.cache.NULL) {
@@ -546,10 +536,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         fetchInfo.setValue(rowValue, cacheValue, this.defaultValueContext);
                         continue;
                     }
-                }
-
-                if (Objects.isNull(rowValue)) {
-                    rowValue = configuration.getObjectFactory().create(resultType);
                 }
 
                 if (fetchInfo.isSingleFetch()) {
@@ -565,7 +551,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     onValues.add(finalOnValue);
                 }
 
-                fetchPuts.add(new FetchPut(rowValue, toMatchValue(finalOnValue), fetchInfo, cacheKey));
+                fetchPuts.add(new FetchPut(rowValue, finalOnValue, fetchInfo, cacheKey));
             }
 
             if (!fetchPuts.isEmpty()) {
@@ -609,12 +595,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         Object result;
                         if (i instanceof FetchTargetValue) {
                             FetchTargetValue fetchTargetValue = (FetchTargetValue) i;
-                            matchValue = toMatchValue(fetchTargetValue.getMatchFieldValue());
+                            matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
                             result = fetchTargetValue.getTarget();
                         } else {
                             try {
                                 matchValue = firstFetchInfo.getSourceTargetMatchFieldGetter().invoke(i, null);
-                                matchValue = toMatchValue(matchValue);
+                                matchValue = TypeConvertUtil.convert(matchValue, firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
                             } catch (IllegalAccessException e) {
                                 throw new RuntimeException(e);
                             }
@@ -654,7 +640,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     for (FetchPut fetchPut : fetchPuts) {
                         list.stream().forEach(i -> {
                             FetchTargetValue fetchTargetValue = (FetchTargetValue) i;
-                            Object matchValue = toMatchValue(fetchTargetValue.getMatchFieldValue());
+                            Object matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), fetchPut.getFetchInfo().getTargetTableFieldInfo().getFieldInfo().getTypeClass());
                             Object result = fetchTargetValue.getTarget();
 
                             Object value = fetchPut.getFetchInfo().getTargetSelectTableFieldInfo().getValue(result);

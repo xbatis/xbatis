@@ -43,8 +43,6 @@ public class FetchInfo {
 
     private final String valueColumn;
 
-    private final TypeHandler<?> valueTypeHandler;
-
     private final TableInfo middleTableInfo;
 
     private final TableFieldInfo middleSourceTableFieldInfo;
@@ -54,6 +52,8 @@ public class FetchInfo {
     private final TableInfo targetTableInfo;
 
     private final TableFieldInfo targetTableFieldInfo;
+
+    private volatile TypeHandler<?> onValueTypeHandler;
 
     private final String targetSelect;
 
@@ -85,7 +85,7 @@ public class FetchInfo {
 
     private final String fetchGroup;
 
-    public FetchInfo(Class clazz, FieldInfo fieldInfo, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler) {
+    public FetchInfo(Class clazz, FieldInfo fieldInfo, Fetch fetch, Class returnType, String valueColumn) {
         if (fetch.mergeGroup().isEmpty()) {
             this.fetchGroup = FetchKeyUtil.getFetchKey(clazz, fieldInfo.getField());
         } else {
@@ -97,7 +97,6 @@ public class FetchInfo {
         this.writeFieldInvoker = new SetFieldInvoker(fieldInfo.getField());
         this.readFieldInvoker = new GetFieldInvoker(fieldInfo.getField());
         this.valueColumn = valueColumn;
-        this.valueTypeHandler = valueTypeHandler;
 
         Object[] objs;
         objs = parseMiddle(clazz, fieldInfo.getField(), fetch);
@@ -108,6 +107,7 @@ public class FetchInfo {
         objs = parseTarget(clazz, fieldInfo.getField(), fetch);
         this.targetTableInfo = (TableInfo) objs[0];
         this.targetTableFieldInfo = (TableFieldInfo) objs[1];
+        this.onValueTypeHandler = this.targetTableFieldInfo.getTypeHandler();
 
         this.targetSelect = parseDynamicColumn(clazz, fieldInfo.getField(), middleTableInfo, targetTableInfo, "@Fetch", "targetSelectProperty", fetch.targetSelectProperty());
 

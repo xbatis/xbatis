@@ -69,7 +69,7 @@ public class FetchPut {
                 }
             }
         } else {
-            match= Objects.equals(this.matchValue, onValue.toString());
+            match = Objects.equals(this.matchValue, onValue);
             if (match){
                 this.values.add(fetchQueryValue);
             }
