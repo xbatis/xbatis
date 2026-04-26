@@ -69,7 +69,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     private Map<Class, Map<String, List<FetchInfo>>> waitFetchGroupInfoMap;
     private Map<String, Set<Object>> waitFetchOnValusMap;
     private Map<String, List<FetchPut>> waitFetchPutMap;
-    private Map<String, List<FetchPut>> waitFetchPutValueMap;
+    private Map<String, Map<Object, List<FetchPut>>> waitFetchPutValueMap;
 
     private Map<String, Consumer<Where>> fetchFilters;
     private Map<String, Boolean> fetchEnables;
@@ -180,9 +180,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
         if (waitFetchPutValueMap != null) {
             waitFetchPutValueMap.entrySet().stream().forEach(i -> {
-                if (i.getValue() != null) {
-                    i.getValue().clear();
+                for (Map.Entry<Object, List<FetchPut>> entry : i.getValue().entrySet()) {
+                    entry.getValue().clear();
                 }
+                i.getValue().clear();
             });
             waitFetchPutValueMap.clear();
         }
@@ -566,10 +567,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
                 if (finalOnValue instanceof Collection) {
                     for (Object v : (Collection) finalOnValue) {
-                        waitFetchPutValueMap.computeIfAbsent(entry.getKey() + "&" + v, k -> new ArrayList<>()).add(fetchPut);
+                        waitFetchPutValueMap.computeIfAbsent(entry.getKey(), k -> new HashMap<>()).computeIfAbsent(v, k -> new ArrayList<>()).add(fetchPut);
                     }
                 } else {
-                    waitFetchPutValueMap.computeIfAbsent(entry.getKey() + "&" + finalOnValue, k -> new ArrayList<>()).add(fetchPut);
+                    waitFetchPutValueMap.computeIfAbsent(entry.getKey(), k -> new HashMap<>()).computeIfAbsent(finalOnValue, k -> new ArrayList<>()).add(fetchPut);
                 }
             }
 
@@ -625,7 +626,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                             result = i;
                         }
 
-                        List<FetchPut> needPutFetchPuts = waitFetchPutValueMap.get(secondEntry.getKey() + "&" + matchValue);
+                        List<FetchPut> needPutFetchPuts = waitFetchPutValueMap.get(secondEntry.getKey()).get(matchValue);
                         for (FetchPut fetchPut : needPutFetchPuts) {
                             fetchPut.putValue(matchValue, result);
                         }
@@ -661,7 +662,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         Object matchValue = TypeConvertUtil.convert(fetchTargetValue.getMatchFieldValue(), firstFetchInfo.getTargetTableFieldInfo().getFieldInfo().getTypeClass());
                         Object result = fetchTargetValue.getTarget();
 
-                        List<FetchPut> needPutFetchPuts = waitFetchPutValueMap.get(secondEntry.getKey() + "&" + matchValue);
+                        List<FetchPut> needPutFetchPuts = waitFetchPutValueMap.get(secondEntry.getKey()).get(matchValue);
                         for (FetchPut fetchPut : needPutFetchPuts) {
                             Object value = fetchPut.getFetchInfo().getTargetSelectTableFieldInfo().getValue(result);
                             fetchPut.putValue(matchValue, value);
