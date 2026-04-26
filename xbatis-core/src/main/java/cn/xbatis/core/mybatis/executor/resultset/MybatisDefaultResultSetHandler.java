@@ -612,9 +612,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         }
                     });
 
-                    fetchPuts.stream().forEach(j -> {
+                    for (FetchPut j : fetchPuts) {
                         setToFetchValue(j.getRowValue(), j.getValues().stream().filter(Objects::nonNull).collect(Collectors.toList()), j.getFetchInfo(), j.getCacheKey());
-                    });
+                    }
                 } else {
                     // 有分组fetch
                     List list;
