@@ -760,6 +760,11 @@ public class ResultInfo {
                 if (!Objects.equals(o1.getFetch().logicDeleteStrategy(), o2.getFetch().logicDeleteStrategy())) {
                     throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(logicDeleteStrategy) not same, please check");
                 }
+                if (o1.getFetch().targetSelectProperty().isEmpty() || o2.getFetch().targetSelectProperty().isEmpty()) {
+                    if (o1.getFieldInfo().getFinalClass() != o2.getFieldInfo().getFinalClass()) {
+                        throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " when targetSelectProperty not set, the field type must be same, please check");
+                    }
+                }
                 return o1;
             }));
         }

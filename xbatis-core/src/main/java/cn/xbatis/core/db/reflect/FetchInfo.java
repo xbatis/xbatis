@@ -121,11 +121,9 @@ public class FetchInfo {
         }
 
         if (!fetch.mergeGroup().isEmpty()) {
-            if (this.targetSelectTableFieldInfo == null) {
-                throw buildException(clazz, fieldInfo.getField(), "@Fetch", " when targetSelectProperty not set", ",the fetch field type must be same");
-            } else {
-                if (fieldInfo.getTypeClass().getPackage().getName().startsWith("java.lang")) {
-                    throw buildException(clazz, fieldInfo.getField(), "@Fetch", " when targetSelectProperty set", ",the fetch field type must be java.lang type");
+            if (this.targetSelectTableFieldInfo != null) {
+                if (!fieldInfo.getFinalClass().getPackage().getName().startsWith("java.")) {
+                    throw buildException(clazz, fieldInfo.getField(), "@Fetch", " when targetSelectProperty set", ",the fetch field type must be java.lang basic type");
                 }
             }
             if (!fetch.cacheName().isEmpty() && this.targetSelectTableFieldInfo != null) {
