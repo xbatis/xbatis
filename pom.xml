@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis</artifactId>
-    <version>1.10.0</version>
+    <version>1.10.1</version>
     <packaging>pom</packaging>
     <modules>
         <module>xbatis-bom</module>
@@ -40,7 +40,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <xbatis.version>1.10.0</xbatis.version>
+        <xbatis.version>1.10.1</xbatis.version>
         <xbatis-generator-core.version>1.1.8</xbatis-generator-core.version>
         <xbatis-datasource-routing.version>1.1.2</xbatis-datasource-routing.version>
 
@@ -78,7 +78,7 @@
 
         <!-- bean容器 -->
         <spring-boot.version>2.7.18</spring-boot.version>
-        <solon.version>3.10.0</solon.version>
+        <solon.version>3.10.3</solon.version>
 
         <!-- mybatis 相关 -->
         <mybatis.version>3.5.19</mybatis.version>
