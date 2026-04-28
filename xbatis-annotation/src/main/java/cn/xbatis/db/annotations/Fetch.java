@@ -66,7 +66,7 @@ public @interface Fetch {
     /**
      * when 条件；符合后才进行Fetch
      * 原始数据源条件；偶数位为属性名，奇数位为值；
-     *
+     * 值的类型是String，支持多值，例如："1,2,3" 表示 or (xx=1 or xx=2 or xx=3)
      * @return
      */
     String[] when() default "";

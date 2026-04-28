@@ -534,14 +534,23 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 if (dbValue == null) {
                     return false;
                 }
-                if (dbValue instanceof LocalDateTime && when.getValue() instanceof LocalDateTime) {
-                    if (!Objects.equals(((LocalDateTime) when.getValue()).toLocalDate(), ((LocalDateTime) dbValue).toLocalDate())) {
-                        return false;
+                // 遍历when的值,符合一个即可
+                boolean match = false;
+                for (Object whenValue : when.getValues()) {
+                    if (dbValue instanceof LocalDateTime && whenValue instanceof LocalDateTime) {
+                        if (Objects.equals(((LocalDateTime) whenValue).toLocalDate(), ((LocalDateTime) dbValue).toLocalDate())) {
+                            match = true;
+                            break;
+                        }
+                    } else {
+                        if (Objects.equals(whenValue, dbValue)) {
+                            match = true;
+                            break;
+                        }
                     }
-                } else {
-                    if (!Objects.equals(when.getValue(), dbValue)) {
-                        return false;
-                    }
+                }
+                if (!match) {
+                    return false;
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);

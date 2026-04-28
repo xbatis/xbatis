@@ -18,6 +18,10 @@ import cn.xbatis.core.util.TypeConvertUtil;
 import lombok.Getter;
 import org.apache.ibatis.type.TypeHandler;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 public class FetchWhenInfo {
 
@@ -25,14 +29,15 @@ public class FetchWhenInfo {
 
     private final String column;
 
-    private final Object value;
+    private final List<Object> values;
 
     private volatile TypeHandler<?> propertyTypeHandler;
 
     public FetchWhenInfo(TableFieldInfo property, String column, String value) {
         this.property = property;
         this.column = column;
-        this.value = TypeConvertUtil.convert(value, property.getFieldInfo().getFinalClass());
+        String[] strs = value.split(",");
+        this.values = Arrays.stream(strs).map(s -> TypeConvertUtil.convert(s, property.getFieldInfo().getFinalClass())).collect(Collectors.toList());
         this.propertyTypeHandler = property.getTypeHandler();
     }
 
