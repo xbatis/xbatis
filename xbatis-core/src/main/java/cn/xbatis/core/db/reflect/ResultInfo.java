@@ -20,6 +20,7 @@ import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.sql.executor.XbatisTableField;
 import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.core.util.StringPool;
+import cn.xbatis.db.WhenType;
 import cn.xbatis.db.annotations.*;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.tookit.MethodCallNode;
@@ -444,16 +445,20 @@ public class ResultInfo {
 
         List<FetchWhenInfo> fetchWhenInfos = new ArrayList<>();
 
-        if (fetch.when().length % 2 != 0) {
+        if (fetch.when().length % 3 != 0) {
             if (fetch.when().length != 1 || !fetch.when()[0].isEmpty()) {
                 throw buildException(clazz, fieldInfo.getField(), "@Fetch", "when", " must be even number");
             }
         } else {
-            for (int i = 0; i < fetch.when().length; i += 2) {
+            for (int i = 0; i < fetch.when().length; i += 3) {
                 String name = fetch.when()[i];
                 Object[] objs = getFetchFinalColumn(parseResult, resultFieldInfos, tableCount, clazz, field, path + ".when", fetchTableInfo, storey, name);
                 tableCount = (int) objs[0];
-                fetchWhenInfos.add(new FetchWhenInfo((TableFieldInfo) objs[2], (String) objs[1], fetch.when()[i + 1]));
+                String logic = WhenType.WHEN_TYPE_MAP.get(fetch.when()[i + 1]);
+                if (Objects.isNull(logic)) {
+                    throw new RuntimeException(clazz.getName() + "." + fieldInfo.getField().getName() + " @Fetch when logic error, the logic:" + fetch.when()[i + 1] + " is not support");
+                }
+                fetchWhenInfos.add(new FetchWhenInfo((TableFieldInfo) objs[2], (String) objs[1], logic, fetch.when()[i + 2]));
             }
         }
 

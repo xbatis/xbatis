@@ -16,6 +16,7 @@ package cn.xbatis.db.annotations;
 
 import cn.xbatis.db.FetchLogicDeleteStrategy;
 import cn.xbatis.db.FetchPropertyType;
+import cn.xbatis.db.WhenType;
 
 import java.lang.annotation.*;
 
@@ -65,8 +66,14 @@ public @interface Fetch {
 
     /**
      * when 条件；符合后才进行Fetch
-     * 原始数据源条件；偶数位为属性名，奇数位为值；
-     * 值的类型是String，支持多值，例如："1,2,3" 表示 or (xx=1 or xx=2 or xx=3)
+     * 每3位为一组条件
+     * <br/>
+     *  第1位 来源属性
+     * <br/>
+     * {@link WhenType 第2位 位逻辑符号} {@see WhenType} 逻辑符号目前支持 等于：eq,不等于：ne , 包含 ：in 不包含为 notIn;
+     * <br/>
+     *  第3位 值
+     * 值的类型是String，WhenType.BETWEEN, WhenType.NOT_BETWEEN 支持2个值 例如："1,3"；其他支持多个值 例如 "1,2,3"
      * @return
      */
     String[] when() default "";

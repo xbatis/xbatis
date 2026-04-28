@@ -27,14 +27,17 @@ public class FetchWhenInfo {
 
     private final TableFieldInfo property;
 
+    private final String logic;
+
     private final String column;
 
     private final List<Object> values;
 
     private volatile TypeHandler<?> propertyTypeHandler;
 
-    public FetchWhenInfo(TableFieldInfo property, String column, String value) {
+    public FetchWhenInfo(TableFieldInfo property, String column, String logic, String value) {
         this.property = property;
+        this.logic = logic;
         this.column = column;
         String[] strs = value.split(",");
         this.values = Arrays.stream(strs).map(s -> TypeConvertUtil.convert(s, property.getFieldInfo().getFinalClass())).collect(Collectors.toList());

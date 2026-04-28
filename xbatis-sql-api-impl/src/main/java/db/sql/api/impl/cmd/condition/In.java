@@ -18,6 +18,7 @@ import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.cmd.basic.RowValues;
 import db.sql.api.impl.tookit.Lists;
 import db.sql.api.impl.tookit.SqlConst;
@@ -80,11 +81,14 @@ public class In extends BaseCondition<In, Cmd, List<Cmd>> {
         sqlBuilder = key.sql(module, this, context, sqlBuilder);
         if (this.values.size() == 1) {
             Cmd first = this.values.get(0);
-            if (!(first instanceof IQuery) && !(first instanceof RowValues)) {
-                sqlBuilder.append(SqlConst.BLANK).append(SqlConst.EQ);
-                sqlBuilder = first.sql(module, this, context, sqlBuilder);
-                sqlBuilder = sqlBuilder.append(SqlConst.BLANK);
-                return sqlBuilder;
+            if (!(first instanceof IQuery) && !(first instanceof RowValues) && first instanceof BasicValue) {
+                BasicValue basicValue = (BasicValue) first;
+                if (basicValue.getFinalValue() instanceof Serializable) {
+                    sqlBuilder.append(SqlConst.BLANK).append(SqlConst.EQ);
+                    sqlBuilder = first.sql(module, this, context, sqlBuilder);
+                    sqlBuilder = sqlBuilder.append(SqlConst.BLANK);
+                    return sqlBuilder;
+                }
             }
         }
         sqlBuilder.append(getOperator()).append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);

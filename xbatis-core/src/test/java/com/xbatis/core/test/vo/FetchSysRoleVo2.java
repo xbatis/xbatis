@@ -14,6 +14,7 @@
 
 package com.xbatis.core.test.vo;
 
+import cn.xbatis.db.WhenType;
 import cn.xbatis.db.annotations.Fetch;
 import cn.xbatis.db.annotations.ResultEntity;
 import com.xbatis.core.test.DO.SysRole;
@@ -30,10 +31,10 @@ public class FetchSysRoleVo2 {
 
     private String name;
 
-    @Fetch(column = "id", when = {SysRole.Fields.createTime, "2022-10-10", SysRole.Fields.createTime, "2022-10-10"}, target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id asc")
+    @Fetch(column = "id", when = {SysRole.Fields.createTime, WhenType.EQ, "2022-10-10", SysRole.Fields.createTime, WhenType.EQ, "2022-10-10"}, target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id asc")
     private List<String> sysRoleNames;
 
-    @Fetch(column = "id", when = {SysRole.Fields.createTime, "2022-10-10", SysRole.Fields.createTime, "2022-10-11"}, target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id asc")
+    @Fetch(column = "id", when = {SysRole.Fields.createTime, WhenType.EQ, "2022-10-10", SysRole.Fields.createTime, WhenType.EQ, "2022-10-11"}, target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id asc")
     private List<String> sysRoleNames2;
 
     @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "[count({id})]")

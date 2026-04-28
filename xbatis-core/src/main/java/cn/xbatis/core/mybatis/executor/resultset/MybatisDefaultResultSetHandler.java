@@ -28,6 +28,7 @@ import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.*;
 import cn.xbatis.db.FetchLogicDeleteStrategy;
 import cn.xbatis.db.FetchPropertyType;
+import cn.xbatis.db.WhenType;
 import cn.xbatis.db.annotations.ResultEntity;
 import db.sql.api.IDbType;
 import db.sql.api.impl.cmd.Methods;
@@ -521,42 +522,167 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 return false;
             }
         }
+
         if (fetchInfo.getWhens().isEmpty()) {
             return true;
         }
 
         for (FetchWhenInfo when : fetchInfo.getWhens()) {
+            Object dbValue;
             try {
                 if (when.getPropertyTypeHandler() == null) {
                     when.setPropertyTypeHandler(configuration.getTypeHandlerRegistry().getTypeHandler(when.getProperty().getFieldInfo().getFinalClass()));
                 }
-                Object dbValue = when.getPropertyTypeHandler().getResult(resultSet, when.getColumn());
-                if (dbValue == null) {
-                    return false;
-                }
-                // 遍历when的值,符合一个即可
-                boolean match = false;
-                for (Object whenValue : when.getValues()) {
-                    if (dbValue instanceof LocalDateTime && whenValue instanceof LocalDateTime) {
-                        if (Objects.equals(((LocalDateTime) whenValue).toLocalDate(), ((LocalDateTime) dbValue).toLocalDate())) {
-                            match = true;
-                            break;
-                        }
-                    } else {
-                        if (Objects.equals(whenValue, dbValue)) {
-                            match = true;
-                            break;
-                        }
-                    }
-                }
-                if (!match) {
-                    return false;
-                }
+                dbValue = when.getPropertyTypeHandler().getResult(resultSet, when.getColumn());
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }
 
+            if (dbValue == null) {
+                return false;
+            }
+
+            switch (when.getLogic()) {
+                case WhenType.IN:
+                case WhenType.EQ: {
+                    // 遍历when的值,符合一个即可
+                    boolean match = false;
+                    for (Object whenValue : when.getValues()) {
+                        if (dbValue instanceof LocalDateTime) {
+                            if (Objects.equals(((LocalDateTime) whenValue).toLocalDate(), ((LocalDateTime) dbValue).toLocalDate())) {
+                                match = true;
+                                break;
+                            }
+                        } else {
+                            if (Objects.equals(whenValue, dbValue)) {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!match) {
+                        return false;
+                    }
+                    break;
+                }
+                case WhenType.NOT_IN:
+                case WhenType.NE: {
+                    // 遍历when的值,全部都要不等于
+                    for (Object whenValue : when.getValues()) {
+                        if (dbValue instanceof LocalDateTime) {
+                            if (Objects.equals(((LocalDateTime) whenValue).toLocalDate(), ((LocalDateTime) dbValue).toLocalDate())) {
+                                return false;
+                            }
+                        } else {
+                            if (Objects.equals(whenValue, dbValue)) {
+                                return false;
+                            }
+                        }
+                    }
+                    break;
+                }
+                case WhenType.GT: {
+                    for (Object whenValue : when.getValues()) {
+                        if (dbValue instanceof LocalDateTime) {
+                            if (!((LocalDateTime) dbValue).isAfter((LocalDateTime) whenValue)) {
+                                return false;
+                            }
+                        }
+
+                        if (((Number) dbValue).doubleValue() <= ((Number) whenValue).doubleValue()) {
+                            return false;
+                        }
+                    }
+                    break;
+                }
+                case WhenType.GTE: {
+                    for (Object whenValue : when.getValues()) {
+                        if (dbValue instanceof LocalDateTime) {
+                            if (((LocalDateTime) dbValue).isBefore((LocalDateTime) whenValue)) {
+                                return false;
+                            }
+                        }
+
+                        if (((Number) dbValue).doubleValue() < ((Number) whenValue).doubleValue()) {
+                            return false;
+                        }
+                    }
+                    break;
+                }
+                case WhenType.LT: {
+                    for (Object whenValue : when.getValues()) {
+                        if (dbValue instanceof LocalDateTime) {
+                            if (!((LocalDateTime) dbValue).isBefore((LocalDateTime) whenValue)) {
+                                return false;
+                            }
+                        }
+
+                        if (((Number) dbValue).doubleValue() >= ((Number) whenValue).doubleValue()) {
+                            return false;
+                        }
+                    }
+                    break;
+                }
+                case WhenType.LTE: {
+                    for (Object whenValue : when.getValues()) {
+                        if (dbValue instanceof LocalDateTime) {
+                            if (((LocalDateTime) dbValue).isAfter((LocalDateTime) whenValue)) {
+                                return false;
+                            }
+                        }
+
+                        if (((Number) dbValue).doubleValue() > ((Number) whenValue).doubleValue()) {
+                            return false;
+                        }
+                    }
+                    break;
+                }
+                case WhenType.BETWEEN: {
+                    Object first = when.getValues().get(0);
+                    Object second = when.getValues().get(1);
+                    if (dbValue instanceof LocalDateTime) {
+                        if (((LocalDateTime) dbValue).isBefore((LocalDateTime) first)) {
+                            return false;
+                        }
+
+                        if (((LocalDateTime) dbValue).isAfter((LocalDateTime) second)) {
+                            return false;
+                        }
+                    }
+
+                    if (((Number) dbValue).doubleValue() < ((Number) first).doubleValue()) {
+                        return false;
+                    }
+
+                    if (((Number) dbValue).doubleValue() > ((Number) second).doubleValue()) {
+                        return false;
+                    }
+                    break;
+                }
+                case WhenType.NOT_BETWEEN: {
+                    Object first = when.getValues().get(0);
+                    Object second = when.getValues().get(1);
+                    if (dbValue instanceof LocalDateTime) {
+                        if (!((LocalDateTime) dbValue).isBefore((LocalDateTime) first)) {
+                            return false;
+                        }
+
+                        if (!((LocalDateTime) dbValue).isAfter((LocalDateTime) second)) {
+                            return false;
+                        }
+                    }
+
+                    if (((Number) dbValue).doubleValue() < ((Number) first).doubleValue()) {
+                        return false;
+                    }
+
+                    if (((Number) dbValue).doubleValue() > ((Number) second).doubleValue()) {
+                        return false;
+                    }
+                    break;
+                }
+            }
+        }
         return true;
     }
 
