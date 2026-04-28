@@ -331,4 +331,5 @@ CREATE TABLE IF NOT EXISTS fetch_merge
 insert into fetch_merge(role_id1, role_id2, role_id3)
 values (1, 2, 3),
        (0, 1, 2),
-       (0, 2, 3);
+       (0, 2, 3),
+       (null, 2, 3);

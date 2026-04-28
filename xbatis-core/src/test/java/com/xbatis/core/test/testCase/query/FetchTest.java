@@ -71,6 +71,9 @@ public class FetchTest extends BaseTest {
             assertEquals(map.get(1).getSysRoleNames().get(1), "test2");
             assertEquals(map.get(1).getRoleName(), "测试");
             assertEquals(map.get(2).getRoleName(), "运维");
+
+            assertEquals(map.get(1).getSysRoleNames2().size(), 0);
+            assertEquals(map.get(2).getSysRoleNames2().size(), 0);
         }
     }
 
@@ -727,7 +730,7 @@ public class FetchTest extends BaseTest {
 
             System.out.println(list);
 
-            assertEquals(3, list.size());
+            assertEquals(4, list.size());
             assertEquals(list.get(0).getRoleId1(), list.get(0).getRoleid1());
 
             assertEquals(0, list.get(1).getRoleId1());
@@ -761,6 +764,8 @@ public class FetchTest extends BaseTest {
             assertEquals("运维", list.get(2).getRole2().getName());
             assertNull(list.get(2).getRole3());
 
+            assertEquals("运维", list.get(3).getRoleName2());
+            assertEquals(list.get(3).getRoleNames().size(), 0);
         }
     }
 

@@ -21,10 +21,15 @@ import com.xbatis.core.test.DO.SysRole;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.List;
+
 @Data
 @ToString(callSuper = true)
 @ResultEntity(FetchMerge.class)
 public class FetchMergeVO extends FetchMerge {
+
+    @Fetch(mergeGroup = "role", property = Fields.roleId1, target = SysRole.class, targetProperty = SysRole.Fields.id, targetSelectProperty = SysRole.Fields.name)
+    private List<String> roleNames;
 
     @Fetch(mergeGroup = "role", property = Fields.roleId1, target = SysRole.class, targetProperty = SysRole.Fields.id, targetSelectProperty = SysRole.Fields.name)
     private String roleName1;

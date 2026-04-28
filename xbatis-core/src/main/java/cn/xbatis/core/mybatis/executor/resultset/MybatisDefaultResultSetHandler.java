@@ -51,6 +51,7 @@ import org.apache.ibatis.type.TypeHandler;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -509,6 +510,47 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    private boolean isNeedFetchWithFinalOnValue(FetchInfo fetchInfo, Object finalOnValue, ResultSet resultSet) {
+        if (Objects.isNull(finalOnValue)) {
+            return false;
+        }
+
+        if (finalOnValue instanceof Collection) {
+            Collection onValues = (Collection) finalOnValue;
+            if (onValues.isEmpty()) {
+                return false;
+            }
+        }
+        if (fetchInfo.getWhens().isEmpty()) {
+            return true;
+        }
+
+        for (FetchWhenInfo when : fetchInfo.getWhens()) {
+            try {
+                if (when.getPropertyTypeHandler() == null) {
+                    when.setPropertyTypeHandler(configuration.getTypeHandlerRegistry().getTypeHandler(when.getProperty().getFieldInfo().getFinalClass()));
+                }
+                Object dbValue = when.getPropertyTypeHandler().getResult(resultSet, when.getColumn());
+                if (dbValue == null) {
+                    return false;
+                }
+                if (dbValue instanceof LocalDateTime && when.getValue() instanceof LocalDateTime) {
+                    if (!Objects.equals(((LocalDateTime) when.getValue()).toLocalDate(), ((LocalDateTime) dbValue).toLocalDate())) {
+                        return false;
+                    }
+                } else {
+                    if (!Objects.equals(when.getValue(), dbValue)) {
+                        return false;
+                    }
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return true;
+    }
+
     public Object loadFetchValue(Class<?> resultType, Map<String, List<FetchInfo>> fetchMap, List<FetchInfo> filteredFetchInfos, Object rowValue, ResultSet resultSet) {
         for (Map.Entry<String, List<FetchInfo>> entry : fetchMap.entrySet()) {
             List<FetchPut> fetchPuts = new ArrayList<>();
@@ -524,16 +566,28 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 }
 
                 if (Objects.isNull(onValue)) {
+                    if (rowValue != null) {
+                        fetchInfo.setValue(rowValue, null, this.defaultValueContext);
+                    }
                     continue;
                 }
 
                 Object finalOnValue = this.getFinalFetchOnValue(fetchInfo, onValue);
-                if (Objects.isNull(finalOnValue)) {
+                if (finalOnValue == null || (finalOnValue instanceof Collection && ((Collection) finalOnValue).isEmpty())) {
+                    if (rowValue != null) {
+                        fetchInfo.setValue(rowValue, null, this.defaultValueContext);
+                    }
                     continue;
                 }
 
                 if (Objects.isNull(rowValue)) {
                     rowValue = configuration.getObjectFactory().create(resultType);
+                }
+
+                if (!isNeedFetchWithFinalOnValue(fetchInfo, finalOnValue, resultSet)) {
+                    //不匹配 需要跳过
+                    fetchInfo.setValue(rowValue, null, this.defaultValueContext);
+                    continue;
                 }
 
                 FetchCache fetchCache = XbatisGlobalConfig.getFetchCache();

@@ -129,7 +129,11 @@ public final class TypeConvertUtil {
             if (value instanceof Date) {
                 newValue = toLocalDateTime(((Date) value).getTime());
             } else if (value instanceof String) {
-                newValue = LocalDateTime.parse(value.toString(), DEFAULT_DTF);
+                if (((String) value).length() == 10) {
+                    newValue = LocalDate.parse(value.toString(), DATE_DTF).atStartOfDay();
+                } else {
+                    newValue = LocalDateTime.parse(value.toString(), DEFAULT_DTF);
+                }
             } else if (value instanceof Long || value.getClass() == long.class) {
                 newValue = toLocalDateTime(((Long) value));
             } else if (value instanceof Integer || value.getClass() == int.class) {

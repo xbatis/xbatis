@@ -85,7 +85,9 @@ public class FetchInfo {
 
     private final String fetchGroup;
 
-    public FetchInfo(Class clazz, FieldInfo fieldInfo, Fetch fetch, Class returnType, String valueColumn) {
+    private final List<FetchWhenInfo> whens;
+
+    public FetchInfo(Class clazz, FieldInfo fieldInfo, Fetch fetch, Class returnType, String valueColumn, List<FetchWhenInfo> whens) {
         if (fetch.mergeGroup().isEmpty()) {
             this.fetchGroup = FetchKeyUtil.getFetchKey(clazz, fieldInfo.getField());
         } else {
@@ -163,6 +165,8 @@ public class FetchInfo {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+
+        this.whens = whens;
     }
 
     private static RuntimeException buildException(Class clazz, Field field, String annotationName, String annotationPropertyName, String message) {
@@ -446,5 +450,9 @@ public class FetchInfo {
 
     public Comparator<?> getComparator() {
         return comparator;
+    }
+
+    public List<FetchWhenInfo> getWhens() {
+        return whens;
     }
 }

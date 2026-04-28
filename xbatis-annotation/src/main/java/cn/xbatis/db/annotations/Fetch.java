@@ -64,6 +64,14 @@ public @interface Fetch {
     int storey() default -1;
 
     /**
+     * when 条件；符合后才进行Fetch
+     * 原始数据源条件；偶数位为属性名，奇数位为值；
+     *
+     * @return
+     */
+    String[] when() default "";
+
+    /**
      * 中间实体类（中间表）
      *
      * @return 中间实体类

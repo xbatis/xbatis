@@ -375,6 +375,24 @@ public class ResultInfo {
         return new RuntimeException(clazz.getName() + "." + field.getName() + " " + annotationName + "  config error,the " + annotationPropertyName + ":" + message);
     }
 
+    private static Object[] getFetchFinalColumn(ParseResult parseResult, List<ResultFieldInfo> resultFieldInfos, int tableCount, Class clazz, Field field, String path, TableInfo fetchTableInfo, int storey, String property) {
+        TableFieldInfo fetchFieldInfo;
+        fetchFieldInfo = fetchTableInfo.getFieldInfo(property);
+
+        if (Objects.isNull(fetchFieldInfo)) {
+            throw new NotTableFieldException(clazz, path, fetchTableInfo.getType(), property);
+        }
+
+        //以字段为基础的查询
+        //创建前缀
+        tableCount = createPrefix(fetchTableInfo.getType(), storey, parseResult.tablePrefixes, tableCount);
+        //获取前缀
+        String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), storey);
+
+        resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, fetchTableInfo, fetchFieldInfo, field, false));
+        return new Object[]{tableCount, tablePrefix + fetchFieldInfo.getColumnName(), fetchFieldInfo};
+    }
+
     /**
      * 解析内嵌字段
      *
@@ -388,42 +406,30 @@ public class ResultInfo {
     private static int parseFetch(Class root, String path, ParseResult parseResult, int parentStorey, TableInfo currentTableInfo, List<ResultFieldInfo> resultFieldInfos, Class<?> clazz, Field field, Fetch fetch, int tableCount) {
         String valueColumn = fetch.column();
 
+        TableInfo fetchTableInfo;
+        if (fetch.source() != Void.class) {
+            if (!fetch.source().isAnnotationPresent(Table.class)) {
+                throw new NotTableClassException(root, path, fetch.source());
+            }
+            fetchTableInfo = Tables.get(fetch.source());
+        } else {
+            //如果没有设置Fetch source 字段，则当前作用域的TableInfo
+            fetchTableInfo = currentTableInfo;
+        }
+
+        int storey;
+        if (fetch.storey() != -1) {
+            storey = fetch.storey();
+        } else if (currentTableInfo == fetchTableInfo) {
+            storey = parentStorey;
+        } else {
+            storey = 1;
+        }
+
         if (StringPool.EMPTY.equals(valueColumn)) {
-            TableFieldInfo fetchFieldInfo;
-            TableInfo fetchTableInfo;
-            if (fetch.source() != Void.class) {
-                if (!fetch.source().isAnnotationPresent(Table.class)) {
-                    throw new NotTableClassException(root, path, fetch.source());
-                }
-                fetchTableInfo = Tables.get(fetch.source());
-                fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
-            } else {
-                //如果没有设置Fetch source 字段，则当前作用域的TableInfo
-                fetchTableInfo = currentTableInfo;
-                fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
-            }
-
-            int storey;
-            if (fetch.storey() != -1) {
-                storey = fetch.storey();
-            } else if (currentTableInfo == fetchTableInfo) {
-                storey = parentStorey;
-            } else {
-                storey = 1;
-            }
-
-            if (Objects.isNull(fetchFieldInfo)) {
-                throw new NotTableFieldException(clazz, path, fetchTableInfo.getType(), fetch.property());
-            }
-
-            //以字段为基础的查询
-            //创建前缀
-            tableCount = createPrefix(fetchTableInfo.getType(), storey, parseResult.tablePrefixes, tableCount);
-            //获取前缀
-            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetchTableInfo.getType(), storey);
-
-            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, storey, tablePrefix, fetchTableInfo, fetchFieldInfo, field, false));
-            valueColumn = tablePrefix + fetchFieldInfo.getColumnName();
+            Object[] objs = getFetchFinalColumn(parseResult, resultFieldInfos, tableCount, clazz, field, path + ".property", fetchTableInfo, storey, fetch.property());
+            tableCount = (int) objs[0];
+            valueColumn = (String) objs[1];
         }
 
         FieldInfo fieldInfo = new FieldInfo(clazz, field);
@@ -436,7 +442,22 @@ public class ResultInfo {
             }
         }
 
-        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, fieldInfo, fetch, returnType, valueColumn));
+        List<FetchWhenInfo> fetchWhenInfos = new ArrayList<>();
+
+        if (fetch.when().length % 2 != 0) {
+            if (fetch.when().length != 1 || !fetch.when()[0].isEmpty()) {
+                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "when", " must be even number");
+            }
+        } else {
+            for (int i = 0; i < fetch.when().length; i += 2) {
+                String name = fetch.when()[i];
+                Object[] objs = getFetchFinalColumn(parseResult, resultFieldInfos, tableCount, clazz, field, path + ".when", fetchTableInfo, storey, name);
+                tableCount = (int) objs[0];
+                fetchWhenInfos.add(new FetchWhenInfo((TableFieldInfo) objs[2], (String) objs[1], fetch.when()[i + 1]));
+            }
+        }
+
+        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, fieldInfo, fetch, returnType, valueColumn, fetchWhenInfos));
         return tableCount;
     }
 
