@@ -1084,7 +1084,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 fetchInfo.setValue(rowValue, null, defaultValueContext);
                 return;
             } else if (matchValues.size() > 1 && !fetchInfo.getFetch().multiValueErrorIgnore()) {
-                throw new TooManyResultsException("fetch action found more than 1 record");
+                throw new TooManyResultsException("fetch:" + fetchInfo.getFieldInfo().getClazz() + "." + fetchInfo.getFieldInfo().getField().getName() + " action found more than 1 record");
             }
 
             Object value;
