@@ -319,6 +319,7 @@ values ('1,2', '1,2,3', '["1","4","1"]'),
        ('2,4', '1,5', '["5","1"]'),
        ('1,6', '6', '["2"]');
 
+drop table if exists fetch_merge;
 
 CREATE TABLE IF NOT EXISTS fetch_merge
 (
