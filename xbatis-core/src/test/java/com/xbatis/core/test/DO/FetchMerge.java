@@ -14,8 +14,10 @@
 
 package com.xbatis.core.test.DO;
 
+import cn.xbatis.db.IdAutoType;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableId;
+import db.sql.api.DbType;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
@@ -24,6 +26,7 @@ import lombok.experimental.FieldNameConstants;
 @FieldNameConstants
 public class FetchMerge {
     @TableId
+    @TableId(dbType = DbType.Name.ORACLE, value = IdAutoType.SQL, sql = "select fetch_merge_seq.NEXTVAL FROM dual")
     private Integer id;
 
     private Integer roleId1;

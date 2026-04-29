@@ -246,3 +246,19 @@ CREATE TABLE IF NOT EXISTS multi_pk
     name VARCHAR(100) not null,
     PRIMARY KEY (id1, id2)
 );
+
+drop table if exists fetch_merge;
+
+CREATE TABLE IF NOT EXISTS fetch_merge
+(
+    id          INTEGER generated always as identity (start with 1, increment by 1),
+    role_id1 INT,
+    role_id2 INT,
+    role_id3 INT
+);
+
+insert into fetch_merge(role_id1, role_id2, role_id3)
+values (1, 2, 3),
+       (0, 1, 2),
+       (0, 2, 3),
+       (null, 2, 3);

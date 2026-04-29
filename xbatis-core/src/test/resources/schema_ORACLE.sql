@@ -307,3 +307,30 @@ CREATE TABLE multi_pk
     name VARCHAR(100) not null,
     PRIMARY KEY (id1, id2)
 );
+
+DROP
+SEQUENCE fetch_merge_seq;
+
+CREATE
+SEQUENCE fetch_merge_seq;
+
+DROP TABLE fetch_merge;
+
+CREATE TABLE fetch_merge
+(
+    id               INT PRIMARY KEY,
+    role_id1 INT,
+    role_id2 INT,
+    role_id3 INT
+);
+
+insert all
+    into fetch_merge(id,role_id1, role_id2, role_id3)
+    values(1,1, 2, 3)
+    into fetch_merge(id,role_id1, role_id2, role_id3)
+    values(2,0, 1, 2)
+    into fetch_merge(id,role_id1, role_id2, role_id3)
+        values(3,0, 2, 3)
+    into fetch_merge(id,role_id1, role_id2, role_id3)
+    values(4,null, 2, 3)
+    select * from dual;
