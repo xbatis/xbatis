@@ -81,7 +81,7 @@ public class NotIn extends BaseCondition<NotIn, Cmd, List<Cmd>> {
         sqlBuilder = key.sql(module, this, context, sqlBuilder);
         if (this.values.size() == 1) {
             Cmd first = this.values.get(0);
-            if (!(first instanceof IQuery) && !(first instanceof RowValues) && first instanceof BasicValue) {
+            if (first instanceof BasicValue) {
                 BasicValue basicValue = (BasicValue) first;
                 if (basicValue.getFinalValue() instanceof Serializable) {
                     sqlBuilder.append(SqlConst.BLANK).append(SqlConst.NE);
