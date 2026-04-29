@@ -98,7 +98,11 @@ public class ModelInfo {
 
     public ModelInfo(Class<?> model) {
         this.type = model;
-        Class<?> entity = GenericUtil.getGenericInterfaceClass(model).stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst().orElseThrow(() -> new RuntimeException(MessageFormat.format("class {0} have no generic type", model.getName())));
+        List<Class<?>> genericInterfaceClasses = GenericUtil.getGenericInterfaceClass(model);
+        if (genericInterfaceClasses.size() == 0) {
+            genericInterfaceClasses = GenericUtil.getGenericSuperClass(model);
+        }
+        Class<?> entity = genericInterfaceClasses.stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst().orElseThrow(() -> new RuntimeException(MessageFormat.format("class {0} have no generic type", model.getName())));
         this.entityType = entity;
 
         try {
