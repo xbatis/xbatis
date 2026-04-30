@@ -27,13 +27,9 @@ import static cn.xbatis.db.annotations.Condition.Type.LIKE;
 @ConditionTarget(value = SysUser.class)
 public class KeywordLikeREQ {
 
-    @Conditions(
-            logic = Logic.OR,
-            value = {
-                    @Condition(property = SysUser.Fields.userName, value = LIKE),
-                    @Condition(property = SysUser.Fields.password, value = LIKE)
-            }
-    )
+    //多列模糊匹配 配多个默认为OR行为；AND行为需要使用@Conditions
+    @Condition(property = SysUser.Fields.userName, value = LIKE)
+    @Condition(property = SysUser.Fields.password, value = LIKE)
     private String keyword;
 
     private Integer id;
