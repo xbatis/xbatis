@@ -25,44 +25,8 @@ public class DefaultDbTypeParser implements DbTypeParser {
     public static final DbTypeParser INSTANCE = new DefaultDbTypeParser();
 
     public static void main(String[] args) {
-        System.out.println(new DefaultDbTypeParser().getKey("jdbc:mysql://localhost:3306/test"));
-        System.out.println(new DefaultDbTypeParser().getKey("jdbc:p6spy:mysql://localhost:3306/test"));
-    }
-
-    protected String getKey(String jdbcUrl) {
-        int startIndex = -1;
-        int endIndex = -1;
-        int firstStartIndex = -1;
-        int firstEndIndex = -1;
-        char[] chars = jdbcUrl.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] == ':') {
-                if (firstStartIndex == -1) {
-                    firstStartIndex = i;
-                } else if (firstEndIndex == -1) {
-                    firstEndIndex = i;
-                }
-                if (startIndex != -1 && i + 3 <= chars.length && chars[i + 1] == '/' && chars[i + 2] == '/') {
-                    endIndex = i;
-                    break;
-                } else {
-                    startIndex = i;
-                }
-            }
-        }
-        if (endIndex == -1) {
-            startIndex = firstStartIndex;
-            endIndex = firstEndIndex;
-        }
-        if (endIndex != -1) {
-            char[] dbKeyChars = new char[endIndex - startIndex + 1];
-            for (int i = startIndex, j = 0; i <= endIndex; i++, j++) {
-                char c = chars[i];
-                dbKeyChars[j] = Character.isUpperCase(c) ? Character.toLowerCase(c) : c;
-            }
-            return new String(dbKeyChars);
-        }
-        return null;
+        System.out.println(new DefaultDbTypeParser().getKey("jdbc:mysql://localhost:3306/test", 0));
+        System.out.println(new DefaultDbTypeParser().getKey("jdbc:p6spy:mysql://localhost:3306/test", 0));
     }
 
     @Override
@@ -74,8 +38,21 @@ public class DefaultDbTypeParser implements DbTypeParser {
         throw new DbTypeUtil.DbTypeParseException("Unrecognized database type:" + jdbcUrl);
     }
 
+    protected String getKey(String jdbcUrl, int start) {
+        int index = jdbcUrl.indexOf(':', start);
+        int end = jdbcUrl.indexOf(':', index + 1);
+        String key = jdbcUrl.substring(index, end + 1);
+        if (":p6spy:".equals(key)) {
+            return getKey(jdbcUrl, end);
+        }
+        return key;
+    }
+
     protected IDbType getDbType(String jdbcUrl) {
-        String dbKey = getKey(jdbcUrl);
+        String dbKey = getKey(jdbcUrl, 0);
+        if (":p6spy:".equals(dbKey)) {
+            dbKey = getKey(jdbcUrl, 9);
+        }
         IDbType dbType = DbTypes.getDbTypeByUrlKey(dbKey);
         if (dbType != null) {
             return dbType;
