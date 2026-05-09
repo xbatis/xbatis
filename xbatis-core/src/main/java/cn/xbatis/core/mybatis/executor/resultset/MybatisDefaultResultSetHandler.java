@@ -111,10 +111,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         this.waitFetchPutValueMap = new HashMap<>();
 
                         this.basicMapper = XbatisContextUtil.getBasicMapper(parameterObject);
-
                         this.waitFetchGroupInfoMap = new HashMap<>();
                         if (this.fetchEnables == null || this.fetchEnables.isEmpty()) {
                             for (Map.Entry<Class, List<FetchInfo>> entry : resultInfo.getFetchInfoMap().entrySet()) {
+                                for (FetchInfo fetchInfo : entry.getValue()) {
+                                    this.checkFetchInfo(fetchInfo);
+                                }
                                 waitFetchGroupInfoMap.put(entry.getKey(), entry.getValue().stream().collect(Collectors.groupingBy(FetchInfo::getFetchGroup)));
                             }
                         } else {
@@ -123,7 +125,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                                 if (value == null || value.isEmpty()) {
                                     return;
                                 }
-                                value.stream().forEach(item -> {
+                                for (FetchInfo item : value) {
                                     Boolean enable;
                                     if (this.fetchEnables == null) {
                                         enable = Boolean.FALSE;
@@ -134,17 +136,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                                         enable = this.fetchEnables.get(item.getFetch().mergeGroup());
                                     }
                                     if (enable != null && !enable) {
-                                        if (item.getFetch().needFilter()) {
-                                            if (item.getFetch().mergeGroup().isEmpty()) {
-                                                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(item.getFetchKey())) {
-                                                    throw new RuntimeException("the fetch of " + item.getFieldInfo().getClazz() + "." + item.getFieldInfo().getField().getName() + " has no filter; you must call fetchFilter method in " + baseQuery.getClass().getSimpleName());
-                                                }
-                                            } else {
-                                                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(item.getFetch().mergeGroup())) {
-                                                    throw new RuntimeException("the fetch of " + item.getFieldInfo().getClazz() + "." + item.getFieldInfo().getField().getName() + " has no group filter; you must call fetchFilter(group,filter) method in " + baseQuery.getClass().getSimpleName());
-                                                }
-                                            }
-                                        }
                                         List<FetchInfo> fetchInfos = filteredFetchInfosMap.get(key);
                                         if (fetchInfos == null) {
                                             fetchInfos = new ArrayList<>();
@@ -152,10 +143,11 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                                         }
                                         fetchInfos.add(item);
                                     } else {
+                                        this.checkFetchInfo(item);
                                         Map<String, List<FetchInfo>> map = waitFetchGroupInfoMap.computeIfAbsent(key, k -> new HashMap<>());
                                         map.computeIfAbsent(item.getFetchGroup(), k -> new ArrayList<>()).add(item);
                                     }
-                                });
+                                }
                             });
                         }
                     }
@@ -166,6 +158,20 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 this.returnType = baseQuery.getReturnType();
                 if (!XbatisContextUtil.isCmdCountFromQueryContext(parameterObject)) {
                     this.onRowEvent = baseQuery.getOnRowEvent();
+                }
+            }
+        }
+    }
+
+    private void checkFetchInfo(FetchInfo fetchInfo) {
+        if (fetchInfo.getFetch().needFilter()) {
+            if (fetchInfo.getFetch().mergeGroup().isEmpty()) {
+                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(fetchInfo.getFetchKey())) {
+                    throw new RuntimeException("the fetch of " + fetchInfo.getFieldInfo().getClazz() + "." + fetchInfo.getFieldInfo().getField().getName() + " has no filter; you must call fetchFilter method in " + baseQuery.getClass().getSimpleName() + " instance");
+                }
+            } else {
+                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(fetchInfo.getFetch().mergeGroup())) {
+                    throw new RuntimeException("the fetch of " + fetchInfo.getFieldInfo().getClazz() + "." + fetchInfo.getFieldInfo().getField().getName() + " has no group filter; you must call fetchFilter(group,filter) method in " + baseQuery.getClass().getSimpleName() + " instance");
                 }
             }
         }
