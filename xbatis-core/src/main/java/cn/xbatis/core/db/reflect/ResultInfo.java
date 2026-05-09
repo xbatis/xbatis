@@ -791,6 +791,9 @@ public class ResultInfo {
                         throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " when targetSelectProperty not set, the field type must be same, please check");
                     }
                 }
+                if (!Objects.equals(o1.getFetch().needFilter(), o2.getFetch().needFilter())) {
+                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(needFilter) not same, please check");
+                }
                 return o1;
             }));
         }
