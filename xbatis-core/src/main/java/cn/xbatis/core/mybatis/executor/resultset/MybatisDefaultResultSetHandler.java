@@ -134,6 +134,17 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                                         enable = this.fetchEnables.get(item.getFetch().mergeGroup());
                                     }
                                     if (enable != null && !enable) {
+                                        if (item.getFetch().needFilter()) {
+                                            if (item.getFetch().mergeGroup().isEmpty()) {
+                                                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(item.getFetchKey())) {
+                                                    throw new RuntimeException("the fetch of " + item.getFieldInfo().getClazz() + "." + item.getFieldInfo().getField().getName() + " has no filter; you must call fetchFilter method in " + baseQuery.getClass().getSimpleName());
+                                                }
+                                            } else {
+                                                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(item.getFetch().mergeGroup())) {
+                                                    throw new RuntimeException("the fetch of " + item.getFieldInfo().getClazz() + "." + item.getFieldInfo().getField().getName() + " has no group filter; you must call fetchFilter(group,filter) method in " + baseQuery.getClass().getSimpleName());
+                                                }
+                                            }
+                                        }
                                         List<FetchInfo> fetchInfos = filteredFetchInfosMap.get(key);
                                         if (fetchInfos == null) {
                                             fetchInfos = new ArrayList<>();

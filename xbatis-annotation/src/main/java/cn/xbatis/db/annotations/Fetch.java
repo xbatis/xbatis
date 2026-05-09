@@ -198,4 +198,11 @@ public @interface Fetch {
      * @return 逻辑删除 策略
      */
     FetchLogicDeleteStrategy logicDeleteStrategy() default FetchLogicDeleteStrategy.DEFAULT;
+
+    /**
+     * 是否必须调用fetchFilter方法；默认false ； 如果true，则必须调用fetchFilter方法；此配置主要了防止忘记调用fetchFilter方法
+     *
+     * @return 是否必须调用fetchFilter方法
+     */
+    boolean needFilter() default false;
 }
