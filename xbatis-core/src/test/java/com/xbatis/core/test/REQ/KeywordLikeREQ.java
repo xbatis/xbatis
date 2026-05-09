@@ -14,10 +14,8 @@
 
 package com.xbatis.core.test.REQ;
 
-import cn.xbatis.db.Logic;
 import cn.xbatis.db.annotations.Condition;
 import cn.xbatis.db.annotations.ConditionTarget;
-import cn.xbatis.db.annotations.Conditions;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 

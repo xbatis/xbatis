@@ -160,6 +160,30 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    private static boolean isNeedFetch(Object parameterObject, Class<?> returnType) {
+        if (parameterObject instanceof SQLCmdCountFromQueryContext) {
+            return false;
+        }
+
+        if (!returnType.isAnnotationPresent(ResultEntity.class)) {
+            return false;
+        }
+
+        if (parameterObject instanceof SQLCmdQueryContext) {
+            return true;
+        }
+
+        if (parameterObject instanceof Map) {
+            if (XbatisContextUtil.isCmdCountFromQueryContext(parameterObject)) {
+                return false;
+            }
+            if (XbatisContextUtil.getQueryExecution(parameterObject) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void clearObjects() {
         rowValues.clear();
 
@@ -189,30 +213,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             });
             waitFetchPutValueMap.clear();
         }
-    }
-
-    private static boolean isNeedFetch(Object parameterObject, Class<?> returnType) {
-        if (parameterObject instanceof SQLCmdCountFromQueryContext) {
-            return false;
-        }
-
-        if (!returnType.isAnnotationPresent(ResultEntity.class)) {
-            return false;
-        }
-
-        if (parameterObject instanceof SQLCmdQueryContext) {
-            return true;
-        }
-
-        if (parameterObject instanceof Map) {
-            if (XbatisContextUtil.isCmdCountFromQueryContext(parameterObject)) {
-                return false;
-            }
-            if (XbatisContextUtil.getQueryExecution(parameterObject) != null) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void onRowEvent(Object rowValue) {
@@ -877,7 +877,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         } else {
                             for (FetchPut fetchPut : needPutFetchPuts) {
                                 Object value = fetchPut.getFetchInfo().getTargetSelectTableFieldInfo().getValue(result);
-                                value = TypeConvertUtil.convert(value,fetchPut.getFetchInfo().getFieldInfo().getFinalClass());
+                                value = TypeConvertUtil.convert(value, fetchPut.getFetchInfo().getFieldInfo().getFinalClass());
                                 fetchPut.putValue(matchValue, value);
                             }
                         }

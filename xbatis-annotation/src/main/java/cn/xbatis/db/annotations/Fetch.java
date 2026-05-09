@@ -68,12 +68,13 @@ public @interface Fetch {
      * when 条件；符合后才进行Fetch
      * 每3位为一组条件
      * <br/>
-     *  第1位 来源属性
+     * 第1位 来源属性
      * <br/>
      * {@link WhenType 第2位 位逻辑符号} {@see WhenType} 逻辑符号目前支持 等于：eq,不等于：ne , 包含 ：in 不包含为 notIn;
      * <br/>
-     *  第3位 值
+     * 第3位 值
      * 值的类型是String，WhenType.BETWEEN, WhenType.NOT_BETWEEN 支持2个值 例如："1,3"；其他支持多个值 例如 "1,2,3"
+     *
      * @return
      */
     String[] when() default "";

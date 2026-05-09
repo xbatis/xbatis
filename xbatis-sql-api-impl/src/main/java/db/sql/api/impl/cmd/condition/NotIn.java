@@ -16,10 +16,8 @@ package db.sql.api.impl.cmd.condition;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.BasicValue;
-import db.sql.api.impl.cmd.basic.RowValues;
 import db.sql.api.impl.tookit.Lists;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;

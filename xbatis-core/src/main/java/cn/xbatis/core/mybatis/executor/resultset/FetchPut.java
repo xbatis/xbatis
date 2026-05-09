@@ -30,21 +30,21 @@ public class FetchPut {
 
     private FetchInfo fetchInfo;
 
-    private List<Object> values=new ArrayList<>();
+    private List<Object> values = new ArrayList<>();
 
     private Set<Object> matchSet;
 
-    public FetchPut(Object rowValue,Object matchValue, FetchInfo fetchInfo, String cacheKey) {
+    public FetchPut(Object rowValue, Object matchValue, FetchInfo fetchInfo, String cacheKey) {
         this.rowValue = rowValue;
         this.matchValue = matchValue;
         this.fetchInfo = fetchInfo;
         this.cacheKey = cacheKey;
 
-        if (this.matchValue instanceof Collection){
+        if (this.matchValue instanceof Collection) {
             Collection collection = (Collection) this.matchValue;
             this.matchSet = new HashSet<>();
             this.matchSet.addAll(collection);
-            for(Object o : collection){
+            for (Object o : collection) {
                 this.values.add(null);
             }
         } else {
@@ -52,16 +52,16 @@ public class FetchPut {
         }
     }
 
-    public boolean putValue(Object onValue,Object fetchQueryValue) {
-        if (onValue == null){
+    public boolean putValue(Object onValue, Object fetchQueryValue) {
+        if (onValue == null) {
             return false;
         }
         boolean match;
-        if (this.matchSet != null){
+        if (this.matchSet != null) {
             match = this.matchSet.contains(onValue);
             if (match) {
                 int i = -1;
-                for (Object o:(Collection) this.matchValue){
+                for (Object o : (Collection) this.matchValue) {
                     i++;
                     if (Objects.equals(o, onValue)) {
                         this.values.set(i, fetchQueryValue);
@@ -70,7 +70,7 @@ public class FetchPut {
             }
         } else {
             match = Objects.equals(this.matchValue, onValue);
-            if (match){
+            if (match) {
                 this.values.add(fetchQueryValue);
             }
         }

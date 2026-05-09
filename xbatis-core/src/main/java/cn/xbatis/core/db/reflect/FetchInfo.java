@@ -52,40 +52,23 @@ public class FetchInfo {
     private final TableInfo targetTableInfo;
 
     private final TableFieldInfo targetTableFieldInfo;
-
-    private volatile TypeHandler<?> onValueTypeHandler;
-
     private final String targetSelect;
-
     private final TableFieldInfo targetSelectTableFieldInfo;
-
     private final String targetOrderBy;
-
     private final String otherConditions;
-
     private final SetFieldInvoker writeFieldInvoker;
-
     private final GetFieldInvoker readFieldInvoker;
-
     private final Class<?> returnType;
-
     private final boolean singleFetch;
-
     private final boolean group;
-
     private final boolean sourceTargetMatchFieldInReturnType;
-
     private final Field sourceTargetMatchField;
-
     private final GetFieldInvoker sourceTargetMatchFieldGetter;
-
     private final Object nullFillValue;
-
     private final Comparator<?> comparator;
-
     private final String fetchGroup;
-
     private final List<FetchWhenInfo> whens;
+    private volatile TypeHandler<?> onValueTypeHandler;
 
     public FetchInfo(Class clazz, FieldInfo fieldInfo, Fetch fetch, Class returnType, String valueColumn, List<FetchWhenInfo> whens) {
         if (fetch.mergeGroup().isEmpty()) {
