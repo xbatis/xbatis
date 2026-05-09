@@ -25,15 +25,23 @@ public class DefaultDbTypeParser implements DbTypeParser {
     public static final DbTypeParser INSTANCE = new DefaultDbTypeParser();
 
     public static void main(String[] args) {
-        System.out.println(new DefaultDbTypeParser().getType("jdbc:mysql://localhost:3306/test"));
+        System.out.println(new DefaultDbTypeParser().getKey("jdbc:mysql://localhost:3306/test"));
+        System.out.println(new DefaultDbTypeParser().getKey("jdbc:p6spy:mysql://localhost:3306/test"));
     }
 
-    protected String getType(String jdbcUrl) {
+    protected String getKey(String jdbcUrl) {
         int startIndex = -1;
         int endIndex = -1;
+        int firstStartIndex = -1;
+        int firstEndIndex = -1;
         char[] chars = jdbcUrl.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (chars[i] == ':') {
+                if (firstStartIndex == -1) {
+                    firstStartIndex = i;
+                } else if (firstEndIndex == -1) {
+                    firstEndIndex = i;
+                }
                 if (startIndex != -1 && i + 3 <= chars.length && chars[i + 1] == '/' && chars[i + 2] == '/') {
                     endIndex = i;
                     break;
@@ -42,9 +50,13 @@ public class DefaultDbTypeParser implements DbTypeParser {
                 }
             }
         }
-        if (startIndex != -1 && endIndex != -1) {
-            char[] dbKeyChars = new char[endIndex - startIndex - 1];
-            for (int i = startIndex + 1, j = 0; i < endIndex; i++, j++) {
+        if (endIndex == -1) {
+            startIndex = firstStartIndex;
+            endIndex = firstEndIndex;
+        }
+        if (endIndex != -1) {
+            char[] dbKeyChars = new char[endIndex - startIndex + 1];
+            for (int i = startIndex, j = 0; i <= endIndex; i++, j++) {
                 char c = chars[i];
                 dbKeyChars[j] = Character.isUpperCase(c) ? Character.toLowerCase(c) : c;
             }
@@ -63,7 +75,7 @@ public class DefaultDbTypeParser implements DbTypeParser {
     }
 
     protected IDbType getDbType(String jdbcUrl) {
-        String dbKey = getType(jdbcUrl);
+        String dbKey = getKey(jdbcUrl);
         IDbType dbType = DbTypes.getDbTypeByUrlKey(dbKey);
         if (dbType != null) {
             return dbType;
