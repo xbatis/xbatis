@@ -17,7 +17,6 @@ package cn.xbatis.core.db.reflect;
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.util.FieldUtil;
-import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.annotations.*;
 
@@ -41,8 +40,6 @@ public class TableInfo {
      * 表名
      */
     private final String tableName;
-
-    private final String schemaAndTableName;
 
     /**
      * 所有 字段
@@ -122,6 +119,15 @@ public class TableInfo {
 
         this.annotation = entity.getAnnotation(Table.class);
 
+        String schema = annotation.schema();
+
+        if (XbatisGlobalConfig.isDynamicValueKeyFormat(schema)) {
+            schema = XbatisGlobalConfig.getDynamicValue(entity, String.class, schema);
+            if (schema == null) {
+                throw new RuntimeException("the @Table of Entity " + entity.getName() + " has config error,the schema can't be null");
+            }
+        }
+
         this.schema = TableInfoUtil.buildDatabaseCaseNaming(annotation, annotation.schema());
 
         SplitTable splitTable = entity.getAnnotation(SplitTable.class);
@@ -139,12 +145,6 @@ public class TableInfo {
             this.splitTableStrict = false;
         }
         this.tableName = TableInfoUtil.getTableName(entity);
-        if (schema == null || StringPool.EMPTY.equals(schema)) {
-            this.schemaAndTableName = tableName;
-        } else {
-            this.schemaAndTableName = schema + "." + tableName;
-        }
-
 
         TableFieldInfo versionFieldInfo = null;
         TableFieldInfo tenantIdFieldInfo = null;
@@ -295,10 +295,6 @@ public class TableInfo {
 
     public String getTableName() {
         return tableName;
-    }
-
-    public String getSchemaAndTableName() {
-        return schemaAndTableName;
     }
 
     public Map<Class<?>, ForeignInfo> getForeignInfoMap() {
