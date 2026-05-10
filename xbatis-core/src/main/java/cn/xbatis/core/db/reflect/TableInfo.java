@@ -124,11 +124,11 @@ public class TableInfo {
         if (XbatisGlobalConfig.isDynamicValueKeyFormat(schema)) {
             schema = XbatisGlobalConfig.getDynamicValue(entity, String.class, schema);
             if (schema == null) {
-                throw new RuntimeException("the @Table of Entity " + entity.getName() + " has config error,the schema can't be null");
+                throw new RuntimeException("the @Table of Entity " + entity.getName() + " has config error,the dynamic value " + annotation.schema() + " of table schema can't be null");
             }
         }
 
-        this.schema = TableInfoUtil.buildDatabaseCaseNaming(annotation, annotation.schema());
+        this.schema = TableInfoUtil.buildDatabaseCaseNaming(annotation, schema);
 
         SplitTable splitTable = entity.getAnnotation(SplitTable.class);
         this.isSplitTable = splitTable != null;

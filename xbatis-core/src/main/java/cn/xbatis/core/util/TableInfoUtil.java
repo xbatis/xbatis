@@ -118,6 +118,9 @@ public final class TableInfoUtil {
             //动态表名
             if (XbatisGlobalConfig.isDynamicValueKeyFormat(table.value())) {
                 tableName = XbatisGlobalConfig.getDynamicValue(entity, String.class, table.value());
+                if (tableName == null) {
+                    throw new RuntimeException("the @Table of Entity " + entity.getName() + " has config error,the dynamic value " + table.value() + " of table name can't be null");
+                }
             }
         }
 
