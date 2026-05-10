@@ -114,6 +114,11 @@ public final class TableInfoUtil {
             if (XbatisGlobalConfig.isTableUnderline()) {
                 tableName = NamingUtil.camelToUnderline(tableName);
             }
+        } else {
+            //动态表名
+            if (XbatisGlobalConfig.isDynamicValueKeyFormat(table.value())) {
+                tableName = XbatisGlobalConfig.getDynamicValue(entity, String.class, table.value());
+            }
         }
 
         tableName = buildDatabaseCaseNaming(table, tableName);
