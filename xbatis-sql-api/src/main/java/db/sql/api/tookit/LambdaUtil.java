@@ -141,13 +141,14 @@ public final class LambdaUtil {
 
     public static <GETTER extends Function<T, R>, T, R> GETTER createGetter(Class<GETTER> getterClass, Class<T> clazz, String getterName, Class<R> rType) {
         try {
-            CallSite callSite = LambdaMetafactory.metafactory(
+            CallSite callSite = LambdaMetafactory.altMetafactory(
                     LOOKUP,
                     "apply",
                     MethodType.methodType(getterClass),
                     MethodType.methodType(Object.class, Object.class),
                     LOOKUP.findVirtual(clazz, getterName, MethodType.methodType(rType)),
-                    MethodType.methodType(rType, clazz)
+                    MethodType.methodType(rType, clazz),
+                    LambdaMetafactory.FLAG_SERIALIZABLE  // 可选标志
             );
 
             MethodHandle factory = callSite.getTarget();
