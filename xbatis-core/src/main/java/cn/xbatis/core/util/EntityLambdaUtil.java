@@ -18,12 +18,13 @@ import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.db.reflect.Tables;
 import db.sql.api.Getter;
+import db.sql.api.Setter;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class EntityUtil {
+public class EntityLambdaUtil {
 
     private static final Map<String, Getter> CACHE = new ConcurrentHashMap<>();
 
@@ -39,5 +40,14 @@ public class EntityUtil {
             return null;
         }
         return CACHE.computeIfAbsent(cacheKey, key -> LambdaUtil.createGetterByField(clazz, fieldName, tableFieldInfo.getField().getType()));
+    }
+
+    public final static <T,V> Setter<T,V> createSetter(Class<T> clazz, String fieldName) {
+        TableInfo tableInfo = Tables.get(clazz);
+        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldName);
+        if (tableFieldInfo == null) {
+            return null;
+        }
+        return (Setter<T,V>) LambdaUtil.createSetterByField(clazz, fieldName, tableFieldInfo.getField().getType());
     }
 }

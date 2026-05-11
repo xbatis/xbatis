@@ -15,10 +15,11 @@
 package com.xbatis.core.test.testCase.query;
 
 
-import cn.xbatis.core.util.EntityUtil;
+import cn.xbatis.core.util.EntityLambdaUtil;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.testCase.BaseTest;
 import db.sql.api.Getter;
+import db.sql.api.Setter;
 import db.sql.api.tookit.LambdaUtil;
 import org.junit.jupiter.api.Test;
 
@@ -28,12 +29,16 @@ public class EntityGetterParseTest extends BaseTest {
 
     @Test
     public void parse() {
-        Getter<SysUser> getter = EntityUtil.createGetter(SysUser.class, "id");
+        Getter<SysUser> getter = EntityLambdaUtil.createGetter(SysUser.class, "id");
         LambdaUtil.LambdaFieldInfo<SysUser> userLambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
         SysUser sysUser = new SysUser();
         sysUser.setId(1123);
         assertEquals(getter.apply(sysUser), 1123);
         assertEquals(userLambdaFieldInfo.getType(), SysUser.class);
         assertEquals(userLambdaFieldInfo.getName(), "id");
+
+        Setter<SysUser, Integer> setter = EntityLambdaUtil.createSetter(SysUser.class, "id");
+        setter.accept(sysUser, 2222);
+        assertEquals(sysUser.getId(), 2222);
     }
 }
