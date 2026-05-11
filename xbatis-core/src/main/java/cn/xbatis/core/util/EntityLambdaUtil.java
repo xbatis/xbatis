@@ -17,6 +17,7 @@ package cn.xbatis.core.util;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.db.reflect.Tables;
+import cn.xbatis.core.exception.NoFoundFieldException;
 import db.sql.api.Getter;
 import db.sql.api.Setter;
 import db.sql.api.tookit.LambdaUtil;
@@ -46,8 +47,8 @@ public class EntityLambdaUtil {
         TableInfo tableInfo = Tables.get(clazz);
         TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldName);
         if (tableFieldInfo == null) {
-            return null;
+            throw new NoFoundFieldException(clazz, fieldName);
         }
-        return (Setter<T,V>) LambdaUtil.createSetterByField(clazz, fieldName, tableFieldInfo.getField().getType());
+        return (Setter<T, V>) LambdaUtil.createSetterByField(clazz, fieldName, tableFieldInfo.getField().getType());
     }
 }
