@@ -14,10 +14,12 @@
 
 package com.xbatis.core.test.testCase.query;
 
+import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.MybatisCmdFactory;
 import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
+import com.xbatis.core.test.DO.Addr;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.DO.SysUserScore;
@@ -26,6 +28,7 @@ import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.mapper.SysUserScoreMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
+import com.xbatis.core.test.vo.SysRoleVo;
 import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.IDbType;
@@ -850,6 +853,37 @@ public class FunTest extends BaseTest {
                     .get();
 
             assertEquals("c4ca4238a0b923820dcc509a6f75849b", md5);
+        }
+    }
+
+    @Test
+    public void mysqlTest() {
+        if (TestDataSource.DB_TYPE.getDbModel() != DbModel.MYSQL && TestDataSource.DB_TYPE != DbType.MYSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            BasicMapper sysUserMapper = session.getMapper(BasicMapper.class);
+            SysRoleVo sysRoleVo = QueryChain.of(sysUserMapper, SysUser.class)
+                    .select(SysRoleVo.class)
+
+                    .forSearch()
+                    .leftJoin(SysUser::getRole_id, SysRole::getId)
+                    .leftJoin(SysUser::getId, Addr::getId)
+
+
+                    .eq(SysUser::getId, 2)
+                    .orNested(c -> {
+                        c.andNested(true, c33 -> {
+                            c33.or(SysRole::getId, c2 -> c2.mysql().findInSet(1));
+                            c33.or(SysRole::getName, c2 -> c2.mysql().findInSet(2));
+                        });
+
+                    })
+                    .limit(1)
+                    .returnType(SysRoleVo.class)
+                    .get();
+
+            assertEquals(sysRoleVo.getId(), 1);
         }
     }
 }

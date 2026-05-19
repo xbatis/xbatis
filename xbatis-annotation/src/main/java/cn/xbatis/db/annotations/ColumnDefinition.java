@@ -17,6 +17,13 @@ package cn.xbatis.db.annotations;
 public @interface ColumnDefinition {
 
     /**
+     * 顺序索引
+     *
+     * @return 索引
+     */
+    int index() default 0;
+
+    /**
      * 默认值
      *
      * @return 默认值
