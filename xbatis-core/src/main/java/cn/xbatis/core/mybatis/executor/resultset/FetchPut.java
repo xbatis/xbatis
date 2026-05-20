@@ -22,6 +22,8 @@ import java.util.*;
 @Getter
 public class FetchPut {
 
+    public static final Object NULL = new Object();
+
     private Object rowValue;
 
     private String cacheKey;
@@ -45,7 +47,7 @@ public class FetchPut {
             this.matchSet = new HashSet<>();
             this.matchSet.addAll(collection);
             for (Object o : collection) {
-                this.values.add(null);
+                this.values.add(NULL);
             }
         } else {
             this.values = new ArrayList<>();

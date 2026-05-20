@@ -380,7 +380,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             rowValues.add(rowValue);
         }
 
-        if (rowValue != null) {
+        if (baseQuery != null && baseQuery instanceof FetchQuery) {
             if (hasFetchMatchColumn == null) {
                 List<String> columns = rsw.getColumnNames();
                 hasFetchMatchColumn = columns.contains(FETCH_MATCH_COLUMN);
@@ -839,7 +839,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     });
 
                     for (FetchPut j : fetchPuts) {
-                        setToFetchValue(j.getRowValue(), j.getValues().stream().filter(Objects::nonNull).collect(Collectors.toList()), j.getFetchInfo(), j.getCacheKey());
+                        setToFetchValue(j.getRowValue(), j.getValues().stream().filter(i -> i != FetchPut.NULL).collect(Collectors.toList()), j.getFetchInfo(), j.getCacheKey());
                     }
                 } else {
                     // 有分组fetch
@@ -901,7 +901,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     });
 
                     fetchPuts.stream().forEach(j -> {
-                        setToFetchValue(j.getRowValue(), j.getValues().stream().filter(Objects::nonNull).collect(Collectors.toList()), j.getFetchInfo(), j.getCacheKey());
+                        setToFetchValue(j.getRowValue(), j.getValues().stream().filter(i -> i != FetchPut.NULL).collect(Collectors.toList()), j.getFetchInfo(), j.getCacheKey());
                     });
                 }
             }
@@ -960,7 +960,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             return new ArrayList();
         }
 
-        Query<?> query = Query.create();
+        Query<?> query = FetchQuery.create();
         query.returnType(mainFetchInfo.getReturnType());
 
         //如果有中间表
