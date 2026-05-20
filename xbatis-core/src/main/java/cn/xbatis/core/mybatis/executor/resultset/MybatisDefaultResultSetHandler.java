@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
-    private final String FETCH_MATCH_COLUMN = "m$v";
+    private final String FETCH_MATCH_COLUMN = "M$V";
     private final Map<Method, Map> createdEventContextMap = new HashMap<>();
     private final List<Object> rowValues = new ArrayList<>();
 
@@ -384,9 +384,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             if (hasFetchMatchColumn == null) {
                 List<String> columns = rsw.getColumnNames();
                 hasFetchMatchColumn = columns.contains(FETCH_MATCH_COLUMN);
-                if (!hasFetchMatchColumn) {
-                    hasFetchMatchColumn = columns.contains(getUpperCase(FETCH_MATCH_COLUMN));
-                }
             }
             if (hasFetchMatchColumn) {
                 return new FetchTargetValue(rsw.getResultSet().getString(FETCH_MATCH_COLUMN), rowValue);
