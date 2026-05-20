@@ -97,7 +97,7 @@ public class ModelUpdateCreateUtil {
             boolean isForceUpdate = modelFieldInfo.isForceUpdate() || (Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName()));
             Object value = modelFieldInfo.getValue(model);
             if (modelFieldInfo.getTableFieldInfo().isTableId()) {
-                if (Objects.nonNull(value)) {
+                if (IdUtil.isIdValueExists(value)) {
                     if (update.$where().hasContent()) {
                         update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo, value));
                     } else {

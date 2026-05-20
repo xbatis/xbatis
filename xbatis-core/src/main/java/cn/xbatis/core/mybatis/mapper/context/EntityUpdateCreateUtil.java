@@ -92,7 +92,7 @@ public class EntityUpdateCreateUtil {
             Object value = tableFieldInfo.getValue(entity);
             boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
             if (tableFieldInfo.isTableId()) {
-                if (Objects.nonNull(value)) {
+                if (IdUtil.isIdValueExists(value)) {
                     if (update.$where().hasContent()) {
                         update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), CmdParamUtil.build(tableFieldInfo, value));
                     } else {

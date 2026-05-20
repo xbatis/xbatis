@@ -52,8 +52,7 @@ public class EntityBatchInsertCreateUtil {
                 Objects.requireNonNull(tableId.value());
                 if (tableId.value() == IdAutoType.AUTO) {
                     Object id = tableFieldInfo.getValue(entity);
-
-                    if (Objects.isNull(id)) {
+                    if (!IdUtil.isIdValueExists(id)) {
                         continue;
                     }
                 }
@@ -151,8 +150,7 @@ public class EntityBatchInsertCreateUtil {
             for (int i = 0; i < fieldSize; i++) {
                 TableFieldInfo tableFieldInfo = saveFieldInfoSet.get(i);
                 Object value = tableFieldInfo.getValue(t);
-
-                if (tableFieldInfo.isTableId() && Objects.nonNull(value)) {
+                if (tableFieldInfo.isTableId() && IdUtil.isIdValueExists(value)) {
                     containId = true;
                 }
 

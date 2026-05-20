@@ -41,17 +41,18 @@ public class EntityInsertCreateUtil {
     public static void initInsertValue(TableInfo tableInfo, TableFieldInfo tableFieldInfo, Object insertData, IDbType dbType, Map<String, Object> defaultValueContext) {
         if (tableFieldInfo.isTableId()) {
             Object value = tableFieldInfo.getValue(insertData);
-            if (value != null && IdUtil.isIdExists(insertData, tableFieldInfo)) {
+            if (IdUtil.isIdValueExists(value)) {
+                // ID已存在，不设置
                 return;
             }
-            if (!IdUtil.isIdValueExists(value)) {
-                TableId tableId = TableIds.get(insertData.getClass(), dbType);
-                if (tableId.value() == IdAutoType.GENERATOR) {
-                    String generatorName = tableId.generator().isEmpty() ? tableId.generatorName() : tableId.generator();
-                    Generator generator = GeneratorFactory.getIdentifierGenerator(generatorName);
-                    Object id = generator.nextId(tableInfo.getType());
-                    IdUtil.setId(insertData, tableFieldInfo, id);
-                }
+
+            // 生成ID
+            TableId tableId = TableIds.get(insertData.getClass(), dbType);
+            if (tableId.value() == IdAutoType.GENERATOR) {
+                String generatorName = tableId.generator().isEmpty() ? tableId.generatorName() : tableId.generator();
+                Generator generator = GeneratorFactory.getIdentifierGenerator(generatorName);
+                Object id = generator.nextId(tableInfo.getType());
+                IdUtil.setId(insertData, tableFieldInfo, id);
             }
             return;
         }
@@ -144,7 +145,7 @@ public class EntityInsertCreateUtil {
             // 看是否是强制字段
             if (!isNeedInsert && (saveStrategy.isAllFieldSave() || (Objects.nonNull(saveStrategy.getForceFields()) && saveStrategy.getForceFields().contains(tableFieldInfo.getField().getName())))) {
                 isNeedInsert = true;
-                if (tableFieldInfo.isTableId() && value == null) {
+                if (tableFieldInfo.isTableId() && !IdUtil.isIdValueExists(value)) {
                     isNeedInsert = false;
                 }
             }

@@ -43,7 +43,7 @@ public class ModelBatchInsertCreateUtil {
                 Objects.requireNonNull(tableId.value());
                 if (tableId.value() == IdAutoType.AUTO) {
                     Object id = modelFieldInfo.getValue(model);
-                    if (Objects.isNull(id)) {
+                    if (!IdUtil.isIdValueExists(id)) {
                         continue;
                     }
                 }
@@ -147,7 +147,7 @@ public class ModelBatchInsertCreateUtil {
                 ModelFieldInfo modelFieldInfo = saveFieldInfoSet.get(i);
                 Object value = modelFieldInfo.getValue(t);
 
-                if (modelFieldInfo.getTableFieldInfo().isTableId() && Objects.nonNull(value)) {
+                if (modelFieldInfo.getTableFieldInfo().isTableId() && IdUtil.isIdValueExists(value)) {
                     containId = true;
                 }
 

@@ -39,17 +39,18 @@ public class ModelInsertCreateUtil {
     public static <M extends Model<T>, T> void initInsertValue(ModelInfo modelInfo, ModelFieldInfo modelFieldInfo, M insertData, IDbType dbType, Map<String, Object> defaultValueContext) {
         if (modelFieldInfo.getTableFieldInfo().isTableId()) {
             Object value = modelFieldInfo.getValue(insertData);
-            if (value != null && IdUtil.isIdExists(insertData, modelFieldInfo)) {
+            if (IdUtil.isIdValueExists(value)) {
+                // ID已存在，不设置
                 return;
             }
-            if (!IdUtil.isIdValueExists(value)) {
-                TableId tableId = TableIds.get(modelInfo.getEntityType(), dbType);
-                if (tableId.value() == IdAutoType.GENERATOR) {
-                    String generatorName = tableId.generator().isEmpty() ? tableId.generator() : tableId.generator();
-                    Generator generator = GeneratorFactory.getIdentifierGenerator(generatorName);
-                    Object id = generator.nextId(modelInfo.getTableInfo().getType());
-                    IdUtil.setId(insertData, modelFieldInfo, id);
-                }
+
+            // 生成ID
+            TableId tableId = TableIds.get(modelInfo.getEntityType(), dbType);
+            if (tableId.value() == IdAutoType.GENERATOR) {
+                String generatorName = tableId.generator().isEmpty() ? tableId.generator() : tableId.generator();
+                Generator generator = GeneratorFactory.getIdentifierGenerator(generatorName);
+                Object id = generator.nextId(modelInfo.getTableInfo().getType());
+                IdUtil.setId(insertData, modelFieldInfo, id);
             }
             return;
         }
@@ -144,7 +145,7 @@ public class ModelInsertCreateUtil {
             // 看是否是强制字段
             if (!isNeedInsert && (saveStrategy.isAllFieldSave() || (Objects.nonNull(saveStrategy.getForceFields()) && saveStrategy.getForceFields().contains(modelFieldInfo.getField().getName())))) {
                 isNeedInsert = true;
-                if (modelFieldInfo.getTableFieldInfo().isTableId() && value == null) {
+                if (modelFieldInfo.getTableFieldInfo().isTableId() && !IdUtil.isIdValueExists(value)) {
                     isNeedInsert = false;
                 }
             }
