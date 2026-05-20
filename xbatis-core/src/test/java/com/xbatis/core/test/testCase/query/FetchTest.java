@@ -349,7 +349,7 @@ public class FetchTest extends BaseTest {
 
     @Test
     public void fetchResultSingleFieldNullTest6() {
-        if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE == DbType.H2) {
+        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.H2) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
