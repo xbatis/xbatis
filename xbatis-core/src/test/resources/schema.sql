@@ -79,7 +79,7 @@ drop table if exists t_sys_role;
 CREATE TABLE IF NOT EXISTS t_sys_role
 (
     id          INTEGER PRIMARY KEY auto_increment,
-    name        VARCHAR(100) not null,
+    name VARCHAR(100),
     create_time DATETIME     NOT NULL DEFAULT NOW()
 );
 

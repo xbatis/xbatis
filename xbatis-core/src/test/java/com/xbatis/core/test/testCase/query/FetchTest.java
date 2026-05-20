@@ -18,6 +18,7 @@ import cn.xbatis.core.db.reflect.FetchInfo;
 import cn.xbatis.core.db.reflect.ResultInfo;
 import cn.xbatis.core.db.reflect.ResultInfos;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
+import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xbatis.core.test.DO.AddrArchive;
@@ -343,6 +344,33 @@ public class FetchTest extends BaseTest {
             });
 
             assertEquals(Arrays.asList("test1", "test2"), list3.get(0).getSysRoleNames());
+        }
+    }
+
+    @Test
+    public void fetchResultSingleFieldNullTest6() {
+        if (TestDataSource.DB_TYPE == DbType.MYSQL || TestDataSource.DB_TYPE == DbType.H2) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            UpdateChain.of(session.getMapper(SysRoleMapper.class))
+                    .set(SysRole::getName, null, true)
+                    .eq(SysRole::getId, 2)
+                    .execute();
+
+            List<FetchSysRoleVo6> list3 = QueryChain.of(sysUserMapper)
+                    .select(FetchSysRoleVo6.class)
+                    .from(SysUser.class)
+                    .in(SysUser::getId, 2, 3)
+                    .returnType(FetchSysRoleVo6.class)
+                    .list();
+
+
+            System.out.println(list3);
+            assertEquals(null, list3.get(0).getRoleName());
+            assertEquals(null, list3.get(0).getRoleNames().get(0));
         }
     }
 
