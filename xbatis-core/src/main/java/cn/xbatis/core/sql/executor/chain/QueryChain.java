@@ -372,8 +372,8 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     }
 
     /**
-     * 将结果转成 分组map
-     *
+     * 将结果转成 分组map Key List<T>
+     * 注意 key的null值会被过滤
      * @param mapKey 指定的map的 key属性
      * @param <R>    map的key的value 的类型
      * @return 结果 Map<R, List<T>>
@@ -383,7 +383,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     }
 
     /**
-     * 将结果转成 分组map
+     * 将结果转成 分组map Key List<T>
      *
      * @param predicate 过滤条件
      * @param mapKey    指定的map的 key属性
