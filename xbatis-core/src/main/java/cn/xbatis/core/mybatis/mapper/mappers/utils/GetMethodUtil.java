@@ -18,11 +18,15 @@ import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.xbatis.core.sql.executor.BaseQuery;
+import cn.xbatis.core.sql.executor.XbatisTableField;
 import cn.xbatis.core.sql.util.QueryUtil;
 import cn.xbatis.core.sql.util.SelectClassUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
 import db.sql.api.Getter;
+import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.tookit.LambdaUtil;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.io.Serializable;
 import java.util.function.Consumer;
@@ -43,6 +47,27 @@ public final class GetMethodUtil {
             q.setReturnType(targetType);
         });
         return basicMapper.$getById(new SQLCmdQueryContext(query));
+    }
+
+    public static <T, V> V getValueById(BasicMapper basicMapper, TableInfo tableInfo, Serializable id, GetterFun<T, V> getter) {
+        Where where = WhereUtil.create(tableInfo, w -> WhereUtil.appendIdWhere(w, tableInfo, id));
+        LambdaUtil.LambdaFieldInfo<T> fieldInfo = LambdaUtil.getFieldInfo(getter);
+        BaseQuery<?, T> query = QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> {
+            XbatisTableField tableField = (XbatisTableField) q.$(fieldInfo.getType(), fieldInfo.getName());
+            q.select(tableField);
+            QueryUtil.fillQueryDefault(q, tableInfo);
+            //如果没设置type handler，则返回字段的类型，否则返回是实体类
+            if (tableField.getTableFieldInfo().getTableFieldAnnotation().typeHandler() == UnknownTypeHandler.class) {
+                q.setReturnType(tableField.getTableFieldInfo().getFieldInfo().getFinalClass());
+            } else {
+                q.setReturnType(fieldInfo.getType());
+            }
+        });
+        Object value = basicMapper.$getById(new SQLCmdQueryContext(query));
+        if (query.getReturnType() == fieldInfo.getType()) {
+            return getter.apply((T) value);
+        }
+        return (V) value;
     }
 
     public static <T> T get(BasicMapper basicMapper, TableInfo tableInfo, Where where, Getter<T>[] selectFields) {

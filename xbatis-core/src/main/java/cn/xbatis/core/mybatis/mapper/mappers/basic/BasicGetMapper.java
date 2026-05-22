@@ -17,6 +17,7 @@ package cn.xbatis.core.mybatis.mapper.mappers.basic;
 import cn.xbatis.core.db.reflect.Tables;
 import cn.xbatis.core.mybatis.mapper.mappers.utils.GetMethodUtil;
 import db.sql.api.Getter;
+import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
@@ -81,6 +82,18 @@ public interface BasicGetMapper extends BasicBaseMapper {
      */
     default <T, T2, ID extends Serializable> T2 getById(Class<T> entityType, Class<T2> targetType, ID id) {
         return GetMethodUtil.getById(getBasicMapper(), Tables.get(entityType), targetType, id);
+    }
+
+    /**
+     * 根据ID查询，指定字段的值
+     *
+     * @param id
+     * @param getter 返回字段对应的值
+     * @param <V>
+     * @return 指定字段的值
+     */
+    default <T, V, ID extends Serializable> V getValueById(Class<T> entityType, ID id, GetterFun<T, V> getter) {
+        return GetMethodUtil.getValueById(getBasicMapper(), Tables.get(entityType), id, getter);
     }
 
     /**
