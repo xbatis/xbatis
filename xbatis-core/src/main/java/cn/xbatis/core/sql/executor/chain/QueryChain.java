@@ -32,6 +32,8 @@ import org.apache.ibatis.cursor.Cursor;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -367,5 +369,31 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     public <K> Map<K, T> mapWithKey(String mapKey) {
         this.setDefault();
         return mapper.mapWithKey(mapKey, this);
+    }
+
+    /**
+     * 将结果转成 分组map
+     *
+     * @param mapKey 指定的map的 key属性
+     * @param <R>    map的key的value 的类型
+     * @return 结果 Map<R, List<T>>
+     */
+    public <R> Map<R, List<T>> mapGroupWithKey(Function<T, R> mapKey) {
+        return this.mapGroupWithKey(i -> Objects.nonNull(mapKey.apply(i)), mapKey);
+    }
+
+    /**
+     * 将结果转成 分组map
+     *
+     * @param predicate 过滤条件
+     * @param mapKey    指定的map的 key属性
+     * @param <R>       map的key的value 的类型
+     * @return 结果 Map<R, List<T>>
+     */
+    public <R> Map<R, List<T>> mapGroupWithKey(Predicate<T> predicate, Function<T, R> mapKey) {
+        return this.list()
+                .stream()
+                .filter(predicate)
+                .collect(Collectors.groupingBy(mapKey));
     }
 }
