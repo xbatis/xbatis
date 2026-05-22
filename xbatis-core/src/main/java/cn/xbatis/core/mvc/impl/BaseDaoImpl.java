@@ -16,7 +16,7 @@ package cn.xbatis.core.mvc.impl;
 
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.db.reflect.Tables;
-import cn.xbatis.core.mvc.Dao;
+import cn.xbatis.core.mvc.IDao;
 import cn.xbatis.core.mybatis.mapper.BaseMapper;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T, ID> {
+public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements IDao<T, ID> {
 
     private final Class<T> entityType;
     private final Class<ID> idType;
@@ -151,6 +151,12 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     public <T2> T2 getById(Class<T2> targetType, ID id) {
         this.checkIdType();
         return GetMethodUtil.getById(getBasicMapper(), getTableInfo(), targetType, (Serializable) id);
+    }
+
+    @Override
+    public <V> V getValueById(ID id, GetterFun<T, V> getter) {
+        this.checkIdType();
+        return GetMethodUtil.getValueById(getBasicMapper(), getTableInfo(), (Serializable) id, getter);
     }
 
     /**

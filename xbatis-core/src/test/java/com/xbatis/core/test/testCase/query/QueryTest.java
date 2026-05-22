@@ -21,11 +21,13 @@ import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.util.WhereUtil;
 import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
+import com.xbatis.core.test.DO.SysUserEncrypt;
 import com.xbatis.core.test.DO.SysUserRoleMiddle;
 import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.REQ.SysUserOrderBys;
 import com.xbatis.core.test.REQ.SysUserOrderBys2;
 import com.xbatis.core.test.mapper.SysRoleMapper;
+import com.xbatis.core.test.mapper.SysUserEncryptMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.mapper.SysUserRoleMiddleMapper;
 import com.xbatis.core.test.testCase.BaseTest;
@@ -227,6 +229,24 @@ public class QueryTest extends BaseTest {
             eqSysUser.setPassword("123");
             eqSysUser.setCreate_time(LocalDateTime.parse("2023-10-11T15:16:17"));
             assertEquals(eqSysUser, sysUser, "getById检测");
+        }
+    }
+
+    @Test
+    public void getValueByIdTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String userName = sysUserMapper.getValueById(1, SysUser::getUserName);
+            assertEquals("admin", userName);
+        }
+    }
+
+    @Test
+    public void getValueByIdHasTypeHandlerTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserEncryptMapper sysUserMapper = session.getMapper(SysUserEncryptMapper.class);
+            String username = sysUserMapper.getValueById(1, SysUserEncrypt::getUserName);
+            assertEquals("加密后的数据", username);
         }
     }
 

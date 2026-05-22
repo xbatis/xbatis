@@ -14,14 +14,14 @@
 
 package com.xbatis.core.test.testCase.dao;
 
-import cn.xbatis.core.mvc.Dao;
+import cn.xbatis.core.mvc.IDao;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 
 public class BaseDaoTest extends BaseTest {
 
-    protected Dao<SysUser, Integer> getDao(SysUserMapper sysUserMapper) {
+    protected IDao<SysUser, Integer> getDao(SysUserMapper sysUserMapper) {
         return new SysUserDao(sysUserMapper);
     }
 }
