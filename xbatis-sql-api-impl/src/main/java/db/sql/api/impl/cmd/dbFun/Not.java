@@ -12,23 +12,14 @@
  *
  */
 
-package db.sql.api.cmd.executor.method.condition;
+package db.sql.api.impl.cmd.dbFun;
 
+import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.ICondition;
+import db.sql.api.impl.tookit.SqlConst;
 
-/**
- * 条件方法
- *
- * @param <RV>
- * @param <COLUMN>
- * @param <V>
- */
-public interface IConditionMethods<RV, COLUMN, V> extends ICompare<RV, COLUMN, V>,
-        IInMethod<RV, COLUMN>,
-        INotInMethod<RV, COLUMN>,
-        IExistsMethod<RV> {
-
-    RV not(ICondition condition);
-
-    RV not(boolean when, ICondition condition);
+public class Not extends BasicFunction<Not> implements ICondition {
+    public Not(Cmd key) {
+        super(SqlConst.NOT, key);
+    }
 }

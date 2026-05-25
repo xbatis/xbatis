@@ -42,6 +42,30 @@ public interface IConditionMethod<SELF extends IConditionMethod,
 
     CONDITION_CHAIN conditionChain();
 
+    @Override
+    default SELF not(ICondition condition) {
+        conditionChain().not(condition);
+        return (SELF) this;
+    }
+
+    @Override
+    default SELF not(boolean when, ICondition condition) {
+        conditionChain().not(when, condition);
+        return (SELF) this;
+    }
+
+    default SELF not(Consumer<CONDITION_CHAIN> consumer) {
+        conditionChain().not(consumer);
+        return (SELF) this;
+    }
+
+    default SELF not(boolean when, Consumer<CONDITION_CHAIN> chain) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.not(chain);
+    }
+
     default SELF and() {
         conditionChain().and();
         return (SELF) this;
@@ -176,6 +200,12 @@ public interface IConditionMethod<SELF extends IConditionMethod,
                 conditionChain().or(cond);
             }
         }
+        return (SELF) this;
+    }
+
+    @Override
+    default SELF nested(Consumer<CONDITION_CHAIN> consumer) {
+        conditionChain().nested(consumer);
         return (SELF) this;
     }
 

@@ -812,4 +812,18 @@ public class ConditionTest extends BaseTest {
             assertEquals(Integer.valueOf(3), list.get(2));
         }
     }
+
+    @Test
+    public void not() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser user = QueryChain.of(sysUserMapper)
+                    .not(chain -> chain.ne(SysUser::getId, 1))
+                    .nested(c -> c.not(chain -> chain.ne(SysUser::getId, 1)))
+                    .returnType(SysUser.class)
+                    .get();
+
+            assertEquals(1, user.getId());
+        }
+    }
 }

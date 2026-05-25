@@ -443,6 +443,17 @@ public final class Methods {
     }
 
     /**
+     * not 函数
+     *
+     * @param column 列
+     * @return Not
+     */
+    public static Not not(Cmd column) {
+        Objects.requireNonNull(column);
+        return new Not(column);
+    }
+
+    /**
      * count(1) 条数 函数
      *
      * @return Count1

@@ -50,6 +50,15 @@ public interface FunctionInterface extends Cmd {
     }
 
     /**
+     * 条件取反
+     *
+     * @return Not
+     */
+    default Not not() {
+        return Methods.not(this);
+    }
+
+    /**
      * 对自己进行求和操作
      *
      * @return Sum

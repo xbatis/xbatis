@@ -17,11 +17,53 @@ package db.sql.api.cmd.struct;
 import java.util.function.Consumer;
 
 public interface Nested<SELF, CHAIN> {
+    /**
+     * 嵌套（不改变逻辑符）
+     * 就是用于括号包裹
+     *
+     * @param consumer 条件链路
+     * @return 自己
+     */
+    SELF nested(Consumer<CHAIN> consumer);
 
+    /**
+     * AND 嵌套（执行后逻辑符为AND）
+     * 就是用于括号包裹
+     * @param consumer 条件链路
+     * @return 自己
+     */
     SELF andNested(Consumer<CHAIN> consumer);
 
+    /**
+     * OR 嵌套（执行后逻辑符为OR）
+     * 就是用于括号包裹
+     * @param consumer 条件链路
+     * @return 自己
+     */
     SELF orNested(Consumer<CHAIN> consumer);
 
+    /**
+     * 嵌套（不改变逻辑符）
+     * 就是用于括号包裹
+     *
+     * @param when     是否生效
+     * @param consumer 条件链路
+     * @return 自己
+     */
+    default SELF nested(boolean when, Consumer<CHAIN> consumer) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return nested(consumer);
+    }
+
+    /**
+     * AND 嵌套（执行后逻辑符为AND）
+     * 就是用于括号包裹
+     * @param when 是否生效
+     * @param consumer 条件链路
+     * @return 自己
+     */
     default SELF andNested(boolean when, Consumer<CHAIN> consumer) {
         if (!when) {
             return (SELF) this;
@@ -29,6 +71,13 @@ public interface Nested<SELF, CHAIN> {
         return andNested(consumer);
     }
 
+    /**
+     * OR 嵌套（执行后逻辑符为OR）
+     * 就是用于括号包裹
+     * @param when 是否生效
+     * @param consumer 条件链路
+     * @return 自己
+     */
     default SELF orNested(boolean when, Consumer<CHAIN> consumer) {
         if (!when) {
             return (SELF) this;

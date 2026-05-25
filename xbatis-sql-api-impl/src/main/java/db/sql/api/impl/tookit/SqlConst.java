@@ -110,6 +110,7 @@ public final class SqlConst {
     public static final char[] CONCAT = " CONCAT".toCharArray();
     public static final char[] CONCAT_WS = " CONCAT_WS".toCharArray();
     public static final char[] IF = " IF".toCharArray();
+    public static final char[] NOT = " NOT".toCharArray();
     public static final char[] IFNULL = " IFNULL".toCharArray();
     public static final char[] CASE = " CASE ".toCharArray();
     public static final char[] WHEN = " WHEN ".toCharArray();

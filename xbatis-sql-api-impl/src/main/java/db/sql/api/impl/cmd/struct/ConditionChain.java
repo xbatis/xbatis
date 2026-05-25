@@ -27,6 +27,7 @@ import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.basic.ConditionBlock;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.dbFun.Not;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 import db.sql.api.impl.cmd.struct.ext.Exists;
 import db.sql.api.impl.cmd.struct.ext.In;
@@ -149,6 +150,24 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
 
     public List<ConditionBlock> getConditionBlocks() {
         return conditionBlocks;
+    }
+
+    @Override
+    public ConditionChain not(ICondition condition) {
+        ICondition newCondition = conditionFactory.not(condition);
+        if (newCondition != null) {
+            this.appendCondition(newCondition);
+        }
+        return this;
+    }
+
+    @Override
+    public ConditionChain not(boolean when, ICondition condition) {
+        ICondition newCondition = conditionFactory.not(when, condition);
+        if (newCondition != null) {
+            this.appendCondition(newCondition);
+        }
+        return this;
     }
 
     @Override
@@ -708,7 +727,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
         }
 
         if (sb.length() > 0) {
-            boolean appendBracket = (!(parent instanceof Where) && !(parent instanceof On)) || this.parent != null;
+            boolean appendBracket = this.parent != null && (!(parent instanceof Where) && !(parent instanceof On) && !(parent instanceof Not));
             if (appendBracket) {
                 sqlBuilder = sqlBuilder.append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
             }

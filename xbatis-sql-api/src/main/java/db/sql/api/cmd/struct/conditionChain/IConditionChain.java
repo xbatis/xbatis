@@ -65,19 +65,42 @@ public interface IConditionChain<SELF extends IConditionChain,
      */
     SELF clearConditions();
 
+
+    default SELF not(Consumer<SELF> consumer) {
+        SELF chain = newInstance();
+        consumer.accept(chain);
+        if (chain.hasContent()) {
+            this.not(chain);
+        }
+        return (SELF) this;
+    }
+
+    default SELF not(boolean when, Consumer<SELF> chain) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.not(chain);
+    }
+
     @Override
-    default SELF andNested(Consumer<SELF> consumer) {
+    default SELF nested(Consumer<SELF> consumer) {
         SELF newSelf = newInstance();
         consumer.accept(newSelf);
-        this.and(newSelf.hasContent(), newSelf);
+        if (newSelf.hasContent()) {
+            this.appendCondition(newSelf);
+        }
         return (SELF) this;
     }
 
     @Override
+    default SELF andNested(Consumer<SELF> consumer) {
+        this.and();
+        return this.nested(consumer);
+    }
+
+    @Override
     default SELF orNested(Consumer<SELF> consumer) {
-        SELF newSelf = newInstance();
-        consumer.accept(newSelf);
-        this.or(newSelf.hasContent(), newSelf);
-        return (SELF) this;
+        this.or();
+        return this.nested(consumer);
     }
 }

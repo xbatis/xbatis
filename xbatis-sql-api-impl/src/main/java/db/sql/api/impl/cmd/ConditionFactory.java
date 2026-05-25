@@ -186,6 +186,22 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
+    public ICondition not(boolean when, ICondition condition) {
+        if (!when) {
+            return null;
+        }
+        return not(condition);
+    }
+
+    @Override
+    public ICondition not(ICondition condition) {
+        if (!isKeyValid(condition)) {
+            return null;
+        }
+        return Methods.not(condition);
+    }
+
+    @Override
     public ICondition empty(Cmd column) {
         if (!isKeyValid(column)) {
             return null;
