@@ -76,6 +76,30 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         return (SELF) this;
     }
 
+    default <T> SELF where(Getter<T> column, Function<TABLE_FIELD, ICondition> f) {
+        return this.where(column, 1, f);
+    }
+
+    default <T> SELF where(boolean when, Getter<T> column, Function<TABLE_FIELD, ICondition> f) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.where(column, 1, f);
+    }
+
+    default <T> SELF where(Getter<T> column, int storey, Function<TABLE_FIELD, ICondition> f) {
+        conditionChain().where(column, storey, f);
+        return (SELF) this;
+    }
+
+    default <T> SELF where(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, ICondition> f) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.where(column, storey, f);
+    }
+
+    ///
 
     default <T> SELF and(Getter<T> column, Function<TABLE_FIELD, ICondition> f) {
         return this.and(column, 1, f);
@@ -123,6 +147,18 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         return this.or(column, storey, f);
     }
 
+    default SELF where(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
+        conditionChain().where(getterFields, f);
+        return (SELF) this;
+    }
+
+    default SELF where(boolean when, GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
+        conditionChain().where(when, getterFields, f);
+        return (SELF) this;
+    }
+
+    ///
+
     default SELF and(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
         conditionChain().and(getterFields, f);
         return (SELF) this;
@@ -143,6 +179,12 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         return (SELF) this;
     }
 
+    default SELF where(Function<SELF, ICondition> f) {
+        conditionChain().where(f.apply((SELF) this));
+        return (SELF) this;
+    }
+    //
+
     default SELF and(Function<SELF, ICondition> f) {
         conditionChain().and(f.apply((SELF) this));
         return (SELF) this;
@@ -153,12 +195,23 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         return (SELF) this;
     }
 
+    default SELF where(ICondition condition) {
+        return this.where(true, condition);
+    }
+
     default SELF and(ICondition condition) {
         return this.and(true, condition);
     }
 
     default SELF or(ICondition condition) {
         return this.or(true, condition);
+    }
+
+    default SELF where(boolean when, ICondition condition) {
+        if (when && condition != null) {
+            conditionChain().where(condition);
+        }
+        return (SELF) this;
     }
 
     default SELF and(boolean when, ICondition condition) {
@@ -175,6 +228,10 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         return (SELF) this;
     }
 
+    default SELF where(Supplier<ICondition> condition) {
+        return this.where(true, condition);
+    }
+
     default SELF and(Supplier<ICondition> condition) {
         return this.and(true, condition);
     }
@@ -182,6 +239,17 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     default SELF or(Supplier<ICondition> condition) {
         return this.or(true, condition);
     }
+
+    default SELF where(boolean when, Supplier<ICondition> condition) {
+        if (when) {
+            ICondition cond = condition.get();
+            if (cond != null) {
+                conditionChain().where(cond);
+            }
+        }
+        return (SELF) this;
+    }
+    //
 
     default SELF and(boolean when, Supplier<ICondition> condition) {
         if (when) {

@@ -818,7 +818,26 @@ public class ConditionTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser user = QueryChain.of(sysUserMapper)
-                    .not(chain -> chain.ne(SysUser::getId, 1))
+                    .where(SysUser::getId, c -> c.ne(1).not())
+                    .returnType(SysUser.class)
+                    .get();
+
+            assertEquals(1, user.getId());
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser user = QueryChain.of(sysUserMapper)
+                    .where(q -> q.$(SysUser::getId).ne(1).not())
+                    .returnType(SysUser.class)
+                    .get();
+
+            assertEquals(1, user.getId());
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser user = QueryChain.of(sysUserMapper)
                     .nested(c -> c.not(chain -> chain.ne(SysUser::getId, 1)))
                     .returnType(SysUser.class)
                     .get();

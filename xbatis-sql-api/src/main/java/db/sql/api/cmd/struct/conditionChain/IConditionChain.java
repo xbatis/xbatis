@@ -30,6 +30,7 @@ public interface IConditionChain<SELF extends IConditionChain,
 
         extends IConditionMethods<SELF, COLUMN, V>,
         Nested<SELF, SELF>,
+        IConditionChainWhere<SELF, TABLE_FIELD>,
         IConditionChainAnd<SELF, TABLE_FIELD>,
         IConditionChainOr<SELF, TABLE_FIELD>,
         ICondition {

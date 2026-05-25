@@ -98,6 +98,14 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
+    public ConditionChain where(ICondition condition) {
+        if (Objects.nonNull(condition)) {
+            this.appendCondition(condition);
+        }
+        return this;
+    }
+
+    @Override
     public ConditionChain and(ICondition condition) {
         this.and();
         if (Objects.nonNull(condition)) {
@@ -183,6 +191,14 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
+    public <T> ConditionChain where(boolean when, Getter<T> column, int storey, Function<TableField, ICondition> f) {
+        if (!when) {
+            return this;
+        }
+        return this.where(f.apply(this.conditionFactory.getCmdFactory().field(column, storey)));
+    }
+
+    @Override
     public <T> ConditionChain and(boolean when, Getter<T> column, int storey, Function<TableField, ICondition> f) {
         this.and();
         if (!when) {
@@ -198,6 +214,14 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
             return this;
         }
         return this.or(f.apply(this.conditionFactory.getCmdFactory().field(column, storey)));
+    }
+
+    @Override
+    public ConditionChain where(boolean when, GetterField[] getterFields, Function<TableField[], ICondition> f) {
+        if (!when) {
+            return this;
+        }
+        return this.where(f.apply(this.conditionFactory.getCmdFactory().fields(getterFields)));
     }
 
     @Override

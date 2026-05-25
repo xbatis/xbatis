@@ -17,9 +17,10 @@ package db.sql.api.impl.cmd.condition;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import db.sql.api.tookit.CmdUtils;
 
-public abstract class BasicCondition<T extends BasicCondition<T>> extends BaseCondition<T, Cmd, Cmd> {
+public abstract class BasicCondition<T extends BasicCondition<T>> extends BaseCondition<T, Cmd, Cmd> implements FunctionInterface {
 
     protected Cmd field;
 

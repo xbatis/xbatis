@@ -145,11 +145,6 @@ public interface IQuery<SELF extends IQuery
         return (SELF) this;
     }
 
-    default SELF where(Consumer<WHERE> whereConsumer) {
-        whereConsumer.accept($where());
-        return (SELF) this;
-    }
-
     @Override
     default SELF groupBy(COLUMN column) {
         $groupBy().groupBy(column);
