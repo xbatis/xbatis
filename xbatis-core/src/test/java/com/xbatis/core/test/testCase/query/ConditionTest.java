@@ -819,6 +819,9 @@ public class ConditionTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser user = QueryChain.of(sysUserMapper)
                     .where(SysUser::getId, c -> c.ne(1).not())
+                    .where(true, c -> c.eq(SysUser::getId, 1))
+                    .nested(cc -> cc.where(SysUser::getId, c -> c.eq(1)))
+                    .nested(cc -> cc.where(true, c -> c.eq(SysUser::getId, 1)))
                     .returnType(SysUser.class)
                     .get();
 
@@ -839,6 +842,18 @@ public class ConditionTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser user = QueryChain.of(sysUserMapper)
                     .nested(c -> c.not(chain -> chain.ne(SysUser::getId, 1)))
+                    .returnType(SysUser.class)
+                    .get();
+
+            assertEquals(1, user.getId());
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser user = QueryChain.of(sysUserMapper)
+                    .where(true, c -> c.eq(SysUser::getId, 1))
+                    .nested(cc -> cc.where(SysUser::getId, c -> c.eq(1)))
+                    .nested(cc -> cc.where(true, c -> c.eq(SysUser::getId, 1)))
                     .returnType(SysUser.class)
                     .get();
 
