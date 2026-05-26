@@ -18,11 +18,19 @@ import db.sql.api.Getter;
 import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.basic.ICondition;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface IConditionChainWhere<SELF extends IConditionChainWhere, TABLE_FIELD> {
 
     SELF where(ICondition condition);
+
+    default SELF where(boolean when, Consumer<SELF> consumer) {
+        if (when) {
+            consumer.accept((SELF) this);
+        }
+        return (SELF) this;
+    }
 
     default SELF where(boolean when, ICondition condition) {
         if (!when) {

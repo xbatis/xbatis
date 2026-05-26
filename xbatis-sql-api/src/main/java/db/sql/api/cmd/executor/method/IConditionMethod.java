@@ -76,6 +76,13 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         return (SELF) this;
     }
 
+    default SELF where(boolean when, Consumer<SELF> consumer) {
+        if (when) {
+            consumer.accept((SELF) this);
+        }
+        return (SELF) this;
+    }
+
     default <T> SELF where(Getter<T> column, Function<TABLE_FIELD, ICondition> f) {
         return this.where(column, 1, f);
     }
