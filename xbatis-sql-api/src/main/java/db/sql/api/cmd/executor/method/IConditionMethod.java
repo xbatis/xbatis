@@ -76,6 +76,11 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         return (SELF) this;
     }
 
+    default SELF where(Consumer<SELF> consumer) {
+        consumer.accept((SELF) this);
+        return (SELF) this;
+    }
+
     default SELF where(boolean when, Consumer<SELF> consumer) {
         if (when) {
             consumer.accept((SELF) this);
