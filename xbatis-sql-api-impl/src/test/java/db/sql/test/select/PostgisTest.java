@@ -24,7 +24,9 @@ public class PostgisTest extends BaseTest {
     @Test
     public void testST_DWithin() {
         check("ST_DWithin测试", "select id where ST_DWithin(name,st_srid(point(0.0,0.0),4326),11.0)", new Query()
-                .select(userTable().$("id")).where(where -> userTable().$("name").ST_DWithin(new ST_Point(0, 0), 11)));
+                .select(userTable().$("id")).where(where -> {
+                    return userTable().$("name").ST_DWithin(new ST_Point(0, 0), 11);
+                }));
     }
 
     @Test
