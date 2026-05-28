@@ -343,6 +343,27 @@ public final class Methods {
     }
 
     /**
+     * plus加法
+     *
+     * @param column 列
+     * @param values 值
+     * @return Plus
+     */
+    public static Plus plus(Cmd column, Object... values) {
+        Objects.requireNonNull(column);
+        Objects.requireNonNull(values);
+        Plus plus = null;
+        for (Object value : values) {
+            if (plus == null) {
+                plus = new Plus(column, cmd(value));
+            } else {
+                plus = plus.plus(cmd(value));
+            }
+        }
+        return plus;
+    }
+
+    /**
      * subtract加法
      *
      * @param column 列
@@ -366,6 +387,27 @@ public final class Methods {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
         return new Subtract(column, value);
+    }
+
+    /**
+     * subtract减法
+     *
+     * @param column 列
+     * @param values 值
+     * @return Subtract
+     */
+    public static Subtract subtract(Cmd column, Object... values) {
+        Objects.requireNonNull(column);
+        Objects.requireNonNull(values);
+        Subtract subtract = null;
+        for (Object value : values) {
+            if (subtract == null) {
+                subtract = new Subtract(column, cmd(value));
+            } else {
+                subtract = subtract.subtract(cmd(value));
+            }
+        }
+        return subtract;
     }
 
     /**
@@ -395,7 +437,7 @@ public final class Methods {
     }
 
     /**
-     * multiply乘法
+     * divide除法
      *
      * @param column 列
      * @param value  值
@@ -405,6 +447,27 @@ public final class Methods {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
         return new Divide(column, value);
+    }
+
+    /**
+     * divide除法
+     *
+     * @param column 列
+     * @param values 值
+     * @return Divide
+     */
+    public static Divide divide(Cmd column, Object... values) {
+        Objects.requireNonNull(column);
+        Objects.requireNonNull(values);
+        Divide divide = null;
+        for (Object value : values) {
+            if (divide == null) {
+                divide = new Divide(column, cmd(value));
+            } else {
+                divide = divide.divide(cmd(value));
+            }
+        }
+        return divide;
     }
 
     /**
@@ -418,6 +481,27 @@ public final class Methods {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
         return new Multiply(column, value);
+    }
+
+    /**
+     * multiply乘法
+     *
+     * @param column 列
+     * @param values 多个值
+     * @return Multiply
+     */
+    public static Multiply multiply(Cmd column, Object... values) {
+        Objects.requireNonNull(column);
+        Objects.requireNonNull(values);
+        Multiply multiply = null;
+        for (Object value : values) {
+            if (multiply == null) {
+                multiply = new Multiply(column, cmd(value));
+            } else {
+                multiply = multiply.multiply(cmd(value));
+            }
+        }
+        return multiply;
     }
 
     /**
@@ -733,6 +817,17 @@ public final class Methods {
     public static Radians radians(Cmd column) {
         Objects.requireNonNull(column);
         return new Radians(column);
+    }
+
+    /**
+     * 将角度转换为弧度 函数
+     *
+     * @param column 列
+     * @return Radians
+     */
+    public static Radians radians(Number value) {
+        Objects.requireNonNull(value);
+        return new Radians(cmd(value));
     }
 
     /**
