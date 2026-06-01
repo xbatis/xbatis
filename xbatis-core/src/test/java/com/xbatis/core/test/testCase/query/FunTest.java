@@ -287,6 +287,25 @@ public class FunTest extends BaseTest {
     }
 
     @Test
+    public void caseWhenThen2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String str = QueryChain.of(sysUserMapper)
+                    .connect(self -> {
+                        MybatisCmdFactory $ = self.$();
+                        self.select(SysUser::getId, c -> {
+                            return c.case_().when(1, 1).when(2, 2).else_(3);
+                        });
+                    })
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(String.class)
+                    .get();
+            assertEquals("1", str, "caseWhenThen");
+        }
+    }
+
+    @Test
     public void caseWhenElse() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);

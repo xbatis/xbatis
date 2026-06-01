@@ -20,6 +20,7 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.BasicValue;
+import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -47,20 +48,24 @@ public class Case extends BasicFunction<Case> {
         return this;
     }
 
-    public Case when(Object then) {
-        values.add(Methods.cmd(then));
+    public Case when(Object whenValue, Object thenValue) {
+        if (whenValue instanceof NULL) {
+            values.add(new CaseWhen(Methods.isNull(this.key), Methods.cmd(thenValue)));
+        } else {
+            values.add(new CaseWhen(Methods.eq(this.key, whenValue), Methods.cmd(thenValue)));
+        }
         return this;
     }
 
-    public Case when(boolean when, Object then) {
+    public Case when(boolean when, Object whenValue, Object thenValue) {
         if (!when) {
             return this;
         }
-        return this.when(then);
+        return this.when(whenValue, thenValue);
     }
 
-    public <V extends Serializable> Case when(V then, Predicate<V> predicate) {
-        return this.when(predicate.test(then), then);
+    public <V extends Serializable> Case when(Object whenValue, V thenValue, Predicate<V> predicate) {
+        return this.when(predicate.test(thenValue), whenValue, thenValue);
     }
 
     public Case when(ICondition condition, Serializable then) {
@@ -90,10 +95,6 @@ public class Case extends BasicFunction<Case> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.BRACKET_LEFT).append(operator);
-        if (key != null) {
-            sqlBuilder.append(SqlConst.BLANK);
-            sqlBuilder = key.sql(module, this, context, sqlBuilder);
-        }
 
         for (Cmd item : values) {
             if (!(item instanceof CaseWhen)) {
