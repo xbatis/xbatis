@@ -33,9 +33,10 @@ public interface IDbType {
         if (getKeywords().isEmpty()) {
             return name;
         }
-        if (getKeywords().contains(name.toUpperCase())) {
+        String upperName = name.toUpperCase();
+        if (getKeywords().contains(upperName)) {
             if (getKeywordWrap().isToUpperCase()) {
-                name = name.toUpperCase();
+                name = upperName;
             }
             return getKeywordWrap().getPrefix() + name + getKeywordWrap().getSuffix();
         }
