@@ -20,6 +20,7 @@ import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.GetterFields;
 import db.sql.api.cmd.LikeMode;
+import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IParamWrap;
 import db.sql.api.cmd.executor.IQuery;
@@ -529,12 +530,12 @@ public final class Methods {
     /**
      * not 函数
      *
-     * @param column 列
+     * @param condition 条件
      * @return Not
      */
-    public static Not not(Cmd column) {
-        Objects.requireNonNull(column);
-        return new Not(column);
+    public static Not not(ICondition condition) {
+        Objects.requireNonNull(condition);
+        return new Not(condition);
     }
 
     /**
@@ -1649,6 +1650,15 @@ public final class Methods {
      */
     public static Case case_() {
         return new Case();
+    }
+
+    /**
+     * case 语句块
+     *
+     * @return Case
+     */
+    public static Case case_(Cmd column) {
+        return new Case(column);
     }
 
     /**

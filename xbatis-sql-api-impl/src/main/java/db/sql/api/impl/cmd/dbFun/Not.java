@@ -14,12 +14,11 @@
 
 package db.sql.api.impl.cmd.dbFun;
 
-import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.tookit.SqlConst;
 
 public class Not extends BasicFunction<Not> implements ICondition {
-    public Not(Cmd key) {
-        super(SqlConst.NOT, key);
+    public Not(ICondition condition) {
+        super(SqlConst.NOT, condition);
     }
 }

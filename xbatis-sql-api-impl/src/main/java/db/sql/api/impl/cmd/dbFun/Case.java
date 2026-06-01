@@ -38,9 +38,29 @@ public class Case extends BasicFunction<Case> {
         super(CASE, null);
     }
 
+    public Case(Cmd key) {
+        super(CASE, key);
+    }
+
     public Case when(ICondition condition, Cmd then) {
         values.add(new CaseWhen(condition, then));
         return this;
+    }
+
+    public Case when(Object then) {
+        values.add(Methods.cmd(then));
+        return this;
+    }
+
+    public Case when(boolean when, Object then) {
+        if (!when) {
+            return this;
+        }
+        return this.when(then);
+    }
+
+    public <V extends Serializable> Case when(V then, Predicate<V> predicate) {
+        return this.when(predicate.test(then), then);
     }
 
     public Case when(ICondition condition, Serializable then) {
@@ -70,6 +90,11 @@ public class Case extends BasicFunction<Case> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.BRACKET_LEFT).append(operator);
+        if (key != null) {
+            sqlBuilder.append(SqlConst.BLANK);
+            sqlBuilder = key.sql(module, this, context, sqlBuilder);
+        }
+
         for (Cmd item : values) {
             if (!(item instanceof CaseWhen)) {
                 sqlBuilder.append(SqlConst.ELSE);

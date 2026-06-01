@@ -50,15 +50,6 @@ public interface FunctionInterface extends Cmd {
     }
 
     /**
-     * 条件取反
-     *
-     * @return Not
-     */
-    default Not not() {
-        return Methods.not(this);
-    }
-
-    /**
      * 对自己进行求和操作
      *
      * @return Sum
@@ -1364,5 +1355,15 @@ public interface FunctionInterface extends Cmd {
      */
     default ToJSON toJSON() {
         return Methods.toJSON(this);
+    }
+
+
+    /**
+     * case 条件
+     *
+     * @return Case
+     */
+    default Case case_() {
+        return Methods.case_(this);
     }
 }
