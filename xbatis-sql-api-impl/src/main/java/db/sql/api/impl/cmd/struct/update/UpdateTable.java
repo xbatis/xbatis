@@ -74,18 +74,18 @@ public class UpdateTable implements IUpdateTable<Table> {
                     if (table.getAlias() != null) {
                         sqlBuilder.append(table.getAlias());
                     } else {
-                        sqlBuilder.append(table.getName());
+                        table.appendSchemaAndTableName(context.getDbType(), sqlBuilder);
                     }
                 } else {
                     //没有 from 不加别名
                     table.setAlias(null);
-                    sqlBuilder.append(table.getName());
+                    table.appendSchemaAndTableName(context.getDbType(), sqlBuilder);
                 }
                 sqlBuilder.append(SqlConst.BLANK);
                 return sqlBuilder;
             }
 
-            sqlBuilder.append(table.getName());
+            table.appendSchemaAndTableName(context.getDbType(), sqlBuilder);
             sqlBuilder.append(SqlConst.BLANK);
             if (table.getAlias() != null) {
                 sqlBuilder.append(table.getAlias());

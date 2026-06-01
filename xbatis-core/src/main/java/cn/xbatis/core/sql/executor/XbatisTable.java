@@ -47,7 +47,15 @@ public class XbatisTable extends db.sql.api.impl.cmd.basic.Table {
         if (tableInfo.getAnnotation().databaseCaseRule() == DatabaseCaseRule.DEFAULT) {
             return super.getName(dbType);
         }
-        return dbType.wrap(this.getName());
+        return dbType.wrap(tableInfo.getAnnotation().databaseCaseRule().convert(this.getName()));
+    }
+
+    @Override
+    public String getSchema(IDbType dbType) {
+        if (tableInfo.getAnnotation().databaseCaseRule() == DatabaseCaseRule.DEFAULT) {
+            return super.getSchema(dbType);
+        }
+        return dbType.wrap(tableInfo.getAnnotation().databaseCaseRule().convert(this.getSchema()));
     }
 
     @Override

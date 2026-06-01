@@ -54,8 +54,9 @@ public class InsertTable implements IInsertTable<Table> {
                 //可能需要增加ConflictKeys
                 abstractInsert.getConflict().addDefaultConflictKeys(abstractInsert, context.getDbType());
 
-                sqlBuilder.append(SqlConst.INSERT).append("--+ IGNORE_ROW_ON_DUPKEY_INDEX(")
-                        .append(table.getName(context.getDbType())).append(SqlConst.BRACKET_LEFT)
+                sqlBuilder.append(SqlConst.INSERT).append("--+ IGNORE_ROW_ON_DUPKEY_INDEX(");
+                sqlBuilder = this.table.appendSchemaAndTableName(context.getDbType(), sqlBuilder);
+                sqlBuilder.append(SqlConst.BRACKET_LEFT)
                         .append(String.join(",", abstractInsert.getConflict().getConflictKeys()))
                         .append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT)
                         .append(System.lineSeparator().replaceAll(Matcher.quoteReplacement("\\"), Matcher.quoteReplacement("\\\\")))
@@ -67,7 +68,7 @@ public class InsertTable implements IInsertTable<Table> {
             sqlBuilder.append(SqlConst.INSERT_INTO);
         }
 
-        sqlBuilder.append(this.table.getName());
+        sqlBuilder = this.table.appendSchemaAndTableName(context.getDbType(), sqlBuilder);
         return sqlBuilder;
     }
 

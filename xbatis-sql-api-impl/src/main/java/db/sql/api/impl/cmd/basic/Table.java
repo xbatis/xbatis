@@ -68,7 +68,20 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
         return new TableField(this, name);
     }
 
+    @Override
+    public String getSchemaAndTableName(IDbType dbType) {
+        return appendSchemaAndTableName(dbType, new StringBuilder()).toString();
+    }
 
+    public StringBuilder appendSchemaAndTableName(IDbType dbType, StringBuilder sb) {
+        if (schema != null && !schema.isEmpty()) {
+            sb.append(getSchema(dbType)).append(SqlConst.DOT);
+        }
+        sb.append(getName(dbType));
+        return sb;
+    }
+
+    @Override
     public String getName() {
         return name;
     }
@@ -78,6 +91,7 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
         return this;
     }
 
+    @Override
     public String getName(IDbType dbType) {
         DatabaseCaseRule databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
         if (databaseCaseRule == null || databaseCaseRule == DatabaseCaseRule.DEFAULT) {
@@ -86,8 +100,18 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
         return dbType.wrap(databaseCaseRule.convert(this.getName()));
     }
 
+    @Override
     public String getSchema() {
         return schema;
+    }
+
+    @Override
+    public String getSchema(IDbType dbType) {
+        DatabaseCaseRule databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
+        if (databaseCaseRule == null || databaseCaseRule == DatabaseCaseRule.DEFAULT) {
+            databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule();
+        }
+        return dbType.wrap(databaseCaseRule.convert(getSchema()));
     }
 
     public Table setSchema(String schema) {
@@ -118,12 +142,13 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
         return this;
     }
 
+    public boolean isSameTable(ITable table) {
+        return Objects.equals(this.getSchema(), table.getSchema()) && Objects.equals(this.getName(), table.getName());
+    }
+
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (this.schema != null && !this.schema.isEmpty()) {
-            sqlBuilder.append(schema).append(SqlConst.DOT);
-        }
-        sqlBuilder.append(getName(context.getDbType()));
+        this.appendSchemaAndTableName(context.getDbType(), sqlBuilder);
         if (getAlias() != null) {
             sqlBuilder.append(SqlConst.BLANK).append(getAlias());
         }

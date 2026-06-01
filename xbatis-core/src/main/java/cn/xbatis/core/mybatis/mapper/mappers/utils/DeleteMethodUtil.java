@@ -133,13 +133,13 @@ public final class DeleteMethodUtil {
             listener.onTruncate(xbatisTable);
         });
         return basicMapper.dbAdapt(selectorCall -> selectorCall.when(DbType.DB2, (dbType) -> {
-            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getName(dbType) + " IMMEDIATE");
+            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getSchemaAndTableName(dbType) + " IMMEDIATE");
         }).when(DbType.SQLITE, (dbType) -> {
-            int cnt = basicMapper.execute("DELETE FROM " + xbatisTable.getName(dbType));
+            int cnt = basicMapper.execute("DELETE FROM " + xbatisTable.getSchemaAndTableName(dbType));
             basicMapper.execute("UPDATE SQLITE_SEQUENCE SET SEQ = 0 WHERE name = '" + xbatisTable.getName() + "'");
             return cnt;
         }).otherwise((dbType) -> {
-            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getName(dbType));
+            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getSchemaAndTableName(dbType));
         }));
     }
 }

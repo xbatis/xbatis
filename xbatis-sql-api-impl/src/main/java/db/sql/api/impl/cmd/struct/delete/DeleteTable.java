@@ -58,7 +58,9 @@ public class DeleteTable implements IDeleteTable<IDataset> {
             } else {
                 if (dataset instanceof Table) {
                     Table table = (Table) dataset;
-                    sqlBuilder.append(table.getName());
+                    table.appendSchemaAndTableName(context.getDbType(), sqlBuilder);
+                } else {
+                    throw new RuntimeException("delete table error:" + dataset);
                 }
             }
         }

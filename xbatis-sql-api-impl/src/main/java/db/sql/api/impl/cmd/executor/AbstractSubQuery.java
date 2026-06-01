@@ -107,7 +107,7 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
                     if (df.getTable() == tableField.getTable()) {
                         //同个对象
                         return new DatasetField(root, df.getAlias() == null || df.getAlias().isEmpty() ? df.getName() : df.getAlias());
-                    } else if (df instanceof TableField && ((Table) df.getTable()).getName().equals(tableField.getTable().getName())) {
+                    } else if (df instanceof TableField && ((Table) df.getTable()).isSameTable(tableField.getTable())) {
                         //同个表名 列名
                         return new DatasetField(root, df.getAlias() == null || df.getAlias().isEmpty() ? df.getName() : df.getAlias());
                     }

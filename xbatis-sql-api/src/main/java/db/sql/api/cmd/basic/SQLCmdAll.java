@@ -42,7 +42,7 @@ public class SQLCmdAll implements Cmd {
             String name;
             if (dataset instanceof ITable) {
                 ITable table = (ITable) dataset;
-                name = Objects.isNull(table.getAlias()) ? table.getName() : table.getAlias();
+                name = Objects.isNull(table.getAlias()) ? table.getSchemaAndTableName(context.getDbType()) : table.getAlias();
             } else {
                 name = dataset.getAlias();
             }
