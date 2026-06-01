@@ -16,6 +16,7 @@ package db.sql.test.select;
 
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
+import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.Query;
 import db.sql.api.impl.cmd.executor.WithQuery;
 import db.sql.test.BaseTest;
@@ -28,7 +29,6 @@ public class QueryTest extends BaseTest {
 
     @Test
     public void selectTest() {
-
 
         check("select测试", "SELECT id,name", new Query()
                 .select(userTable().$("id"), userTable().$("name")));
@@ -169,5 +169,14 @@ public class QueryTest extends BaseTest {
                 .from(userTable().as("t").forceIndex("aa")).join(userTable(), roleTable().as("t2").forceIndex("bb"), on -> {
                     on.eq(on.getJoin().getMainTable().$("id"), on.getJoin().getSecondTable().$("id"));
                 }));
+    }
+
+    @Test
+    public void queryWithSchemaTest() {
+        Table userTable = userTable();
+        userTable.setSchema("tc");
+        check("queryWithSchemaTest", "SELECT id,name FROM tc.user", new Query()
+                .select(userTable.$("id"), userTable.$("name"))
+                .from(userTable));
     }
 }

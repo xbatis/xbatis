@@ -37,7 +37,7 @@ public class DeleteTest extends BaseTest {
         Table userTable = userTable();
 
         check("delete", "delete from user where id=1",
-                new Delete().delete(userTable).from(userTable.as("t").setPrefix("_aa")).eq(userTable().$("id"), 1)
+                new Delete().delete(userTable).from(userTable.as("t").setPrefix("_aa")).eq(userTable.$("id"), 1)
         );
         Table userTable2 = userTable();
         check("delete", "delete t,t2 from user t,user t2 where t.id=t2.id",
@@ -57,7 +57,14 @@ public class DeleteTest extends BaseTest {
         check("delete", "delete from deletetest where id=1",
                 new Delete().delete(DeleteTest.class).from(DeleteTest.class).eq(DeleteTest::getId, 1)
         );
+    }
 
-
+    @Test
+    void deleteWithSchemaTest() {
+        Table userTable = userTable();
+        userTable.setSchema("tc");
+        check("delete", "delete from tc.user where id=1",
+                new Delete().delete(userTable).from(userTable.as("t").setPrefix("_aa")).eq(userTable.$("id"), 1)
+        );
     }
 }

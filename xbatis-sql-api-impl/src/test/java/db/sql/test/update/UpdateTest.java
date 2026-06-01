@@ -54,4 +54,13 @@ public class UpdateTest extends BaseTest {
 
 
     }
+
+    @Test
+    void updateWithSchemaTest() {
+        Table userTable = userTable();
+        userTable.setSchema("tc");
+        check("updateWithSchemaTest", "update tc.user set name='xx' where id=1",
+                new Update().update(userTable).set(userTable.$("name"), "xx").eq(userTable.$("id"), 1)
+        );
+    }
 }
