@@ -51,6 +51,25 @@ public interface ISelectMultiGetterMethod<SELF extends ISelectMultiGetterMethod,
 
     /**
      * @param getterFields 利用 GetterFields 进行 数组构建
+     * @return 自己
+     */
+    default SELF select(GetterField[] getterFields) {
+        return this.select(getterFields, null);
+    }
+
+    /**
+     * @param getterFields 利用 GetterFields 进行 数组构建
+     * @return 自己
+     */
+    default SELF select(boolean when, GetterField[] getterFields) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.select(getterFields);
+    }
+
+    /**
+     * @param getterFields 利用 GetterFields 进行 数组构建
      * @param f            函数
      * @return 自己
      */

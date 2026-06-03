@@ -25,6 +25,17 @@ import java.util.function.Function;
 
 public interface IOrderByMultiGetterFunMethod<SELF extends IOrderByMultiGetterFunMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> extends IBaseOrderByMethods {
 
+    default SELF orderBy(GetterField[] getterFields) {
+        return this.orderBy(getterFields, null);
+    }
+
+    default SELF orderBy(boolean when, GetterField[] getterFields) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(getterFields);
+    }
+
     default SELF orderBy(GetterField[] getterFields, Function<TABLE_FIELD[], Cmd> f) {
         return this.orderBy(ascOrderByDirection(), getterFields, f);
     }

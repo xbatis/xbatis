@@ -25,6 +25,17 @@ import java.util.function.Function;
 
 public interface IGroupByMultiGetterMethod<SELF extends IGroupByMultiGetterMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> {
 
+    default SELF groupBy(GetterField[] getterFields) {
+        return this.groupBy(getterFields, null);
+    }
+
+    default SELF groupBy(boolean when, GetterField[] getterFields) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.groupBy(getterFields);
+    }
+
     @SuppressWarnings("unchecked")
     default <T> SELF groupBy(Getter<T>... columns) {
         return this.groupBy(1, columns);

@@ -24,6 +24,17 @@ import java.util.function.Function;
 
 public interface IOrderByMultiGetterFunAscMethod<SELF extends IOrderByMultiGetterFunAscMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> extends IOrderByMultiGetterFunMethod<SELF, TABLE, TABLE_FIELD> {
 
+    default SELF orderByAsc(GetterField[] getterFields) {
+        return this.orderByAsc(getterFields, null);
+    }
+
+    default SELF orderByAsc(boolean when, GetterField[] getterFields) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderByAsc(getterFields);
+    }
+
     default SELF orderByAsc(GetterField[] getterFields, Function<TABLE_FIELD[], Cmd> f) {
         return this.orderBy(ascOrderByDirection(), getterFields, f);
     }

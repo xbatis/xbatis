@@ -24,6 +24,17 @@ import java.util.function.Function;
 
 public interface IOrderByDatasetMultiGetterFunDescMethod<SELF extends IOrderByDatasetMultiGetterFunDescMethod> extends IOrderByDatasetMultiGetterFunMethod<SELF> {
 
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDesc(IDataset<DATASET, DATASET_FIELD> dataset, GetterField[] getterFields) {
+        return this.orderByDesc(dataset, getterFields, null);
+    }
+
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDesc(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, GetterField[] getterFields) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderByDesc(dataset, getterFields);
+    }
+
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDesc(IDataset<DATASET, DATASET_FIELD> dataset, GetterField[] getterFields, Function<IDatasetField[], Cmd> f) {
         return this.orderBy(dataset, descOrderByDirection(), getterFields, f);
     }
