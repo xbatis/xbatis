@@ -39,6 +39,7 @@ import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.Getters;
 import db.sql.api.IDbType;
+import db.sql.api.cmd.GetterFields;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import db.sql.api.impl.tookit.Objects;
@@ -343,6 +344,23 @@ public class QueryTest extends BaseTest {
                     .from(SysUser.class)
                     .groupBy(SysUser::getRole_id)
                     .orderBy(SysUser::getRole_id)
+                    .returnType(Integer.class)
+                    .list();
+
+            assertEquals(counts.get(0), Integer.valueOf(1), "groupBy");
+            assertEquals(counts.get(1), Integer.valueOf(2), "groupBy");
+        }
+    }
+
+    @Test
+    public void groupBy2Test() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<Integer> counts = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, c -> c.count())
+                    .from(SysUser.class)
+                    .groupBy(GetterFields.of(SysUser::getRole_id))
+                    .orderBy(GetterFields.of(SysUser::getRole_id))
                     .returnType(Integer.class)
                     .list();
 
