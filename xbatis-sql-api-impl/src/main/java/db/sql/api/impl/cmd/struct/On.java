@@ -15,13 +15,19 @@
 package db.sql.api.impl.cmd.struct;
 
 import db.sql.api.Cmd;
+import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.IOn;
 import db.sql.api.impl.cmd.ConditionFactory;
+import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.ConditionBlock;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.condition.Eq;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
+
+import java.util.List;
 
 public class On implements IOn<On, Join, Table, TableField, Cmd, Object, ConditionChain> {
 
@@ -42,6 +48,29 @@ public class On implements IOn<On, Join, Table, TableField, Cmd, Object, Conditi
     @Override
     public Join getJoin() {
         return join;
+    }
+
+    @Override
+    public <T, T2> boolean appendOnEq(Getter<T> leftOnColumn, int leftStorey, Getter<T2> rightOnColumn, int rightStorey) {
+        return this.appendOnEq(this.conditionFactory.getCmdFactory().field(leftOnColumn, leftStorey), this.conditionFactory.getCmdFactory().field(rightOnColumn, rightStorey));
+    }
+
+    @Override
+    public boolean appendOnEq(Cmd leftOnColumn, Cmd rightOnColumn) {
+        if (conditionChain != null && conditionChain.hasContent()) {
+            List<ConditionBlock> conditionBlocks = conditionChain.getConditionBlocks();
+            ConditionBlock firstBlock = conditionBlocks.get(0);
+            if (firstBlock.getCondition() instanceof Eq) {
+                Eq eq = (Eq) firstBlock.getCondition();
+                //已经追加过核心on条件了 不需要再追加了
+                if (eq.getField().equals(leftOnColumn) && eq.getValue().equals(rightOnColumn)
+                        || eq.getField().equals(rightOnColumn) && eq.getValue().equals(leftOnColumn)) {
+                    return false;
+                }
+            }
+        }
+        this.conditionChain().appendCondition(Methods.eq(leftOnColumn, rightOnColumn));
+        return false;
     }
 
     @Override

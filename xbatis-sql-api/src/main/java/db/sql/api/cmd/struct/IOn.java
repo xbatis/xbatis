@@ -16,6 +16,7 @@ package db.sql.api.cmd.struct;
 
 
 import db.sql.api.Cmd;
+import db.sql.api.Getter;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.cmd.executor.method.IConditionMethod;
@@ -33,4 +34,26 @@ public interface IOn<SELF extends IOn<SELF, JOIN, TABLE, TABLE_FIELD, COLUMN, V,
 
 
     JOIN getJoin();
+
+    /**
+     * 追加 连表的核心 on 条件
+     *
+     * @param leftOnColumn
+     * @param leftStorey
+     * @param rightOnColumn
+     * @param rightStorey
+     * @param <T>
+     * @param <T2>
+     * @return
+     */
+    <T, T2> boolean appendOnEq(Getter<T> leftOnColumn, int leftStorey, Getter<T2> rightOnColumn, int rightStorey);
+
+    /**
+     * 追加 连表的核心 on 条件
+     *
+     * @param leftOnColumn
+     * @param rightOnColumn
+     * @return
+     */
+    boolean appendOnEq(Cmd leftOnColumn, Cmd rightOnColumn);
 }

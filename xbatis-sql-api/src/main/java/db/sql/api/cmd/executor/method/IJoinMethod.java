@@ -266,7 +266,7 @@ public interface IJoinMethod<SELF extends IJoinMethod, JOIN, ON extends IOn> {
 
     default <T1, T2> SELF join(JoinMode mode, Getter<T1> mainJoinField, int mainTableStorey, Getter<T2> secondJoinField, int secondTableStorey, Consumer<ON> on) {
         return this.join(mode, LambdaUtil.getFieldInfo(mainJoinField).getType(), mainTableStorey, LambdaUtil.getFieldInfo(secondJoinField).getType(), secondTableStorey, o -> {
-            o.eq(mainJoinField, mainTableStorey, secondJoinField, secondTableStorey);
+            o.appendOnEq(mainJoinField, mainTableStorey, secondJoinField, secondTableStorey);
             if (on != null) {
                 on.accept(o);
             }

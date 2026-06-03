@@ -184,12 +184,44 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
 
     @Override
     public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, Class<?> secondTable, int secondTableStorey, Consumer<On> consumer) {
+        Table $mainTable = $.table(mainTable, mainTableStorey);
         Table $secondTable = $.table(secondTable, secondTableStorey);
+        if (mainTable == secondTable) {
+            throw new IllegalArgumentException("left and right table cannot be the same");
+        }
+
         Joins<Join> js = getJoins();
-        if (js != null && js.getJoins().stream().anyMatch(i -> i.getSecondTable() == $secondTable)) {
-            return this.join(mode, $secondTable, $.table(mainTable, mainTableStorey), consumer);
+        if (js == null) {
+            return this.join(mode, $mainTable, $secondTable, consumer);
+        }
+
+        Join join = null;
+        boolean mainExists = false;
+        boolean secondExists = false;
+        for (Join i : js.getJoins()) {
+            if (i.getMainTable() == $mainTable || i.getSecondTable() == $mainTable) {
+                mainExists = true;
+            }
+            if (i.getSecondTable() == $secondTable || i.getMainTable() == $secondTable) {
+                secondExists = true;
+            }
+            if ((i.getMainTable() == $mainTable && i.getSecondTable() == $secondTable) || (i.getSecondTable() == $mainTable && i.getMainTable() == $secondTable)) {
+                join = i;
+                break;
+            }
+        }
+
+        if (!mainExists && secondExists) {
+            return this.join(mode, $secondTable, $mainTable, consumer);
         } else {
-            return this.join(mode, $.table(mainTable, mainTableStorey), $secondTable, consumer);
+            if (join != null) {
+                // join 存在，则忽略；但是 consumer回调不忽略
+                if (consumer != null) {
+                    consumer.accept(join.getOn());
+                }
+                return (SELF) this;
+            }
+            return this.join(mode, $mainTable, $secondTable, consumer);
         }
     }
 
