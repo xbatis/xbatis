@@ -28,6 +28,7 @@ import com.xbatis.core.test.vo.NestedTestVO;
 import com.xbatis.core.test.vo.SysUserJoinSelfVo;
 import db.sql.api.DbType;
 import db.sql.api.cmd.JoinMode;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.apache.ibatis.session.SqlSession;
@@ -51,6 +52,8 @@ public class JoinTest extends BaseTest {
                     .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
                     .join(SysUser::getRole_id, SysRole::getId)
+                    .join(SysUser::getRole_id, SysRole::getId, on -> on.gt(SysRole::getId, 0))
+                    .join(SysRole::getId, SysUser::getRole_id, on -> on.where(Methods.TRUE()))
                     .returnType(Integer.class)
                     .get();
 
