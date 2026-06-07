@@ -51,7 +51,7 @@ public @interface TableId {
      * @return 自增器的名称
      * @see cn.xbatis.core.incrementer.Generators
      */
-    String generator() default "";
+    String generator() default "DEFAULT";
 
     /**
      * 后续使用 generator 替代
