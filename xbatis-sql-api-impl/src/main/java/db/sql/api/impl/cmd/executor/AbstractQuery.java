@@ -401,12 +401,11 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, Class<?> secondTable, int secondTableStorey, Consumer<On> consumer) {
-        Table $mainTable = $.table(mainTable, mainTableStorey);
-        Table $secondTable = $.table(secondTable, secondTableStorey);
-        if (mainTable == secondTable) {
+        if (mainTable == secondTable && mainTableStorey == secondTableStorey) {
             throw new IllegalArgumentException("left and right table cannot be the same");
         }
-
+        Table $mainTable = $.table(mainTable, mainTableStorey);
+        Table $secondTable = $.table(secondTable, secondTableStorey);
         Joins<Join> js = getJoins();
         if (js == null) {
             return this.join(mode, $mainTable, $secondTable, consumer);
