@@ -233,7 +233,8 @@ public final class SQLOptimizeUtils {
         for (Cmd cmd : cmdList) {
             classCmdMap.put(cmd.getClass(), cmd);
         }
-        optimizedCmdList(context.getDbType(), classCmdMap, false, false, true, optimizeOptions.getDisableOptimizeJoinMap(), classCmdMap.containsKey(Unions.class));
+        Map<Class, Set<Integer>> disableOptimizeJoinMap = optimizeOptions != null ? optimizeOptions.getDisableOptimizeJoinMap() : null;
+        optimizedCmdList(context.getDbType(), classCmdMap, false, false, true, disableOptimizeJoinMap, classCmdMap.containsKey(Unions.class));
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
         return QuerySQLUtil.buildQuerySQL(context, null, null, query, new StringBuilder(), cmdList);
     }
@@ -306,7 +307,8 @@ public final class SQLOptimizeUtils {
         }
         boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
         boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
-        return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, optimizeOptions.getDisableOptimizeJoinMap());
+        Map<Class, Set<Integer>> disableOptimizeJoinMap = optimizeOptions != null ? optimizeOptions.getDisableOptimizeJoinMap() : null;
+        return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, disableOptimizeJoinMap);
     }
 
 
@@ -324,6 +326,7 @@ public final class SQLOptimizeUtils {
         }
         boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
         boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
-        return getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, optimizeOptions.getDisableOptimizeJoinMap());
+        Map<Class, Set<Integer>> disableOptimizeJoinMap = optimizeOptions != null ? optimizeOptions.getDisableOptimizeJoinMap() : null;
+        return getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, disableOptimizeJoinMap);
     }
 }
