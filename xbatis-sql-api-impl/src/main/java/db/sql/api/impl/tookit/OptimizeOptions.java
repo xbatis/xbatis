@@ -14,6 +14,11 @@
 
 package db.sql.api.impl.tookit;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public class OptimizeOptions {
 
     /**
@@ -27,10 +32,15 @@ public class OptimizeOptions {
     private boolean optimizeJoin = true;
 
     /**
+     * 禁止某个表优化Join
+     */
+    private Map<Class, Set<Integer>> disableOptimizeJoinMap;
+
+    /**
      * 设置是否优化OrderBy
      *
      * @param optimizeOrderBy
-     * @return OptimizeOptions
+     * @return 自己
      */
     public OptimizeOptions optimizeOrderBy(boolean optimizeOrderBy) {
         this.optimizeOrderBy = optimizeOrderBy;
@@ -41,7 +51,7 @@ public class OptimizeOptions {
      * 设置是否优化Join
      *
      * @param optimizeJoin
-     * @return OptimizeOptions
+     * @return 自己
      */
     public OptimizeOptions optimizeJoin(boolean optimizeJoin) {
         this.optimizeJoin = optimizeJoin;
@@ -49,9 +59,34 @@ public class OptimizeOptions {
     }
 
     /**
+     * 设置禁止某个表优化Join
+     *
+     * @param entity 实体类
+     * @return 自己
+     */
+    public OptimizeOptions disableOptimizeJoin(Class entity) {
+        return this.disableOptimizeJoin(entity, 1);
+    }
+
+    /**
+     * 设置禁止某个表优化Join
+     *
+     * @param entity
+     * @param storey
+     * @return 自己
+     */
+    public OptimizeOptions disableOptimizeJoin(Class entity, int storey) {
+        if (disableOptimizeJoinMap == null) {
+            disableOptimizeJoinMap = new HashMap<>();
+        }
+        disableOptimizeJoinMap.computeIfAbsent(entity, k -> new HashSet<>()).add(storey);
+        return this;
+    }
+
+    /**
      * 关闭所有优化项
      *
-     * @return OptimizeOptions
+     * @return 自己
      */
     public OptimizeOptions disableAll() {
         this.optimizeJoin = false;
@@ -84,5 +119,14 @@ public class OptimizeOptions {
      */
     public boolean isOptimizeOrderBy() {
         return optimizeOrderBy;
+    }
+
+    /**
+     * 获取禁止优化Join的表
+     *
+     * @return 禁止优化Join的map
+     */
+    public Map<Class, Set<Integer>> getDisableOptimizeJoinMap() {
+        return disableOptimizeJoinMap;
     }
 }

@@ -73,7 +73,10 @@ public class MybatisCmdFactory extends CmdFactory {
         }
         return (XbatisTable) this.tableCache.computeIfAbsent(storey + entity.getName(), key -> {
             TableInfo tableInfo = getTableInfo(entity);
-            return new XbatisTable(tableInfo, tableAs(storey, ++tableNums));
+            XbatisTable xbatisTable = new XbatisTable(tableInfo, tableAs(storey, ++tableNums));
+            xbatisTable.setEntity(entity);
+            xbatisTable.setStorey(storey);
+            return xbatisTable;
         });
     }
 

@@ -48,6 +48,10 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
 
     protected String forceIndex;
 
+    protected Class<?> entity;
+
+    protected int storey;
+
     public Table(String name) {
         this.name = name;
     }
@@ -190,5 +194,23 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
             }
         }
         return this.idsSet.contains(column);
+    }
+
+    public int getStorey() {
+        return storey;
+    }
+
+    public Table setStorey(int storey) {
+        this.storey = storey;
+        return this;
+    }
+
+    public Class<?> getEntity() {
+        return entity;
+    }
+
+    public Table setEntity(Class<?> entity) {
+        this.entity = entity;
+        return this;
     }
 }

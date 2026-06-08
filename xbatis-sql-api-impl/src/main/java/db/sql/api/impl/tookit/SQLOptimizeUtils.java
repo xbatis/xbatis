@@ -25,6 +25,7 @@ import db.sql.api.cmd.struct.Joins;
 import db.sql.api.cmd.struct.query.IUnion;
 import db.sql.api.cmd.struct.query.Unions;
 import db.sql.api.impl.cmd.basic.CountAll;
+import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.dbFun.Count;
 import db.sql.api.impl.cmd.struct.Join;
 import db.sql.api.impl.cmd.struct.Limit;
@@ -33,10 +34,7 @@ import db.sql.api.impl.cmd.struct.query.OrderBy;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.tookit.CmdUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +53,7 @@ public final class SQLOptimizeUtils {
             if (j == current) {
                 continue;
             }
+
             if (j.getOn() != null && j.getOn().contain(current.getSecondTable())) {
                 return false;
             }
@@ -83,7 +82,7 @@ public final class SQLOptimizeUtils {
         return true;
     }
 
-    private static boolean removeLeftJoin(List<Join> joinList, boolean forCount, Map<Class, Cmd> classCmdMap) {
+    private static boolean removeLeftJoin(List<Join> joinList, Map<Class, Set<Integer>> disableOptimizeJoinMap, boolean forCount, Map<Class, Cmd> classCmdMap) {
         boolean hasLeftJoin = false;
         for (Join join : joinList) {
             if (join.getMode() == JoinMode.LEFT) {
@@ -107,6 +106,16 @@ public final class SQLOptimizeUtils {
                 //从后面扫描 因为从习惯上 最后一个是最容易被优化的
                 Join join = joinList.get(i);
                 if (join.getMode() == JoinMode.LEFT) {
+                    if (disableOptimizeJoinMap != null && join.getSecondTable() instanceof Table) {
+                        Table table = (Table) join.getSecondTable();
+                        if (table.getEntity() != null) {
+                            Set<Integer> disableSet = disableOptimizeJoinMap.get(table.getEntity());
+                            if (disableSet != null && disableSet.contains(table.getStorey())) {
+                                //已禁用优化
+                                break;
+                            }
+                        }
+                    }
                     //判断是否能删除
                     if (isCanRemoveLeftJoin(join, joinList, forCount, classCmdMap)) {
                         removeOne = true;
@@ -125,7 +134,7 @@ public final class SQLOptimizeUtils {
         return removeOne;
     }
 
-    private static void optimizedCmdList(IDbType dbType, Map<Class, Cmd> classCmdMap, boolean forCount, boolean optimizeOrderBy, boolean optimizeJoins, boolean isUnionQuery) {
+    private static void optimizedCmdList(IDbType dbType, Map<Class, Cmd> classCmdMap, boolean forCount, boolean optimizeOrderBy, boolean optimizeJoins, Map<Class, Set<Integer>> disableOptimizeJoinMap, boolean isUnionQuery) {
 
         if (forCount) {
             if (!isUnionQuery) {
@@ -150,7 +159,7 @@ public final class SQLOptimizeUtils {
             Joins joins = (Joins) classCmdMap.get(Joins.class);
             if (Objects.nonNull(joins)) {
                 List<Join> joinList = new ArrayList<>(joins.getJoins());
-                if (removeLeftJoin(joinList, forCount, classCmdMap)) {
+                if (removeLeftJoin(joinList, disableOptimizeJoinMap, forCount, classCmdMap)) {
                     if (joinList.isEmpty()) {
                         classCmdMap.remove(Joins.class);
                     } else {
@@ -175,7 +184,7 @@ public final class SQLOptimizeUtils {
                 for (Cmd unionCmd : unionCmdList) {
                     unionCmdClassMap.put(unionCmd.getClass(), unionCmd);
                 }
-                optimizedCmdList(dbType, unionCmdClassMap, false, optimizeOrderBy, optimizeJoins, true);
+                optimizedCmdList(dbType, unionCmdClassMap, false, optimizeOrderBy, optimizeJoins, disableOptimizeJoinMap, true);
                 unionCmdList = (List<Cmd>) unionCmdClassMap.values().stream().sorted(union.getUnionQuery().comparator()).collect(Collectors.toList());
                 CmdList cmdList = new CmdList(union.getOperator(), unionCmdList);
                 cmdListList.add(cmdList);
@@ -224,7 +233,7 @@ public final class SQLOptimizeUtils {
         for (Cmd cmd : cmdList) {
             classCmdMap.put(cmd.getClass(), cmd);
         }
-        optimizedCmdList(context.getDbType(), classCmdMap, false, false, true, classCmdMap.containsKey(Unions.class));
+        optimizedCmdList(context.getDbType(), classCmdMap, false, false, true, optimizeOptions.getDisableOptimizeJoinMap(), classCmdMap.containsKey(Unions.class));
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
         return QuerySQLUtil.buildQuerySQL(context, null, null, query, new StringBuilder(), cmdList);
     }
@@ -237,7 +246,7 @@ public final class SQLOptimizeUtils {
      * @param context 构建SQL上下文
      * @return SQL StringBuilder
      */
-    public static StringBuilder getOptimizedCountSql(IQuery query, SqlBuilderContext context, boolean optimizeOrderBy, boolean optimizeJoins) {
+    public static StringBuilder getOptimizedCountSql(IQuery query, SqlBuilderContext context, boolean optimizeOrderBy, boolean optimizeJoins, Map<Class, Set<Integer>> disableOptimizeJoinMap) {
         Map<Class, Cmd> classCmdMap = new HashMap<>();
         List<Cmd> cmdList = query.cmds();
         int size = cmdList.size();
@@ -245,7 +254,7 @@ public final class SQLOptimizeUtils {
             classCmdMap.put(cmd.getClass(), cmd);
         }
 
-        optimizedCmdList(context.getDbType(), classCmdMap, true, optimizeOrderBy, optimizeJoins, classCmdMap.containsKey(Unions.class));
+        optimizedCmdList(context.getDbType(), classCmdMap, true, optimizeOrderBy, optimizeJoins, disableOptimizeJoinMap, classCmdMap.containsKey(Unions.class));
 
         boolean needWarp = false;
         if (classCmdMap.containsKey(Unions.class) || classCmdMap.containsKey(UnionsCmdLists.class)) {
@@ -290,14 +299,14 @@ public final class SQLOptimizeUtils {
         if (optimizeOptions != null && optimizeOptions.isAllDisable()) {
             if (context.getDbType() == DbType.SQL_SERVER || context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE) {
                 //需要去掉order by
-                return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false);
+                return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false, null);
             }
             //不优化直接包裹一层
             return new StringBuilder("SELECT COUNT(*) FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
         }
         boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
         boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
-        return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin);
+        return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, optimizeOptions.getDisableOptimizeJoinMap());
     }
 
 
@@ -315,6 +324,6 @@ public final class SQLOptimizeUtils {
         }
         boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
         boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
-        return getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin);
+        return getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, optimizeOptions.getDisableOptimizeJoinMap());
     }
 }

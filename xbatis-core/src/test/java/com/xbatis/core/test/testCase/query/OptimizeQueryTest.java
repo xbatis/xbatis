@@ -126,6 +126,21 @@ public class OptimizeQueryTest extends BaseTest {
     }
 
     @Test
+    public void disableEntityLeftJoinOrderBy() {
+        check("禁止某个实体类的left join 表 order by 优化后的SQL",
+                "select t.id,t.user_name from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1 order by t.id asc",
+                getQuerySql(Query.create()
+                        .select(SysUser::getId, SysUser::getUserName)
+                        .from(SysUser.class)
+                        .join(JoinMode.LEFT, SysUser.class, SysRole.class)
+                        .optimizeOptions(i -> i.disableOptimizeJoin(SysRole.class))
+                        .eq(SysUser::getId, 1)
+                        .orderBy(SysUser::getId)
+                )
+        );
+    }
+
+    @Test
     public void distinctLeftJoinOrderBy() {
         check("order by 优化后的SQL",
                 "select distinct t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc",
