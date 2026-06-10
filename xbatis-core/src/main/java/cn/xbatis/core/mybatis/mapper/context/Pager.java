@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper.context;
 
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.page.IPager;
 import cn.xbatis.page.PageUtil;
 import cn.xbatis.page.PagerField;
@@ -41,8 +42,8 @@ public class Pager<T> implements IPager<T> {
     }
 
     public Pager(int number, int size) {
-        this.number = number;
-        this.size = size;
+        this.setNumber(number);
+        this.setSize(size);
     }
 
     public static <T> Pager<T> of(int size) {
@@ -88,6 +89,9 @@ public class Pager<T> implements IPager<T> {
 
     public void setNumber(int number) {
         this.number = number;
+        if (number < 1 && XbatisGlobalConfig.isCheckPagerParam()) {
+            throw new IllegalArgumentException("Pager number must be greater than 0");
+        }
     }
 
     public Integer getSize() {
@@ -96,6 +100,9 @@ public class Pager<T> implements IPager<T> {
 
     public void setSize(int size) {
         this.size = size;
+        if (size < 1 && XbatisGlobalConfig.isCheckPagerParam()) {
+            throw new IllegalArgumentException("Pager size must be greater than 0");
+        }
     }
 
     public Integer getTotalPage() {
