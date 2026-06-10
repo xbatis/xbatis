@@ -749,29 +749,4 @@ public final class XbatisGlobalConfig {
             DB_TYPE_PARSER = dbTypeParser;
         }
     }
-
-    /**
-     * 获取是否检测pager参数
-     *
-     * @return
-     */
-    public static boolean isCheckPagerParam() {
-        if (CHECK_PAGER_PARAM == NULL) {
-            CHECK_PAGER_PARAM = true;
-        }
-        return (boolean) CHECK_PAGER_PARAM;
-    }
-
-    /**
-     *
-     * @param check
-     * @return
-     */
-    public static boolean setCheckPagerParam(boolean check) {
-        if (CHECK_PAGER_PARAM == NULL) {
-            CHECK_PAGER_PARAM = check;
-            return true;
-        }
-        return false;
-    }
 }
