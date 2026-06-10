@@ -15,10 +15,12 @@
 package cn.xbatis.core.mybatis.provider;
 
 
+import cn.xbatis.core.db.reflect.ResultInfos;
 import cn.xbatis.core.mybatis.mapper.context.*;
 import cn.xbatis.core.sql.executor.BaseQuery;
 import cn.xbatis.core.sql.executor.chain.DeleteChain;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
+import cn.xbatis.db.annotations.ResultEntity;
 import db.sql.api.DbType;
 import db.sql.api.IDbType;
 
@@ -135,7 +137,18 @@ public class MybatisSQLProvider {
         //SQL_SERVER 需要order by 才能分页 所以不加
         if (dbType != DbType.SQL_SERVER) {
             if (Objects.isNull(queryContext.getExecution().getLimit())) {
-                queryContext.getExecution().limit(2);
+                // 没有join 也没有内嵌类 添加 limit 2
+                if (queryContext.getExecution().getReturnType() != null && queryContext.getExecution().getJoins() != null) {
+                    if (queryContext.getExecution().getReturnType().isAnnotationPresent(ResultEntity.class)) {
+                        if (!ResultInfos.get(queryContext.getExecution().getReturnType()).getNestedResultInfos().isEmpty()) {
+                            queryContext.getExecution().limit(2);
+                        }
+                    }
+                }
+                if (Objects.isNull(queryContext.getExecution().getJoins())) {
+
+                    queryContext.getExecution().limit(2);
+                }
             }
         }
         return cmdQuery(queryContext, dbType);

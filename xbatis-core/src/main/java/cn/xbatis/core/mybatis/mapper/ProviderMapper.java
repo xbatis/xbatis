@@ -46,7 +46,7 @@ public interface ProviderMapper {
      * @see MybatisSQLProvider#getByIdCmdQuery (SQLCmdQueryContext, ProviderContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.GET_BY_ID_QUERY_NAME)
-    <R> R $getById(SQLCmdQueryContext queryContext);
+    <R> R $getById(SQLCmdQueryContext queryContext, RowBounds rowBounds);
 
     /**
      * @param insertContext 上下文

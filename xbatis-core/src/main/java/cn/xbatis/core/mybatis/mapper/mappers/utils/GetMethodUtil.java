@@ -26,6 +26,7 @@ import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.io.Serializable;
@@ -36,7 +37,7 @@ public final class GetMethodUtil {
     public static <T> T getById(BasicMapper basicMapper, TableInfo tableInfo, Serializable id, Getter<T>[] selectFields) {
         Where where = WhereUtil.create(tableInfo, w -> WhereUtil.appendIdWhere(w, tableInfo, id));
         BaseQuery<?, T> query = QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> QueryUtil.fillQueryDefault(q, tableInfo, selectFields));
-        return basicMapper.$getById(new SQLCmdQueryContext(query));
+        return basicMapper.$getById(new SQLCmdQueryContext(query), new RowBounds(0, 2));
     }
 
     public static <T> T getById(BasicMapper basicMapper, TableInfo tableInfo, Class<T> targetType, Serializable id) {
@@ -46,7 +47,7 @@ public final class GetMethodUtil {
             QueryUtil.fillQueryDefault(q, tableInfo);
             q.setReturnType(targetType);
         });
-        return basicMapper.$getById(new SQLCmdQueryContext(query));
+        return basicMapper.$getById(new SQLCmdQueryContext(query), new RowBounds(0, 2));
     }
 
     public static <T, V> V getValueById(BasicMapper basicMapper, TableInfo tableInfo, Serializable id, GetterFun<T, V> getter) {
@@ -63,7 +64,7 @@ public final class GetMethodUtil {
                 q.setReturnType(fieldInfo.getType());
             }
         });
-        Object value = basicMapper.$getById(new SQLCmdQueryContext(query));
+        Object value = basicMapper.$getById(new SQLCmdQueryContext(query), new RowBounds(0, 2));
         if (query.getReturnType() == fieldInfo.getType()) {
             return getter.apply((T) value);
         }
