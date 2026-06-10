@@ -141,14 +141,11 @@ public class MybatisSQLProvider {
                 if (queryContext.getExecution().getReturnType() != null && queryContext.getExecution().getJoins() != null) {
                     if (queryContext.getExecution().getReturnType().isAnnotationPresent(ResultEntity.class)) {
                         if (!ResultInfos.get(queryContext.getExecution().getReturnType()).getNestedResultInfos().isEmpty()) {
-                            queryContext.getExecution().limit(2);
+                            return cmdQuery(queryContext, dbType);
                         }
                     }
                 }
-                if (Objects.isNull(queryContext.getExecution().getJoins())) {
-
-                    queryContext.getExecution().limit(2);
-                }
+                queryContext.getExecution().limit(2);
             }
         }
         return cmdQuery(queryContext, dbType);
