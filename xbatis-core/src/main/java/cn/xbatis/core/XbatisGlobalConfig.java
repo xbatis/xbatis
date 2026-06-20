@@ -19,6 +19,7 @@ import cn.xbatis.core.cache.FetchCache;
 import cn.xbatis.core.dbType.DbTypeParser;
 import cn.xbatis.core.dbType.DefaultDbTypeParser;
 import cn.xbatis.core.logicDelete.LogicDeleteSwitch;
+import cn.xbatis.core.mybatis.executor.SQLAuditing;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.mybatis.mapper.intercept.MethodInterceptor;
 import cn.xbatis.core.sql.SQLBuilder;
@@ -72,6 +73,7 @@ public final class XbatisGlobalConfig {
     private static volatile Object FETCH_CACHE = NULL;
     private static volatile Object DB_TYPE_PARSER = NULL;
     private static volatile Object CHECK_PAGER_PARAM = NULL;
+    private static volatile Object SQL_AUDITING = NULL;
 
     static {
         SQL_LISTENERS.add(new ForeignKeySQLListener());
@@ -747,6 +749,29 @@ public final class XbatisGlobalConfig {
     public static void setDbTypeParser(DbTypeParser dbTypeParser) {
         if (DB_TYPE_PARSER == NULL) {
             DB_TYPE_PARSER = dbTypeParser;
+        }
+    }
+
+    /**
+     * 获取SQL 审计
+     *
+     * @return SQLAuditing
+     */
+    public static SQLAuditing getSQLAuditing() {
+        if (SQL_AUDITING == NULL) {
+            SQL_AUDITING = null;
+        }
+        return (SQLAuditing) SQL_AUDITING;
+    }
+
+    /**
+     * 设置SQL 审计
+     *
+     * @param sqlAuditing
+     */
+    public static void setSQLAuditing(SQLAuditing sqlAuditing) {
+        if (SQL_AUDITING == NULL) {
+            SQL_AUDITING = sqlAuditing;
         }
     }
 }

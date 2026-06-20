@@ -14,12 +14,15 @@
 
 package cn.xbatis.core.mybatis.executor;
 
+import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.mybatis.logging.XbatisLogFactory;
+import cn.xbatis.core.mybatis.logging.jdbc.SQLAuditingConnectionLogger;
 import cn.xbatis.core.mybatis.mapper.context.SQLCmdInsertContext;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.BatchExecutor;
 import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.jdbc.ConnectionLogger;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
@@ -76,6 +79,19 @@ public class MybatisBatchExecutor extends BatchExecutor {
 
     @Override
     protected Connection getConnection(Log statementLog) throws SQLException {
-        return super.getConnection(this.statementLog);
+        Connection connection = transaction.getConnection();
+        SQLAuditing sqlAuditing = XbatisGlobalConfig.getSQLAuditing();
+        if (sqlAuditing == null) {
+            if (this.statementLog.isDebugEnabled()) {
+                return ConnectionLogger.newInstance(connection, this.statementLog, queryStack);
+            }
+            return connection;
+        } else {
+            if (this.statementLog.isDebugEnabled()) {
+                return SQLAuditingConnectionLogger.newInstance(connection, this.statementLog, queryStack);
+            } else {
+                return SQLAuditingConnectionLogger.newInstance(connection, XbatisLogFactory.NO_LOGGER, queryStack);
+            }
+        }
     }
 }
