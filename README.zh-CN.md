@@ -93,7 +93,7 @@ https://gitee.com/xbatis/xbatis-spring-boot-demo
         <dependency>
             <groupId>cn.xbatis</groupId>
             <artifactId>xbatis-spring-boot-parent</artifactId>
-            <version>1.10.5-M2</version>
+            <version>1.10.5</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
