@@ -174,7 +174,7 @@ public final class SqlConst {
     public static final char[] FROM_UNIXTIME = " FROM_UNIXTIME".toCharArray();
     public static final char[] MONTH = " MONTH".toCharArray();
     public static final char[] DATE = " DATE".toCharArray();
-
+    public static final char[] COALESCE = " COALESCE".toCharArray();
     public static final char[] DAY = " DAY".toCharArray();
     public static final char[] WEEKDAY = " WEEKDAY".toCharArray();
     public static final char[] HOUR = " HOUR".toCharArray();

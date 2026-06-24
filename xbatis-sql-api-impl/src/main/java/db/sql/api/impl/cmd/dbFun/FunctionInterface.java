@@ -1366,4 +1366,15 @@ public interface FunctionInterface extends Cmd {
     default Case case_() {
         return Methods.case_(this);
     }
+
+
+    /**
+     * 找到第一个非 NULL 值
+     *
+     * @param values
+     * @return
+     */
+    default Coalesce coalesce(Object... values) {
+        return Methods.coalesce(this, values);
+    }
 }

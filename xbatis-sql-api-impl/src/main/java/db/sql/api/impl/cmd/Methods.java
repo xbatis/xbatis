@@ -77,6 +77,7 @@ public final class Methods {
      * @param <T>     对象类型
      * @return RowValues
      */
+    @SafeVarargs
     public static <T> RowValues rowValues(List<T> list, Getter<T>... getters) {
         List<Cmd> values = new ArrayList<>();
         if (list != null && !list.isEmpty()) {
@@ -350,6 +351,7 @@ public final class Methods {
      * @param values 值
      * @return Plus
      */
+    @SafeVarargs
     public static Plus plus(Cmd column, Object... values) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(values);
@@ -397,6 +399,7 @@ public final class Methods {
      * @param values 值
      * @return Subtract
      */
+    @SafeVarargs
     public static Subtract subtract(Cmd column, Object... values) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(values);
@@ -457,6 +460,7 @@ public final class Methods {
      * @param values 值
      * @return Divide
      */
+    @SafeVarargs
     public static Divide divide(Cmd column, Object... values) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(values);
@@ -491,6 +495,7 @@ public final class Methods {
      * @param values 多个值
      * @return Multiply
      */
+    @SafeVarargs
     public static Multiply multiply(Cmd column, Object... values) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(values);
@@ -2114,6 +2119,7 @@ public final class Methods {
      * @param values 指定值
      * @return sort
      */
+    @SafeVarargs
     public static Case sort(Cmd column, Serializable... values) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(values);
@@ -2123,6 +2129,18 @@ public final class Methods {
         }
         cs.else_(column);
         return cs;
+    }
+
+    /**
+     * 找第一个非null值
+     *
+     * @param column
+     * @param values
+     * @return
+     */
+    @SafeVarargs
+    public static Coalesce coalesce(Cmd column, Object... values) {
+        return new Coalesce(column, values);
     }
 
     /**
@@ -2406,4 +2424,6 @@ public final class Methods {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> GetterField[] getters(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3, Getter<T4> getter4, int storey4, Getter<T5> getter5, int storey5, Getter<T6> getter6, int storey6, Getter<T7> getter7, int storey7, Getter<T8> getter8, int storey8, Getter<T9> getter9, int storey9, Getter<T10> getter10, int storey10) {
         return GetterFields.of(getter1, storey1, getter2, storey2, getter3, storey3, getter4, storey4, getter5, storey5, getter6, storey6, getter7, storey7, getter8, storey8, getter9, storey9, getter10, storey10);
     }
+
+
 }

@@ -15,24 +15,23 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
-import db.sql.api.DbModel;
-import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import static db.sql.api.impl.tookit.SqlConst.CONCAT_WS;
+import static db.sql.api.impl.tookit.SqlConst.COALESCE;
 
-public class ConcatWs extends BasicFunction<ConcatWs> {
+/**
+ * 找第一个非 NULL 值
+ */
+public class Coalesce extends BasicFunction<Coalesce> {
 
     private final Cmd[] values;
 
-    private final Cmd split;
+    public Coalesce(Cmd key, Object... values) {
+        super(COALESCE, key);
 
-    public ConcatWs(Cmd key, String split, Object... values) {
-        super(CONCAT_WS, key);
-        this.split = Methods.cmd(split);
         Cmd[] vs = new Cmd[values.length];
         int i = 0;
         for (Object value : values) {
@@ -68,25 +67,14 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
         if (this.values == null || this.values.length < 1) {
             return sqlBuilder;
         }
-        if (context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2 || context.getDbType() == DbType.SQLITE) {
-            sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
-            for (Cmd value : this.values) {
-                sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
-                sqlBuilder = this.split.sql(module, this, context, sqlBuilder);
-                sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
-                sqlBuilder = value.sql(module, this, context, sqlBuilder);
-            }
-            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
-            return sqlBuilder;
-        }
+
         sqlBuilder.append(this.operator).append(SqlConst.BRACKET_LEFT);
-        sqlBuilder = this.split.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.DELIMITER);
+
         if (this.key != null) {
             sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.DELIMITER);
         }
+
         join(module, this, context, sqlBuilder, this.values, SqlConst.DELIMITER);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
