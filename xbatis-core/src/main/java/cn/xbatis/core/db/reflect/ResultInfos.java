@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.db.reflect;
 
-import cn.xbatis.core.exception.NotTableClassException;
+import cn.xbatis.core.exception.NotVOClassException;
 import cn.xbatis.db.annotations.ResultEntity;
 
 import java.util.Map;
@@ -33,7 +33,7 @@ public class ResultInfos {
 
     public static ResultInfo get(Class clazz) {
         if (!clazz.isAnnotationPresent(ResultEntity.class)) {
-            throw new NotTableClassException(clazz);
+            throw new NotVOClassException(clazz);
         }
         if (CACHE.containsKey(clazz)) {
             return CACHE.get(clazz);
