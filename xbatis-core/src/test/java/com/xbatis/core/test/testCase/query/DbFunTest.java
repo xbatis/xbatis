@@ -144,4 +144,20 @@ public class DbFunTest extends BaseTest {
 
         }
     }
+
+    @Test
+    public void coalesceTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String str = QueryChain.of(sysUserMapper)
+                    .select(GetterFields.of(SysUser::getPassword, SysUser::getUserName), cs -> cs[0].coalesce(cs[1]))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 3)
+                    .orderBy(SysUser::getId)
+                    .returnType(String.class)
+                    .get();
+
+            assertEquals(str, "test2");
+        }
+    }
 }
