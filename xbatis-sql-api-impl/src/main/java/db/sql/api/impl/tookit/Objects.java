@@ -62,4 +62,16 @@ public final class Objects {
             java.util.Objects.requireNonNull(s);
         }
     }
+
+    public static <T> void requireArrayLength(T[] values, int minLength) {
+        java.util.Objects.requireNonNull(values);
+        if (values.length < minLength) {
+            throw new IllegalArgumentException("The minimum length of arguments's length is " + minLength);
+        }
+        for (T s : values) {
+            java.util.Objects.requireNonNull(s);
+        }
+    }
+
+
 }

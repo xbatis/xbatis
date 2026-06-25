@@ -93,6 +93,15 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
     }
 
     @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (this.values == null || this.values.length == 0) {
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+            return sqlBuilder;
+        }
+        return super.sql(module, parent, context, sqlBuilder);
+    }
+
+    @Override
     public boolean contain(Cmd cmd) {
         return CmdUtils.contain(cmd, this.key, this.values);
     }

@@ -39,6 +39,7 @@ import db.sql.api.impl.tookit.SqlUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -354,10 +355,38 @@ public final class Methods {
     @SafeVarargs
     public static Plus plus(Cmd column, Object... values) {
         Objects.requireNonNull(column);
-        Objects.requireNonNull(values);
+        if (values == null || values.length == 0) {
+            return new Plus(column, (Cmd) null);
+        }
         Plus plus = null;
         for (Object value : values) {
             if (plus == null) {
+                plus = new Plus(column, cmd(value));
+            } else {
+                plus = plus.plus(cmd(value));
+            }
+        }
+        return plus;
+    }
+
+    /**
+     * plus加法
+     *
+     * @param values 值
+     * @return Plus
+     */
+    @SafeVarargs
+    public static Plus plus(Object... values) {
+        Objects.requireArrayLength(values, 1);
+        if (values.length == 1) {
+            return new Plus(cmd(values[0]), (Cmd) null);
+        }
+        Plus plus = null;
+        Cmd column = null;
+        for (Object value : values) {
+            if (column == null) {
+                column = cmd(value);
+            } else if (plus == null) {
                 plus = new Plus(column, cmd(value));
             } else {
                 plus = plus.plus(cmd(value));
@@ -402,10 +431,39 @@ public final class Methods {
     @SafeVarargs
     public static Subtract subtract(Cmd column, Object... values) {
         Objects.requireNonNull(column);
-        Objects.requireNonNull(values);
+        if (values == null || values.length == 0) {
+            return new Subtract(column, (Cmd) null);
+        }
         Subtract subtract = null;
         for (Object value : values) {
             if (subtract == null) {
+                subtract = new Subtract(column, cmd(value));
+            } else {
+                subtract = subtract.subtract(cmd(value));
+            }
+        }
+        return subtract;
+    }
+
+    /**
+     * subtract减法
+     *
+     * @param values 值
+     * @return Subtract
+     */
+    @SafeVarargs
+    public static Subtract subtract(Object... values) {
+        Objects.requireArrayLength(values, 1);
+        if (values.length == 1) {
+            return new Subtract(cmd(values[0]), (Cmd) null);
+        }
+
+        Cmd column = null;
+        Subtract subtract = null;
+        for (Object value : values) {
+            if (column == null) {
+                column = cmd(value);
+            } else if (subtract == null) {
                 subtract = new Subtract(column, cmd(value));
             } else {
                 subtract = subtract.subtract(cmd(value));
@@ -425,6 +483,70 @@ public final class Methods {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
         return new Multiply(column, value);
+    }
+
+    /**
+     * multiply乘法
+     *
+     * @param column 列
+     * @param value  值
+     * @return Multiply
+     */
+    public static Multiply multiply(Cmd column, Cmd value) {
+        Objects.requireNonNull(column);
+        Objects.requireNonNull(value);
+        return new Multiply(column, value);
+    }
+
+    /**
+     * multiply乘法
+     *
+     * @param column 列
+     * @param values 多个值
+     * @return Multiply
+     */
+    @SafeVarargs
+    public static Multiply multiply(Cmd column, Object... values) {
+        Objects.requireNonNull(column);
+        if (values == null || values.length == 0) {
+            return new Multiply(column, (Cmd) null);
+        }
+        Multiply multiply = null;
+        for (Object value : values) {
+            if (multiply == null) {
+                multiply = new Multiply(column, cmd(value));
+            } else {
+                multiply = multiply.multiply(cmd(value));
+            }
+        }
+        return multiply;
+    }
+
+    /**
+     * multiply乘法
+     *
+     * @param values 多个值
+     * @return Multiply
+     */
+    @SafeVarargs
+    public static Multiply multiply(Object... values) {
+        Objects.requireArrayLength(values, 1);
+        if (values.length == 1) {
+            return new Multiply(cmd(values[0]), (Cmd) null);
+        }
+
+        Cmd column = null;
+        Multiply multiply = null;
+        for (Object value : values) {
+            if (column == null) {
+                column = cmd(value);
+            } else if (multiply == null) {
+                multiply = new Multiply(column, cmd(value));
+            } else {
+                multiply = multiply.multiply(cmd(value));
+            }
+        }
+        return multiply;
     }
 
     /**
@@ -463,7 +585,9 @@ public final class Methods {
     @SafeVarargs
     public static Divide divide(Cmd column, Object... values) {
         Objects.requireNonNull(column);
-        Objects.requireNonNull(values);
+        if (values == null || values.length == 0) {
+            return new Divide(column, (Cmd) null);
+        }
         Divide divide = null;
         for (Object value : values) {
             if (divide == null) {
@@ -475,40 +599,34 @@ public final class Methods {
         return divide;
     }
 
-    /**
-     * multiply乘法
-     *
-     * @param column 列
-     * @param value  值
-     * @return Multiply
-     */
-    public static Multiply multiply(Cmd column, Cmd value) {
-        Objects.requireNonNull(column);
-        Objects.requireNonNull(value);
-        return new Multiply(column, value);
-    }
+
 
     /**
-     * multiply乘法
+     * divide除法
      *
-     * @param column 列
-     * @param values 多个值
-     * @return Multiply
+     * @param values 值
+     * @return Divide
      */
     @SafeVarargs
-    public static Multiply multiply(Cmd column, Object... values) {
-        Objects.requireNonNull(column);
-        Objects.requireNonNull(values);
-        Multiply multiply = null;
+    public static Divide divide(Object... values) {
+        Objects.requireArrayLength(values, 1);
+        if (values.length == 1) {
+            return new Divide(cmd(values[0]), (Cmd) null);
+        }
+        Cmd column = null;
+        Divide divide = null;
         for (Object value : values) {
-            if (multiply == null) {
-                multiply = new Multiply(column, cmd(value));
+            if (column == null) {
+                column = cmd(value);
+            } else if (divide == null) {
+                divide = new Divide(column, cmd(value));
             } else {
-                multiply = multiply.multiply(cmd(value));
+                divide = divide.divide(cmd(value));
             }
         }
-        return multiply;
+        return divide;
     }
+
 
     /**
      * count条数 函数
@@ -1503,23 +1621,19 @@ public final class Methods {
     @SafeVarargs
     public static Concat concat(Cmd column, Object... values) {
         Objects.requireNonNull(column);
-        Objects.requireNonNull(values);
         return new Concat(column, values);
     }
 
     /**
      * concat拼接 函数
      *
-     * @param first  第一个concat 参数
      * @param values 需要拼接的值
      * @return Concat
      */
     @SafeVarargs
-    public static Concat concat(Object first, Object... values) {
-        Objects.requireNonNull(first);
-        Objects.requireNonNull(values);
-
-        return new Concat(cmd(first), values);
+    public static Concat concat(Object... values) {
+        Objects.requireArrayLength(values, 1);
+        return new Concat(cmd(values[0]), Arrays.copyOfRange(values, 1, values.length));
     }
 
     /**
@@ -1536,6 +1650,20 @@ public final class Methods {
         Objects.requireNonNull(split);
         Objects.requireNonNull(values);
         return new ConcatWs(column, split, values);
+    }
+
+    /**
+     * concatWs拼接 函数
+     *
+     * @param split  分隔符
+     * @param values 需要拼接的值
+     * @return ConcatWs
+     */
+    @SafeVarargs
+    public static ConcatWs concatWs(String split, Object... values) {
+        Objects.requireNonNull(split);
+        Objects.requireArrayLength(values, 1);
+        return new ConcatWs(cmd(values[0]), split, Arrays.copyOfRange(values, 1, values.length));
     }
 
     /* --------------------------------------以下为判断条件----------------------------------------------*/
@@ -2141,6 +2269,18 @@ public final class Methods {
     @SafeVarargs
     public static Coalesce coalesce(Cmd column, Object... values) {
         return new Coalesce(column, values);
+    }
+
+    /**
+     * 找第一个非null值
+     *
+     * @param values
+     * @return
+     */
+    @SafeVarargs
+    public static Coalesce coalesce(Object... values) {
+        Objects.requireNonNull(values);
+        return new Coalesce(cmd(values[0]), Arrays.copyOfRange(values, 1, values.length));
     }
 
     /**

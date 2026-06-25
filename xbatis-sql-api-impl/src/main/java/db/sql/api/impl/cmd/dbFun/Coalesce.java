@@ -64,20 +64,22 @@ public class Coalesce extends BasicFunction<Coalesce> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (this.values == null || this.values.length < 1) {
-            return sqlBuilder;
-        }
-
         sqlBuilder.append(this.operator).append(SqlConst.BRACKET_LEFT);
-
-        if (this.key != null) {
-            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
-            sqlBuilder.append(SqlConst.DELIMITER);
-        }
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder.append(SqlConst.DELIMITER);
 
         join(module, this, context, sqlBuilder, this.values, SqlConst.DELIMITER);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (this.values == null || this.values.length == 0) {
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+            return sqlBuilder;
+        }
+        return super.sql(module, parent, context, sqlBuilder);
     }
 
     @Override

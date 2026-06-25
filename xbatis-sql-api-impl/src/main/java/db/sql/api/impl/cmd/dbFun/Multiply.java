@@ -47,6 +47,15 @@ public class Multiply extends BasicFunction<Multiply> {
     }
 
     @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (this.value == null) {
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+            return sqlBuilder;
+        }
+        return super.sql(module, parent, context, sqlBuilder);
+    }
+
+    @Override
     public boolean contain(Cmd cmd) {
         return CmdUtils.contain(cmd, this.key, this.value);
     }

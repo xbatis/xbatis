@@ -150,7 +150,7 @@ public class DbFunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String str = QueryChain.of(sysUserMapper)
-                    .select(GetterFields.of(SysUser::getPassword, SysUser::getUserName), cs -> cs[0].coalesce(cs[1]))
+                    .select(GetterFields.of(SysUser::getPassword, SysUser::getUserName), cs -> Methods.coalesce(cs))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 3)
                     .orderBy(SysUser::getId)
