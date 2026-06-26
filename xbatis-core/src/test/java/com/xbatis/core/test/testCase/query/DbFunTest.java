@@ -160,4 +160,20 @@ public class DbFunTest extends BaseTest {
             assertEquals(str, "test2");
         }
     }
+
+    @Test
+    public void plusSubtractMultiplyDivideIngnoreTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer id = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, c -> Methods.divide(Methods.multiply(Methods.subtract(Methods.plus(Methods.coalesce(c))))))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 3)
+                    .orderBy(SysUser::getId)
+                    .returnType(Integer.class)
+                    .get();
+
+            assertEquals(id, 3);
+        }
+    }
 }
