@@ -71,11 +71,11 @@ docker run --name dm -e INSTANCE_NAME=SYSDBA -e DSYSDBA_PWD=SYSDBA001 -p 5236:52
 # 人大金仓
 
 ```
-docker load -i kdb_x86_64_V008R006C008B0014.tar
+docker load -i KingbaseES_V009R001C010B0004_x86_64_Docker.tar
 ```
 
 ```
-docker run -tid --name kingbase -p 54321:54321 -e DB_USER=system -e DB_PASSWORD=123456 kingbase_v008r006c008b0014_single_x86:v1 bin/bash
+docker run -tid --name kingbase -p 54321:54321 -e DB_USER=system -e DB_PASSWORD=123456 kingbase_v009r001c010b0004_single_x86:v1 bin/bash
 ```
 
 ```

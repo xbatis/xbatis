@@ -14,49 +14,23 @@
 
 package cn.xbatis.db.annotations;
 
-import cn.xbatis.db.ColumnNameRule;
-import cn.xbatis.db.DatabaseCaseRule;
-
 import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Table {
+public @interface TableDefinition {
+    /**
+     * 生成列的 DDL 时使用的 SQL 片段。默认使用推断的类型来生成 SQL 片段以创建此列。
+     *
+     * @return 生成列的 DDL
+     */
+    String definition() default "";
 
     /**
-     * 表名
+     * 备注
      *
-     * @return 表名
+     * @return 备注
      */
-    String value() default "";
-
-    /**
-     * 数据库的 schema
-     *
-     * @return 数据库的 schema
-     */
-    String schema() default "";
-
-    /**
-     * 列名规则
-     *
-     * @return ColumnNameRule
-     * @see ColumnNameRule
-     */
-    ColumnNameRule columnNameRule() default ColumnNameRule.IGNORE;
-
-    /**
-     * 数据库大小写规则
-     *
-     * @return DatabaseCaseRule
-     */
-    DatabaseCaseRule databaseCaseRule() default DatabaseCaseRule.DEFAULT;
-
-    /**
-     * 是否表；如果是视图，设置为false；
-     *
-     * @return 是否是表
-     */
-    boolean table() default true;
+    String comment() default "";
 }

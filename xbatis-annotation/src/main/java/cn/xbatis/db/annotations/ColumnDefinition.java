@@ -14,6 +14,11 @@
 
 package cn.xbatis.db.annotations;
 
+import java.lang.annotation.*;
+
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface ColumnDefinition {
 
     /**
@@ -79,4 +84,10 @@ public @interface ColumnDefinition {
      */
     String comment() default "";
 
+    /**
+     * 特殊情况下填写
+     *
+     * @return
+     */
+    Class<?> javaType() default Void.class;
 }
