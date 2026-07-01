@@ -14,12 +14,24 @@
 
 package cn.xbatis.db.annotations;
 
+import db.sql.api.DbType;
+
 import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Repeatable(TableDefinition.List.class)
 public @interface TableDefinition {
+
+    /**
+     * 数据库类型 例如 DbType.Name.MYSQL
+     *
+     * @return DbType name
+     * @see db.sql.api.DbType.Name
+     */
+    String dbType() default DbType.Name.UNKNOWN;
+
     /**
      * 生成列的 DDL 时使用的 SQL 片段。默认使用推断的类型来生成 SQL 片段以创建此列。
      *
@@ -33,4 +45,16 @@ public @interface TableDefinition {
      * @return 备注
      */
     String comment() default "";
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @interface List {
+        /**
+         * 多个TableDefinition
+         *
+         * @return values
+         */
+        TableDefinition[] value();
+    }
 }

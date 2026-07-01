@@ -14,12 +14,23 @@
 
 package cn.xbatis.db.annotations;
 
+import db.sql.api.DbType;
+
 import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
+@Repeatable(ColumnDefinition.List.class)
 public @interface ColumnDefinition {
+
+    /**
+     * 数据库类型 例如 DbType.Name.MYSQL
+     *
+     * @return DbType name
+     * @see db.sql.api.DbType.Name
+     */
+    String dbType() default DbType.Name.UNKNOWN;
 
     /**
      * 顺序索引
@@ -90,4 +101,16 @@ public @interface ColumnDefinition {
      * @return
      */
     Class<?> javaType() default Void.class;
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    @interface List {
+        /**
+         * 多个ColumnDefinition
+         *
+         * @return values
+         */
+        ColumnDefinition[] value();
+    }
 }
