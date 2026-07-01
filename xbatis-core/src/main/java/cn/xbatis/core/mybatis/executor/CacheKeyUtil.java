@@ -36,6 +36,9 @@ public final class CacheKeyUtil {
             if (context.getExecution().getReturnType() != null) {
                 cacheKey.update(context.getExecution().getReturnType().getName());
             }
+            if (context.getExecution().getCallSetOnNulls() != null) {
+                cacheKey.update(context.getExecution().getCallSetOnNulls());
+            }
         } else if (parameterObject instanceof ExecuteAndSelectPreparedContext) {
             ExecuteAndSelectPreparedContext context = (ExecuteAndSelectPreparedContext) parameterObject;
             if (context.getParameters() != null) {

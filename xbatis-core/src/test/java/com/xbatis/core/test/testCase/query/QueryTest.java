@@ -1076,4 +1076,24 @@ public class QueryTest extends BaseTest {
             assertEquals(list.get(3).getRoleId(), null);
         }
     }
+
+    @Test
+    public void returnMapTest(){
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Map<String,Object> map=QueryChain.of(sysUserMapper)
+                    .eq(SysUser::getId,3)
+                    .returnMap(false)
+                    .get();
+            System.out.println(map);
+            assertFalse(map.containsKey("password"));
+
+            map=QueryChain.of(sysUserMapper)
+                    .eq(SysUser::getId,3)
+                    .returnMap(true)
+                    .get();
+            System.out.println(map);
+            assertTrue(map.containsKey("password"));
+        }
+    }
 }

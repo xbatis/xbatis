@@ -1187,4 +1187,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
         return prefix + columnName;
     }
+
+    @Override
+    protected boolean isCallSettersOnNulls() {
+        if (this.baseQuery == null || this.baseQuery.getCallSetOnNulls() == null) {
+            return super.isCallSettersOnNulls();
+        }
+        return this.baseQuery.getCallSetOnNulls();
+    }
 }

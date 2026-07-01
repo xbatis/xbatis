@@ -46,6 +46,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     protected Integer timeout;
     protected Integer fetchSize;
     protected Integer fetchDirection;
+    protected Boolean callSetOnNulls;
 
     public BaseQuery() {
         this(new MybatisCmdFactory());
@@ -148,6 +149,14 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     public Q fetchSize(Integer fetchSize) {
         this.fetchSize = fetchSize;
         return (Q) this;
+    }
+
+    public Boolean getCallSetOnNulls() {
+        return callSetOnNulls;
+    }
+
+    public void setCallSetOnNulls(Boolean callSetOnNulls){
+        this.callSetOnNulls = callSetOnNulls;
     }
 
     /**

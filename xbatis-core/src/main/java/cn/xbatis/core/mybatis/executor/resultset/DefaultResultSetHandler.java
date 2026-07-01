@@ -115,6 +115,10 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         return true;
     }
 
+    protected boolean isCallSettersOnNulls() {
+        return this.configuration.isCallSettersOnNulls();
+    }
+
     //
     // HANDLE OUTPUT PARAMETER
     //
@@ -486,7 +490,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
                     foundValues = true;
                 }
                 if (value != null
-                        || configuration.isCallSettersOnNulls() && !metaObject.getSetterType(property).isPrimitive()) {
+                        || this.isCallSettersOnNulls() && !metaObject.getSetterType(property).isPrimitive()) {
                     // gcode issue #377, call setter on nulls (value is not 'found')
                     metaObject.setValue(property, value);
                 }
@@ -607,7 +611,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
                 if (value != null) {
                     foundValues = true;
                 }
-                if (value != null || configuration.isCallSettersOnNulls() && !mapping.primitive) {
+                if (value != null || this.isCallSettersOnNulls() && !mapping.primitive) {
                     // gcode issue #377, call setter on nulls (value is not 'found')
                     metaObject.setValue(mapping.property, value);
                 }
