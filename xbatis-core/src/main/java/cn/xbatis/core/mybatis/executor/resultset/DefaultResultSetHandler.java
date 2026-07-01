@@ -119,6 +119,10 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         return this.configuration.isCallSettersOnNulls();
     }
 
+    protected boolean isMapUnderscoreToCamelCase() {
+        return this.configuration.isMapUnderscoreToCamelCase();
+    }
+
     //
     // HANDLE OUTPUT PARAMETER
     //
@@ -570,7 +574,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
                  */
                 final String property;
                 if (isForMap) {
-                    if (configuration.isMapUnderscoreToCamelCase()) {
+                    if (this.isMapUnderscoreToCamelCase()) {
                         propertyName = NamingUtil.underlineToCamel(propertyName);
                     }
                     property = propertyName;

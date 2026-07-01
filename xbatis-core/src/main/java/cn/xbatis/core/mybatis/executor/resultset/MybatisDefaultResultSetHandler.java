@@ -1195,4 +1195,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
         return this.baseQuery.getCallSetOnNulls();
     }
+
+    @Override
+    protected boolean isMapUnderscoreToCamelCase() {
+        if (this.baseQuery == null || this.baseQuery.getCallSetOnNulls() == null) {
+            return super.isMapUnderscoreToCamelCase();
+        }
+        return this.baseQuery.getMapUnderscoreToCamelCase();
+    }
 }

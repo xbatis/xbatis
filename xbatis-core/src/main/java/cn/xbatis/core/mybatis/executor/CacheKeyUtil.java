@@ -37,7 +37,10 @@ public final class CacheKeyUtil {
                 cacheKey.update(context.getExecution().getReturnType().getName());
             }
             if (context.getExecution().getCallSetOnNulls() != null) {
-                cacheKey.update(context.getExecution().getCallSetOnNulls());
+                cacheKey.update("CallSetOnNulls=" + context.getExecution().getCallSetOnNulls());
+            }
+            if (context.getExecution().getMapUnderscoreToCamelCase() != null) {
+                cacheKey.update("MapUnderscoreToCamelCase=" + context.getExecution().getMapUnderscoreToCamelCase());
             }
         } else if (parameterObject instanceof ExecuteAndSelectPreparedContext) {
             ExecuteAndSelectPreparedContext context = (ExecuteAndSelectPreparedContext) parameterObject;

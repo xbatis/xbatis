@@ -142,6 +142,18 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         return (QueryChain) super.setReturnType(Map.class,(Consumer)consumer);
     }
 
+    public <V> QueryChain<Map<String, V>> returnMap(Boolean callSetOnNulls, Boolean mapUnderscoreToCamelCase) {
+        this.callSetOnNulls = callSetOnNulls;
+        this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;
+        return (QueryChain) super.setReturnType(Map.class);
+    }
+
+    public <V> QueryChain<Map<String, V>> returnMap(Boolean callSetOnNulls, Boolean mapUnderscoreToCamelCase, Consumer<Map<String, V>> consumer) {
+        this.callSetOnNulls = callSetOnNulls;
+        this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;
+        return (QueryChain) super.setReturnType(Map.class, (Consumer) consumer);
+    }
+
     public QueryChain<T> setDefault() {
         return this.setDefault(false);
     }

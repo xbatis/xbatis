@@ -47,6 +47,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     protected Integer fetchSize;
     protected Integer fetchDirection;
     protected Boolean callSetOnNulls;
+    protected Boolean mapUnderscoreToCamelCase;
 
     public BaseQuery() {
         this(new MybatisCmdFactory());
@@ -157,6 +158,10 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
 
     public void setCallSetOnNulls(Boolean callSetOnNulls){
         this.callSetOnNulls = callSetOnNulls;
+    }
+
+    public Boolean getMapUnderscoreToCamelCase() {
+        return mapUnderscoreToCamelCase;
     }
 
     /**
