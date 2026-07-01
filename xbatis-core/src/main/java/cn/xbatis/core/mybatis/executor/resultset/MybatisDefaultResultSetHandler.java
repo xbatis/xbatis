@@ -1198,7 +1198,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     @Override
     protected boolean isMapUnderscoreToCamelCase() {
-        if (this.baseQuery == null || this.baseQuery.getCallSetOnNulls() == null) {
+        if (this.baseQuery == null || this.baseQuery.getMapUnderscoreToCamelCase() == null) {
             return super.isMapUnderscoreToCamelCase();
         }
         return this.baseQuery.getMapUnderscoreToCamelCase();
