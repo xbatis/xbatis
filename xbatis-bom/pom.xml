@@ -65,6 +65,12 @@
             </dependency>
 
             <dependency>
+                <groupId>cn.xbatis</groupId>
+                <artifactId>xbatis-ddl-auto</artifactId>
+                <version>${xbatis-ddl-auto.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
