@@ -79,7 +79,7 @@
 
         <!-- bean容器 -->
         <spring-boot.version>2.7.18</spring-boot.version>
-        <solon.version>4.0.2</solon.version>
+        <solon.version>4.0.3</solon.version>
 
         <!-- mybatis 相关 -->
         <mybatis.version>3.5.19</mybatis.version>
