@@ -30,4 +30,19 @@ public class SysUserCalcSelectVo {
 
     @ResultCalcField("sum({id}+1)")
     private Integer count2;
+
+    @ResultCalcField("[sum(plus(id,1))]")
+    private Integer sum1;
+
+    @ResultCalcField("[plus(id,1)]")
+    private Integer plus1;
+
+    @ResultCalcField("[plus(2,1)]")
+    private Integer plus2;
+
+    @ResultCalcField("[plus(2,1,id)]")
+    private Integer plus3;
+
+    @ResultCalcField("[subtract(id,1,2)]")
+    private Integer subtract1;
 }

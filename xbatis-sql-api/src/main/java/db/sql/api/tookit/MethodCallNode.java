@@ -14,8 +14,11 @@
 
 package db.sql.api.tookit;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MethodCallNode {
     private String funName;
@@ -23,6 +26,8 @@ public class MethodCallNode {
     private List<Object> args;
 
     private Method method;
+
+    private final Map<Integer, MethodHandle> methodHandleMap = new HashMap<>();
 
     public MethodCallNode(String funName, List<Object> args) {
         this.funName = funName;
@@ -55,6 +60,10 @@ public class MethodCallNode {
 
     public void setMethod(Method method) {
         this.method = method;
+    }
+
+    public Map<Integer, MethodHandle> getMethodHandleMap() {
+        return methodHandleMap;
     }
 
     @Override

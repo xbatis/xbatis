@@ -1043,6 +1043,27 @@ public class QueryTest extends BaseTest {
             assertEquals(list.get(0).getCount2(), list.get(0).getId() + 1);
             assertEquals(list.get(1).getCount2(), list.get(1).getId() + 1);
             assertEquals(list.get(2).getCount2(), list.get(2).getId() + 1);
+
+
+            assertEquals(list.get(0).getSum1(), list.get(0).getId() + 1);
+            assertEquals(list.get(1).getSum1(), list.get(1).getId() + 1);
+            assertEquals(list.get(2).getSum1(), list.get(2).getId() + 1);
+
+            assertEquals(list.get(0).getPlus1(), list.get(0).getId() + 1);
+            assertEquals(list.get(1).getPlus1(), list.get(1).getId() + 1);
+            assertEquals(list.get(2).getPlus1(), list.get(2).getId() + 1);
+
+            assertEquals(list.get(0).getPlus2(), 3);
+            assertEquals(list.get(1).getPlus2(), 3);
+            assertEquals(list.get(2).getPlus2(), 3);
+
+            assertEquals(list.get(0).getPlus3(), list.get(0).getId() + 3);
+            assertEquals(list.get(1).getPlus3(), list.get(1).getId() + 3);
+            assertEquals(list.get(2).getPlus3(), list.get(2).getId() + 3);
+
+            assertEquals(list.get(0).getSubtract1(), list.get(0).getId() - 3);
+            assertEquals(list.get(1).getSubtract1(), list.get(1).getId() - 3);
+            assertEquals(list.get(2).getSubtract1(), list.get(2).getId() - 3);
         }
     }
 

@@ -25,7 +25,10 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,7 +37,6 @@ public class XbatisMethodsCallParser {
     private final Object target;
     private final boolean isStatic;
     private final Map<String, List<Method>> methodMap;
-    private final Map<Integer, MethodHandle> methodHandleMap = new HashMap<>();
     private final Function<String, String> nameConverter;
 
 
@@ -110,7 +112,7 @@ public class XbatisMethodsCallParser {
     }
 
     private Object invoke(MethodCallNode callNode, List<Object> args, int index) {
-        MethodHandle methodHandle = methodHandleMap.get(index);
+        MethodHandle methodHandle = callNode.getMethodHandleMap().get(index);
         if (methodHandle == null) {
             String name = callNode.getFunName();
             if (nameConverter != null) {
@@ -166,7 +168,7 @@ public class XbatisMethodsCallParser {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            methodHandleMap.put(index, methodHandle);
+            callNode.getMethodHandleMap().put(index, methodHandle);
         }
 
 
