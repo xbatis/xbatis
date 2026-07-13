@@ -297,7 +297,7 @@ CREATE TABLE multi_pk
     PRIMARY KEY (id1, id2)
 );
 
-drop table fetch_merge;
+drop table if exists fetch_merge;
 
 CREATE TABLE fetch_merge
 (

@@ -37,6 +37,11 @@ public class OptimizeOptions {
     private Map<Class, Set<Integer>> disableOptimizeJoinMap;
 
     /**
+     * 是否优化 count
+     */
+    private boolean optimizeCount = true;
+
+    /**
      * 设置是否优化OrderBy
      *
      * @param optimizeOrderBy
@@ -83,6 +88,11 @@ public class OptimizeOptions {
         return this;
     }
 
+    public OptimizeOptions optimizeCount(boolean optimizeCount) {
+        this.optimizeCount = optimizeCount;
+        return this;
+    }
+
     /**
      * 关闭所有优化项
      *
@@ -91,6 +101,7 @@ public class OptimizeOptions {
     public OptimizeOptions disableAll() {
         this.optimizeJoin = false;
         this.optimizeOrderBy = false;
+        this.optimizeCount = false;
         return this;
     }
 
@@ -100,7 +111,7 @@ public class OptimizeOptions {
      * @return 是否全部禁用
      */
     public boolean isAllDisable() {
-        return !optimizeOrderBy && !optimizeJoin;
+        return !optimizeOrderBy && !optimizeJoin && !optimizeCount;
     }
 
     /**
@@ -128,5 +139,14 @@ public class OptimizeOptions {
      */
     public Map<Class, Set<Integer>> getDisableOptimizeJoinMap() {
         return disableOptimizeJoinMap;
+    }
+
+    /**
+     * 是否优化count
+     *
+     * @return 是否优化
+     */
+    public boolean isOptimizeCount() {
+        return optimizeCount;
     }
 }
