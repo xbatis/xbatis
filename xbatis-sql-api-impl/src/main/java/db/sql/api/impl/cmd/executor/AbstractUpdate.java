@@ -177,7 +177,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         return this.set(field, value);
     }
 
-    public <T, V extends Serializable> SELF set(Getter<T> field, V value, Predicate<V> predicate) {
+    public <T, V extends Serializable & Comparable<V>> SELF set(Getter<T> field, V value, Predicate<V> predicate) {
         return this.set(predicate.test(value), field, value);
     }
 
