@@ -2473,6 +2473,15 @@ public final class Methods {
         return new DistinctOn(onKeys);
     }
 
+    /**
+     * 条件链路
+     *
+     * @return
+     */
+    public static ConditionChain conditionChain() {
+        return new ConditionChain();
+    }
+
     //-----------------------------构建getters----------------------------------------
 
     @SafeVarargs

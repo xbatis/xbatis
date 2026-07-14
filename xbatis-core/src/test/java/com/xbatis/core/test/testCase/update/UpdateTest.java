@@ -29,7 +29,9 @@ import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.IDbType;
+import db.sql.api.cmd.GetterFields;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.dbFun.Case;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -39,7 +41,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -595,6 +599,59 @@ public class UpdateTest extends BaseTest {
                     .execute();
 
             assertEquals(cnt, 3);
+        }
+    }
+
+
+    @Test
+    public void caseWhenUpdateTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            UpdateChain.of(sysUserMapper)
+                    .set(SysUser::getUserName, GetterFields.of(SysUser::getId, SysUser::getUserName), cs -> {
+                        Case cased = Methods.case_();
+                        Map<Integer, String> map = new HashMap<>();
+                        map.put(1, "1name");
+                        map.put(2, "2name");
+                        map.entrySet().stream().forEach(i -> {
+                            cased.when(cs[0].eq(i.getKey()), i.getValue());
+                        });
+                        cased.else_(cs[1]);
+                        return cased;
+                    })
+                    .set(SysUser::getCreate_time, LocalDateTime.now())
+                    .in(SysUser::getId, 1, 2, 3)
+                    .execute();
+
+            assertEquals("1name", sysUserMapper.getValueById(1, SysUser::getUserName));
+            assertEquals("2name", sysUserMapper.getValueById(2, SysUser::getUserName));
+            assertEquals("test2", sysUserMapper.getValueById(3, SysUser::getUserName));
+        }
+    }
+
+    @Test
+    public void caseWhenUpdateTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            UpdateChain.of(sysUserMapper)
+                    .set(SysUser::getUserName, GetterFields.of(SysUser::getId, SysUser::getUserName), cs -> {
+                        Case cased = Methods.case_();
+                        Map<Integer, String> map = new HashMap<>();
+                        map.put(1, "1name");
+                        map.put(2, "2name");
+                        map.entrySet().stream().forEach(i -> {
+                            cased.when(Methods.conditionChain().and(cs[0].eq(i.getKey())).andNested(chain -> chain.and(cs[0].lte(1))), i.getValue());
+                        });
+                        cased.else_(cs[1]);
+                        return cased;
+                    })
+                    .set(SysUser::getCreate_time, LocalDateTime.now())
+                    .in(SysUser::getId, 1, 2, 3)
+                    .execute();
+
+            assertEquals("1name", sysUserMapper.getValueById(1, SysUser::getUserName));
+            assertEquals("test1", sysUserMapper.getValueById(2, SysUser::getUserName));
+            assertEquals("test2", sysUserMapper.getValueById(3, SysUser::getUserName));
         }
     }
 }
