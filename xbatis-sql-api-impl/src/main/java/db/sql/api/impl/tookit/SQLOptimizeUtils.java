@@ -195,7 +195,7 @@ public final class SQLOptimizeUtils {
         }
 
         Select select = (Select) classCmdMap.get(Select.class);
-        if (forCount && !isUnionQuery && !select.isDistinct() && !select.getSelectField().stream().anyMatch(i -> i instanceof AffectLineNumber)) {
+        if (forCount && !classCmdMap.containsKey(OrderBy.class) && !isUnionQuery && !select.isDistinct() && !select.getSelectField().stream().anyMatch(i -> i instanceof AffectLineNumber)) {
             if (classCmdMap.containsKey(GroupBy.class) || select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
                 Select newSelect;
                 if (dbType.getDbModel() == DbModel.ORACLE || dbType == DbType.ORACLE) {
@@ -261,10 +261,13 @@ public final class SQLOptimizeUtils {
         boolean needWarp = optimizeCount;
         if (needWarp) {
             if (classCmdMap.containsKey(Unions.class) || classCmdMap.containsKey(UnionsCmdLists.class)) {
-                //说明包含union查询
+                //说明包含union查询  不优化
                 needWarp = true;
             } else if (classCmdMap.containsKey(GroupBy.class)) {
-                //包含分组查询
+                //包含分组查询 不优化
+                needWarp = true;
+            } else if (classCmdMap.containsKey(OrderBy.class)) {
+                //包含orderBy查询 不优化
                 needWarp = true;
             } else {
                 Select select = (Select) classCmdMap.get(Select.class);

@@ -62,7 +62,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("关闭 order by 优化后的count SQL",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 1 offset 0) t",
+                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc) t",
                 getCountSql(Query.create()
                                 .select(SysUser::getId, SysUser::getUserName)
                                 .from(SysUser.class)
