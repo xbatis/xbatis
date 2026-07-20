@@ -330,6 +330,9 @@ public final class SQLOptimizeUtils {
                 return new StringBuilder("SELECT COUNT(*) AS r$n FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
             }
             boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
+            if(context.getDbType() == DbType.SQL_SERVER){
+                optimizeOrderBy = true;
+            }
             boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
             Map<Class, Set<Integer>> disableOptimizeJoinMap = optimizeOptions != null ? optimizeOptions.getDisableOptimizeJoinMap() : null;
             boolean optimizeCount = optimizeOptions != null ? optimizeOptions.isOptimizeCount() : true;
