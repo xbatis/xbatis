@@ -1175,7 +1175,9 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         if (Objects.isNull(getLimit())) {
             return false;
         }
-        return this.cmds().remove(getLimit());
+        this.cmds().remove(getLimit());
+        this.limit = null;
+        return true;
     }
 
     @Override

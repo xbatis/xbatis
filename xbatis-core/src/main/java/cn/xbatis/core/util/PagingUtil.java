@@ -183,7 +183,7 @@ public final class PagingUtil {
         } else {
             orderBy = " ORDER BY CURRENT_TIMESTAMP";
         }
-        selectSql = selectSql + orderBy + ") R$N ";
+        selectSql = selectSql + orderBy + ") r$n ";
 
         return "SELECT TOP " + size + " * FROM  ( " + selectSql + middleSql + " ) T WHERE R$N > " + offset;
     }
@@ -226,7 +226,7 @@ public final class PagingUtil {
             //sql server 必须移除order by
             optimize = true;
         }
-        return "SELECT COUNT(*) FROM (" + removeOrderBy(sql, optimize) + ") T";
+        return "SELECT COUNT(*) as r$n FROM (" + removeOrderBy(sql, optimize) + ") T";
     }
 
 }

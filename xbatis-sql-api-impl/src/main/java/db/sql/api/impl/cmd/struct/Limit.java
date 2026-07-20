@@ -49,6 +49,7 @@ public class Limit implements ILimit<Limit> {
         return this;
     }
 
+    @Override
     public int getOffset() {
         return offset;
     }
@@ -57,6 +58,7 @@ public class Limit implements ILimit<Limit> {
         this.offset = offset;
     }
 
+    @Override
     public int getLimit() {
         return limit;
     }

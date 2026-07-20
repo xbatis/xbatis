@@ -22,6 +22,8 @@ import com.xbatis.core.test.testCase.BaseTest;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class SubQueryTest extends BaseTest {
 
     @Test
@@ -41,6 +43,45 @@ public class SubQueryTest extends BaseTest {
                     .returnMap()
                     .list()
             ;
+        }
+    }
+
+    @Test
+    public void countSubQueryTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            SubQuery subQuery = SubQuery.create("xx")
+                    .select(SysUser::getId)
+                    .from(SysUser.class)
+                    .orderBy(SysUser::getId)
+                    .in(SysUser::getId, 1, 2)
+                    .limit(1);
+
+            Integer count = QueryChain.of(sysUserMapper)
+                    .select("*")
+                    .from(subQuery)
+                    .returnMap()
+                    .count();
+
+            assertEquals(Integer.valueOf(1), count);
+
+            subQuery = SubQuery.create("xx")
+                    .select(SysUser::getId, SysUser::getUserName)
+                    .from(SysUser.class)
+                    .orderBy(SysUser::getId)
+                    .in(SysUser::getId, 1, 2)
+                    .limit(1)
+            ;
+            count = QueryChain.of(sysUserMapper)
+                    .selectDistinct()
+                    .select(subQuery.$outerField(SysUser::getId), subQuery.$outerField(SysUser::getUserName))
+                    .from(subQuery)
+                    .returnMap()
+                    .count()
+            ;
+
+            assertEquals(Integer.valueOf(1), count);
         }
     }
 

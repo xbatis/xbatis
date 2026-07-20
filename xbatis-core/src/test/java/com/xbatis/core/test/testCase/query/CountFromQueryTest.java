@@ -50,8 +50,21 @@ public class CountFromQueryTest extends BaseTest {
 
     @Test
     public void simpleOrderBy() {
+
+        check("关闭 count orderby 优化后的count SQL",
+                "select count(*) as r$n from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc) t",
+                getCountSql(Query.create()
+                                .select(SysUser::getId, SysUser::getUserName)
+                                .from(SysUser.class)
+                                .eq(SysUser::getId, 1)
+                                .optimizeOptions(optimizeOptions -> optimizeOptions.optimizeOrderBy(false).optimizeCount(false))
+                                .orderBy(SysUser::getId)
+                                .limit(1)
+                        , false)
+        );
+
         check("order by 优化后的count SQL",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                                 .select(SysUser::getId, SysUser::getUserName)
                                 .from(SysUser.class)
@@ -61,8 +74,20 @@ public class CountFromQueryTest extends BaseTest {
                         , false)
         );
 
-        check("关闭 order by 优化后的count SQL",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc) t",
+        check("关闭 count 优化后的count SQL",
+                "select count(*) as r$n from (select t.id,t.user_name from t_sys_user t where t.id=1) t",
+                getCountSql(Query.create()
+                                .select(SysUser::getId, SysUser::getUserName)
+                                .from(SysUser.class)
+                                .eq(SysUser::getId, 1)
+                                .optimizeOptions(optimizeOptions -> optimizeOptions.optimizeCount(false))
+                                .orderBy(SysUser::getId)
+                                .limit(1)
+                        , false)
+        );
+
+        check("关闭 orderby 优化后的count SQL",
+                "select count(*) as r$n from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc) t",
                 getCountSql(Query.create()
                                 .select(SysUser::getId, SysUser::getUserName)
                                 .from(SysUser.class)
@@ -73,8 +98,9 @@ public class CountFromQueryTest extends BaseTest {
                         , false)
         );
 
+
         check("order by 优化后的count SQL",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -90,7 +116,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void simpleOrderByLimit() {
         check("order by 优化后的count SQL",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -104,7 +130,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void simpleDistinctOrderBy() {
         check("distinct order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -118,7 +144,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void simpleDistinctOrderByLimit() {
         check("distinct order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -133,7 +159,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void leftJoinOrderBy() {
         check("order by 优化后的count SQL",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -147,7 +173,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void leftJoinOrderBy2() {
         check("order by 优化后的count SQL",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -159,7 +185,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("关闭 left 优化后的count SQL",
-                "select count(*) from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(*) as r$n from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -175,7 +201,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinOrderBy() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -190,7 +216,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinOrderByLimit() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -206,7 +232,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinOrderBy2() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name,t2.id) from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name,t2.id) as r$n from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -222,7 +248,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinOrderBy2Limit() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name,t2.id) from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name,t2.id) as r$n from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -240,7 +266,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void rightJoinOrderBy() {
         check("right join order by 优化后的count SQL",
-                "select count(*) from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(*) as r$n from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -254,7 +280,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void rightJoinOrderBy2() {
         check("right join order by 优化后的count SQL",
-                "select count(*) from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(*) as r$n from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -269,7 +295,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctRightJoinOrderBy() {
         check("right join order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -284,7 +310,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctRightJoinOrderByLimit() {
         check("right join order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -300,7 +326,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctRightJoinOrderBy2() {
         check("right join order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name,t2.id) from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name,t2.id) as r$n from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -316,7 +342,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctRightJoinOrderBy2Limit() {
         check("right join order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name,t2.id) from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name,t2.id) as r$n from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -334,7 +360,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void leftJoin2OrderBy() {
         check("order by 优化后的count SQL",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -349,7 +375,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void leftJoin2OrderBy2() {
         check("order by 优化后的count SQL",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -365,7 +391,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoin2OrderBy() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -381,7 +407,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoin2OrderByLimit() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -398,7 +424,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoin2OrderBy2() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name,t2.id) from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name,t2.id) as r$n from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -415,7 +441,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoin2OrderBy2Limit() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name,t2.id) from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name,t2.id) as r$n from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -434,7 +460,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void leftJoinRIGHTOrderBy() {
         check("order by 优化后的count SQL",
-                "select count(*) from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
+                "select count(*) as r$n from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -449,7 +475,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void leftJoinRIGHTOrderBy2() {
         check("order by 优化后的count SQL",
-                "select count(*) from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
+                "select count(*) as r$n from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .select(SysRole::getId)
@@ -465,7 +491,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinRIGHTOrderBy() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -481,7 +507,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinRIGHTOrderByLimit() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name) from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -498,7 +524,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinRIGHTOrderBy2() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name,t2.id) from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name,t2.id) as r$n from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -515,7 +541,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void distinctLeftJoinRIGHTOrderBy2Limit() {
         check("order by 优化后的count SQL",
-                "select count(distinct t.id,t.user_name,t2.id) from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name,t2.id) as r$n from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id right join t_sys_role t3 on t3.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -534,7 +560,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void unionOrderBy() {
         check("unionOrderBy",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
+                "select count(*) as r$n from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -550,7 +576,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("unionOrderBy",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
+                "select count(*) as r$n from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -570,7 +596,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void unionOrderByLimit() {
         check("unionOrderBy",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 3 offset 0 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
+                "select count(*) as r$n from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 3 offset 0 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -592,7 +618,7 @@ public class CountFromQueryTest extends BaseTest {
     public void optimizeCountSqlTest() {
 
         check("多个union count limit",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 1 offset 0 union select t.id,t.user_name from t_sys_user t where t.id=2 union select t.id,t.user_name from t_sys_user t where t.id=2 order by t.id asc limit 2 offset 0) t",
+                "select count(*) as r$n from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 1 offset 0 union select t.id,t.user_name from t_sys_user t where t.id=2 union select t.id,t.user_name from t_sys_user t where t.id=2 order by t.id asc limit 2 offset 0) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -616,7 +642,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("union count 不优化",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
+                "select count(*) as r$n from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -631,7 +657,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("left join count优化",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -642,7 +668,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("inner join left join count优化",
-                "select count(*) from t_sys_user t inner join t_sys_role t3 on t3.id=t.role_id where t.id=1",
+                "select count(*) as r$n from t_sys_user t inner join t_sys_role t3 on t3.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -654,7 +680,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("inner join left join count优化",
-                "select count(distinct t.id,t.user_name) from t_sys_user t inner join t_sys_role t3 on t3.id=t.role_id where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t inner join t_sys_role t3 on t3.id=t.role_id where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -668,7 +694,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("order by count优化",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -678,7 +704,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("order by count优化",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -689,7 +715,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("多个left join count优化",
-                "select count(*) from t_sys_user t where t.id=1",
+                "select count(*) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -701,7 +727,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("join count不优化",
-                "select count(*) from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1 and t2.id=0",
+                "select count(*) as r$n from t_sys_user t left join t_sys_role t2 on t2.id=t.role_id where t.id=1 and t2.id=0",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -714,7 +740,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("right join count不优化",
-                "select count(*) from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 and t2.id=0",
+                "select count(*) as r$n from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 and t2.id=0",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -727,7 +753,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("distinct count 优化",
-                "select count(distinct t.id,t.user_name) from t_sys_user t where t.id=1",
+                "select count(distinct t.id,t.user_name) as r$n from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -740,7 +766,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("group by select 多字段 优化",
-                "select count(*) from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) t",
+                "select count(*) as r$n from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -751,7 +777,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by count 优化join",
-                "select count(*) from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) t",
+                "select count(*) as r$n from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -763,7 +789,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by count 不优化join",
-                "select count(*) from (select 1 as x$1 from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) t",
+                "select count(*) as r$n from (select 1 as x$1 from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -775,7 +801,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by distinct count 不优化join",
-                "select count(*) from (select distinct t.id,t.user_name from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) t",
+                "select count(*) as r$n from (select distinct t.id,t.user_name from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -789,7 +815,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("多个union count 不优化",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
+                "select count(*) as r$n from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -810,7 +836,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("union distinct count 不优化",
-                "select count(*) from (select distinct t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
+                "select count(*) as r$n from (select distinct t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -827,7 +853,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("distinct on count 不优化",
-                "select count(*) from (select distinct on(t.id,t.user_name) t.user_name,t.role_id from t_sys_user t where t.id=1 ) t",
+                "select count(*) as r$n from (select distinct on(t.id,t.user_name) t.user_name,t.role_id from t_sys_user t where t.id=1 ) t",
                 getCountSql(Query.create()
                         //.select(SysUser::getId, c -> c.postgres().distinctOn())
                         .select(GetterFields.of(SysUser::getId, SysUser::getUserName), cs -> Methods.postgres().distinctOn(cs))
