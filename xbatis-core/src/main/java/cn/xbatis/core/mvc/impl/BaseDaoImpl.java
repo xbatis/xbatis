@@ -1133,7 +1133,17 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements IDao<T
      * @return 影响条数
      */
     protected int truncate() {
-        return DeleteMethodUtil.truncate(getBasicMapper(), getTableInfo());
+        return DeleteMethodUtil.truncate(getBasicMapper(), getTableInfo(), false);
+    }
+
+    /**
+     * TRUNCATE TABLE
+     *
+     * @param cascade 是否级联 truncate
+     * @return 影响条数
+     */
+    protected int truncate(boolean cascade) {
+        return DeleteMethodUtil.truncate(getBasicMapper(), getTableInfo(), cascade);
     }
 
 }

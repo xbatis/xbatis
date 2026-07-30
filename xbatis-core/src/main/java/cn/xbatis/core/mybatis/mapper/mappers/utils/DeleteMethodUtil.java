@@ -23,7 +23,9 @@ import cn.xbatis.core.sql.executor.TableSplitUtil;
 import cn.xbatis.core.sql.executor.XbatisTable;
 import cn.xbatis.core.sql.util.WhereUtil;
 import cn.xbatis.core.util.OptimisticLockUtil;
+import db.sql.api.DbModel;
 import db.sql.api.DbType;
+import db.sql.api.IDbType;
 import db.sql.api.cmd.basic.SQL1;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -125,21 +127,34 @@ public final class DeleteMethodUtil {
      *
      * @param basicMapper
      * @param tableInfo
+     * @param cascade
      * @return 影响数量
      */
-    public static int truncate(BasicMapper basicMapper, TableInfo tableInfo) {
+    public static int truncate(BasicMapper basicMapper, TableInfo tableInfo, boolean cascade) {
         XbatisTable xbatisTable = new XbatisTable(tableInfo);
         XbatisGlobalConfig.getSQLListeners().stream().filter(Objects::nonNull).forEach(listener -> {
             listener.onTruncate(xbatisTable);
         });
         return basicMapper.dbAdapt(selectorCall -> selectorCall.when(DbType.DB2, (dbType) -> {
-            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getSchemaAndTableName(dbType) + " IMMEDIATE");
+            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getSchemaAndTableName(dbType) + " IMMEDIATE" + buildTruncateCascade(dbType, cascade));
         }).when(DbType.SQLITE, (dbType) -> {
-            int cnt = basicMapper.execute("DELETE FROM " + xbatisTable.getSchemaAndTableName(dbType));
+            int cnt = basicMapper.execute("DELETE FROM " + xbatisTable.getSchemaAndTableName(dbType) + buildTruncateCascade(dbType, cascade));
             basicMapper.execute("UPDATE SQLITE_SEQUENCE SET SEQ = 0 WHERE name = '" + xbatisTable.getName() + "'");
             return cnt;
         }).otherwise((dbType) -> {
-            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getSchemaAndTableName(dbType));
+            return basicMapper.execute("TRUNCATE TABLE " + xbatisTable.getSchemaAndTableName(dbType) + buildTruncateCascade(dbType, cascade));
         }));
+    }
+
+    private static String buildTruncateCascade(IDbType dbType, boolean cascade) {
+        if (cascade) {
+            return "";
+        }
+        if (dbType == DbType.PGSQL || dbType.getDbModel() == DbModel.PGSQL) {
+            return " CASCADE";
+        } else if (dbType == DbType.ORACLE || dbType.getDbModel() == DbModel.ORACLE) {
+            return " CASCADE";
+        }
+        return "";
     }
 }

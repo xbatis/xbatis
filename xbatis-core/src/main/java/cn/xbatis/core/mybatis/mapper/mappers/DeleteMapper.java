@@ -108,6 +108,16 @@ public interface DeleteMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int truncate() {
-        return DeleteMethodUtil.truncate(getBasicMapper(), getTableInfo());
+        return DeleteMethodUtil.truncate(getBasicMapper(), getTableInfo(), false);
+    }
+
+    /**
+     * 是否级联truncate
+     *
+     * @param cascade 是否级联truncate
+     * @return 影响数量
+     */
+    default int truncate(boolean cascade) {
+        return DeleteMethodUtil.truncate(getBasicMapper(), getTableInfo(), cascade);
     }
 }
