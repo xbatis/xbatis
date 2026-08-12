@@ -46,9 +46,16 @@ public class ResultMapWrapper {
 
     public static List<ResultMap> replaceResultMap(MybatisConfiguration configuration, List<ResultMap> sourceResultMap) {
         return sourceResultMap.stream().map(item -> {
+            //基本数据类型静默处理
+            if (Objects.nonNull(item.getType().getPackage()) && item.getType().getPackage().getName().startsWith("java.lang")) {
+                return item;
+            }
+
             if (!item.getResultMappings().isEmpty()) {
                 return replaceTypeHandler(configuration, item);
             }
+
+
             String resultMapId = XbatisIdUtil.convertResultMapIdPath(item.getType().getName());
             if (configuration.hasResultMap(resultMapId)) {
                 return configuration.getResultMap(resultMapId);
