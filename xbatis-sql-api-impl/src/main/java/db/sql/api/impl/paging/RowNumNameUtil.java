@@ -19,7 +19,7 @@ import db.sql.api.SqlBuilderContext;
 public class RowNumNameUtil {
 
     public static String getRowName(SqlBuilderContext sqlBuilderContext) {
-        String rnName = "R$N";
+        String rnName = "RN";
         Integer rnCount = (Integer) sqlBuilderContext.getExtMap().get(rnName);
         if (rnCount == null) {
             rnCount = 1;

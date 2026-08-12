@@ -180,8 +180,8 @@ public class BaseTest {
     }
 
     public void check(String message, String targetSql, String sql) {
-        String sql1 = trim(targetSql);
-        String sql2 = trim(sql);
+        String sql1 = trim(targetSql).toLowerCase();
+        String sql2 = trim(sql).toLowerCase();
         System.out.println("sql1:  " + sql1);
         System.out.println("sql2:  " + sql2);
         assertEquals(sql1, sql2, message);

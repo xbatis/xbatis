@@ -164,10 +164,10 @@ public final class PagingUtil {
     }
 
     private static String getOracleRowNumLimitedSQL(Integer size, int offset, String sql) {
-        return "SELECT *  FROM ( SELECT IT.*,ROWNUM R$N FROM (" +
+        return "SELECT *  FROM ( SELECT IT.*,ROWNUM RN FROM (" +
                 sql + ") IT WHERE ROWNUM <= " +
                 (size + offset) +
-                ") NT WHERE NT.R$N  >" + offset;
+                ") NT WHERE NT.RN  >" + offset;
     }
 
     private static String getSQLServerRowNumLimitedSQL(Integer size, int offset, String sql) {
@@ -183,9 +183,9 @@ public final class PagingUtil {
         } else {
             orderBy = " ORDER BY CURRENT_TIMESTAMP";
         }
-        selectSql = selectSql + orderBy + ") r$n ";
+        selectSql = selectSql + orderBy + ") RN ";
 
-        return "SELECT TOP " + size + " * FROM  ( " + selectSql + middleSql + " ) T WHERE R$N > " + offset;
+        return "SELECT TOP " + size + " * FROM  ( " + selectSql + middleSql + " ) T WHERE RN > " + offset;
     }
 
     private static String removeOrderBy(String sql, boolean optimize) {
@@ -226,7 +226,7 @@ public final class PagingUtil {
             //sql server 必须移除order by
             optimize = true;
         }
-        return "SELECT COUNT(*) as r$n FROM (" + removeOrderBy(sql, optimize) + ") T";
+        return "SELECT COUNT(*) as RN FROM (" + removeOrderBy(sql, optimize) + ") T";
     }
 
 }

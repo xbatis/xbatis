@@ -21,7 +21,6 @@ import db.sql.api.cmd.basic.CmdList;
 import db.sql.api.cmd.basic.SQL1;
 import db.sql.api.cmd.basic.UnionsCmdLists;
 import db.sql.api.cmd.executor.IQuery;
-import db.sql.api.cmd.struct.ILimit;
 import db.sql.api.cmd.struct.Joins;
 import db.sql.api.cmd.struct.query.IUnion;
 import db.sql.api.cmd.struct.query.Unions;
@@ -138,12 +137,6 @@ public final class SQLOptimizeUtils {
 
     private static void optimizedCmdList(IDbType dbType, Map<Class, Cmd> classCmdMap, boolean forCount, boolean optimizeOrderBy, boolean optimizeJoins, Map<Class, Set<Integer>> disableOptimizeJoinMap, boolean optimizeCount, boolean isUnionQuery) {
 
-        if (forCount) {
-            if (!isUnionQuery) {
-                //非union查询 可删除分页
-                classCmdMap.remove(Limit.class);
-            }
-        }
         if (optimizeOrderBy) {
             if (isUnionQuery) {
                 //union查询 没有分页 可删除order by
@@ -261,7 +254,9 @@ public final class SQLOptimizeUtils {
 
         boolean needWarp = !optimizeCount;
         if (!needWarp) {
-            if (classCmdMap.containsKey(Unions.class) || classCmdMap.containsKey(UnionsCmdLists.class)) {
+            if (classCmdMap.containsKey(Limit.class)) {
+                needWarp = true;
+            } else if (classCmdMap.containsKey(Unions.class) || classCmdMap.containsKey(UnionsCmdLists.class)) {
                 //说明包含union查询  不优化
                 needWarp = true;
             } else if (classCmdMap.containsKey(GroupBy.class)) {
@@ -288,16 +283,16 @@ public final class SQLOptimizeUtils {
             if (classCmdMap.containsKey(GroupBy.class) || select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
                 Select newSelect = new Select();
                 if (select.isDistinct()) {
-                    newSelect.select(new Count(select).as("r$n"));
+                    newSelect.select(new Count(select).as("RN"));
                 } else {
-                    newSelect.select(new CountAll().as("r$n"));
+                    newSelect.select(new CountAll().as("RN"));
                 }
                 classCmdMap.put(Select.class, newSelect);
             }
         }
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
         if (needWarp) {
-            return new StringBuilder("SELECT COUNT(*) AS r$n FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList)).append(") T");
+            return new StringBuilder("SELECT COUNT(*) AS RN FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList)).append(") T");
         }
         return CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList);
     }
@@ -311,37 +306,22 @@ public final class SQLOptimizeUtils {
      * @return SQL StringBuilder
      */
     public static StringBuilder getCountSqlFromQuery(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
-        ILimit limit = null;
-
-        if (query.getUnions() == null) {
-            limit = query.getLimit();
-            if (limit != null) {
-                query.removeLimit();
+        if (optimizeOptions != null && optimizeOptions.isAllDisable()) {
+            if (context.getDbType() == DbType.SQL_SERVER || context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE) {
+                //需要去掉order by
+                return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false, null, false);
             }
+            //不优化直接包裹一层
+            return new StringBuilder("SELECT COUNT(*) AS RN FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
         }
-
-        try {
-            if (optimizeOptions != null && optimizeOptions.isAllDisable()) {
-                if (context.getDbType() == DbType.SQL_SERVER || context.getDbType().getDbModel() == DbModel.ORACLE || context.getDbType() == DbType.ORACLE) {
-                    //需要去掉order by
-                    return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false, null, false);
-                }
-                //不优化直接包裹一层
-                return new StringBuilder("SELECT COUNT(*) AS r$n FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
-            }
-            boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
-            if(context.getDbType() == DbType.SQL_SERVER){
-                optimizeOrderBy = true;
-            }
-            boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
-            Map<Class, Set<Integer>> disableOptimizeJoinMap = optimizeOptions != null ? optimizeOptions.getDisableOptimizeJoinMap() : null;
-            boolean optimizeCount = optimizeOptions != null ? optimizeOptions.isOptimizeCount() : true;
-            return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, disableOptimizeJoinMap, optimizeCount);
-        } finally {
-            if (limit != null) {
-                query.limit(limit.getOffset(), limit.getLimit());
-            }
+        boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
+        if (context.getDbType() == DbType.SQL_SERVER) {
+            optimizeOrderBy = true;
         }
+        boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
+        Map<Class, Set<Integer>> disableOptimizeJoinMap = optimizeOptions != null ? optimizeOptions.getDisableOptimizeJoinMap() : null;
+        boolean optimizeCount = optimizeOptions != null ? optimizeOptions.isOptimizeCount() : true;
+        return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, disableOptimizeJoinMap, optimizeCount);
     }
 
 
