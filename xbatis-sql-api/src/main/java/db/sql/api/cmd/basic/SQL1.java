@@ -22,11 +22,13 @@ public class SQL1 implements Cmd {
 
     public final static SQL1 INSTANCE = new SQL1();
 
+    public static final String AS = "V_1";
+
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(" 1 ");
         if (parent instanceof ISelect) {
-            sqlBuilder.append("AS X$1 ");
+            sqlBuilder.append("AS ").append(AS);
         }
         return sqlBuilder;
     }

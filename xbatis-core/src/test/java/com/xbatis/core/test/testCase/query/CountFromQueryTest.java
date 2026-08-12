@@ -23,6 +23,7 @@ import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.GetterFields;
 import db.sql.api.cmd.JoinMode;
+import db.sql.api.cmd.basic.SQL1;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SQLOptimizeUtils;
 import db.sql.api.impl.tookit.SQLPrinter;
@@ -65,7 +66,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("order by 优化后的count SQL",
-                "select count(*) as " + SqlConst.COUNT_AS_TOTAL + " from (select 1 as x$1 from t_sys_user t where t.id=1 limit 1 offset 0) t",
+                "select count(*) as " + SqlConst.COUNT_AS_TOTAL + " from (select 1 as " + SQL1.AS + " from t_sys_user t where t.id=1 limit 1 offset 0) t",
                 getCountSql(Query.create()
                                 .select(SysUser::getId, SysUser::getUserName)
                                 .from(SysUser.class)
@@ -607,7 +608,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("group by select 多字段 优化",
-                "select count(*) as " + SqlConst.COUNT_AS_TOTAL + " from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) t",
+                "select count(*) as " + SqlConst.COUNT_AS_TOTAL + " from (select 1 as " + SQL1.AS + " from t_sys_user t where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -618,7 +619,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by count 优化join",
-                "select count(*) as " + SqlConst.COUNT_AS_TOTAL + " from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) t",
+                "select count(*) as " + SqlConst.COUNT_AS_TOTAL + " from (select 1 as " + SQL1.AS + " from t_sys_user t where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -630,7 +631,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by count 不优化join",
-                "select count(*) as " + SqlConst.COUNT_AS_TOTAL + " from (select 1 as x$1 from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) t",
+                "select count(*) as " + SqlConst.COUNT_AS_TOTAL + " from (select 1 as " + SQL1.AS + " from t_sys_user t right join t_sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
