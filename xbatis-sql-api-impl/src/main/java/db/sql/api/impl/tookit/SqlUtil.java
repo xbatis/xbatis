@@ -15,17 +15,16 @@
 package db.sql.api.impl.tookit;
 
 import db.sql.api.Getter;
+import db.sql.api.impl.SQLConfig;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.lang.reflect.Field;
 
 public final class SqlUtil {
 
-    public static final String AS_SPLIT = "__";
-
     public static <T> String getAsName(Getter<T> getter) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
-        return lambdaFieldInfo.getType().getSimpleName() + AS_SPLIT + lambdaFieldInfo.getName();
+        return lambdaFieldInfo.getType().getSimpleName() + SQLConfig.getGetterAsSplit() + lambdaFieldInfo.getName();
     }
 
     public static String getAsName(Class clazz, Field field) {
@@ -33,11 +32,11 @@ public final class SqlUtil {
     }
 
     public static String getAsName(Class clazz, String fieldName) {
-        return clazz.getSimpleName() + AS_SPLIT + fieldName;
+        return clazz.getSimpleName() + SQLConfig.getGetterAsSplit() + fieldName;
     }
 
     public static boolean isAsName(Class clazz, Field field, String name) {
-        if (!name.contains(AS_SPLIT)) {
+        if (!name.contains(SQLConfig.getGetterAsSplit())) {
             return false;
         }
         return getAsName(clazz, field).equals(name);

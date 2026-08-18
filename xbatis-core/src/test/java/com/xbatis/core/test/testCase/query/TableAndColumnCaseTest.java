@@ -19,7 +19,7 @@ import cn.xbatis.db.DatabaseCaseRule;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.testCase.BaseTest;
 import db.sql.api.DbType;
-import db.sql.api.impl.SQLImplGlobalConfig;
+import db.sql.api.impl.SQLConfig;
 import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
@@ -35,7 +35,7 @@ public class TableAndColumnCaseTest extends BaseTest {
 
     private void setDatabaseCaseRule(DatabaseCaseRule databaseCaseRule) {
         try {
-            Field field = SQLImplGlobalConfig.class.getDeclaredField("DATABASE_CASE_RULE");
+            Field field = SQLConfig.class.getDeclaredField("DATABASE_CASE_RULE");
             field.setAccessible(true);
             field.set(null, databaseCaseRule);
         } catch (NoSuchFieldException e) {

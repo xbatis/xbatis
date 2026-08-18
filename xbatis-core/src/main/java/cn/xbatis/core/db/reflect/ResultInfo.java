@@ -22,6 +22,7 @@ import cn.xbatis.core.util.FieldUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.WhenType;
 import cn.xbatis.db.annotations.*;
+import db.sql.api.impl.SQLConfig;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.tookit.MethodCallNode;
 import db.sql.api.tookit.MethodsCallParser;
@@ -705,7 +706,7 @@ public class ResultInfo {
             if (tableCount == 1) {
                 prefix = "";
             } else {
-                prefix = "x" + tableCount + "$";
+                prefix = "x" + tableCount + SQLConfig.getTableColumnAutoAsSplit();
             }
             if (!addPrefix(entityPrefixMap, entity, storey, prefix)) {
                 tableCount--;

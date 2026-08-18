@@ -22,7 +22,7 @@ import db.sql.api.IDbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.ITable;
-import db.sql.api.impl.SQLImplGlobalConfig;
+import db.sql.api.impl.SQLConfig;
 import db.sql.api.impl.cmd.struct.From;
 import db.sql.api.impl.cmd.struct.Join;
 import db.sql.api.impl.tookit.SqlConst;
@@ -97,9 +97,9 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
 
     @Override
     public String getName(IDbType dbType) {
-        DatabaseCaseRule databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
+        DatabaseCaseRule databaseCaseRule = SQLConfig.getDatabaseCaseRule(dbType);
         if (databaseCaseRule == null || databaseCaseRule == DatabaseCaseRule.DEFAULT) {
-            databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule();
+            databaseCaseRule = SQLConfig.getDatabaseCaseRule();
         }
         return dbType.wrap(databaseCaseRule.convert(this.getName()));
     }
@@ -111,9 +111,9 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
 
     @Override
     public String getSchema(IDbType dbType) {
-        DatabaseCaseRule databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
+        DatabaseCaseRule databaseCaseRule = SQLConfig.getDatabaseCaseRule(dbType);
         if (databaseCaseRule == null || databaseCaseRule == DatabaseCaseRule.DEFAULT) {
-            databaseCaseRule = SQLImplGlobalConfig.getDatabaseCaseRule();
+            databaseCaseRule = SQLConfig.getDatabaseCaseRule();
         }
         return dbType.wrap(databaseCaseRule.convert(getSchema()));
     }

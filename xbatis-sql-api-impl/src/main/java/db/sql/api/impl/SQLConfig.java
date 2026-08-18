@@ -20,11 +20,13 @@ import db.sql.api.IDbType;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class SQLImplGlobalConfig {
+public final class SQLConfig {
 
     private static final Object NULL = new Object();
     private final static Map<IDbType, Object> DATABASE_CASE_RULES = new ConcurrentHashMap<>();
     private static Object DATABASE_CASE_RULE = NULL;
+    private static Object GETTER_AS_SPLIT = NULL;
+    private static Object TABLE_COLUMN_AUTO_AS_SPLIT = NULL;
 
     /**
      * 数据库命名规则 默认 不处理
@@ -72,5 +74,56 @@ public final class SQLImplGlobalConfig {
      */
     public static void setDatabaseCaseRule(IDbType dbType, DatabaseCaseRule databaseCaseRule) {
         DATABASE_CASE_RULES.computeIfAbsent(dbType, i -> databaseCaseRule);
+    }
+
+    /**
+     * 获取 as getter的拼接符
+     *
+     * @return 分隔符
+     */
+    public static String getGetterAsSplit() {
+        if (GETTER_AS_SPLIT == NULL) {
+            GETTER_AS_SPLIT = "$$";
+        }
+        return (String) GETTER_AS_SPLIT;
+    }
+
+    /**
+     * 设置 as getter的拼接符
+     *
+     * @return 是否设置成功
+     */
+    public static boolean setGetterAsSplit(String split) {
+        if (GETTER_AS_SPLIT == NULL) {
+            GETTER_AS_SPLIT = split;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取联表时表列自动as的分隔符
+     *
+     * @return 分隔符
+     */
+    public static String getTableColumnAutoAsSplit() {
+        if (TABLE_COLUMN_AUTO_AS_SPLIT == NULL) {
+            TABLE_COLUMN_AUTO_AS_SPLIT = "$";
+        }
+        return (String) TABLE_COLUMN_AUTO_AS_SPLIT;
+    }
+
+    /**
+     * 设置联表时表列自动as的分隔符
+     *
+     * @param split 分隔符
+     * @return 是否设置成功
+     */
+    public static boolean setTableColumnAutoAsSplit(String split) {
+        if (TABLE_COLUMN_AUTO_AS_SPLIT == NULL) {
+            TABLE_COLUMN_AUTO_AS_SPLIT = split;
+            return true;
+        }
+        return false;
     }
 }

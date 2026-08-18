@@ -23,6 +23,7 @@ import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.executor.ISubQuery;
 import db.sql.api.cmd.executor.IWithQuery;
+import db.sql.api.impl.SQLConfig;
 import db.sql.api.impl.cmd.basic.AllField;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
@@ -77,7 +78,7 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
         if (this.deepLevel == 1) {
             return this.tableAsPrefix + this.tableNums;
         }
-        return this.tableAsPrefix + "$" + this.tableNums;
+        return this.tableAsPrefix + SQLConfig.getTableColumnAutoAsSplit() + this.tableNums;
     }
 
     public ConditionFactory createConditionFactory() {

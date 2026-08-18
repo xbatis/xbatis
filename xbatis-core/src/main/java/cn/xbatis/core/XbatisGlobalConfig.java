@@ -36,7 +36,7 @@ import cn.xbatis.listener.OnInsertListener;
 import cn.xbatis.listener.OnUpdateListener;
 import db.sql.api.IDbType;
 import db.sql.api.cmd.listener.SQLListener;
-import db.sql.api.impl.SQLImplGlobalConfig;
+import db.sql.api.impl.SQLConfig;
 import db.sql.api.impl.paging.IPagingProcessor;
 import db.sql.api.impl.paging.PagingProcessorFactory;
 
@@ -72,7 +72,6 @@ public final class XbatisGlobalConfig {
     private static volatile Object FETCH_IN_BATCH_SIZE = NULL;
     private static volatile Object FETCH_CACHE = NULL;
     private static volatile Object DB_TYPE_PARSER = NULL;
-    private static volatile Object CHECK_PAGER_PARAM = NULL;
     private static volatile Object SQL_AUDITING = NULL;
 
     static {
@@ -170,7 +169,7 @@ public final class XbatisGlobalConfig {
      * @return 命名规则
      */
     public static DatabaseCaseRule getDatabaseCaseRule() {
-        return SQLImplGlobalConfig.getDatabaseCaseRule();
+        return SQLConfig.getDatabaseCaseRule();
     }
 
     /**
@@ -179,7 +178,7 @@ public final class XbatisGlobalConfig {
      * @return 是否成功
      */
     public static boolean setDatabaseCaseRule(DatabaseCaseRule databaseCaseRule) {
-        return SQLImplGlobalConfig.setDatabaseCaseRule(databaseCaseRule);
+        return SQLConfig.setDatabaseCaseRule(databaseCaseRule);
     }
 
 
@@ -189,7 +188,7 @@ public final class XbatisGlobalConfig {
      * @return 命名规则
      */
     public static DatabaseCaseRule getDatabaseCaseRule(IDbType dbType) {
-        return SQLImplGlobalConfig.getDatabaseCaseRule(dbType);
+        return SQLConfig.getDatabaseCaseRule(dbType);
     }
 
     /**
@@ -197,7 +196,7 @@ public final class XbatisGlobalConfig {
      *
      */
     public static void setDatabaseCaseRule(IDbType dbType, DatabaseCaseRule databaseCaseRule) {
-        SQLImplGlobalConfig.setDatabaseCaseRule(dbType, databaseCaseRule);
+        SQLConfig.setDatabaseCaseRule(dbType, databaseCaseRule);
     }
 
     /**
@@ -773,5 +772,42 @@ public final class XbatisGlobalConfig {
         if (SQL_AUDITING == NULL) {
             SQL_AUDITING = sqlAuditing;
         }
+    }
+
+    /**
+     * 获取 as getter的拼接符
+     *
+     * @return 分隔符
+     */
+    public static String getGetterAsSplit() {
+        return SQLConfig.getGetterAsSplit();
+    }
+
+    /**
+     * 设置 as getter的拼接符
+     *
+     * @return 是否设置成功
+     */
+    public static boolean setGetterAsSplit(String split) {
+        return SQLConfig.setGetterAsSplit(split);
+    }
+
+    /**
+     * 获取联表时表列自动as的分隔符
+     *
+     * @return 分隔符
+     */
+    public static String getTableColumnAutoAsSplit() {
+        return SQLConfig.getTableColumnAutoAsSplit();
+    }
+
+    /**
+     * 设置联表时表列自动as的分隔符
+     *
+     * @param split 分隔符
+     * @return 是否设置成功
+     */
+    public static boolean setTableColumnAutoAsSplit(String split) {
+        return SQLConfig.setTableColumnAutoAsSplit(split);
     }
 }

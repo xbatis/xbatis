@@ -21,7 +21,7 @@ import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.db.DatabaseCaseRule;
 import com.xbatis.core.test.DO.SysUser;
 import com.xbatis.core.test.testCase.BaseTest;
-import db.sql.api.impl.SQLImplGlobalConfig;
+import db.sql.api.impl.SQLConfig;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -55,7 +55,7 @@ public class TableAndColumnQueryChainUpperCaseTest extends BaseTest {
 
     private static void setDatabaseCaseRule(DatabaseCaseRule databaseCaseRule) {
         try {
-            Field field = SQLImplGlobalConfig.class.getDeclaredField("DATABASE_CASE_RULE");
+            Field field = SQLConfig.class.getDeclaredField("DATABASE_CASE_RULE");
             field.setAccessible(true);
             field.set(null, databaseCaseRule);
         } catch (NoSuchFieldException e) {
