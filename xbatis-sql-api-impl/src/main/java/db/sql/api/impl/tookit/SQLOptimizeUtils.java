@@ -283,16 +283,16 @@ public final class SQLOptimizeUtils {
             if (classCmdMap.containsKey(GroupBy.class) || select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
                 Select newSelect = new Select();
                 if (select.isDistinct()) {
-                    newSelect.select(new Count(select).as(SqlConst.COUNT_AS_TOTAL));
+                    newSelect.select(new Count(select).as(SqlConst.TOTAL_AS));
                 } else {
-                    newSelect.select(new CountAll().as(SqlConst.COUNT_AS_TOTAL));
+                    newSelect.select(new CountAll().as(SqlConst.TOTAL_AS));
                 }
                 classCmdMap.put(Select.class, newSelect);
             }
         }
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
         if (needWarp) {
-            return new StringBuilder("SELECT COUNT(*) AS ").append(SqlConst.COUNT_AS_TOTAL).append(" FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList)).append(") T");
+            return new StringBuilder("SELECT COUNT(*) AS ").append(SqlConst.TOTAL_AS).append(" FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList)).append(") T");
         }
         return CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList);
     }
@@ -312,7 +312,7 @@ public final class SQLOptimizeUtils {
                 return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false, null, false);
             }
             //不优化直接包裹一层
-            return new StringBuilder("SELECT COUNT(*) AS ").append(SqlConst.COUNT_AS_TOTAL).append(" FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
+            return new StringBuilder("SELECT COUNT(*) AS ").append(SqlConst.TOTAL_AS).append(" FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
         }
         boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
         if (context.getDbType() == DbType.SQL_SERVER) {

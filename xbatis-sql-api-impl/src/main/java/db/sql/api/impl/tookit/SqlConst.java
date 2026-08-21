@@ -20,7 +20,7 @@ import db.sql.api.IDbType;
 
 public final class SqlConst {
 
-    public static final String COUNT_AS_TOTAL = "rn";
+    public static final String TOTAL_AS = "rn";
 
     public static final String PLACEHOLDER = "?";
 
