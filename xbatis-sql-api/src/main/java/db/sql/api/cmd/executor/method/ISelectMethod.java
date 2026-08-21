@@ -56,10 +56,18 @@ public interface ISelectMethod<SELF extends ISelectMethod,
     SELF selectCountAll(Consumer<ICountAll<?>> consumer);
 
     default SELF select(Class entity) {
-        return this.select(entity, 1);
+        return this.select(true, entity, 1);
     }
 
-    SELF select(Class entity, int storey);
+    default SELF select(boolean when, Class entity) {
+        return select(when, entity, 1);
+    }
+
+    default SELF select(Class entity, int storey) {
+        return select(true, entity, storey);
+    }
+
+    SELF select(boolean when, Class entity, int storey);
 
     default SELF select(Class... entities) {
         return this.select(1, entities);

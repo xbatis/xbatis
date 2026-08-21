@@ -116,7 +116,10 @@ public interface IQuery<SELF extends IQuery
     }
 
     @Override
-    default SELF select(Class entity, int storey) {
+    default SELF select(boolean when, Class entity, int storey) {
+        if (!when) {
+            return (SELF) this;
+        }
         return this.select($().allField($().table(entity, storey)));
     }
 

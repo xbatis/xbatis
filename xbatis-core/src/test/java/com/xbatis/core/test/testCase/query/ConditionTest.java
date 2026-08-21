@@ -54,6 +54,7 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1, Objects::nonNull)
                     .eq(SysUser::getId, null)
+                    .eq(true, SysUser::getId, null)
                     .empty(SysUser::getUserName)
                     .returnType(Integer.class)
                     .connect(q -> {

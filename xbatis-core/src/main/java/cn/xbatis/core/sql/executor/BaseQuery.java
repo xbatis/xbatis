@@ -228,7 +228,10 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     }
 
     @Override
-    public Q select(Class entity, int storey) {
+    public Q select(boolean when, Class entity, int storey) {
+        if (!when) {
+            return (Q) this;
+        }
         SelectClassUtil.select(this, entity, storey);
         return (Q) this;
     }
