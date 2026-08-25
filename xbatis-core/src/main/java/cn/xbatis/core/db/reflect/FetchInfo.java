@@ -283,18 +283,25 @@ public class FetchInfo {
 
             TableInfo tableInfo;
             String tableAliasName;
-            String ascOrDesc;
+            String ascOrDesc = "";
             if (arr.length == 2) {
                 if (!arr[0].equals("middle") && !arr[0].equals("target")) {
                     throw buildException(clazz, field, annotationName, annotationPropertyName, "format error, table alias just can be middle or target");
                 }
                 tableInfo = arr[0].equals("middle") ? middleTableInfo : targetTableInfo;
                 tableAliasName = arr[0];
-                ascOrDesc = arr[1];
             } else {
                 tableInfo = targetTableInfo;
                 tableAliasName = middleTableInfo != null ? "target" : ICmdFactory.QUERY_TABLE_AS_PREFIX;
-                ascOrDesc = "";
+            }
+
+            if (ss.length >= 2) {
+                for (int j = 1; j < ss.length; j++) {
+                    ascOrDesc += ss[j];
+                    if (j != ss.length - 1) {
+                        ascOrDesc += " ";
+                    }
+                }
             }
 
             TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(property);
