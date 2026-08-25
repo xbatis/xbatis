@@ -75,6 +75,9 @@ public class FetchTest extends BaseTest {
 
             assertEquals(map.get(1).getSysRoleNames2().size(), 0);
             assertEquals(map.get(2).getSysRoleNames2().size(), 0);
+
+            assertEquals(map.get(1).getSysRoleNames3().get(0), "test2");
+            assertEquals(map.get(1).getSysRoleNames3().get(1), "test1");
         }
     }
 

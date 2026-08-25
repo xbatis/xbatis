@@ -37,6 +37,9 @@ public class FetchSysRoleVo2 {
     @Fetch(column = "id", when = {SysRole.Fields.createTime, WhenType.EQ, "2022-10-10", SysRole.Fields.createTime, WhenType.EQ, "2022-10-11"}, target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id asc")
     private List<String> sysRoleNames2;
 
+    @Fetch(column = "id", when = {SysRole.Fields.createTime, WhenType.EQ, "2022-10-10", SysRole.Fields.createTime, WhenType.EQ, "2022-10-10"}, target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id desc")
+    private List<String> sysRoleNames3;
+
     @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "[count({id})]")
     private Integer cnts;
 
