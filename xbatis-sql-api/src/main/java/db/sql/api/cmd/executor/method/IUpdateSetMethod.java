@@ -27,4 +27,11 @@ public interface IUpdateSetMethod<SELF extends IUpdateSetMethod, TABLE_FIELD ext
     <T> SELF set(Getter<T> field, V value);
 
     <T> SELF set(Getter<T> field, Function<TABLE_FIELD, Cmd> f);
+
+    default <T> SELF set(boolean when, Getter<T> field, Function<TABLE_FIELD, Cmd> f) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return set(field, f);
+    }
 }
