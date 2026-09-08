@@ -1676,7 +1676,7 @@ public final class Methods {
      * @param thenValue condition不符合时的值
      * @return If
      */
-    public static If if_(Condition condition, Serializable value, Serializable thenValue) {
+    public static If if_(ICondition condition, Serializable value, Serializable thenValue) {
         Objects.requireNonNull(value);
         Objects.requireNonNull(thenValue);
         Objects.requireNonNull(condition);
@@ -1691,7 +1691,7 @@ public final class Methods {
      * @param thenValue condition不符合时的值
      * @return If
      */
-    public static If if_(Condition condition, Cmd value, Serializable thenValue) {
+    public static If if_(ICondition condition, Cmd value, Serializable thenValue) {
         Objects.requireNonNull(value);
         Objects.requireNonNull(thenValue);
         Objects.requireNonNull(condition);
@@ -1706,7 +1706,7 @@ public final class Methods {
      * @param thenValue condition不符合时的值
      * @return If
      */
-    public static If if_(Condition condition, Serializable value, Cmd thenValue) {
+    public static If if_(ICondition condition, Serializable value, Cmd thenValue) {
         Objects.requireNonNull(value);
         Objects.requireNonNull(thenValue);
         Objects.requireNonNull(condition);
@@ -1721,7 +1721,7 @@ public final class Methods {
      * @param thenValue condition不符合时的值
      * @return If
      */
-    public static If if_(Condition condition, Cmd value, Cmd thenValue) {
+    public static If if_(ICondition condition, Cmd value, Cmd thenValue) {
         Objects.requireNonNull(value);
         Objects.requireNonNull(thenValue);
         Objects.requireNonNull(condition);
