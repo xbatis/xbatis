@@ -14,7 +14,10 @@
 
 package db.sql.api.cmd.basic;
 
+import db.sql.api.Cmd;
 import db.sql.api.Getter;
+
+import java.util.function.Function;
 
 public interface IConflictUpdate<T> {
 
@@ -26,6 +29,15 @@ public interface IConflictUpdate<T> {
      * @return IConflictUpdate
      */
     IConflictUpdate<T> set(Getter<T> field, Object value);
+
+    /**
+     * 设置值
+     *
+     * @param field
+     * @param fun
+     * @return IConflictUpdate
+     */
+    IConflictUpdate<T> set(Getter<T> field, Function<ITableField<?, ?>, Cmd> fun);
 
     /**
      * 覆盖字段

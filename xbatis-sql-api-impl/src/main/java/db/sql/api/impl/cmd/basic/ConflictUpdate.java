@@ -18,6 +18,7 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IConflictUpdate;
+import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
@@ -27,6 +28,7 @@ import db.sql.api.tookit.CmdUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class ConflictUpdate<T> implements IConflictUpdate<T>, Cmd {
 
@@ -61,6 +63,11 @@ public class ConflictUpdate<T> implements IConflictUpdate<T>, Cmd {
         this.updateSets.set(tableField, Methods.cmd(value));
         this.customizeSetValueFields.add(tableField);
         return this;
+    }
+
+    @Override
+    public IConflictUpdate<T> set(Getter<T> field, Function<ITableField<?, ?>, Cmd> fun) {
+        return this.set(field, fun.apply(new ConflictUpdateTableField(cmdFactory.field(field))));
     }
 
     @Override

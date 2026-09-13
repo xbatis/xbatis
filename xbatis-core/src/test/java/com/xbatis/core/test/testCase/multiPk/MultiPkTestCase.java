@@ -21,6 +21,7 @@ import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.testCase.TestDataSource;
 import db.sql.api.DbModel;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -102,7 +103,24 @@ public class MultiPkTestCase extends BaseTest {
             System.out.println(entity);
         }
 
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
 
+            MultiPk entity = new MultiPk();
+            entity.setId1(1);
+            entity.setId2(2);
+            entity.setName("12");
+
+            mapper.save(entity);
+            mapper.save(entity, strategy ->
+                    strategy.onConflict(action -> action.doUpdate(update -> {
+                        update.set(MultiPk::getName, c -> Methods.concat(c, "a"));
+                    }))
+            );
+            entity = mapper.get(where -> where.eq(MultiPk::getId1, 1).eq(MultiPk::getId2, 2));
+            assertEquals("12a", entity.getName());
+            System.out.println(entity);
+        }
     }
 
     @Test
