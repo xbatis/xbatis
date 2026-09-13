@@ -4,7 +4,7 @@
     <parent>
         <groupId>cn.xbatis</groupId>
         <artifactId>xbatis</artifactId>
-        <version>1.10.8</version>
+        <version>1.10.9</version>
     </parent>
 
     <url>https://gitee.com/xbatis</url>

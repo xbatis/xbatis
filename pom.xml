@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.xbatis</groupId>
     <artifactId>xbatis</artifactId>
-    <version>1.10.8</version>
+    <version>1.10.9</version>
     <packaging>pom</packaging>
     <modules>
         <module>xbatis-bom</module>
@@ -40,9 +40,9 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <xbatis.version>1.10.8</xbatis.version>
+        <xbatis.version>1.10.9</xbatis.version>
         <xbatis-generator-core.version>1.1.9</xbatis-generator-core.version>
-        <xbatis-datasource-routing.version>1.1.2</xbatis-datasource-routing.version>
+        <xbatis-datasource-routing.version>1.1.3</xbatis-datasource-routing.version>
         <xbatis-ddl-auto.version>1.0.2</xbatis-ddl-auto.version>
 
         <!-- jdbc version -->
@@ -56,9 +56,9 @@
         <db2.version>12.1.5.0</db2.version>
         <kingbase.version>9.0.1</kingbase.version>
         <clickhouse.version>0.9.8</clickhouse.version>
-        <sqlite.version>3.53.2.1</sqlite.version>
+        <sqlite.version>3.53.4.0</sqlite.version>
         <opengauss.version>6.0.3-og</opengauss.version>
-        <oceanbase.version>2.4.18</oceanbase.version>
+        <oceanbase.version>2.4.19</oceanbase.version>
         <highgo.version>6.2.5</highgo.version>
 
         <!-- log version -->
@@ -66,20 +66,20 @@
         <slf4j.version>1.7.36</slf4j.version>
 
         <!-- lombok version -->
-        <lombok.version>1.18.46</lombok.version>
+        <lombok.version>1.18.48</lombok.version>
         <p6spy.version>3.9.1</p6spy.version>
 
         <!-- junit -->
         <junit.version>5.14.1</junit.version>
 
         <!-- 代码生成器 -->
-        <freemarker.version>2.3.34</freemarker.version>
+        <freemarker.version>2.3.35</freemarker.version>
         <swagger2.version>3.0.0</swagger2.version>
-        <swagger3.version>2.2.53</swagger3.version>
+        <swagger3.version>2.2.54</swagger3.version>
 
         <!-- bean容器 -->
         <spring-boot.version>2.7.18</spring-boot.version>
-        <solon.version>4.0.6</solon.version>
+        <solon.version>4.1.0</solon.version>
 
         <!-- mybatis 相关 -->
         <mybatis.version>3.5.19</mybatis.version>
@@ -90,12 +90,12 @@
         <mybatis-thymeleaf.version>1.2.0</mybatis-thymeleaf.version>
 
         <!-- 连接池 -->
-        <beecp.verion>5.2.2</beecp.verion>
+        <beecp.verion>5.2.3</beecp.verion>
         <druid.version>1.2.28</druid.version>
-        <seata.version>2.0.0</seata.version>
+        <seata.version>2.6.0</seata.version>
 
         <!-- json 框架 -->
-        <fastjson.version>2.0.64</fastjson.version>
+        <fastjson.version>2.0.65</fastjson.version>
         <gson.version>2.14.0</gson.version>
     </properties>
 
