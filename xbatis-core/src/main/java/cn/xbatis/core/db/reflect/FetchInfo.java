@@ -98,8 +98,8 @@ public class FetchInfo {
 
         if (!fetch.targetSelectProperty().isEmpty()) {
             this.targetSelectTableFieldInfo = targetTableInfo.getFieldInfo(fetch.targetSelectProperty());
-            if (this.targetSelectTableFieldInfo == null && !fetch.mergeGroup().isEmpty()) {
-                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "middleTargetProperty", " when set mergeGroup, targetSelectProperty must be entity field name");
+            if (this.targetSelectTableFieldInfo == null && (!fetch.targetSelectProperty().contains(",") && !fetch.targetSelectProperty().startsWith("["))) {
+                throw buildException(clazz, fieldInfo.getField(), "@Fetch", "targetSelectProperty", "targetSelectProperty must be entity field name");
             }
         } else {
             this.targetSelectTableFieldInfo = null;

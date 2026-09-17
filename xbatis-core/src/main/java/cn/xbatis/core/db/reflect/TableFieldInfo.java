@@ -142,6 +142,9 @@ public class TableFieldInfo {
 
     public Object getValue(Object object) {
         try {
+            if (object == null) {
+                return null;
+            }
 //            if (getter != null) {
 //                return getter.apply(object);
 //            }
