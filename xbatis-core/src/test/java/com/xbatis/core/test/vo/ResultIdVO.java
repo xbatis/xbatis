@@ -12,11 +12,27 @@
  *
  */
 
-package cn.xbatis.core.exception;
+package com.xbatis.core.test.vo;
 
-public class NotTableFieldException extends RuntimeException {
+import cn.xbatis.db.annotations.NestedResultEntity;
+import cn.xbatis.db.annotations.ResultEntity;
+import cn.xbatis.db.annotations.ResultId;
+import com.xbatis.core.test.DO.FetchMerge;
+import lombok.Data;
+import lombok.ToString;
 
-    public NotTableFieldException(Class parent, String path, Class clazz, String fieldName) {
-        super(parent.getName() + (path == null || path.isEmpty() ? "" : "." + path) + " config error ; " + "the field: " + fieldName + " not found in " + clazz.getName());
-    }
+import java.util.List;
+
+@Data
+@ToString(callSuper = true)
+@ResultEntity(FetchMerge.class)
+public class ResultIdVO {
+
+    private Integer id;
+
+    @ResultId
+    private Integer roleId3;
+
+    @NestedResultEntity(target = FetchMerge.class)
+    private List<ResultIdVO2> vo;
 }

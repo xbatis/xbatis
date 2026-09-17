@@ -26,6 +26,8 @@ public class ResultFieldInfo {
 
     private final boolean resultMapping;
 
+    protected boolean resultId;
+
     //字段名是否映射
     private final boolean fieldNameMapping;
 
@@ -56,17 +58,18 @@ public class ResultFieldInfo {
      */
     private String[] otherMappingColumnNames;
 
-    public ResultFieldInfo(Class clazz, Field field, ResultField resultField) {
-        this(true, clazz, field, getColumnName(clazz, field, resultField), getTypeHandler(field, resultField), resultField.jdbcType(), true);
+    public ResultFieldInfo(Class clazz, Field field, ResultField resultField, boolean resultId) {
+        this(true, clazz, field, getColumnName(clazz, field, resultField), getTypeHandler(field, resultField), resultField.jdbcType(), true, resultId);
         if (resultField.value().length > 1) {
             this.otherMappingColumnNames = new String[resultField.value().length - 1];
             for (int i = 1; i < resultField.value().length; i++) {
                 this.otherMappingColumnNames[i - 1] = resultField.value()[i];
             }
         }
+
     }
 
-    public ResultFieldInfo(boolean resultMapping, Class clazz, Field field, String mappingColumnName, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, boolean fieldNameMapping) {
+    public ResultFieldInfo(boolean resultMapping, Class clazz, Field field, String mappingColumnName, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, boolean fieldNameMapping, boolean resultId) {
         this.resultMapping = resultMapping;
         this.fieldNameMapping = fieldNameMapping;
         this.field = field;
@@ -74,6 +77,7 @@ public class ResultFieldInfo {
         this.mappingColumnName = mappingColumnName;
         this.typeHandler = typeHandler;
         this.jdbcType = jdbcType;
+        this.resultId = resultId;
     }
 
     static Class<? extends TypeHandler<?>> getTypeHandler(Field field, ResultField resultField) {
@@ -90,6 +94,10 @@ public class ResultFieldInfo {
             name = SqlUtil.getAsName(clazz, field);
         }
         return name;
+    }
+
+    public boolean isResultId() {
+        return resultId;
     }
 
     public boolean isResultMapping() {

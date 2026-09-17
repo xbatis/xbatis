@@ -12,11 +12,12 @@
  *
  */
 
-package cn.xbatis.core.exception;
+package cn.xbatis.db.annotations;
 
-public class NotTableFieldException extends RuntimeException {
+import java.lang.annotation.*;
 
-    public NotTableFieldException(Class parent, String path, Class clazz, String fieldName) {
-        super(parent.getName() + (path == null || path.isEmpty() ? "" : "." + path) + " config error ; " + "the field: " + fieldName + " not found in " + clazz.getName());
-    }
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface ResultId {
 }

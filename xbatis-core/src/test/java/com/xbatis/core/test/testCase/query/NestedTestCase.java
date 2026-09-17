@@ -16,12 +16,16 @@ package com.xbatis.core.test.testCase.query;
 
 
 import cn.xbatis.core.sql.executor.chain.QueryChain;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.xbatis.core.test.DO.*;
+import com.xbatis.core.test.mapper.FetchMergeMapper;
 import com.xbatis.core.test.mapper.NestedFirstMapper;
 import com.xbatis.core.test.mapper.NestedMutiFirstMapper;
 import com.xbatis.core.test.testCase.BaseTest;
 import com.xbatis.core.test.vo.NestedFirstVo;
 import com.xbatis.core.test.vo.NestedMutiFirstVo;
+import com.xbatis.core.test.vo.ResultIdVO;
 import db.sql.api.cmd.JoinMode;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -190,6 +194,47 @@ public class NestedTestCase extends BaseTest {
 
             System.out.println(list);
 
+        }
+    }
+
+    @Test
+    public void resultIdTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            FetchMergeMapper fetchMergeMapper = session.getMapper(FetchMergeMapper.class);
+
+            FetchMerge fetchMerge = new FetchMerge();
+            fetchMerge.setRoleId1(0);
+            fetchMerge.setRoleId2(1);
+            fetchMerge.setRoleId3(3);
+            fetchMergeMapper.save(fetchMerge);
+
+            List<ResultIdVO> list = QueryChain.of(fetchMergeMapper)
+                    .returnType(ResultIdVO.class)
+                    .orderBy(FetchMerge::getId)
+                    .list();
+            System.out.println(JSON.toJSONString(list, SerializerFeature.PrettyFormat));
+            assertEquals(2, list.size());
+            assertEquals(3, list.get(0).getRoleId3());
+            assertEquals(2, list.get(1).getRoleId3());
+
+            assertEquals(2, list.get(0).getVo().size());
+            assertEquals(1, list.get(1).getVo().size());
+
+            assertEquals(2, list.get(0).getVo().get(0).getRoleId2());
+            assertEquals(2, list.get(0).getVo().get(0).getVo().size());
+
+            assertEquals(1, list.get(0).getVo().get(0).getVo().get(0).getRoleId1());
+            assertEquals(0, list.get(0).getVo().get(0).getVo().get(1).getRoleId1());
+
+            assertEquals(1, list.get(0).getVo().get(1).getRoleId2());
+            assertEquals(1, list.get(0).getVo().get(1).getVo().size());
+
+            assertEquals(0, list.get(0).getVo().get(1).getVo().get(0).getRoleId1());
+
+
+            assertEquals(1, list.get(1).getVo().get(0).getRoleId2());
+            assertEquals(1, list.get(1).getVo().get(0).getVo().size());
+            assertEquals(0, list.get(1).getVo().get(0).getVo().get(0).getRoleId1());
         }
     }
 

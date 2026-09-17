@@ -17,6 +17,7 @@ package cn.xbatis.core.db.reflect;
 import cn.xbatis.db.annotations.NestedResultEntity;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NestedResultInfo {
@@ -43,6 +44,11 @@ public class NestedResultInfo {
      */
     private final List<ResultFieldInfo> resultFieldInfos;
 
+    /**
+     * resultId 字段
+     */
+    private final List<String> resultIdFields = new ArrayList<>();
+
     public NestedResultInfo(Class clazz, Field field, NestedResultEntity nestedResultEntity, Class<?> nestedTargetEntityType, List<ResultFieldInfo> resultFieldInfos, List<NestedResultInfo> nestedResultInfos) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
@@ -62,6 +68,10 @@ public class NestedResultInfo {
 
     public Class<?> getTargetEntityType() {
         return targetEntityType;
+    }
+
+    public List<String> getResultIdFields() {
+        return resultIdFields;
     }
 
     public List<ResultFieldInfo> getResultFieldInfos() {

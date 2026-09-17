@@ -40,8 +40,8 @@ public class ResultCalcFieldInfo extends ResultFieldInfo {
 
     private final ResultCalcField annotation;
 
-    public ResultCalcFieldInfo(Class type, int storey, TableInfo tableInfo, TableFieldInfo[] tableFieldInfos, Field field, ResultCalcField resultCalcField, Object value) {
-        super(true, type, field, resultCalcField.as().isEmpty() ? SqlUtil.getAsName(type, field) : resultCalcField.as(), getTypeHandler(field, resultCalcField), resultCalcField.jdbcType(), true);
+    public ResultCalcFieldInfo(Class type, int storey, TableInfo tableInfo, TableFieldInfo[] tableFieldInfos, Field field, ResultCalcField resultCalcField, Object value, boolean resultId) {
+        super(true, type, field, resultCalcField.as().isEmpty() ? SqlUtil.getAsName(type, field) : resultCalcField.as(), getTypeHandler(field, resultCalcField), resultCalcField.jdbcType(), true, resultId);
         this.type = type;
         this.tableInfo = tableInfo;
         this.tableFieldInfos = tableFieldInfos;
