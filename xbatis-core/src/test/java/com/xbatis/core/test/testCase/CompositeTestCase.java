@@ -14,16 +14,19 @@
 
 package com.xbatis.core.test.testCase;
 
+import cn.xbatis.core.db.reflect.ResultInfo;
+import cn.xbatis.core.db.reflect.ResultInfos;
 import cn.xbatis.core.tenant.TenantContext;
 import com.alibaba.fastjson.JSON;
 import com.xbatis.core.test.DO.CompositeTest;
 import com.xbatis.core.test.mapper.CompositeTestMapper;
+import com.xbatis.core.test.vo.ResultIdVO;
+import com.xbatis.core.test.vo.SysRoleVo;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CompositeTestCase extends BaseTest {
 
@@ -153,5 +156,17 @@ public class CompositeTestCase extends BaseTest {
             compositeTest = compositeTestMapper.getById(1);
             assertNull(compositeTest);
         }
+    }
+
+    @Test
+    public void resultInfoResultIdTest() {
+        ResultInfo resultInfo = ResultInfos.get(ResultIdVO.class);
+
+        assertFalse(resultInfo.getResultFieldInfos().get(0).isResultId());
+        assertTrue(resultInfo.getResultFieldInfos().get(1).isResultId());
+        assertTrue(resultInfo.getNestedResultInfos().get(0).getResultFieldInfos().get(0).isResultId());
+
+        ResultInfo resultInfo2 = ResultInfos.get(SysRoleVo.class);
+        assertTrue(resultInfo2.getResultFieldInfos().get(0).isResultId());
     }
 }
