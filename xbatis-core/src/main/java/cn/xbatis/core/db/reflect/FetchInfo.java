@@ -418,6 +418,9 @@ public class FetchInfo {
                 value = XbatisGlobalConfig.getDefaultValue(this.getFieldInfo().getClazz(), this.getFieldInfo().getTypeClass(), this.fetch.nullFillValue(), defaultValueContext);
             }
         }
+        if (object == null) {
+            return value;
+        }
         try {
             writeFieldInvoker.invoke(object, new Object[]{value});
         } catch (IllegalAccessException e) {
