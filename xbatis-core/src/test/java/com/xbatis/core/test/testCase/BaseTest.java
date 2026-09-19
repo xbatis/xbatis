@@ -102,6 +102,7 @@ public class BaseTest {
 
         configuration.setLogImpl(StdOutImpl.class);
         configuration.setMapUnderscoreToCamelCase(false);
+        configuration.setAsyncInit(true);
 
         // 4 手动增加 Mapper 接口
         configuration.addMapper(SysRoleMapper.class);

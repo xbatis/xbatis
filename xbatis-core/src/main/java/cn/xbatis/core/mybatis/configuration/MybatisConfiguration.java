@@ -17,19 +17,14 @@ package cn.xbatis.core.mybatis.configuration;
 
 import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.FieldInfo;
-import cn.xbatis.core.exception.NotTableClassException;
 import cn.xbatis.core.mybatis.executor.*;
 import cn.xbatis.core.mybatis.executor.resultset.MybatisDefaultResultSetHandler;
 import cn.xbatis.core.mybatis.executor.statement.MybatisRoutingStatementHandler;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
-import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 import cn.xbatis.core.mybatis.mapper.context.PreparedParameterContext;
 import cn.xbatis.core.mybatis.mapping.ResultMapUtils;
 import cn.xbatis.core.mybatis.typeHandler.EnumTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
-import cn.xbatis.core.util.GenericUtil;
-import cn.xbatis.db.annotations.Table;
-import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.ResultMapResolver;
 import org.apache.ibatis.executor.CachingExecutor;
@@ -49,7 +44,10 @@ import org.apache.ibatis.type.TypeHandler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 public class MybatisConfiguration extends Configuration {
@@ -66,13 +64,21 @@ public class MybatisConfiguration extends Configuration {
      */
     private boolean initialized;
 
+    protected final XbatisMapperRegistry mapperRegistry;
+    /**
+     * 是否异步初始化
+     */
+    private boolean asyncInit = false;
+
     public MybatisConfiguration() {
         super();
+        mapperRegistry = new XbatisMapperRegistry(this);
         this.initSetting();
     }
 
     public MybatisConfiguration(Environment environment) {
         super(environment);
+        mapperRegistry = new XbatisMapperRegistry(this);
         this.initSetting();
     }
 
@@ -145,7 +151,6 @@ public class MybatisConfiguration extends Configuration {
         super.addIncompleteResultMap(resultMapResolver);
     }
 
-
     @Override
     public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
         mappedStatement = DynamicsMappedStatement.wrapMappedStatement(mappedStatement, parameterObject, boundSql);
@@ -183,26 +188,11 @@ public class MybatisConfiguration extends Configuration {
     }
 
     private <T> void addBasicMapper(Class<T> type) {
-        super.addMapper(type);
-        //替换成自己的   MapperProxy 工厂
-        if (this.mapperRegistry.hasMapper(type)) {
-            MetaObject msMetaObject = this.newMetaObject(this.mapperRegistry);
-            Map<Class<?>, MapperProxyFactory<?>> knownMappers = (Map<Class<?>, MapperProxyFactory<?>>) msMetaObject.getValue("knownMappers");
-            knownMappers.put(type, new BasicMapperProxyFactory(type));
-        }
-
-        if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class && type != BasicMapper.class) {
-            XbatisGlobalConfig.setSingleMapperClass((Class) type);
-            // 移除一开始注册是单mapper
-            MetaObject msMetaObject = this.newMetaObject(this.mapperRegistry);
-            Map<Class<?>, MapperProxyFactory<?>> knownMappers = (Map<Class<?>, MapperProxyFactory<?>>) msMetaObject.getValue("knownMappers");
-            knownMappers.remove(BasicMapper.class);
-        }
-        // 清空多余的resultMap
-        this.clearResultMap(type);
+        //BasicMapper 比较重要
+        mapperRegistry.addMapper(type, asyncInit);
     }
 
-    private void clearResultMap(Class<?> type) {
+    protected void clearBasicMapperResultMap(Class<?> type) {
         Iterator<Map.Entry<String, ResultMap>> it = resultMaps.entrySet().iterator();
         String removeIdPrefix1 = "$";
         String removeIdPrefix2 = BasicMapper.class.getName() + ".$";
@@ -230,6 +220,10 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public <T> void addMapper(Class<T> type) {
+        //设置新的basicMapper
+        if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class && type != BasicMapper.class && BasicMapper.class.isAssignableFrom(type)) {
+            XbatisGlobalConfig.setSingleMapperClass((Class<? extends BasicMapper>) type);
+        }
         if (!initialized) {
             this.onInit();
         }
@@ -245,35 +239,35 @@ public class MybatisConfiguration extends Configuration {
             }
             return;
         }
+        mapperRegistry.addMapper(type, this.asyncInit);
+    }
 
-        if (MybatisMapper.class.isAssignableFrom(type)) {
-            List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);
-            Optional<Class<?>> entityOptional = list.stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst();
-            if (!entityOptional.isPresent()) {
-                if (list.size() != 1) {
-                    throw new RuntimeException(type + " did not add a generic");
-                } else {
-                    throw new NotTableClassException(list.get(0));
-                }
-            }
-            ResultMapUtils.addAndGetResultMap(this, entityOptional.get());
-        }
+    @Override
+    public void addMappers(String packageName) {
+        mapperRegistry.addMappers(packageName);
+    }
 
-        super.addMapper(type);
+    @Override
+    public void addMappers(String packageName, Class<?> superType) {
+        mapperRegistry.addMappers(packageName, superType);
+    }
 
-        if (MybatisMapper.class.isAssignableFrom(type)) {
-            //替换成自己的   MapperProxy 工厂
-            if (this.mapperRegistry.hasMapper(type)) {
-                MetaObject msMetaObject = this.newMetaObject(this.mapperRegistry);
-                Map<Class<?>, MapperProxyFactory<?>> knownMappers = (Map<Class<?>, MapperProxyFactory<?>>) msMetaObject.getValue("knownMappers");
-                knownMappers.put(type, new MybatisMapperProxyFactory(type));
-            }
-        }
+    @Override
+    public boolean hasMapper(Class<?> type) {
+        return mapperRegistry.hasMapper(type);
     }
 
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        return super.getMapper(type, sqlSession);
+        return mapperRegistry.getMapper(type, sqlSession);
+    }
+
+    @Override
+    public MappedStatement getMappedStatement(String id, boolean validateIncompleteStatements) {
+        if (asyncInit) {
+            mapperRegistry.checkAndWait(id, validateIncompleteStatements);
+        }
+        return super.getMappedStatement(id, validateIncompleteStatements);
     }
 
     public ResultMapping buildResultMapping(boolean id, FieldInfo fieldInfo, String columnName, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandlerClass) {
@@ -312,6 +306,14 @@ public class MybatisConfiguration extends Configuration {
 
     public void setBanner(boolean banner) {
         this.banner = banner;
+    }
+
+    public boolean isAsyncInit() {
+        return asyncInit;
+    }
+
+    public void setAsyncInit(boolean asyncInit) {
+        this.asyncInit = asyncInit;
     }
 }
 
