@@ -169,11 +169,17 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
 
     public <R> R executeAndReturning() {
         this.setDefault();
+        if (this.returning == null) {
+            this.returning(getEntityType());
+        }
         return mapper.updateAndGet(this);
     }
 
     public <R> List<R> executeAndReturningList() {
         this.setDefault();
+        if (this.returning == null) {
+            this.returning(getEntityType());
+        }
         return mapper.updateAndList(this);
     }
 

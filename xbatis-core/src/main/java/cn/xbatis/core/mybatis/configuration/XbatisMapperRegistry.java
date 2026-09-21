@@ -80,8 +80,6 @@ public class XbatisMapperRegistry extends MapperRegistry {
     public <T> void parseMapper(Class<T> type) {
         boolean loadCompleted = false;
         try {
-            if (1 == 1) throw new RuntimeException("xx");
-
             //现在加载实体的ResultMap
             if (MybatisMapper.class.isAssignableFrom(type)) {
                 List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);

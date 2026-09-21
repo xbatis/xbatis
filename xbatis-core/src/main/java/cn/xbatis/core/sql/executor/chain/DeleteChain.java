@@ -156,11 +156,17 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
 
     public <R> R executeAndReturning() {
         this.setDefault();
+        if (this.returning == null) {
+            this.returning(getEntityType());
+        }
         return mapper.deleteAndReturning(this);
     }
 
     public <R> List<R> executeAndReturningList() {
         this.setDefault();
+        if (this.returning == null) {
+            this.returning(getEntityType());
+        }
         return mapper.deleteAndReturningList(this);
     }
 
