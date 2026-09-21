@@ -129,7 +129,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     }
 
     public <V> QueryChain<Map<String, V>> returnMap(Consumer<Map<String, V>> consumer) {
-        return (QueryChain) super.setReturnType(Map.class,(Consumer)consumer);
+        return (QueryChain) super.setReturnType(Map.class, (Consumer) consumer);
     }
 
     public <V> QueryChain<Map<String, V>> returnMap(Boolean callSetOnNulls) {
@@ -137,9 +137,9 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         return (QueryChain) super.setReturnType(Map.class);
     }
 
-    public <V> QueryChain<Map<String, V>> returnMap(Boolean callSetOnNulls,Consumer<Map<String, V>> consumer) {
+    public <V> QueryChain<Map<String, V>> returnMap(Boolean callSetOnNulls, Consumer<Map<String, V>> consumer) {
         this.callSetOnNulls = callSetOnNulls;
-        return (QueryChain) super.setReturnType(Map.class,(Consumer)consumer);
+        return (QueryChain) super.setReturnType(Map.class, (Consumer) consumer);
     }
 
     public <V> QueryChain<Map<String, V>> returnMap(Boolean callSetOnNulls, Boolean mapUnderscoreToCamelCase) {
@@ -400,6 +400,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
     /**
      * 将结果转成 分组map Key List<T>
      * 注意 key的null值会被过滤
+     *
      * @param mapKey 指定的map的 key属性
      * @param <R>    map的key的value 的类型
      * @return 结果 Map<R, List<T>>
