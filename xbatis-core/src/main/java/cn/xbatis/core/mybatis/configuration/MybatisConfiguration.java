@@ -217,10 +217,7 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public <T> void addMapper(Class<T> type) {
-        //设置新的basicMapper
-        if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class && type != BasicMapper.class && BasicMapper.class.isAssignableFrom(type)) {
-            XbatisGlobalConfig.setSingleMapperClass((Class<? extends BasicMapper>) type);
-        }
+
         if (!initialized) {
             this.onInit();
         }
@@ -228,6 +225,11 @@ public class MybatisConfiguration extends Configuration {
         if (XbatisGlobalConfig.getSingleMapperClass() == type) {
             //已在 onInit 中初始化
             return;
+        }
+
+        //设置新的basicMapper
+        if (XbatisGlobalConfig.getSingleMapperClass() == BasicMapper.class && type != BasicMapper.class && BasicMapper.class.isAssignableFrom(type)) {
+            XbatisGlobalConfig.setSingleMapperClass((Class<? extends BasicMapper>) type);
         }
 
         if (XbatisGlobalConfig.getSingleMapperClass().isAssignableFrom(type)) {
