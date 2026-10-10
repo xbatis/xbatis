@@ -22,6 +22,7 @@ import java.util.Optional;
 /**
  * Dao 接口
  * 只定义基础的 xxxById 方法
+ *
  * @param <T>
  * @param <ID>
  */
@@ -76,10 +77,11 @@ public interface Dao<T, ID> {
 
     /**
      * 根据ID查询，指定字段的值
+     *
      * @param id
      * @param getter 返回字段对应的值
-     * @return 指定字段的值
      * @param <V>
+     * @return 指定字段的值
      */
     <V> V getValueById(ID id, GetterFun<T, V> getter);
 }

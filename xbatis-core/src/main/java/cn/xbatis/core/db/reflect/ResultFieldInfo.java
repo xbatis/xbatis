@@ -25,22 +25,16 @@ import java.lang.reflect.Field;
 public class ResultFieldInfo {
 
     private final boolean resultMapping;
-
-    protected boolean resultId;
-
     //字段名是否映射
     private final boolean fieldNameMapping;
-
     /**
      * 字段
      */
     private final Field field;
-
     /**
      * 字段类型信息
      */
     private final FieldInfo fieldInfo;
-
     /**
      * 隐射的列名
      */
@@ -53,6 +47,7 @@ public class ResultFieldInfo {
      * jdbcType
      */
     private final JdbcType jdbcType;
+    protected boolean resultId;
     /**
      * 其他映射的列
      */

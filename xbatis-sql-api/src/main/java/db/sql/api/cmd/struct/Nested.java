@@ -29,6 +29,7 @@ public interface Nested<SELF, CHAIN> {
     /**
      * AND 嵌套（执行后逻辑符为AND）
      * 就是用于括号包裹
+     *
      * @param consumer 条件链路
      * @return 自己
      */
@@ -37,6 +38,7 @@ public interface Nested<SELF, CHAIN> {
     /**
      * OR 嵌套（执行后逻辑符为OR）
      * 就是用于括号包裹
+     *
      * @param consumer 条件链路
      * @return 自己
      */
@@ -60,7 +62,8 @@ public interface Nested<SELF, CHAIN> {
     /**
      * AND 嵌套（执行后逻辑符为AND）
      * 就是用于括号包裹
-     * @param when 是否生效
+     *
+     * @param when     是否生效
      * @param consumer 条件链路
      * @return 自己
      */
@@ -74,7 +77,8 @@ public interface Nested<SELF, CHAIN> {
     /**
      * OR 嵌套（执行后逻辑符为OR）
      * 就是用于括号包裹
-     * @param when 是否生效
+     *
+     * @param when     是否生效
      * @param consumer 条件链路
      * @return 自己
      */

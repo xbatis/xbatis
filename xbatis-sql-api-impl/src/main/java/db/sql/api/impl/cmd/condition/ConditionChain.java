@@ -28,14 +28,15 @@ import java.util.function.Consumer;
 
 public class ConditionChain implements ICondition {
 
-    private List<ConditionBlock> conditionBlocks=new ArrayList<>();
+    private List<ConditionBlock> conditionBlocks = new ArrayList<>();
 
     public ConditionChain and(ICondition condition) {
         conditionBlocks.add(new ConditionBlock(Connector.AND, condition));
         return this;
     }
+
     public ConditionChain and(ICondition... conditions) {
-        for (ICondition condition:conditions) {
+        for (ICondition condition : conditions) {
             conditionBlocks.add(new ConditionBlock(Connector.AND, condition));
         }
         return this;
@@ -47,14 +48,14 @@ public class ConditionChain implements ICondition {
     }
 
     public ConditionChain or(ICondition... conditions) {
-        for (ICondition condition:conditions) {
+        for (ICondition condition : conditions) {
             conditionBlocks.add(new ConditionBlock(Connector.OR, condition));
         }
         return this;
     }
 
     public ConditionChain andNested(Consumer<ConditionChain> chain) {
-        ConditionChain chains=new ConditionChain();
+        ConditionChain chains = new ConditionChain();
         chain.accept(chains);
         if (!chains.conditionBlocks.isEmpty()) {
             conditionBlocks.add(new ConditionBlock(Connector.AND, chains));
@@ -63,7 +64,7 @@ public class ConditionChain implements ICondition {
     }
 
     public ConditionChain orNested(Consumer<ConditionChain> chain) {
-        ConditionChain chains=new ConditionChain();
+        ConditionChain chains = new ConditionChain();
         chain.accept(chains);
         if (!chains.conditionBlocks.isEmpty()) {
             conditionBlocks.add(new ConditionBlock(Connector.OR, chains));
@@ -74,7 +75,7 @@ public class ConditionChain implements ICondition {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (conditionBlocks.isEmpty()){
+        if (conditionBlocks.isEmpty()) {
             return sqlBuilder;
         }
         StringBuilder sb = new StringBuilder();
@@ -106,6 +107,6 @@ public class ConditionChain implements ICondition {
 
     @Override
     public boolean contain(Cmd cmd) {
-        return CmdUtils.contain(cmd,this.conditionBlocks);
+        return CmdUtils.contain(cmd, this.conditionBlocks);
     }
 }

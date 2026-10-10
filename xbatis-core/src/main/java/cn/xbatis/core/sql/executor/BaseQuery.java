@@ -156,7 +156,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
         return callSetOnNulls;
     }
 
-    public void setCallSetOnNulls(Boolean callSetOnNulls){
+    public void setCallSetOnNulls(Boolean callSetOnNulls) {
         this.callSetOnNulls = callSetOnNulls;
     }
 

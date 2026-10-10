@@ -21,13 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 public class MethodCallNode {
-    private String funName;
-
-    private List<Object> args;
-
-    private Method method;
-
     private final Map<Integer, MethodHandle> methodHandleMap = new HashMap<>();
+    private String funName;
+    private List<Object> args;
+    private Method method;
 
     public MethodCallNode(String funName, List<Object> args) {
         this.funName = funName;

@@ -53,18 +53,15 @@ import java.util.Map;
 public class MybatisConfiguration extends Configuration {
 
     private static boolean PRINTED_BANNER = false;
-
+    protected final XbatisMapperRegistry mapperRegistry;
     /**
      * 是否打印 banner
      */
     private boolean banner = true;
-
     /**
      * 是否初始化
      */
     private boolean initialized;
-
-    protected final XbatisMapperRegistry mapperRegistry;
     /**
      * 是否异步初始化
      */

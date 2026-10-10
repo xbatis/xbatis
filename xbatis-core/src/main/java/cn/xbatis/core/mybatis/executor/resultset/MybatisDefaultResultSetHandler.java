@@ -163,20 +163,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
-    private void checkFetchInfo(FetchInfo fetchInfo) {
-        if (fetchInfo.getFetch().needFilter()) {
-            if (fetchInfo.getFetch().mergeGroup().isEmpty()) {
-                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(fetchInfo.getFetchKey())) {
-                    throw new RuntimeException("the fetch of " + fetchInfo.getFieldInfo().getClazz() + "." + fetchInfo.getFieldInfo().getField().getName() + " has no filter; you must call fetchFilter method in " + baseQuery.getClass().getSimpleName() + " instance");
-                }
-            } else {
-                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(fetchInfo.getFetch().mergeGroup())) {
-                    throw new RuntimeException("the fetch of " + fetchInfo.getFieldInfo().getClazz() + "." + fetchInfo.getFieldInfo().getField().getName() + " has no group filter; you must call fetchFilter(group,filter) method in " + baseQuery.getClass().getSimpleName() + " instance");
-                }
-            }
-        }
-    }
-
     private static boolean isNeedFetch(Object parameterObject, Class<?> returnType) {
         if (parameterObject instanceof SQLCmdCountFromQueryContext) {
             return false;
@@ -199,6 +185,20 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         }
         return false;
+    }
+
+    private void checkFetchInfo(FetchInfo fetchInfo) {
+        if (fetchInfo.getFetch().needFilter()) {
+            if (fetchInfo.getFetch().mergeGroup().isEmpty()) {
+                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(fetchInfo.getFetchKey())) {
+                    throw new RuntimeException("the fetch of " + fetchInfo.getFieldInfo().getClazz() + "." + fetchInfo.getFieldInfo().getField().getName() + " has no filter; you must call fetchFilter method in " + baseQuery.getClass().getSimpleName() + " instance");
+                }
+            } else {
+                if (this.fetchFilters == null || this.fetchFilters.isEmpty() || !this.fetchFilters.containsKey(fetchInfo.getFetch().mergeGroup())) {
+                    throw new RuntimeException("the fetch of " + fetchInfo.getFieldInfo().getClazz() + "." + fetchInfo.getFieldInfo().getField().getName() + " has no group filter; you must call fetchFilter(group,filter) method in " + baseQuery.getClass().getSimpleName() + " instance");
+                }
+            }
+        }
     }
 
     private void clearObjects() {

@@ -38,7 +38,7 @@ public class CountDistinctOptimizeTest extends BaseTest {
                     .eq(SysUser::getId, 3)
                     .paging(Pager.of(1));
 
-            assertEquals(pager.getResults().size(),1);
+            assertEquals(pager.getResults().size(), 1);
         }
     }
 
@@ -46,13 +46,13 @@ public class CountDistinctOptimizeTest extends BaseTest {
     public void distinctCountTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            Integer count= QueryChain.of(sysUserMapper)
+            Integer count = QueryChain.of(sysUserMapper)
                     .selectDistinct()
                     .select(SysUser::getId)
                     .eq(SysUser::getId, 3)
                     .count();
 
-            assertEquals(count,1);
+            assertEquals(count, 1);
         }
     }
 
@@ -63,11 +63,11 @@ public class CountDistinctOptimizeTest extends BaseTest {
             Pager<SysUser> pager = QueryChain.of(sysUserMapper)
 
                     .selectDistinct()
-                    .select(SysUser::getId,SysUser::getUserName)
+                    .select(SysUser::getId, SysUser::getUserName)
                     .eq(SysUser::getId, 3)
                     .paging(Pager.of(1));
 
-            assertEquals(pager.getResults().size(),1);
+            assertEquals(pager.getResults().size(), 1);
         }
     }
 
@@ -75,13 +75,13 @@ public class CountDistinctOptimizeTest extends BaseTest {
     public void distinctCountTest2() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            Integer count= QueryChain.of(sysUserMapper)
+            Integer count = QueryChain.of(sysUserMapper)
                     .selectDistinct()
-                    .select(SysUser::getId,SysUser::getUserName)
+                    .select(SysUser::getId, SysUser::getUserName)
                     .eq(SysUser::getId, 3)
                     .count();
 
-            assertEquals(count,1);
+            assertEquals(count, 1);
         }
     }
 }

@@ -14,7 +14,7 @@
 
 package cn.xbatis.core.exception;
 
-public class NoFoundFieldException extends RuntimeException{
+public class NoFoundFieldException extends RuntimeException {
 
     private final Class<?> clazz;
 

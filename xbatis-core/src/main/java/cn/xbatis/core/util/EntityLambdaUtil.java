@@ -43,7 +43,7 @@ public class EntityLambdaUtil {
         return CACHE.computeIfAbsent(cacheKey, key -> LambdaUtil.createGetterByField(clazz, fieldName, tableFieldInfo.getField().getType()));
     }
 
-    public final static <T,V> Setter<T,V> createSetter(Class<T> clazz, String fieldName) {
+    public final static <T, V> Setter<T, V> createSetter(Class<T> clazz, String fieldName) {
         TableInfo tableInfo = Tables.get(clazz);
         TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldName);
         if (tableFieldInfo == null) {

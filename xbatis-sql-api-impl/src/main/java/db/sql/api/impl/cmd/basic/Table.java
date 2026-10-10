@@ -109,6 +109,11 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
         return schema;
     }
 
+    public Table setSchema(String schema) {
+        this.schema = schema;
+        return this;
+    }
+
     @Override
     public String getSchema(IDbType dbType) {
         DatabaseCaseRule databaseCaseRule = SQLConfig.getDatabaseCaseRule(dbType);
@@ -116,11 +121,6 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
             databaseCaseRule = SQLConfig.getDatabaseCaseRule();
         }
         return dbType.wrap(databaseCaseRule.convert(getSchema()));
-    }
-
-    public Table setSchema(String schema) {
-        this.schema = schema;
-        return this;
     }
 
     @Override

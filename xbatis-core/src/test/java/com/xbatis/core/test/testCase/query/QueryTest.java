@@ -1099,18 +1099,18 @@ public class QueryTest extends BaseTest {
     }
 
     @Test
-    public void returnMapTest(){
+    public void returnMapTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            Map<String,Object> map=QueryChain.of(sysUserMapper)
-                    .eq(SysUser::getId,3)
+            Map<String, Object> map = QueryChain.of(sysUserMapper)
+                    .eq(SysUser::getId, 3)
                     .returnMap(false)
                     .get();
             System.out.println(map);
             assertFalse(map.containsKey("password"));
 
-            map=QueryChain.of(sysUserMapper)
-                    .eq(SysUser::getId,3)
+            map = QueryChain.of(sysUserMapper)
+                    .eq(SysUser::getId, 3)
                     .returnMap(true)
                     .get();
             System.out.println(map);

@@ -22,10 +22,10 @@ public class DefaultTestSQLAuditing implements SQLAuditing {
 
     @Override
     public void auditOperation(String sql, List<Object> params, long startTime, long endTime, long queryCount, long updateCount) {
-            System.out.println("SQLAuditing sql: " + sql);
-            System.out.println("SQLAuditing params: " + params);
-            System.out.println("SQLAuditing costTime:" + (endTime - startTime));
-            System.out.println("SQLAuditing queryCount: " + queryCount);
-            System.out.println("SQLAuditing updateCount: " + updateCount);
+        System.out.println("SQLAuditing sql: " + sql);
+        System.out.println("SQLAuditing params: " + params);
+        System.out.println("SQLAuditing costTime:" + (endTime - startTime));
+        System.out.println("SQLAuditing queryCount: " + queryCount);
+        System.out.println("SQLAuditing updateCount: " + updateCount);
     }
 }

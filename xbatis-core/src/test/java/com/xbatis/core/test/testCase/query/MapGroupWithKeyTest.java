@@ -15,21 +15,17 @@
 package com.xbatis.core.test.testCase.query;
 
 import cn.xbatis.core.sql.executor.chain.QueryChain;
-import com.xbatis.core.test.DO.SysRole;
 import com.xbatis.core.test.DO.SysUser;
-import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
 import com.xbatis.core.test.testCase.BaseTest;
-import com.xbatis.core.test.vo.SysRoleVo3;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class MapGroupWithKeyTest extends BaseTest {
 
@@ -42,8 +38,8 @@ public class MapGroupWithKeyTest extends BaseTest {
             Map<Integer, List<SysUser>> map = QueryChain.of(sysUserMapper).mapGroupWithKey(SysUser::getRole_id);
             assertEquals(2, map.size());
             System.out.println(map);
-            assertEquals( 1,map.get(0).size());
-            assertEquals(  2,map.get(1).size());
+            assertEquals(1, map.get(0).size());
+            assertEquals(2, map.get(1).size());
             assertInstanceOf(SysUser.class, map.get(1).get(0));
         }
     }
@@ -54,11 +50,11 @@ public class MapGroupWithKeyTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
             //最强mapWithKey 完全自己构建
-            Map<String, List<SysUser>> map = QueryChain.of(sysUserMapper).mapGroupWithKey(i->i.getRole_id()+"");
+            Map<String, List<SysUser>> map = QueryChain.of(sysUserMapper).mapGroupWithKey(i -> i.getRole_id() + "");
             assertEquals(2, map.size());
             System.out.println(map);
-            assertEquals( 1,map.get("0").size());
-            assertEquals(  2,map.get("1").size());
+            assertEquals(1, map.get("0").size());
+            assertEquals(2, map.get("1").size());
             assertInstanceOf(SysUser.class, map.get("1").get(0));
         }
     }
@@ -69,10 +65,10 @@ public class MapGroupWithKeyTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
             //最强mapWithKey 完全自己构建
-            Map<String, List<SysUser>> map = QueryChain.of(sysUserMapper).mapGroupWithKey(i->i.getRole_id()!=null && i.getRole_id()>0 ,i->i.getRole_id()+"");
+            Map<String, List<SysUser>> map = QueryChain.of(sysUserMapper).mapGroupWithKey(i -> i.getRole_id() != null && i.getRole_id() > 0, i -> i.getRole_id() + "");
             assertEquals(1, map.size());
             System.out.println(map);
-            assertEquals( 2,map.get("1").size());
+            assertEquals(2, map.get("1").size());
             assertInstanceOf(SysUser.class, map.get("1").get(0));
         }
     }
