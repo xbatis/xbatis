@@ -118,6 +118,11 @@ public class MybatisConfiguration extends Configuration {
     }
 
     @Override
+    public XbatisMapperRegistry getMapperRegistry() {
+        return mapperRegistry;
+    }
+
+    @Override
     public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {
         MetaObject metaObject = this.newMetaObject(resultMapResolver);
         String extend = (String) metaObject.getValue("extend");
