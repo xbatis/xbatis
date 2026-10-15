@@ -69,6 +69,12 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
     }
 
     @Override
+    public SELF as(String alias) {
+        this.alias = alias;
+        return (SELF) this;
+    }
+
+    @Override
     public WithQueryDataset asTable(String alias) {
         return new WithQueryDataset(this, alias);
     }

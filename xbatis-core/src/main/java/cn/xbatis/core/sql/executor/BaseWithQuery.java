@@ -35,8 +35,6 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
 
     private final String name;
 
-    private String alias;
-
     public BaseWithQuery(String name) {
         super(new MybatisCmdFactory(ICmdFactory.WITH_QUERY_TABLE_AS_PREFIX, 1, false));
         this.name = name;
@@ -58,12 +56,6 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
 
     public String getName() {
         return this.name;
-    }
-
-    @Override
-    public Q as(String alias) {
-        this.alias = alias;
-        return (Q) this;
     }
 
     @Override

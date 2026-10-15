@@ -49,7 +49,7 @@ public final class SQLOptimizeUtils {
         return 300;
     }
 
-    private static boolean isCanRemoveLeftJoin(Join current, List<Join> joinList, boolean forClass, Map<Class, Cmd> classCmdMap) {
+    private static boolean isCanRemoveLeftJoin(Join current, List<Join> joinList, boolean forCount, Map<Class, Cmd> classCmdMap) {
         for (Join j : joinList) {
             if (j == current) {
                 continue;
@@ -66,7 +66,7 @@ public final class SQLOptimizeUtils {
             if (c == Joins.class) {
                 continue;
             }
-            if (forClass && c == Select.class) {
+            if (forCount && c == Select.class) {
                 Select select = (Select) entry.getValue();
                 if (select.isDistinct()) {
                     if (select.contain(current.getSecondTable())) {
