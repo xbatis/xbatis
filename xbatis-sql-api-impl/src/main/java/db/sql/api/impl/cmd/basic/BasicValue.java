@@ -73,7 +73,7 @@ public class BasicValue extends AbstractField<BasicValue> {
         }
 
         if (originValue instanceof String && parent instanceof Like && ((Like) parent).getMode() != LikeMode.NONE) {
-            originValue = originValue.toString().replaceAll("%", "\\\\%").replaceAll("_", "\\\\_%");
+            originValue = originValue.toString().replaceAll("%", "\\\\%").replaceAll("_", "\\\\_");
         } else if (parent instanceof Concat || parent instanceof Like || parent instanceof ConcatWs) {
             originValue = originValue.toString();
         }
