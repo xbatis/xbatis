@@ -23,6 +23,7 @@ import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
+import db.sql.api.tookit.SqlInjectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -105,7 +106,10 @@ public class Case extends BasicFunction<Case> {
                     if (basicValue.getValue() instanceof Number) {
                         sqlBuilder.append(basicValue.getValue());
                     } else {
-                        sqlBuilder.append("'").append(basicValue.getValue()).append("'");
+                        if (basicValue.getFinalValue() != null) {
+                            SqlInjectionUtils.check(basicValue.getFinalValue().toString());
+                        }
+                        sqlBuilder.append("'").append(basicValue.getFinalValue()).append("'");
                     }
                     continue;
                 }
