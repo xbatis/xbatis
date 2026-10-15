@@ -113,7 +113,7 @@ public final class SQLOptimizeUtils {
                             Set<Integer> disableSet = disableOptimizeJoinMap.get(table.getEntity());
                             if (disableSet != null && disableSet.contains(table.getStorey())) {
                                 //已禁用优化
-                                break;
+                                continue;
                             }
                         }
                     }
