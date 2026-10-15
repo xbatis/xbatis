@@ -405,7 +405,7 @@ public interface IConditionMethod<SELF extends IConditionMethod,
 
     @Override
     default SELF notEmpty(COLUMN column) {
-        conditionChain().empty(column);
+        conditionChain().notEmpty(column);
         return (SELF) this;
     }
 

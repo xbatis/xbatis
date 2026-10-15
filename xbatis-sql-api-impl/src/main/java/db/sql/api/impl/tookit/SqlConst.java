@@ -356,7 +356,7 @@ public final class SqlConst {
             return " FORMAT";
         }
 
-        if (dbType == DbType.H2 || dbType == DbType.DB2 || dbType == DbType.DB2) {
+        if (dbType == DbType.H2 || dbType == DbType.DB2) {
             return " TO_CHAR";
         }
 

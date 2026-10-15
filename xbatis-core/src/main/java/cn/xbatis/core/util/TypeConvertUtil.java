@@ -153,7 +153,7 @@ public final class TypeConvertUtil {
             } else if (value instanceof Long || value.getClass() == long.class) {
                 newValue = new Date((Long) value);
             } else if (value instanceof Integer || value.getClass() == int.class) {
-                newValue = new Date(((Integer) value) * 1000);
+                newValue = new Date(((Integer) value).longValue() * 1000);
             } else {
                 throw new RuntimeException("Inconsistent types value : " + value + " can't convert to a " + targetType);
             }

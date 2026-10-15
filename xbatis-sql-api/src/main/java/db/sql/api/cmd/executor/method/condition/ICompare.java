@@ -298,7 +298,7 @@ public interface ICompare<RV, COLUMN, V> extends
         if (column == null) {
             return $conditionWhenFalseRV();
         }
-        return this.isNull(column);
+        return this.isNotNull(column);
     }
 
     default RV isNotNull(boolean when, Supplier<COLUMN> supplier) {
