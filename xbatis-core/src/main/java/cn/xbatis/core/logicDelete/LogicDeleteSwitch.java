@@ -26,8 +26,13 @@ public final class LogicDeleteSwitch implements AutoCloseable {
 
     private final static ThreadLocal<Boolean> THREAD_LOCAL = new ThreadLocal<>();
 
-    private LogicDeleteSwitch() {
+    // 进入 with() 之前的状态，close() 时恢复
+    private final Boolean previousState;
 
+    private boolean closed;
+
+    private LogicDeleteSwitch(Boolean previousState) {
+        this.previousState = previousState;
     }
 
     /**
@@ -46,20 +51,21 @@ public final class LogicDeleteSwitch implements AutoCloseable {
      * @return LogicDeleteSwitch
      */
     public static LogicDeleteSwitch with(boolean state) {
-        LogicDeleteSwitch logicDeleteSwitch = new LogicDeleteSwitch();
+        LogicDeleteSwitch logicDeleteSwitch = new LogicDeleteSwitch(THREAD_LOCAL.get());
         THREAD_LOCAL.set(state);
         return logicDeleteSwitch;
     }
 
-    /**
-     * 清理临时状态
-     */
-    public static void clear() {
-        THREAD_LOCAL.remove();
-    }
-
     @Override
     public void close() {
-        clear();
+        if (closed) {
+            return;
+        }
+        closed = true;
+        if (previousState == null) {
+            THREAD_LOCAL.remove();
+        } else {
+            THREAD_LOCAL.set(previousState);
+        }
     }
 }
