@@ -597,7 +597,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @return 自己
      */
     public <T, T2> SELF rightJoin(Getter<T> mainOnGetter, Getter<T2> subOnGetter, ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> consumer) {
-        return this.join(JoinMode.INNER, mainOnGetter, 1, subOnGetter, consumer);
+        return this.join(JoinMode.RIGHT, mainOnGetter, 1, subOnGetter, consumer);
     }
 
     /**
@@ -612,7 +612,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @return 自己
      */
     public <T, T2> SELF rightJoin(Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, ThreeConsumer<SELF, AbstractSubQuery<?, ?>, On> consumer) {
-        return this.join(JoinMode.INNER, mainOnGetter, mainTableStorey, subOnGetter, consumer);
+        return this.join(JoinMode.RIGHT, mainOnGetter, mainTableStorey, subOnGetter, consumer);
     }
 
     // ---
@@ -686,7 +686,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @return 自己
      */
     public <T, T2> SELF rightJoin(Getter<T> mainOnGetter, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
-        return this.join(JoinMode.INNER, mainOnGetter, 1, subOnGetter, consumer);
+        return this.join(JoinMode.RIGHT, mainOnGetter, 1, subOnGetter, consumer);
     }
 
     /**
@@ -701,7 +701,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * @return 自己
      */
     public <T, T2> SELF rightJoin(Getter<T> mainOnGetter, int mainTableStorey, Getter<T2> subOnGetter, BiConsumer<SELF, AbstractSubQuery<?, ?>> consumer) {
-        return this.join(JoinMode.INNER, mainOnGetter, mainTableStorey, subOnGetter, consumer);
+        return this.join(JoinMode.RIGHT, mainOnGetter, mainTableStorey, subOnGetter, consumer);
     }
 
 
