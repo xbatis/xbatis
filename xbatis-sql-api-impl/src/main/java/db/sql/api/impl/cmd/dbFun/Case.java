@@ -103,13 +103,14 @@ public class Case extends BasicFunction<Case> {
                 if (context.getDbType() == DbType.DB2 && item instanceof BasicValue) {
                     //没办法 DB2 数据库 ELSE 部分不支持 ?
                     BasicValue basicValue = (BasicValue) item;
-                    if (basicValue.getValue() instanceof Number) {
-                        sqlBuilder.append(basicValue.getValue());
+                    Object value = basicValue.getFinalValue();
+                    if (value instanceof Number) {
+                        sqlBuilder.append(value);
                     } else {
-                        if (basicValue.getFinalValue() != null) {
-                            SqlInjectionUtils.check(basicValue.getFinalValue().toString());
+                        if (value != null) {
+                            SqlInjectionUtils.check(value.toString());
                         }
-                        sqlBuilder.append("'").append(basicValue.getFinalValue()).append("'");
+                        sqlBuilder.append("'").append(value).append("'");
                     }
                     continue;
                 }
