@@ -117,8 +117,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                                 for (FetchInfo fetchInfo : entry.getValue()) {
                                     this.checkFetchInfo(fetchInfo);
                                 }
-                                waitFetchGroupInfoMap.put(entry.getKey(), entry.getValue().stream().collect(Collectors.groupingBy(FetchInfo::getFetchGroup)));
                             }
+                            this.waitFetchGroupInfoMap = new HashMap<>(resultInfo.getFetchGroupInfoMap());
                         } else {
                             this.filteredFetchInfosMap = new HashMap<>();
                             resultInfo.getFetchInfoMap().forEach((key, value) -> {
@@ -263,6 +263,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 TypeHandler<?> typeHandler = item.getValueTypeHandler();
                 if (Objects.isNull(typeHandler)) {
                     typeHandler = mappedStatement.getConfiguration().getTypeHandlerRegistry().getTypeHandler(item.getValueType());
+                    item.setValueTypeHandler(typeHandler);
                 }
                 if (Objects.nonNull(typeHandler)) {
                     codeValue = typeHandler.getResult(resultSet, item.getValueColumn());
@@ -312,6 +313,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     TypeHandler<?> typeHandler = item.getValuesTypeHandler()[i];
                     if (Objects.isNull(typeHandler)) {
                         typeHandler = mappedStatement.getConfiguration().getTypeHandlerRegistry().getTypeHandler(item.getValueTypes()[i]);
+                        item.getValuesTypeHandler()[i] = typeHandler;
                     }
                     if (Objects.nonNull(typeHandler)) {
                         values[i] = typeHandler.getResult(resultSet, item.getValuesColumn()[i]);

@@ -97,24 +97,20 @@ public final class SaveMethodUtil {
             return 0;
         }
         if (tableInfo.isSplitTable()) {
-            final List<String> groups = new ArrayList<>();
             Map<String, List<E>> groupedMap = list.stream()
-                    .collect(Collectors.groupingBy(e -> {
-                        String splitTableName = TableSplitUtil.getSplitTableName(tableInfo, tableInfo.getSplitFieldInfo().getValue(e));
-                        if (!groups.contains(splitTableName)) {
-                            groups.add(splitTableName);
-                        }
-                        return splitTableName;
-                    }));
+                    .collect(Collectors.groupingBy(
+                            e -> TableSplitUtil.getSplitTableName(tableInfo, tableInfo.getSplitFieldInfo().getValue(e)),
+                            LinkedHashMap::new,
+                            Collectors.toList()));
 
             int count = 0;
-            for (String key : groups) {
+            for (Map.Entry<String, List<E>> entry : groupedMap.entrySet()) {
                 if (insert != null && insert.getInsertFields() != null && insert.getInsertFields().getFields() != null) {
                     insert.getInsertFields().getFields().clear();
                     insert.getInsertValues().getValues().clear();
-                    insert.getInsertTable().getTable().setName(key);
+                    insert.getInsertTable().getTable().setName(entry.getKey());
                 }
-                count += basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, groupedMap.get(key), saveBatchStrategy, defaultValueContext));
+                count += basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, entry.getValue(), saveBatchStrategy, defaultValueContext));
             }
             return count;
         }

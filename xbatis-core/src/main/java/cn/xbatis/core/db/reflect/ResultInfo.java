@@ -49,6 +49,11 @@ public class ResultInfo {
      * 所有的 FetchInfo 包括内嵌的
      */
     private final Map<Class, List<FetchInfo>> fetchInfoMap;
+
+    /**
+     * 所有的 FetchInfo 包括内嵌的
+     */
+    private final Map<Class, Map<String, List<FetchInfo>>> fetchGroupInfoMap;
     /**
      * 所有的 PutValue注解的信息 包括内嵌的
      */
@@ -87,6 +92,11 @@ public class ResultInfo {
         this.nestedResultInfos = Collections.unmodifiableList(parseResult.nestedResultInfos);
         this.createdEventInfos = Collections.unmodifiableMap(parseResult.createdEventInfos.stream().collect(Collectors.groupingBy(CreatedEventInfo::getClazz)));
         this.checkMergeFetchInfo(this.fetchInfoMap);
+        Map<Class, Map<String, List<FetchInfo>>> fetchGroupInfoMap = new HashMap<>();
+        for (Map.Entry<Class, List<FetchInfo>> entry : fetchInfoMap.entrySet()) {
+            fetchGroupInfoMap.put(entry.getKey(), entry.getValue().stream().collect(Collectors.groupingBy(FetchInfo::getFetchGroup)));
+        }
+        this.fetchGroupInfoMap = Collections.unmodifiableMap(fetchGroupInfoMap);
     }
 
     private static ParseResult parse(Class<?> clazz) {
@@ -867,6 +877,10 @@ public class ResultInfo {
 
     public Map<Class, List<FetchInfo>> getFetchInfoMap() {
         return fetchInfoMap;
+    }
+
+    public Map<Class, Map<String, List<FetchInfo>>> getFetchGroupInfoMap() {
+        return fetchGroupInfoMap;
     }
 
     public Map<Class, Map<Integer, String>> getTablePrefixes() {

@@ -35,7 +35,7 @@ public class PutValueInfo {
 
     private final String[] valuesColumn;
 
-    private final TypeHandler<?>[] valuesTypeHandler;
+    private volatile TypeHandler<?>[] valuesTypeHandler;
 
     private final SetFieldInvoker writeFieldInvoker;
 

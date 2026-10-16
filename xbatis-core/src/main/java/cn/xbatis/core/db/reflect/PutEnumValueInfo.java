@@ -27,7 +27,7 @@ public class PutEnumValueInfo {
 
     private final String valueColumn;
 
-    private final TypeHandler<?> valueTypeHandler;
+    private volatile TypeHandler<?> valueTypeHandler;
 
     private final Class<?> valueType;
 
@@ -49,5 +49,9 @@ public class PutEnumValueInfo {
         } else {
             this.defaultValue = null;
         }
+    }
+
+    public void setValueTypeHandler(TypeHandler<?> valueTypeHandler) {
+        this.valueTypeHandler = valueTypeHandler;
     }
 }
