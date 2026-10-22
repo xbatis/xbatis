@@ -16,8 +16,6 @@ package cn.xbatis.core.mybatis.mapper;
 
 public enum ShareVariableName {
 
-    BASIC_MAPPER,
-
     MAPPER_METHOD_INTERCEPTED
 
 }
