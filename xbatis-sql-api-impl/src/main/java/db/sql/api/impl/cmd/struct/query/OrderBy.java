@@ -30,7 +30,11 @@ public class OrderBy implements IOrderBy<OrderBy> {
 
     @Override
     public OrderBy orderBy(IOrderByDirection orderByDirection, Cmd column) {
-        orderByValues.add(new OrderByValue(orderByDirection, column));
+        return this.orderBy(new OrderByValue(orderByDirection, column));
+    }
+
+    public OrderBy orderBy(OrderByValue orderByValue) {
+        orderByValues.add(orderByValue);
         return this;
     }
 

@@ -993,6 +993,19 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.limit;
     }
 
+    @Override
+    public SELF orderBy(List<Cmd> cmds) {
+        if (cmds != null && !cmds.isEmpty()) {
+            for (Cmd cmd : cmds) {
+                if (cmd instanceof OrderByValue) {
+                    this.$orderBy().orderBy((OrderByValue) cmd);
+                } else {
+                    this.$orderBy().orderBy(ascOrderByDirection(), cmd);
+                }
+            }
+        }
+        return (SELF) this;
+    }
 
     /**
      * orderBy 列
