@@ -52,7 +52,6 @@ public class SaveOrUpdateMethodUtil {
                 throw new RuntimeException(entityType.getName() + " has no id");
             }
             Object id = tableInfo.getIdFieldInfos().get(0).getValue(entity);
-            ;
 
             if (Objects.isNull(id)) {
                 SaveStrategy<T> saveStrategy = SaveStrategy.create()
