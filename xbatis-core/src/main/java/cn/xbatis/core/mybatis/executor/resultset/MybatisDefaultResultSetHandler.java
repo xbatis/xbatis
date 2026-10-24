@@ -662,6 +662,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         if (((LocalDateTime) dbValue).isAfter((LocalDateTime) second)) {
                             return false;
                         }
+                        break;
                     }
 
                     if (((Number) dbValue).doubleValue() < ((Number) first).doubleValue()) {
@@ -684,6 +685,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         if (!((LocalDateTime) dbValue).isAfter((LocalDateTime) second)) {
                             return false;
                         }
+                        break;
                     }
 
                     if (((Number) dbValue).doubleValue() < ((Number) first).doubleValue()) {
