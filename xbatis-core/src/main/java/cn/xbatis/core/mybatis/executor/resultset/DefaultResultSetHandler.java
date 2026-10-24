@@ -79,7 +79,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
     // Cached Automappings
     private final Map<String, List<UnMappedColumnAutoMapping>> autoMappingsCache = new HashMap<>();
     private final Map<String, List<String>> constructorAutoMappingColumns = new HashMap<>();
-    private final Map<String, String> upperCaseColumnCache = new HashMap<>();
+    protected final Map<String, String> upperCaseColumnCache = new HashMap<>();
     private Object previousRowValue;
     // temporary marking flag that indicate using constructor mapping (use field to reduce memory usage)
     private boolean useConstructorMappings;

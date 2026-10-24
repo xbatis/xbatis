@@ -468,6 +468,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
             waitFetchPutValueMap.clear();
         }
+
+        if (upperCaseColumnCache != null) {
+            upperCaseColumnCache.clear();
+        }
     }
 
     /**
