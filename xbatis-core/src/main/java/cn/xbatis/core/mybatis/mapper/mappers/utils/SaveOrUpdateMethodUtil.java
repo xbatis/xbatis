@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper.mappers.utils;
 
+import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
@@ -51,9 +52,17 @@ public class SaveOrUpdateMethodUtil {
             if (tableInfo.getIdFieldInfos().isEmpty()) {
                 throw new RuntimeException(entityType.getName() + " has no id");
             }
-            Object id = tableInfo.getIdFieldInfos().get(0).getValue(entity);
 
-            if (Objects.isNull(id)) {
+            boolean hasIdValueNull = false;
+            for (TableFieldInfo idFieldInfo : tableInfo.getIdFieldInfos()) {
+                Object id = idFieldInfo.getValue(entity);
+                if (Objects.isNull(id)) {
+                    hasIdValueNull = true;
+                    break;
+                }
+            }
+
+            if (hasIdValueNull) {
                 SaveStrategy<T> saveStrategy = SaveStrategy.create()
                         .allFieldSave(saveOrUpdateStrategy.isAllField())
                         .forceFields(saveOrUpdateStrategy.getForceFields());

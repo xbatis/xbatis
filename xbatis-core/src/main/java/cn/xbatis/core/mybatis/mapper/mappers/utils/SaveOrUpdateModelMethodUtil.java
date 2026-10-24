@@ -14,6 +14,7 @@
 
 package cn.xbatis.core.mybatis.mapper.mappers.utils;
 
+import cn.xbatis.core.db.reflect.ModelFieldInfo;
 import cn.xbatis.core.db.reflect.ModelInfo;
 import cn.xbatis.core.db.reflect.Models;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
@@ -58,8 +59,16 @@ public class SaveOrUpdateModelMethodUtil {
                 throw new RuntimeException(modelInfo.getType().getName() + " has no id");
             }
 
-            Object id = modelInfo.getIdFieldInfos().get(0).getValue(model);
-            if (Objects.isNull(id)) {
+            boolean hasIdValueNull = false;
+            for (ModelFieldInfo idFieldInfo : modelInfo.getIdFieldInfos()) {
+                Object id = idFieldInfo.getValue(model);
+                if (Objects.isNull(id)) {
+                    hasIdValueNull = true;
+                    break;
+                }
+            }
+
+            if (hasIdValueNull) {
                 SaveStrategy<M> saveStrategy = SaveStrategy.create()
                         .allFieldSave(saveOrUpdateStrategy.isAllField())
                         .forceFields(saveOrUpdateStrategy.getForceFields());
