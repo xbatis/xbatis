@@ -527,13 +527,13 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         final String mapKey = resultMap.getId() + ":" + columnPrefix;
         List<UnMappedColumnAutoMapping> autoMapping = autoMappingsCache.get(mapKey);
         if (autoMapping == null) {
-            autoMapping = new ArrayList<>();
             final List<String> unmappedColumnNames = rsw.getUnmappedColumnNames(resultMap, columnPrefix);
             // Remove the entry to release the memory
             List<String> mappedInConstructorAutoMapping = constructorAutoMappingColumns.remove(mapKey);
             if (mappedInConstructorAutoMapping != null) {
                 unmappedColumnNames.removeAll(mappedInConstructorAutoMapping);
             }
+            autoMapping = new ArrayList<>(unmappedColumnNames.size());
             /**
              * 此处新加
              */
@@ -565,7 +565,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
                  */
 
                 if (isAllColumnUpperCase) {
-                    propertyName = propertyName.toLowerCase();
+                    propertyName = propertyName.toLowerCase(Locale.ENGLISH);
                 }
 
                 /**

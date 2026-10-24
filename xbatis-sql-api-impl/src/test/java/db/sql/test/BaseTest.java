@@ -18,6 +18,8 @@ import db.sql.api.Cmd;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.tookit.SQLPrinter;
 
+import java.util.Locale;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BaseTest {
@@ -46,7 +48,7 @@ public class BaseTest {
                 .replaceAll("< ", "<")
                 .replaceAll(" <", "<")
 
-                .toLowerCase().trim();
+                .toLowerCase(Locale.ENGLISH).trim();
     }
 
     public void check(String message, String targetSql, Cmd cmd) {

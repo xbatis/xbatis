@@ -46,6 +46,7 @@ import javax.sql.DataSource;
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -182,8 +183,8 @@ public class BaseTest {
     }
 
     public void check(String message, String targetSql, String sql) {
-        String sql1 = trim(targetSql).toLowerCase();
-        String sql2 = trim(sql).toLowerCase();
+        String sql1 = trim(targetSql).toLowerCase(Locale.ENGLISH);
+        String sql2 = trim(sql).toLowerCase(Locale.ENGLISH);
         System.out.println("sql1:  " + sql1);
         System.out.println("sql2:  " + sql2);
         assertEquals(sql1, sql2, message);
@@ -206,7 +207,7 @@ public class BaseTest {
                 .replaceAll("< ", "<")
                 .replaceAll(" <", "<")
 
-                .toLowerCase().trim();
+                .toLowerCase(Locale.ENGLISH).trim();
     }
 
 }

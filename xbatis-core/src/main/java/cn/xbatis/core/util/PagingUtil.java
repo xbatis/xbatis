@@ -35,10 +35,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 public final class PagingUtil {
 
@@ -171,11 +168,11 @@ public final class PagingUtil {
     }
 
     private static String getSQLServerRowNumLimitedSQL(Integer size, int offset, String sql) {
-        String upperCaseSql = sql.toUpperCase();
-        int formIndex = upperCaseSql.toUpperCase().indexOf("FROM");
+        String upperCaseSql = sql.toUpperCase(Locale.ENGLISH);
+        int formIndex = upperCaseSql.toUpperCase(Locale.ENGLISH).indexOf("FROM");
         String selectSql = sql.substring(0, formIndex) + ",ROW_NUMBER() OVER(";
         String middleSql = sql.substring(formIndex, upperCaseSql.length());
-        int orderByIndex = middleSql.toUpperCase().lastIndexOf("ORDER BY");
+        int orderByIndex = middleSql.toUpperCase(Locale.ENGLISH).lastIndexOf("ORDER BY");
         String orderBy;
         if (orderByIndex != -1) {
             orderBy = middleSql.substring(orderByIndex);
@@ -190,7 +187,7 @@ public final class PagingUtil {
 
     private static String removeOrderBy(String sql, boolean optimize) {
         if (optimize) {
-            String upperCaseSql = sql.toUpperCase();
+            String upperCaseSql = sql.toUpperCase(Locale.ENGLISH);
             //移除最外层的order by
             int orderByIndex = upperCaseSql.lastIndexOf("ORDER BY");
             if (orderByIndex > 0) {

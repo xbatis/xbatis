@@ -19,6 +19,8 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.IForShare;
 import db.sql.api.impl.tookit.SqlConst;
 
+import java.util.Locale;
+
 public class ForShare implements IForShare<ForShare> {
 
     private boolean noWait = false;
@@ -30,7 +32,7 @@ public class ForShare implements IForShare<ForShare> {
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (options != null) {
-            if (!options.toUpperCase().contains("FOR")) {
+            if (!options.toUpperCase(Locale.ENGLISH).contains("FOR")) {
                 sqlBuilder = sqlBuilder.append(SqlConst.FOR).append(SqlConst.SHARE);
             }
             sqlBuilder = sqlBuilder.append(SqlConst.BLANK).append(options);

@@ -236,7 +236,7 @@ public abstract class UUIDv7BaseTest {
                 "UUID字符串应能被java.util.UUID解析: " + uuidStr
         );
 
-        assertEquals(uuidStr.toLowerCase(), parsed.toString().toLowerCase(),
+        assertEquals(uuidStr.toLowerCase(Locale.ENGLISH), parsed.toString().toLowerCase(Locale.ENGLISH),
                 "解析后字符串应相同（忽略大小写）");
     }
 }

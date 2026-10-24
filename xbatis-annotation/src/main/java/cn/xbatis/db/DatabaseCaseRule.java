@@ -14,6 +14,8 @@
 
 package cn.xbatis.db;
 
+import java.util.Locale;
+
 public enum DatabaseCaseRule {
     // 默认 - 不处理 未设置 双重含义
     DEFAULT,
@@ -32,8 +34,8 @@ public enum DatabaseCaseRule {
         if (this == DEFAULT || this == NONE) {
             return name;
         } else if (this == UPPERCASE) {
-            return name.toUpperCase();
+            return name.toUpperCase(Locale.ENGLISH);
         }
-        return name.toLowerCase();
+        return name.toLowerCase(Locale.ENGLISH);
     }
 }

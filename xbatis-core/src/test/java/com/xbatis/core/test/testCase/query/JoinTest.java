@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -306,7 +307,7 @@ public class JoinTest extends BaseTest {
             List<SysUser> list = queryChain.list();
             System.out.println(list);
 
-            check("joinSelf2 sql", SQLPrinter.sql(queryChain).toLowerCase().trim(), "SELECT t2.id , t2.password , t2.role_id , t2.create_time , t2.user_name FROM t_sys_user t LEFT JOIN t_sys_user t2 ON t.id = t2.role_id WHERE t.id =1".toLowerCase());
+            check("joinSelf2 sql", SQLPrinter.sql(queryChain).toLowerCase(Locale.ENGLISH).trim(), "SELECT t2.id , t2.password , t2.role_id , t2.create_time , t2.user_name FROM t_sys_user t LEFT JOIN t_sys_user t2 ON t.id = t2.role_id WHERE t.id =1".toLowerCase());
         }
     }
 

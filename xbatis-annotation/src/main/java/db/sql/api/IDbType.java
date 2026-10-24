@@ -15,6 +15,7 @@
 package db.sql.api;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,7 @@ public interface IDbType {
         if (getKeywords().isEmpty()) {
             return name;
         }
-        String upperName = name.toUpperCase();
+        String upperName = name.toUpperCase(Locale.ENGLISH);
         if (getKeywords().contains(upperName)) {
             if (getKeywordWrap().isToUpperCase()) {
                 name = upperName;
@@ -46,7 +47,7 @@ public interface IDbType {
     DbModel getDbModel();
 
     default void addKeyword(String... keywords) {
-        getKeywords().addAll(Arrays.stream(keywords).map(i -> i.toUpperCase()).collect(Collectors.toList()));
+        getKeywords().addAll(Arrays.stream(keywords).map(i -> i.toUpperCase(Locale.ENGLISH)).collect(Collectors.toList()));
     }
 
     String[] getJdbcUrlMatchers();

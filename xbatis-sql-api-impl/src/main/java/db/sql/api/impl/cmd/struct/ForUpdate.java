@@ -19,6 +19,8 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.IForUpdate;
 import db.sql.api.impl.tookit.SqlConst;
 
+import java.util.Locale;
+
 public class ForUpdate implements IForUpdate<ForUpdate> {
 
     private boolean noWait = false;
@@ -30,7 +32,7 @@ public class ForUpdate implements IForUpdate<ForUpdate> {
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (options != null) {
-            if (!options.toUpperCase().contains("FOR")) {
+            if (!options.toUpperCase(Locale.ENGLISH).contains("FOR")) {
                 sqlBuilder = sqlBuilder.append(SqlConst.FOR).append(SqlConst.BLANK).append(SqlConst.UPDATE);
             }
             sqlBuilder = sqlBuilder.append(SqlConst.BLANK).append(options);

@@ -17,6 +17,8 @@ package cn.xbatis.core.dbType;
 import db.sql.api.DbTypes;
 import db.sql.api.IDbType;
 
+import java.util.Locale;
+
 public class DefaultDbTypeParser implements DbTypeParser {
 
     /**
@@ -58,7 +60,7 @@ public class DefaultDbTypeParser implements DbTypeParser {
             return dbType;
         }
 
-        String lowerDbKey = dbKey.toLowerCase();
+        String lowerDbKey = dbKey.toLowerCase(Locale.ENGLISH);
         if (!lowerDbKey.equals(dbKey)) {
             dbType = DbTypes.getDbTypeByUrlKey(dbKey);
             if (dbType != null) {
