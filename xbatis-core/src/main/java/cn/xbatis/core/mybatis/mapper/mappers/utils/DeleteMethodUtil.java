@@ -106,7 +106,7 @@ public final class DeleteMethodUtil {
             OptimisticLockUtil.appendVersionWhere(w, tableInfo, entity);
         }), defaultValueContext);
 
-        if (cnt == 0 && tableInfo.getVersionFieldInfo() != null && version != null) {
+        if (cnt == 0 && version != null) {
             throw new OptimisticLockException(entity, "Row was updated or deleted by another transaction");
         }
 
