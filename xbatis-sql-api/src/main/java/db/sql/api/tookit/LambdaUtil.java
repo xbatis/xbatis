@@ -30,8 +30,8 @@ import java.util.function.Function;
 
 public final class LambdaUtil {
 
-    private static final Map<Object, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
-    private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap(1000);
+    private static final Map<Object, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(1024);
+    private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap(128);
     private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     private LambdaUtil() {
