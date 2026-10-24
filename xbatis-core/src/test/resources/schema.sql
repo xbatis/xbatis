@@ -131,6 +131,16 @@ CREATE TABLE IF NOT EXISTS version_test
     create_time DATETIME     NOT NULL DEFAULT NOW()
 );
 
+drop table if exists version_test2;
+
+CREATE TABLE IF NOT EXISTS version_test2
+(
+    id          varchar(32) PRIMARY KEY,
+    version     DATETIME          NOT NULL,
+    name        VARCHAR(100) not null,
+    create_time DATETIME     NOT NULL DEFAULT NOW()
+);
+
 drop table if exists tenant_test;
 
 CREATE TABLE IF NOT EXISTS tenant_test

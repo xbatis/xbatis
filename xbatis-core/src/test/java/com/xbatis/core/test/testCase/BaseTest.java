@@ -112,6 +112,7 @@ public class BaseTest {
         configuration.addMapper(SysUserScoreMapper.class);
         configuration.addMapper(IdTestMapper.class);
         configuration.addMapper(VersionTestMapper.class);
+        configuration.addMapper(VersionTest2Mapper.class);
         configuration.addMapper(TenantTestMapper.class);
         configuration.addMapper(LogicDeleteTestMapper.class);
         configuration.addMapper(DefaultValueTestMapper.class);
