@@ -806,64 +806,79 @@ public class ResultInfo {
         return prefix;
     }
 
+    private static void checkSameFetchConfig(FetchInfo o1, FetchInfo o2) {
+        if (!Objects.equals(o1.getFetch().column(), o2.getFetch().column())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(column) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().propertyType(), o2.getFetch().propertyType())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(propertyType) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().source(), o2.getFetch().source())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(source) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().storey(), o2.getFetch().storey())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(storey) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().middle(), o2.getFetch().middle())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(middle) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().middleSourceProperty(), o2.getFetch().middleSourceProperty())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(middleSourceProperty) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().middleTargetProperty(), o2.getFetch().middleTargetProperty())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(middleTargetProperty) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().target(), o2.getFetch().target())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(target) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().targetProperty(), o2.getFetch().targetProperty())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(targetProperty) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().orderBy(), o2.getFetch().orderBy())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(orderBy) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().multiValueErrorIgnore(), o2.getFetch().multiValueErrorIgnore())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(multiValueErrorIgnore) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().memoryLimit(), o2.getFetch().memoryLimit())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(memoryLimit) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().otherConditions(), o2.getFetch().otherConditions())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(otherConditions) not same, please check");
+        }
+        if (!Objects.equals(o1.getFetch().logicDeleteStrategy(), o2.getFetch().logicDeleteStrategy())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(logicDeleteStrategy) not same, please check");
+        }
+        if (o1.getFetch().targetSelectProperty().isEmpty() || o2.getFetch().targetSelectProperty().isEmpty()) {
+            if (o1.getFieldInfo().getFinalClass() != o2.getFieldInfo().getFinalClass()) {
+                throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " when targetSelectProperty not set, the field type must be same, please check");
+            }
+        }
+        if (!Objects.equals(o1.getFetch().needFilter(), o2.getFetch().needFilter())) {
+            throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(needFilter) not same, please check");
+        }
+    }
+
     private void checkMergeFetchInfo(Map<Class, List<FetchInfo>> fetchInfoMap) {
         if (fetchInfoMap == null || fetchInfoMap.isEmpty()) {
             return;
         }
-        for (Map.Entry<Class, List<FetchInfo>> entry : fetchInfoMap.entrySet()) {
-            entry.getValue().stream().filter(i -> !i.getFetch().mergeGroup().isEmpty()).collect(Collectors.toMap(i -> i.getFetch().mergeGroup(), i -> i, (o1, o2) -> {
-                if (!Objects.equals(o1.getFetch().column(), o2.getFetch().column())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(column) not same, please check");
+        for (List<FetchInfo> fetchInfos : fetchInfoMap.values()) {
+            // 1. 显式按 mergeGroup 分组
+            Map<String, List<FetchInfo>> groupMap = fetchInfos.stream()
+                    .filter(i -> !i.getFetch().mergeGroup().isEmpty())
+                    .collect(Collectors.groupingBy(i -> i.getFetch().mergeGroup()));
+
+            // 2. 对每组内的元素逐一和基准项比较
+            for (List<FetchInfo> group : groupMap.values()) {
+                if (group.size() < 2) {
+                    continue;
                 }
-                if (!Objects.equals(o1.getFetch().propertyType(), o2.getFetch().propertyType())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(propertyType) not same, please check");
+                FetchInfo base = group.get(0);
+                for (int i = 1; i < group.size(); i++) {
+                    checkSameFetchConfig(base, group.get(i));
                 }
-                if (!Objects.equals(o1.getFetch().source(), o2.getFetch().source())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(source) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().storey(), o2.getFetch().storey())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(storey) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().middle(), o2.getFetch().middle())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(middle) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().middleSourceProperty(), o2.getFetch().middleSourceProperty())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(middleSourceProperty) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().middleTargetProperty(), o2.getFetch().middleTargetProperty())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(middleTargetProperty) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().target(), o2.getFetch().target())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(target) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().targetProperty(), o2.getFetch().targetProperty())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(targetProperty) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().orderBy(), o2.getFetch().orderBy())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(orderBy) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().multiValueErrorIgnore(), o2.getFetch().multiValueErrorIgnore())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(multiValueErrorIgnore) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().memoryLimit(), o2.getFetch().memoryLimit())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(memoryLimit) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().otherConditions(), o2.getFetch().otherConditions())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(otherConditions) not same, please check");
-                }
-                if (!Objects.equals(o1.getFetch().logicDeleteStrategy(), o2.getFetch().logicDeleteStrategy())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(logicDeleteStrategy) not same, please check");
-                }
-                if (o1.getFetch().targetSelectProperty().isEmpty() || o2.getFetch().targetSelectProperty().isEmpty()) {
-                    if (o1.getFieldInfo().getFinalClass() != o2.getFieldInfo().getFinalClass()) {
-                        throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " when targetSelectProperty not set, the field type must be same, please check");
-                    }
-                }
-                if (!Objects.equals(o1.getFetch().needFilter(), o2.getFetch().needFilter())) {
-                    throw new RuntimeException("the mergeGroup field of " + o1.getFieldInfo().getClazz() + "." + o1.getFieldInfo().getField() + " @Fetch(needFilter) not same, please check");
-                }
-                return o1;
-            }));
+            }
         }
     }
 
