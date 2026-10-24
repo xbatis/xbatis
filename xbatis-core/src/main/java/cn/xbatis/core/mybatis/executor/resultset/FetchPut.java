@@ -34,7 +34,7 @@ public class FetchPut {
 
     private List<Object> values = new ArrayList<>();
 
-    private Set<Object> matchSet;
+    private Map<Object, List<Integer>> matchIndexMap;
 
     public FetchPut(Object rowValue, Object matchValue, FetchInfo fetchInfo, String cacheKey) {
         this.rowValue = rowValue;
@@ -44,10 +44,12 @@ public class FetchPut {
 
         if (this.matchValue instanceof Collection) {
             Collection collection = (Collection) this.matchValue;
-            this.matchSet = new HashSet<>();
-            this.matchSet.addAll(collection);
+            this.matchIndexMap = new HashMap<>(collection.size());
+            int i = 0;
             for (Object o : collection) {
+                this.matchIndexMap.computeIfAbsent(o, k -> new ArrayList<>()).add(i);
                 this.values.add(NULL);
+                i++;
             }
         } else {
             this.values = new ArrayList<>();
@@ -59,15 +61,12 @@ public class FetchPut {
             return false;
         }
         boolean match;
-        if (this.matchSet != null) {
-            match = this.matchSet.contains(onValue);
+        if (this.matchIndexMap != null) {
+            List<Integer> indexes = this.matchIndexMap.get(onValue);
+            match = indexes != null;
             if (match) {
-                int i = -1;
-                for (Object o : (Collection) this.matchValue) {
-                    i++;
-                    if (Objects.equals(o, onValue)) {
-                        this.values.set(i, fetchQueryValue);
-                    }
+                for (int idx : indexes) {
+                    this.values.set(idx, fetchQueryValue);
                 }
             }
         } else {
@@ -82,7 +81,6 @@ public class FetchPut {
     public List<Object> getValues() {
         return values;
     }
-
 
     public String getCacheKey() {
         return cacheKey;

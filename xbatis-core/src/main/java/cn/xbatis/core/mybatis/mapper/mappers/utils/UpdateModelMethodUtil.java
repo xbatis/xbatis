@@ -200,21 +200,17 @@ public final class UpdateModelMethodUtil {
         }
 
         if (modelInfo.getTableInfo().isSplitTable()) {
-            final List<String> groups = new ArrayList<>();
             Map<String, List<M>> groupedMap = list.stream()
-                    .collect(Collectors.groupingBy(e -> {
-                        String splitTableName = TableSplitUtil.getSplitTableName(modelInfo.getTableInfo(), modelInfo.getSplitFieldInfo().getValue(e));
-                        if (!groups.contains(splitTableName)) {
-                            groups.add(splitTableName);
-                        }
-                        return splitTableName;
-                    }));
+                    .collect(Collectors.groupingBy(
+                            e -> TableSplitUtil.getSplitTableName(modelInfo.getTableInfo(), modelInfo.getSplitFieldInfo().getValue(e)),
+                            LinkedHashMap::new,
+                            Collectors.toList()));
 
             int count = 0;
-            for (String key : groups) {
+            for (Map.Entry<String, List<M>> entry : groupedMap.entrySet()) {
                 UpdateChain updateChain = UpdateChain.of(basicMapper, modelInfo.getTableInfo().getType());
-                updateChain.update(modelInfo.getTableInfo().getType(), table -> table.setName(key));
-                count += _updateBatch(updateChain, modelInfo, groupedMap.get(key), tableFieldInfos, tableIdFieldInfos, updateBatchStrategy);
+                updateChain.update(modelInfo.getTableInfo().getType(), table -> table.setName(entry.getKey()));
+                count += _updateBatch(updateChain, modelInfo, entry.getValue(), tableFieldInfos, tableIdFieldInfos, updateBatchStrategy);
             }
             return count;
         }

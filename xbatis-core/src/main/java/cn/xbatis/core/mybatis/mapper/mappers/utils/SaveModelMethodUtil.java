@@ -82,24 +82,20 @@ public final class SaveModelMethodUtil {
         ModelInfo modelInfo = Models.get(first.getClass());
 
         if (modelInfo.getTableInfo().isSplitTable()) {
-            final List<String> groups = new ArrayList<>();
             Map<String, List<M>> groupedMap = list.stream()
-                    .collect(Collectors.groupingBy(m -> {
-                        String splitTableName = TableSplitUtil.getSplitTableName(modelInfo.getTableInfo(), modelInfo.getSplitFieldInfo().getValue(m));
-                        if (!groups.contains(splitTableName)) {
-                            groups.add(splitTableName);
-                        }
-                        return splitTableName;
-                    }));
+                    .collect(Collectors.groupingBy(
+                            m -> TableSplitUtil.getSplitTableName(modelInfo.getTableInfo(), modelInfo.getSplitFieldInfo().getValue(m)),
+                            LinkedHashMap::new,
+                            Collectors.toList()));
 
             int count = 0;
-            for (String key : groups) {
+            for (Map.Entry<String, List<M>> entry : groupedMap.entrySet()) {
                 if (insert != null && insert.getInsertFields() != null && insert.getInsertFields().getFields() != null) {
                     insert.getInsertFields().getFields().clear();
                     insert.getInsertValues().getValues().clear();
-                    insert.getInsertTable().getTable().setName(key);
+                    insert.getInsertTable().getTable().setName(entry.getKey());
                 }
-                count += basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, groupedMap.get(key), saveBatchStrategy, defaultValueContext));
+                count += basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, entry.getValue(), saveBatchStrategy, defaultValueContext));
             }
             return count;
         }

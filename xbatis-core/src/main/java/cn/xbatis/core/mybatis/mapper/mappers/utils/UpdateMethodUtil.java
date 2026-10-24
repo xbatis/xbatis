@@ -231,21 +231,17 @@ public final class UpdateMethodUtil {
         }
 
         if (tableInfo.isSplitTable()) {
-            final List<String> groups = new ArrayList<>();
             Map<String, List<T>> groupedMap = list.stream()
-                    .collect(Collectors.groupingBy(e -> {
-                        String splitTableName = TableSplitUtil.getSplitTableName(tableInfo, tableInfo.getSplitFieldInfo().getValue(e));
-                        if (!groups.contains(splitTableName)) {
-                            groups.add(splitTableName);
-                        }
-                        return splitTableName;
-                    }));
+                    .collect(Collectors.groupingBy(
+                            e -> TableSplitUtil.getSplitTableName(tableInfo, tableInfo.getSplitFieldInfo().getValue(e)),
+                            LinkedHashMap::new,
+                            Collectors.toList()));
 
             int count = 0;
-            for (String key : groups) {
+            for (Map.Entry<String, List<T>> entry : groupedMap.entrySet()) {
                 UpdateChain updateChain = UpdateChain.of(basicMapper, tableInfo.getType());
-                updateChain.update(tableInfo.getType(), table -> table.setName(key));
-                count += _updateBatch(updateChain, tableInfo, groupedMap.get(key), tableFieldInfos, tableIdFieldInfos, updateBatchStrategy);
+                updateChain.update(tableInfo.getType(), table -> table.setName(entry.getKey()));
+                count += _updateBatch(updateChain, tableInfo, entry.getValue(), tableFieldInfos, tableIdFieldInfos, updateBatchStrategy);
             }
             return count;
         }
