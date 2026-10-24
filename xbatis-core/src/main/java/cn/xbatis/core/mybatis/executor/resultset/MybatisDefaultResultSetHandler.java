@@ -196,36 +196,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
-    private void clearObjects() {
-        rowValues.clear();
-
-        if (waitFetchOnValusMap != null) {
-            waitFetchOnValusMap.entrySet().stream().forEach(i -> {
-                if (i.getValue() != null) {
-                    i.getValue().clear();
-                }
-            });
-            waitFetchOnValusMap.clear();
-        }
-
-        if (waitFetchPutMap != null) {
-            waitFetchPutMap.entrySet().stream().forEach(i -> {
-                if (i.getValue() != null) {
-                    i.getValue().clear();
-                }
-            });
-            waitFetchPutMap.clear();
-        }
-        if (waitFetchPutValueMap != null) {
-            waitFetchPutValueMap.entrySet().stream().forEach(i -> {
-                for (Map.Entry<Object, List<FetchPut>> entry : i.getValue().entrySet()) {
-                    entry.getValue().clear();
-                }
-                i.getValue().clear();
-            });
-            waitFetchPutValueMap.clear();
-        }
-    }
+    // 新增一个实例字段，按 fetchInfo 的 fetchKey 缓存该 fetch 对应的固定 where sql 片段
+    private final Map<String, String> fetchWhereSqlCache = new HashMap<>();
 
     private void onRowEvent(Object rowValue) {
         if (Objects.isNull(onRowEvent)) {
@@ -425,7 +397,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             this.onCreatedEvent(obj);
             this.onRowEvent(obj);
         }
-
         this.clearObjects();
     }
 
@@ -467,6 +438,38 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         return onValue;
     }
 
+    private void clearObjects() {
+        rowValues.clear();
+
+        if (waitFetchOnValusMap != null) {
+            for (Map.Entry<String, Set<Object>> i : waitFetchOnValusMap.entrySet()) {
+                if (i.getValue() != null) {
+                    i.getValue().clear();
+                }
+            }
+            waitFetchOnValusMap.clear();
+        }
+
+        if (waitFetchPutMap != null) {
+            for (Map.Entry<String, List<FetchPut>> i : waitFetchPutMap.entrySet()) {
+                if (i.getValue() != null) {
+                    i.getValue().clear();
+                }
+            }
+            waitFetchPutMap.clear();
+        }
+
+        if (waitFetchPutValueMap != null) {
+            for (Map.Entry<String, Map<Object, List<FetchPut>>> i : waitFetchPutValueMap.entrySet()) {
+                for (Map.Entry<Object, List<FetchPut>> entry : i.getValue().entrySet()) {
+                    entry.getValue().clear();
+                }
+                i.getValue().clear();
+            }
+            waitFetchPutValueMap.clear();
+        }
+    }
+
     /**
      * 构建缓存key
      *
@@ -481,10 +484,14 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
         String cacheKey = null;
         if (fetchFilters != null) {
-            Where where = WhereUtil.create();
-            this.appendWhereConditions(where, mainFetchInfo, mergeGroupFetchInfos);
-            if (where.hasContent()) {
-                cacheKey = onValue + "-" + SQLPrinter.sql(dbType, where);
+            String whereSql = fetchWhereSqlCache.computeIfAbsent(mainFetchInfo.getFetchKey(), k -> {
+                Where where = WhereUtil.create();
+                this.appendWhereConditions(where, mainFetchInfo, mergeGroupFetchInfos);
+                // 用一个哨兵区分"确实没有条件"和"还未计算"
+                return where.hasContent() ? SQLPrinter.sql(dbType, where) : "";
+            });
+            if (!whereSql.isEmpty()) {
+                cacheKey = onValue + "-" + whereSql;
             }
         }
         if (cacheKey == null && onValue != null) {
@@ -709,8 +716,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             String cacheKey = null;
             for (FetchInfo fetchInfo : entry.getValue()) {
                 Object onValue;
-                if (hasReadOnValueMap.containsKey(fetchInfo.getValueColumn())) {
-                    onValue = hasReadOnValueMap.get(fetchInfo.getValueColumn());
+                Object cached = hasReadOnValueMap.get(fetchInfo.getValueColumn());
+                if (cached != null || hasReadOnValueMap.containsKey(fetchInfo.getValueColumn())) {
+                    onValue = cached;
                 } else {
                     onValue = this.getFetchOnValue(fetchInfo, resultSet);
                     hasReadOnValueMap.put(fetchInfo.getValueColumn(), onValue);
@@ -814,7 +822,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         list = this.fetchData(firstFetchInfo, values, false, null, null);
                     }
 
-                    list.stream().forEach(i -> {
+                    for (Object i : list) {
                         Object matchValue;
                         Object result;
                         if (i instanceof FetchTargetValue) {
@@ -835,7 +843,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         for (FetchPut fetchPut : needPutFetchPuts) {
                             fetchPut.putValue(matchValue, result);
                         }
-                    });
+                    }
 
                     for (FetchPut j : fetchPuts) {
                         setToFetchValue(j.getRowValue(), j.getValues().stream().filter(i -> i != FetchPut.NULL).collect(Collectors.toList()), j.getFetchInfo(), j.getCacheKey());
@@ -867,7 +875,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         });
                     }
 
-                    list.stream().forEach(i -> {
+                    for (Object i : list) {
                         Object matchValue;
                         Object result;
                         if (i instanceof FetchTargetValue) {
@@ -897,7 +905,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                                 fetchPut.putValue(matchValue, value);
                             }
                         }
-                    });
+                    }
 
                     fetchPuts.stream().forEach(j -> {
                         setToFetchValue(j.getRowValue(), j.getValues().stream().filter(i -> i != FetchPut.NULL).collect(Collectors.toList()), j.getFetchInfo(), j.getCacheKey());

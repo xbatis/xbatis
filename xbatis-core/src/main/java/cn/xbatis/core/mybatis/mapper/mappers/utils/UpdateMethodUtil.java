@@ -303,6 +303,12 @@ public final class UpdateMethodUtil {
                 OnListenerUtil.notifyUpdate(entity);
             }
         }
+        // 放在字段遍历循环之前，整个批量更新只构建一次
+        ICondition[] rowWhens = new ICondition[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            rowWhens[i] = buildIdCaseWhen(updateChain, idTableFields, columnUpdateValues, i);
+        }
+
         for (TableFieldInfo tableFieldInfo : updateTableFieldInfos) {
             TableField tableField = updateChain.$().field(tableInfo.getType(), tableFieldInfo.getField().getName());
             if (tableField.isId()) {
@@ -312,13 +318,9 @@ public final class UpdateMethodUtil {
             for (int i = 0; i < list.size(); i++) {
                 Object value = columnUpdateValues.get(tableFieldInfo.getColumnName()).get(i);
                 if (value == null) {
-                    if (updateBatchStrategy.isIgnoreNull()) {
-                        value = tableField;
-                    } else {
-                        value = Methods.NULL();
-                    }
+                    value = updateBatchStrategy.isIgnoreNull() ? tableField : Methods.NULL();
                 }
-                sqlCase.when(buildIdCaseWhen(updateChain, idTableFields, columnUpdateValues, i), Methods.cmd(value));
+                sqlCase.when(rowWhens[i], Methods.cmd(value));
             }
             sqlCase.else_(tableField);
             updateChain.set(tableField, sqlCase);

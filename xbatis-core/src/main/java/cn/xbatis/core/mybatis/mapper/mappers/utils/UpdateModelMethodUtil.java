@@ -265,6 +265,11 @@ public final class UpdateModelMethodUtil {
             }
         }
 
+        ICondition[] rowWhens = new ICondition[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            rowWhens[i] = buildIdCaseWhen(updateChain, idTableFields, columnUpdateValues, i);
+        }
+
         for (ModelFieldInfo modelFieldInfo : updateModelFieldInfos) {
             TableField tableField = updateChain.$().field(modelInfo.getTableInfo().getType(), modelFieldInfo.getTableFieldInfo().getField().getName());
             if (tableField.isId()) {
@@ -274,13 +279,9 @@ public final class UpdateModelMethodUtil {
             for (int i = 0; i < list.size(); i++) {
                 Object value = columnUpdateValues.get(modelFieldInfo.getTableFieldInfo().getColumnName()).get(i);
                 if (value == null) {
-                    if (updateBatchStrategy.isIgnoreNull()) {
-                        value = tableField;
-                    } else {
-                        value = Methods.NULL();
-                    }
+                    value = updateBatchStrategy.isIgnoreNull() ? tableField : Methods.NULL();
                 }
-                sqlCase.when(buildIdCaseWhen(updateChain, idTableFields, columnUpdateValues, i), Methods.cmd(value));
+                sqlCase.when(rowWhens[i], Methods.cmd(value));
             }
             sqlCase.else_(tableField);
             updateChain.set(tableField, sqlCase);
