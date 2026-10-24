@@ -21,6 +21,8 @@ import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
 public class OptimisticLockUtil {
@@ -37,10 +39,15 @@ public class OptimisticLockUtil {
         if (tableInfo.getVersionFieldInfo() == null) {
             return false;
         }
-
         Table table = update.$().table(tableInfo.getType());
         db.sql.api.impl.cmd.basic.TableField versionField = update.$().field(table, tableInfo.getVersionFieldInfo().getColumnName());
-        update.set(versionField, Methods.tpl("{0} + 1", versionField));
+        if (tableInfo.getVersionFieldInfo().getFieldInfo().getTypeClass() == Date.class) {
+            update.set(versionField, new Date(System.currentTimeMillis()));
+        } else if (tableInfo.getVersionFieldInfo().getFieldInfo().getTypeClass() == LocalDateTime.class) {
+            update.set(versionField, LocalDateTime.now());
+        } else {
+            update.set(versionField, Methods.tpl("{0} + 1", versionField));
+        }
         return true;
     }
 
