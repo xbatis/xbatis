@@ -67,24 +67,26 @@ public final class DeleteMethodUtil {
             throw new IllegalArgumentException();
         }
 
-        boolean isDeleteById = true;
 
-        if (tableInfo.getIdFieldInfos().isEmpty()) {
-            isDeleteById = false;
-        } else {
-            for (TableFieldInfo idFieldInfo : tableInfo.getIdFieldInfos()) {
-                if (idFieldInfo.getValue(entity) == null) {
-                    isDeleteById = false;
-                    break;
-                }
-            }
-        }
 
         Object version = null;
         if (tableInfo.getVersionFieldInfo() != null) {
             version = tableInfo.getVersionFieldInfo().getValue(entity);
-            if (version == null && isDeleteById) {
-                throw new RuntimeException("Data has no version value");
+            if (version == null) {
+                boolean isDeleteById = true;
+                if (tableInfo.getIdFieldInfos().isEmpty()) {
+                    isDeleteById = false;
+                } else {
+                    for (TableFieldInfo idFieldInfo : tableInfo.getIdFieldInfos()) {
+                        if (idFieldInfo.getValue(entity) == null) {
+                            isDeleteById = false;
+                            break;
+                        }
+                    }
+                }
+                if(isDeleteById){
+                    throw new RuntimeException("Data has no version value");
+                }
             }
         }
 
