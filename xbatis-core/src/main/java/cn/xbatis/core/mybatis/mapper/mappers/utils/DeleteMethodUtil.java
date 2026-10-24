@@ -15,7 +15,9 @@
 package cn.xbatis.core.mybatis.mapper.mappers.utils;
 
 import cn.xbatis.core.XbatisGlobalConfig;
+import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
+import cn.xbatis.core.exception.OptimisticLockException;
 import cn.xbatis.core.logicDelete.LogicDeleteUtil;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
 import cn.xbatis.core.sql.executor.Delete;
@@ -65,7 +67,28 @@ public final class DeleteMethodUtil {
             throw new IllegalArgumentException();
         }
 
-        return delete(basicMapper, tableInfo, WhereUtil.create(tableInfo, w -> {
+        boolean isDeleteById = true;
+
+        if (tableInfo.getIdFieldInfos().isEmpty()) {
+            isDeleteById = false;
+        } else {
+            for (TableFieldInfo idFieldInfo : tableInfo.getIdFieldInfos()) {
+                if (idFieldInfo.getValue(entity) == null) {
+                    isDeleteById = false;
+                    break;
+                }
+            }
+        }
+
+        Object version = null;
+        if (tableInfo.getVersionFieldInfo() != null) {
+            version = tableInfo.getVersionFieldInfo().getValue(entity);
+            if (version == null && isDeleteById) {
+                throw new RuntimeException("Data has no version value");
+            }
+        }
+
+        int cnt = delete(basicMapper, tableInfo, WhereUtil.create(tableInfo, w -> {
             if (tableInfo.isSplitTable()) {
                 XbatisTable table = (XbatisTable) w.getConditionFactory().getCmdFactory().table(tableInfo.getType(), 1);
                 if (TableSplitUtil.isNeedSplitHandle(table)) {
@@ -80,6 +103,12 @@ public final class DeleteMethodUtil {
             WhereUtil.appendIdWhereWithEntity(w, tableInfo, entity);
             OptimisticLockUtil.appendVersionWhere(w, tableInfo, entity);
         }), defaultValueContext);
+
+        if (cnt == 0 && tableInfo.getVersionFieldInfo() != null && version != null) {
+            throw new OptimisticLockException(entity, "Row was updated or deleted by another transaction");
+        }
+
+        return cnt;
     }
 
     public static <E> int delete(BasicMapper basicMapper, TableInfo tableInfo, Collection<E> list) {

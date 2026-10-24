@@ -16,6 +16,7 @@ package com.xbatis.core.test.testCase;
 
 import cn.xbatis.core.db.reflect.ResultInfo;
 import cn.xbatis.core.db.reflect.ResultInfos;
+import cn.xbatis.core.exception.OptimisticLockException;
 import cn.xbatis.core.tenant.TenantContext;
 import com.alibaba.fastjson.JSON;
 import com.xbatis.core.test.DO.CompositeTest;
@@ -135,7 +136,10 @@ public class CompositeTestCase extends BaseTest {
             TenantContext.registerTenantGetter(() -> {
                 return 2;
             });
-            compositeTestMapper.delete(compositeTest);
+            CompositeTest finalCompositeTest = compositeTest;
+            assertThrows(OptimisticLockException.class, () -> {
+                compositeTestMapper.delete(finalCompositeTest);
+            });
 
             compositeTest.setId(null);
             compositeTestMapper.delete(where -> where.eq(CompositeTest::getId, 1));
