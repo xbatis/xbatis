@@ -351,8 +351,7 @@ public final class UpdateMethodUtil {
             }
         }
 
-        return updateChain
-                .execute();
+        return updateChain.execute();
     }
 
     private static void wrapUseNormalIn(UpdateChain updateChain, XbatisTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, Collection list) {

@@ -96,7 +96,7 @@ public class UpdateBatchStrategy<T> {
     /**
      * 设置in的方式
      *
-     * @param useForceMultiRowIn
+     * @param updateBatchInMode
      * @return
      */
     public UpdateBatchStrategy<T> updateBatchInMode(UpdateBatchInMode updateBatchInMode) {
