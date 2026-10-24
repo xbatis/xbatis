@@ -126,13 +126,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                                     return;
                                 }
                                 for (FetchInfo item : value) {
-                                    Boolean enable;
-                                    if (this.fetchEnables == null) {
-                                        enable = Boolean.FALSE;
-                                    } else {
-                                        enable = this.fetchEnables.get(item.getFetchKey());
-                                    }
-                                    if ((enable == null || enable) && !item.getFetch().mergeGroup().isEmpty()) {
+                                    Boolean enable = this.fetchEnables.get(item.getFetchKey());
+                                    if (enable==null && !item.getFetch().mergeGroup().isEmpty()) {
                                         enable = this.fetchEnables.get(item.getFetch().mergeGroup());
                                     }
                                     if (enable != null && !enable) {
