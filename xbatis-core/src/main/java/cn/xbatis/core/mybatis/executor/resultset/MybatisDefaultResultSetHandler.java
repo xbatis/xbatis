@@ -1028,7 +1028,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         int size = conditionList.size();
         if (size < batchSize) {
             //无需 分批次查
-            return fetchDataWithQuery(mainFetchInfo, query, conditionList, null);
+            return fetchDataWithQuery(mainFetchInfo, query, conditionList, mergeGroupFetchInfos);
         }
         List newList;
         if (conditionList instanceof List) {
