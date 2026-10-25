@@ -522,6 +522,9 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
     // PROPERTY MAPPINGS
     //
 
+
+    private Boolean isAllColumnUpperCase;
+
     private List<UnMappedColumnAutoMapping> createAutomaticMappings(ResultSetWrapper rsw, ResultMap resultMap,
                                                                     MetaObject metaObject, String columnPrefix) throws SQLException {
         final String mapKey = resultMap.getId() + ":" + columnPrefix;
@@ -540,11 +543,13 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
             //是否是Map映射
             boolean isForMap = Map.class.isAssignableFrom(resultMap.getType()) && resultMap.getResultMappings().isEmpty() && resultMap.getIdResultMappings().isEmpty();
             //是否全大写
-            boolean isAllColumnUpperCase = true;
-            for (String columnName : unmappedColumnNames) {
-                if (!isAllUpperCase(columnName)) {
-                    isAllColumnUpperCase = false;
-                    break;
+            if (isAllColumnUpperCase == null) {
+                isAllColumnUpperCase = true;
+                for (String columnName : unmappedColumnNames) {
+                    if (!isAllUpperCase(columnName)) {
+                        isAllColumnUpperCase = false;
+                        break;
+                    }
                 }
             }
 
