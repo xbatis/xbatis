@@ -324,13 +324,11 @@ CREATE TABLE fetch_merge
     role_id3 INT
 );
 
-insert all
-    into fetch_merge(id,role_id1, role_id2, role_id3)
-    values(1,1, 2, 3)
-    into fetch_merge(id,role_id1, role_id2, role_id3)
-    values(2,0, 1, 2)
-    into fetch_merge(id,role_id1, role_id2, role_id3)
-        values(3,0, 2, 3)
-    into fetch_merge(id,role_id1, role_id2, role_id3)
-    values(4,null, 2, 3)
-    select * from dual;
+INSERT INTO fetch_merge (id, role_id1, role_id2, role_id3)
+SELECT fetch_merge_seq.NEXTVAL, role_id1, role_id2, role_id3
+FROM (
+         SELECT 1 role_id1, 2 role_id2, 3 role_id3 FROM dual
+         UNION ALL SELECT 0, 1, 2 FROM dual
+         UNION ALL SELECT 0, 2, 3 FROM dual
+         UNION ALL SELECT NULL, 2, 3 FROM dual
+     );
