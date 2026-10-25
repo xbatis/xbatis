@@ -230,7 +230,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             return list;
         }
 
-        if ((executeCount == null || executeCount) && (size != null || size < 0)) {
+        if ((executeCount == null || executeCount) && (size == null || size < 0)) {
             count = list.size();
         }
         pager.set(PagerField.RESULTS, list);
