@@ -673,15 +673,14 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         if (((LocalDateTime) dbValue).isAfter((LocalDateTime) second)) {
                             return false;
                         }
-                        break;
-                    }
+                    } else {
+                        if (((Number) dbValue).doubleValue() < ((Number) first).doubleValue()) {
+                            return false;
+                        }
 
-                    if (((Number) dbValue).doubleValue() < ((Number) first).doubleValue()) {
-                        return false;
-                    }
-
-                    if (((Number) dbValue).doubleValue() > ((Number) second).doubleValue()) {
-                        return false;
+                        if (((Number) dbValue).doubleValue() > ((Number) second).doubleValue()) {
+                            return false;
+                        }
                     }
                     break;
                 }
@@ -696,15 +695,14 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         if (!((LocalDateTime) dbValue).isAfter((LocalDateTime) second)) {
                             return false;
                         }
-                        break;
-                    }
+                    } else {
+                        if (((Number) dbValue).doubleValue() < ((Number) first).doubleValue()) {
+                            return false;
+                        }
 
-                    if (((Number) dbValue).doubleValue() < ((Number) first).doubleValue()) {
-                        return false;
-                    }
-
-                    if (((Number) dbValue).doubleValue() > ((Number) second).doubleValue()) {
-                        return false;
+                        if (((Number) dbValue).doubleValue() > ((Number) second).doubleValue()) {
+                            return false;
+                        }
                     }
                     break;
                 }
