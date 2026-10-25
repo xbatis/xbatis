@@ -214,7 +214,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         Integer size = pager.get(PagerField.SIZE);
         Integer count = null;
         List list;
-        if (executeCount && size > -1) {
+        if ((executeCount == null || executeCount) && size > -1) {
             count = sqlSession.selectOne(statementId + "&count", params);
             count = Objects.isNull(count) ? 0 : count;
             if (count == 0) {
