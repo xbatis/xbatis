@@ -277,10 +277,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             Object[] values = new Object[item.getValuesColumn().length];
             for (int i = 0; i < item.getValuesColumn().length; i++) {
                 try {
-                    TypeHandler<?> typeHandler = item.getValuesTypeHandler()[i];
+                    TypeHandler<?> typeHandler = item.getValueTypeHandler(i);
                     if (Objects.isNull(typeHandler)) {
                         typeHandler = mappedStatement.getConfiguration().getTypeHandlerRegistry().getTypeHandler(item.getValueTypes()[i]);
-                        item.getValuesTypeHandler()[i] = typeHandler;
+                        item.setValueTypeHandler(i, typeHandler);
                     }
                     if (Objects.nonNull(typeHandler)) {
                         values[i] = typeHandler.getResult(resultSet, item.getValuesColumn()[i]);

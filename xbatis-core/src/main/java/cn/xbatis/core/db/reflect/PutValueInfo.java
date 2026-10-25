@@ -16,11 +16,13 @@ package cn.xbatis.core.db.reflect;
 
 import cn.xbatis.core.util.TypeConvertUtil;
 import cn.xbatis.db.annotations.PutValue;
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 @Getter
 public class PutValueInfo {
@@ -35,7 +37,8 @@ public class PutValueInfo {
 
     private final String[] valuesColumn;
 
-    private volatile TypeHandler<?>[] valuesTypeHandler;
+    @Getter(AccessLevel.NONE)
+    private final AtomicReferenceArray<TypeHandler<?>> valuesTypeHandler;
 
     private final SetFieldInvoker writeFieldInvoker;
 
@@ -47,7 +50,7 @@ public class PutValueInfo {
         this.annotation = annotation;
         this.valueTypes = valueTypes;
         this.valuesColumn = valuesColumn;
-        this.valuesTypeHandler = valuesTypeHandler;
+        this.valuesTypeHandler = new AtomicReferenceArray(valuesTypeHandler);
         this.writeFieldInvoker = new SetFieldInvoker(field);
 
         if (!annotation.defaultValue().isEmpty()) {
@@ -55,5 +58,13 @@ public class PutValueInfo {
         } else {
             this.defaultValue = null;
         }
+    }
+
+    public TypeHandler<?> getValueTypeHandler(int index) {
+        return valuesTypeHandler.get(index);
+    }
+
+    public void setValueTypeHandler(int index, TypeHandler<?> typeHandler) {
+        valuesTypeHandler.set(index, typeHandler);
     }
 }
