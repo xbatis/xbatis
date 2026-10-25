@@ -17,6 +17,7 @@ package cn.xbatis.core.mybatis.mapper.mappers.utils;
 import cn.xbatis.core.db.reflect.ModelFieldInfo;
 import cn.xbatis.core.db.reflect.ModelInfo;
 import cn.xbatis.core.db.reflect.Models;
+import cn.xbatis.core.db.reflect.OnListenerUtil;
 import cn.xbatis.core.exception.NoUpdateRowException;
 import cn.xbatis.core.exception.OptimisticLockException;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
@@ -264,7 +265,13 @@ public final class UpdateModelMethodUtil {
                 values.add((Serializable) modelFieldInfo.getValue(model));
             }
         }
-
+        if (allUpdate) {
+            //非局部修改 触发onUpdate操作
+            //更新动作通知
+            for (M model : list) {
+                OnListenerUtil.notifyUpdate(model);
+            }
+        }
         ICondition[] rowWhens = new ICondition[list.size()];
         for (int i = 0; i < list.size(); i++) {
             rowWhens[i] = buildIdCaseWhen(updateChain, idTableFields, columnUpdateValues, i);
