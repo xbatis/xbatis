@@ -608,6 +608,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                             if (!((LocalDateTime) dbValue).isAfter((LocalDateTime) whenValue)) {
                                 return false;
                             }
+                            break;
                         }
 
                         if (((Number) dbValue).doubleValue() <= ((Number) whenValue).doubleValue()) {
@@ -622,6 +623,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                             if (((LocalDateTime) dbValue).isBefore((LocalDateTime) whenValue)) {
                                 return false;
                             }
+                            break;
                         }
 
                         if (((Number) dbValue).doubleValue() < ((Number) whenValue).doubleValue()) {
@@ -636,6 +638,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                             if (!((LocalDateTime) dbValue).isBefore((LocalDateTime) whenValue)) {
                                 return false;
                             }
+                            break;
                         }
 
                         if (((Number) dbValue).doubleValue() >= ((Number) whenValue).doubleValue()) {
@@ -650,6 +653,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                             if (((LocalDateTime) dbValue).isAfter((LocalDateTime) whenValue)) {
                                 return false;
                             }
+                            break;
                         }
 
                         if (((Number) dbValue).doubleValue() > ((Number) whenValue).doubleValue()) {
