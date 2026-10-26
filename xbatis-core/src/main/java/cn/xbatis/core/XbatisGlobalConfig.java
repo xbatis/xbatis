@@ -44,9 +44,9 @@ import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
@@ -148,11 +148,12 @@ public final class XbatisGlobalConfig {
             } else if (type == LocalDateTime[].class) {
                 return new LocalDateTime[]{LocalDate.now().atStartOfDay(), LocalDate.now().atStartOfDay().plusDays(1).minusNanos(1)};
             } else if (type == Long[].class) {
-                long time = LocalDate.now().toEpochDay();
-                return new Long[]{time, time + TimeUnit.DAYS.toMillis(1) - 1};
+                long start = LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                long end = LocalDate.now().atStartOfDay().plusDays(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - 1;
+                return new Long[]{start, end};
             } else if (type == String[].class) {
                 String today = LocalDate.now().toString();
-                return new String[]{today, today + "23:59:59"};
+                return new String[]{today, today + " 23:59:59"};
             } else if (type == List.class) {
                 List<LocalDateTime> list = new ArrayList<>();
                 list.add(LocalDate.now().atStartOfDay());
