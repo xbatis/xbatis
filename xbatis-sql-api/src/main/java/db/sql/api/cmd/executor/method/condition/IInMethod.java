@@ -54,7 +54,7 @@ public interface IInMethod<RV, COLUMN> extends IInGetterCompare<RV> {
      * @return 自己
      */
     default <T> RV in(boolean when, List<T> list, Getter<T>... getters) {
-        if (when) {
+        if (!when) {
             return (RV) this;
         }
         return in(list, 1, getters);
@@ -82,7 +82,7 @@ public interface IInMethod<RV, COLUMN> extends IInGetterCompare<RV> {
      * @return 自己
      */
     default <T> RV in(boolean when, List<T> list, int storey, Getter<T>... getters) {
-        if (when) {
+        if (!when) {
             return (RV) this;
         }
         return in(list, storey, getters);

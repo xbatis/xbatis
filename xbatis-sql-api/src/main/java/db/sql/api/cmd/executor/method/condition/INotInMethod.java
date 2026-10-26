@@ -52,7 +52,7 @@ public interface INotInMethod<RV, COLUMN> extends INotInGetterCompare<RV> {
      * @return 自己
      */
     default <T> RV notIn(boolean when, List<T> list, Getter<T>... getters) {
-        if (when) {
+        if (!when) {
             return (RV) this;
         }
         return notIn(list, 1, getters);
@@ -81,7 +81,7 @@ public interface INotInMethod<RV, COLUMN> extends INotInGetterCompare<RV> {
      * @return 自己
      */
     default <T> RV notIn(boolean when, List<T> list, int storey, Getter<T>... getters) {
-        if (when) {
+        if (!when) {
             return (RV) this;
         }
         return notIn(list, storey, getters);

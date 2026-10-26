@@ -812,7 +812,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
      */
     @SafeVarargs
     public final <T> ConditionChain in(boolean when, List<T> list, Getter<T>... getters) {
-        if (when) {
+        if (!when) {
             return this;
         }
         return in(list, 1, getters);
@@ -845,7 +845,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
      */
     @SafeVarargs
     public final <T> ConditionChain in(boolean when, List<T> list, int storey, Getter<T>... getters) {
-        if (when) {
+        if (!when) {
             return this;
         }
         return in(list, storey, getters);
@@ -875,7 +875,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
      */
     @SafeVarargs
     public final <T> ConditionChain notIn(boolean when, List<T> list, Getter<T>... getters) {
-        if (when) {
+        if (!when) {
             return this;
         }
         return notIn(list, 1, getters);
@@ -908,7 +908,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
      */
     @SafeVarargs
     public final <T> ConditionChain notIn(boolean when, List<T> list, int storey, Getter<T>... getters) {
-        if (when) {
+        if (!when) {
             return this;
         }
         return notIn(list, storey, getters);
