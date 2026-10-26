@@ -93,7 +93,7 @@ public class ModelBatchInsertCreateUtil {
         if (!modelInfo.getIdFieldInfos().isEmpty()) {
             modelInfo.getIdFieldInfos().forEach(idFieldInfo -> {
                 TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getTableFieldInfo(), dbType);
-                if (tableId.value() == IdAutoType.GENERATOR) {
+                if (tableId.value() == IdAutoType.GENERATOR || tableId.value() == IdAutoType.SQL) {
                     if (!saveFieldInfoSet.contains(idFieldInfo)) {
                         saveFieldInfoSet.add(idFieldInfo);
                     }
