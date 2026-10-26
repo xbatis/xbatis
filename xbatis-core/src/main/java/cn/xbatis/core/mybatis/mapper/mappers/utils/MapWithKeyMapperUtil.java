@@ -37,10 +37,16 @@ public final class MapWithKeyMapperUtil {
     }
 
     public static <T, K, ID extends Serializable> Map<K, T> mapWithKey(BasicMapper basicMapper, TableInfo tableInfo, String mapKey, ID[] ids) {
+        if (Objects.isNull(ids) || ids.length == 0) {
+            return new HashMap<>();
+        }
         return mapWithKey(basicMapper, tableInfo, mapKey, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
     public static <T, K, ID extends Serializable> Map<K, T> mapWithKey(BasicMapper basicMapper, TableInfo tableInfo, String mapKey, Collection<ID> ids) {
+        if (Objects.isNull(ids) || ids.isEmpty()) {
+            return new HashMap<>();
+        }
         return mapWithKey(basicMapper, tableInfo, mapKey, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
