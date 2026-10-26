@@ -303,7 +303,7 @@ public final class TableInfoUtil {
             appendTableId(tableIdMap, fieldSetter1.getAnnotationsByType(TableId.class));
             //如果依然没有获取到 在取里面set方法里获取
             if (fieldSetter2 != null) {
-                appendTableId(tableIdMap, fieldSetter1.getAnnotationsByType(TableId.class));
+                appendTableId(tableIdMap, fieldSetter2.getAnnotationsByType(TableId.class));
             }
         }
 
