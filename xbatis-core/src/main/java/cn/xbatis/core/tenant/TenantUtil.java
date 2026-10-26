@@ -149,15 +149,23 @@ public final class TenantUtil {
         TableFieldInfo tenantIdFieldInfo = tableInfo.getTenantIdFieldInfo();
         if (tid instanceof TenantId) {
             TenantId tenantId = (TenantId) tid;
+            if (tenantId.getValues() == null || tenantId.getValues().length == 0) {
+                return;
+            }
             if (tenantId.isMultiValue()) {
-                on.extConditionChain().in(new XbatisTableField(table, tenantIdFieldInfo), tenantId.getValues());
+                List<Cmd> values = new ArrayList<>();
+                for (Serializable id : tenantId.getValues()) {
+                    Objects.requireNonNull(id, "TenantId has null value");
+                    values.add(CmdParamUtil.build(tenantIdFieldInfo, id));
+                }
+                on.extConditionChain().and(Methods.in(new XbatisTableField(table, tenantIdFieldInfo), values));
                 onWhere(tableInfo.getType(), on.extConditionChain());
                 return;
             }
             tid = tenantId.getValues()[0];
         }
 
-        on.extConditionChain().eq(new XbatisTableField(table, tenantIdFieldInfo), tid);
+        on.extConditionChain().eq(new XbatisTableField(table, tenantIdFieldInfo), CmdParamUtil.build(tenantIdFieldInfo, tid));
         onWhere(tableInfo.getType(), on.extConditionChain());
     }
 
