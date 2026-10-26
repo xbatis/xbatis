@@ -23,9 +23,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 多个以逗号分隔的值
@@ -50,6 +48,8 @@ public class MultiValueTypeHandler extends GenericTypeHandler<Object> {
             StringBuilder sb = new StringBuilder();
             for (Object v : values) {
                 if (v == null) {
+                    continue;
+                } else if (v instanceof String && ((String) v).isEmpty()) {
                     continue;
                 }
                 sb.append(",").append(v);
@@ -87,16 +87,15 @@ public class MultiValueTypeHandler extends GenericTypeHandler<Object> {
 
         if (this.type.isArray()) {
             Class componentType = this.genericType == null ? this.type.getComponentType() : this.genericType;
-            Object[] newArr = (Object[]) Array.newInstance(componentType, arr.length);
-            int i = 0;
+            List<Object> tmp = new ArrayList<>(arr.length);
             for (String s : arr) {
                 if (s.isEmpty()) {
                     continue;
                 }
-                newArr[i] = TypeConvertUtil.convert(s, componentType);
-                i++;
+                tmp.add(TypeConvertUtil.convert(s, componentType));
             }
-            return newArr;
+            Object[] newArr = (Object[]) Array.newInstance(componentType, tmp.size());
+            return tmp.toArray(newArr);
         }
 
         Collection list = CollectionNewUtil.newInstance(this.type);
