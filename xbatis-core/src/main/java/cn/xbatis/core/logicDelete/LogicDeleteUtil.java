@@ -129,7 +129,7 @@ public final class LogicDeleteUtil {
 
         if (tableInfo.getLogicDeleteTimeFieldInfo() != null) {
             TableField logicDeleteTimeTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteTimeFieldInfo().getField().getName(), 1);
-            baseUpdate.set(logicDeleteTimeTableField, CmdParamUtil.build(tableInfo.getLogicDeleteFieldInfo(), getLogicDeleteTimeValue(tableInfo)));
+            baseUpdate.set(logicDeleteTimeTableField, CmdParamUtil.build(tableInfo.getLogicDeleteTimeFieldInfo(), getLogicDeleteTimeValue(tableInfo)));
         }
     }
 
