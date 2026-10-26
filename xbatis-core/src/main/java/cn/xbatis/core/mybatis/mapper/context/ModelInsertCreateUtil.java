@@ -35,6 +35,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ModelInsertCreateUtil {
+    private static <M extends Model<T>, T> Object getAndSetDefaultValue(M insertData, ModelFieldInfo modelFieldInfo, Map<String, Object> defaultValueContext) {
+        if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
+            return DefaultValueUtil.getAndSetDefaultValue(insertData, modelFieldInfo, defaultValueContext);
+        }
+        return null;
+    }
 
     public static <M extends Model<T>, T> void initInsertValue(ModelInfo modelInfo, ModelFieldInfo modelFieldInfo, M insertData, IDbType dbType, Map<String, Object> defaultValueContext) {
         if (modelFieldInfo.getTableFieldInfo().isTableId()) {
@@ -53,9 +59,7 @@ public class ModelInsertCreateUtil {
                 IdUtil.setId(insertData, modelFieldInfo, id);
             }
             return;
-        }
-
-        if (modelFieldInfo.getTableFieldInfo().isLogicDelete()) {
+        } else if (modelFieldInfo.getTableFieldInfo().isLogicDelete()) {
             Object value = modelFieldInfo.getValue(insertData);
             if (value != null) {
                 return;
@@ -71,18 +75,18 @@ public class ModelInsertCreateUtil {
                 DefaultValueUtil.getAndSetDefaultValue(insertData, modelFieldInfo, defaultValueContext);
             }
             return;
-        }
-
-
-        if (modelFieldInfo.getTableFieldInfo().isVersion()) {
+        } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
             Object value = modelFieldInfo.getValue(insertData);
             if (value != null) {
                 return;
             }
-            //设置 乐观锁设置 默认值
-            value = VersionUtil.getInitValue(modelFieldInfo.getFieldInfo().getTypeClass());
-            //乐观锁回写
-            ModelInfoUtil.setValue(modelFieldInfo, insertData, value);
+            value = getAndSetDefaultValue(insertData, modelFieldInfo, defaultValueContext);
+            if (value == null) {
+                //设置 乐观锁设置 默认值
+                value = VersionUtil.getInitValue(modelFieldInfo.getFieldInfo().getTypeClass());
+                //乐观锁回写
+                ModelInfoUtil.setValue(modelFieldInfo, insertData, value);
+            }
             return;
         }
 

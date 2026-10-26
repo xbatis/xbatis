@@ -38,6 +38,13 @@ import java.util.Objects;
 
 public class EntityInsertCreateUtil {
 
+    private static Object getAndSetDefaultValue(Object insertData, TableFieldInfo tableFieldInfo, Map<String, Object> defaultValueContext) {
+        if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
+            return DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo, defaultValueContext);
+        }
+        return null;
+    }
+
     public static void initInsertValue(TableInfo tableInfo, TableFieldInfo tableFieldInfo, Object insertData, IDbType dbType, Map<String, Object> defaultValueContext) {
         if (tableFieldInfo.isTableId()) {
             Object value = tableFieldInfo.getValue(insertData);
@@ -55,9 +62,7 @@ public class EntityInsertCreateUtil {
                 IdUtil.setId(insertData, tableFieldInfo, id);
             }
             return;
-        }
-
-        if (tableFieldInfo.isLogicDelete()) {
+        } else if (tableFieldInfo.isLogicDelete()) {
             Object value = tableFieldInfo.getValue(insertData);
             if (value != null) {
                 return;
@@ -74,6 +79,20 @@ public class EntityInsertCreateUtil {
                 DefaultValueUtil.getAndSetDefaultValue(insertData, tableFieldInfo, defaultValueContext);
             }
             return;
+        } else if (tableFieldInfo.isVersion()) {
+            Object value = tableFieldInfo.getValue(insertData);
+            if (value != null) {
+                return;
+            }
+
+            value = getAndSetDefaultValue(insertData, tableFieldInfo, defaultValueContext);
+            if (value == null) {
+                //设置 乐观锁设置 默认值
+                value = VersionUtil.getInitValue(tableFieldInfo.getFieldInfo().getTypeClass());
+                //乐观锁回写
+                TableInfoUtil.setValue(tableFieldInfo, insertData, value);
+            }
+            return;
         }
 
         if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
@@ -87,17 +106,6 @@ public class EntityInsertCreateUtil {
             return;
         }
 
-        if (tableFieldInfo.isVersion()) {
-            Object value = tableFieldInfo.getValue(insertData);
-            if (value != null) {
-                return;
-            }
-            //设置 乐观锁设置 默认值
-            value = VersionUtil.getInitValue(tableFieldInfo.getFieldInfo().getTypeClass());
-            //乐观锁回写
-            TableInfoUtil.setValue(tableFieldInfo, insertData, value);
-            return;
-        }
 
         throw new RuntimeException("未处理");
     }
