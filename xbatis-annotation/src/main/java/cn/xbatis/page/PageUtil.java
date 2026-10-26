@@ -35,14 +35,14 @@ public class PageUtil {
      * @return 总页数
      */
     public static int getTotalPage(Integer size, Integer total) {
-        if (size == null) {
+        if (size == null || size == 0) {
             if (total == null || total == 0) {
                 return 0;
             }
             return 1;
         }
 
-        if (total == null || total < 0) {
+        if (total == null || total <= 0) {
             return 0;
         }
         return total / size + (total % size == 0 ? 0 : 1);
