@@ -86,6 +86,7 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
         Object value;
         if (enumSupport) {
             value = cs.getObject(columnIndex, this.enumSupportType);
+            value = TypeConvertUtil.convert(value, this.enumSupportType);
         } else {
             value = cs.getString(columnIndex);
         }
