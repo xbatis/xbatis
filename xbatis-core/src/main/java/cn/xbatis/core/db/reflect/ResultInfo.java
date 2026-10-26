@@ -687,11 +687,11 @@ public class ResultInfo {
         Class<?>[] valueTypes = new Class[properties.length];
         TypeHandler<?>[] valuesTypeHandler = new TypeHandler[properties.length];
         for (int i = 0; i < properties.length; i++) {
-
-            TableFieldInfo fetchFieldInfo = putTableInfo.getFieldInfo(putValue.property());
+            String property = properties[i].trim();
+            TableFieldInfo fetchFieldInfo = putTableInfo.getFieldInfo(property);
 
             if (Objects.isNull(fetchFieldInfo)) {
-                throw new NotTableFieldException(clazz, path, putTableInfo.getType(), putValue.property());
+                throw new NotTableFieldException(clazz, path, putTableInfo.getType(), property);
             }
             //创建前缀
             tableCount = createPrefix(putTableInfo.getType(), storey, parseResult.tablePrefixes, tableCount);
