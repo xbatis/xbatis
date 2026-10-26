@@ -32,7 +32,6 @@ public class OptimisticLockSQLListener implements SQLListener {
             return;
         }
         XbatisTable xbatisTable = (XbatisTable) dataset;
-
         if (source instanceof UpdateChain) {
             UpdateChain update = (UpdateChain) source;
             if (update.isOptimisticLock()) {

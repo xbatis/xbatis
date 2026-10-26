@@ -16,10 +16,15 @@ package cn.xbatis.core.util;
 
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
+import cn.xbatis.core.mybatis.mapper.context.CmdParamUtil;
+import cn.xbatis.core.mybatis.mapper.context.VersionValue;
 import cn.xbatis.core.sql.executor.BaseUpdate;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.ConditionBlock;
 import db.sql.api.impl.cmd.basic.Table;
+import db.sql.api.impl.cmd.condition.Eq;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -35,20 +40,48 @@ public class OptimisticLockUtil {
      * @return 版本后 +1 是否成功
      */
     public static boolean versionPlus1(TableInfo tableInfo, BaseUpdate<?> update) {
-        //不管有没有乐观锁，都加上set version +1
         if (tableInfo.getVersionFieldInfo() == null) {
             return false;
         }
+
+        //不管有没有乐观锁值，都加上set version +1 或者 设置新的时间
         Table table = update.$().table(tableInfo.getType());
         db.sql.api.impl.cmd.basic.TableField versionField = update.$().field(table, tableInfo.getVersionFieldInfo().getColumnName());
-        if (tableInfo.getVersionFieldInfo().getFieldInfo().getTypeClass() == Date.class) {
-            update.set(versionField, new Date(System.currentTimeMillis()));
-        } else if (tableInfo.getVersionFieldInfo().getFieldInfo().getTypeClass() == LocalDateTime.class) {
-            update.set(versionField, LocalDateTime.now());
-        } else {
-            update.set(versionField, Methods.tpl("{0} + 1", versionField));
+
+        Object versionOldValue = null;
+        if (tableInfo.getVersionFieldInfo().getFieldInfo().getTypeClass() == LocalDateTime.class) {
+            versionOldValue = getNewVersionValueFormUpdate(tableInfo, update);
+            if (versionOldValue == null) {
+                versionOldValue = LocalDateTime.now();
+            }
+        } else if (tableInfo.getVersionFieldInfo().getFieldInfo().getTypeClass() == Date.class) {
+            versionOldValue = getNewVersionValueFormUpdate(tableInfo, update);
+            if (versionOldValue == null) {
+                versionOldValue = new Date(System.currentTimeMillis());
+            }
         }
+
+        if (versionOldValue == null) {
+            versionOldValue = Methods.tpl("{0} + 1", versionField);
+        }
+
+        update.set(versionField, CmdParamUtil.build(tableInfo.getVersionFieldInfo(), versionOldValue));
         return true;
+    }
+
+    private static Object getNewVersionValueFormUpdate(TableInfo tableInfo, BaseUpdate<?> update) {
+        ConditionChain extConditionChain = update.$where().getExtConditionChain();
+        if (extConditionChain != null && extConditionChain.hasContent()) {
+            for (ConditionBlock conditionBlock : extConditionChain.getConditionBlocks()) {
+                if (conditionBlock.getCondition() instanceof Eq) {
+                    Eq eq = (Eq) conditionBlock.getCondition();
+                    if (eq.getValue() instanceof VersionValue) {
+                        return ((VersionValue) eq.getValue()).getNewVersion();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 
@@ -72,6 +105,6 @@ public class OptimisticLockUtil {
         }
 
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
-        where.eq($.field(entity.getClass(), versionFieldInfo.getField().getName(), 1), version);
+        where.eq($.field(entity.getClass(), versionFieldInfo.getField().getName(), 1), CmdParamUtil.build(versionFieldInfo, version));
     }
 }

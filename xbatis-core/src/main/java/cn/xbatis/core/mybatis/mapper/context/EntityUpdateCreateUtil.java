@@ -27,6 +27,7 @@ import cn.xbatis.core.util.DefaultValueUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.core.util.TableInfoUtil;
 import cn.xbatis.db.SplitTableException;
+import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
@@ -107,11 +108,11 @@ public class EntityUpdateCreateUtil {
                     continue;
                 }
                 //乐观锁+1
-                Object version = VersionUtil.plus(value);
+                Object newVersion = VersionUtil.plus(value);
                 //乐观锁条件
-                update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), CmdParamUtil.build(tableFieldInfo, value));
+                update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), new VersionValue((BasicValue) CmdParamUtil.build(tableFieldInfo, value), newVersion));
                 //乐观锁回写
-                TableInfoUtil.setValue(tableFieldInfo, entity, version);
+                TableInfoUtil.setValue(tableFieldInfo, entity, newVersion);
                 continue;
             }
 

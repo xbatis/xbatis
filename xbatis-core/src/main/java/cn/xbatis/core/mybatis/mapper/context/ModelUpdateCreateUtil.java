@@ -28,6 +28,7 @@ import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.core.util.StringPool;
 import cn.xbatis.db.Model;
 import cn.xbatis.db.SplitTableException;
+import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
@@ -112,11 +113,11 @@ public class ModelUpdateCreateUtil {
                     continue;
                 }
                 //乐观锁+1
-                Object version = VersionUtil.plus(value);
+                Object newVersion = VersionUtil.plus(value);
                 //乐观锁条件
-                update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), CmdParamUtil.build(modelFieldInfo, value));
+                update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), new VersionValue((BasicValue) CmdParamUtil.build(modelFieldInfo, value), newVersion));
                 //乐观锁回写
-                ModelInfoUtil.setValue(modelFieldInfo, model, version);
+                ModelInfoUtil.setValue(modelFieldInfo, model, newVersion);
                 continue;
             }
 

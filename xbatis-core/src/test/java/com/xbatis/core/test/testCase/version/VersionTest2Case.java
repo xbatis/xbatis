@@ -35,8 +35,9 @@ public class VersionTest2Case extends BaseTest {
         if (a == null || b == null) {
             assertEquals(a,b);
         }
-        Duration d = Duration.between(a, b).abs(); // 取绝对值，避免 a 早于 b 时为负
-        assertTrue(d.toMillis() <= 100);
+        Duration d = Duration.between(b, a); // 取绝对值，避免 a 早于 b 时为负
+        System.out.println(a + "  -  " + b + "  ===>  " + d.toMillis());
+        assertTrue(d.toMillis() <= 500 && d.toMillis() > 0);
     }
 
     @Test

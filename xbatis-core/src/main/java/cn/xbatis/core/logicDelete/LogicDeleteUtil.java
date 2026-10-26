@@ -18,6 +18,7 @@ import cn.xbatis.core.XbatisGlobalConfig;
 import cn.xbatis.core.db.reflect.TableFieldInfo;
 import cn.xbatis.core.db.reflect.TableInfo;
 import cn.xbatis.core.mybatis.mapper.BasicMapper;
+import cn.xbatis.core.mybatis.mapper.context.CmdParamUtil;
 import cn.xbatis.core.sql.executor.BaseUpdate;
 import cn.xbatis.core.sql.executor.Update;
 import cn.xbatis.core.sql.executor.XbatisTable;
@@ -124,12 +125,11 @@ public final class LogicDeleteUtil {
     public static void addLogicDeleteUpdateSets(BaseUpdate baseUpdate, TableInfo tableInfo, Map<String, Object> defaultValueContext) {
         Class entityType = tableInfo.getType();
         TableField logicDeleteTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteFieldInfo().getField().getName(), 1);
-        baseUpdate.set(logicDeleteTableField, getLogicAfterValue(tableInfo.getLogicDeleteFieldInfo(), defaultValueContext));
-
+        baseUpdate.set(logicDeleteTableField, CmdParamUtil.build(tableInfo.getLogicDeleteFieldInfo(), getLogicAfterValue(tableInfo.getLogicDeleteFieldInfo(), defaultValueContext)));
 
         if (tableInfo.getLogicDeleteTimeFieldInfo() != null) {
             TableField logicDeleteTimeTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteTimeFieldInfo().getField().getName(), 1);
-            baseUpdate.set(logicDeleteTimeTableField, getLogicDeleteTimeValue(tableInfo));
+            baseUpdate.set(logicDeleteTimeTableField, CmdParamUtil.build(tableInfo.getLogicDeleteFieldInfo(), getLogicDeleteTimeValue(tableInfo)));
         }
     }
 
