@@ -221,7 +221,14 @@ public interface BasicMapper extends BaseMapper, BasicGetMapper, BasicExistsMapp
         }
 
         Integer number = pager.get(PagerField.NUMBER);
-        query.limit(PageUtil.getOffset(number, size), size);
+        if (number == null) {
+            number = 1;
+        }
+
+        if (size != null && size > -1) {
+            query.limit(PageUtil.getOffset(number, size), size);
+        }
+
         List<?> list = this.list(query);
         pager.set(PagerField.RESULTS, list);
         if ((executeCount == null || executeCount) && (size == null || size < 0)) {

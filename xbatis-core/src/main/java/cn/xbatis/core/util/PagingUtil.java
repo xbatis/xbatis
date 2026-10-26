@@ -132,6 +132,9 @@ public final class PagingUtil {
 
     public static String getLimitedSQL(IDbType dbType, IPager<?> pager, String sql) {
         Integer number = pager.get(PagerField.NUMBER);
+        if (number == null) {
+            number = 1;
+        }
         Integer size = pager.get(PagerField.SIZE);
         if (size == null || size < 0) {
             return sql;
