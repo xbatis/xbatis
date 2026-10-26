@@ -71,7 +71,7 @@ public final class MappedStatementUtil {
         }
 
         if (dbType == null && boundSql != null && boundSql instanceof IDbTypeContext) {
-            dbType = ((IDbTypeContext) parameterObject).getDbType();
+            dbType = ((IDbTypeContext) boundSql).getDbType();
         }
 
         if (dbType == null) {
