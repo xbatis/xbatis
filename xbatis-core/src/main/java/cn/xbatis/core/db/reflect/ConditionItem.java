@@ -118,7 +118,7 @@ public class ConditionItem {
         }
     }
 
-    private Object cast(Object value, Class<?> type) {
+    private Object cast(Object value) {
         return TypeConvertUtil.convert(value, tableFieldInfo.getFieldInfo().getTypeClass());
     }
 
@@ -153,12 +153,12 @@ public class ConditionItem {
             if (this.annotation.cast()) {
                 if (value instanceof Collection) {
                     Collection collection = (Collection) value;
-                    value = collection.stream().map(i -> cast(i, tableFieldInfo.getFieldInfo().getTypeClass())).collect(Collectors.toList());
+                    value = collection.stream().map(i -> cast(i)).collect(Collectors.toList());
                 } else if (value instanceof Object[]) {
                     Object[] values = (Object[]) value;
-                    value = Arrays.stream(values).map(i -> cast(i, tableFieldInfo.getFieldInfo().getTypeClass())).collect(Collectors.toList());
+                    value = Arrays.stream(values).map(i -> cast(i)).collect(Collectors.toList());
                 } else {
-                    value = cast(value, tableFieldInfo.getFieldInfo().getTypeClass());
+                    value = cast(value);
                 }
             }
             if (annotation.toEndDayTime()) {
