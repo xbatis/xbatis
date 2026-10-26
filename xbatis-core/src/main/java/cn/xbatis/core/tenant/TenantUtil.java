@@ -187,6 +187,9 @@ public final class TenantUtil {
         TableFieldInfo tenantIdFieldInfo = tableInfo.getTenantIdFieldInfo();
         if (tid instanceof TenantId) {
             TenantId tenantId = (TenantId) tid;
+            if (tenantId.getValues() == null || tenantId.getValues().length == 0) {
+                return;
+            }
             if (tenantId.isMultiValue()) {
                 List<Cmd> values = new ArrayList<>();
                 for (Serializable id : tenantId.getValues()) {
