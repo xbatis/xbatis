@@ -93,7 +93,7 @@ public class MultiValueTypeHandler extends GenericTypeHandler<Object> {
                 if (s.isEmpty()) {
                     continue;
                 }
-                newArr[i] = TypeConvertUtil.convert(arr[i], componentType);
+                newArr[i] = TypeConvertUtil.convert(s, componentType);
                 i++;
             }
             return newArr;

@@ -133,7 +133,7 @@ public final class PagingUtil {
     public static String getLimitedSQL(IDbType dbType, IPager<?> pager, String sql) {
         Integer number = pager.get(PagerField.NUMBER);
         Integer size = pager.get(PagerField.SIZE);
-        if (size < 0) {
+        if (size == null || size < 0) {
             return sql;
         }
         int offset = PageUtil.getOffset(number, size);
