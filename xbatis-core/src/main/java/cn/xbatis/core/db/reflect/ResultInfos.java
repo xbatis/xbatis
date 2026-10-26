@@ -35,17 +35,13 @@ public class ResultInfos {
         if (!clazz.isAnnotationPresent(ResultEntity.class)) {
             throw new NotVOClassException(clazz);
         }
-        if (CACHE.containsKey(clazz)) {
-            return CACHE.get(clazz);
-        }
-        synchronized (clazz) {
-            if (CACHE.containsKey(clazz)) {
-                return CACHE.get(clazz);
-            }
-            ResultInfo resultInfo = new ResultInfo(clazz);
-            CACHE.put(clazz, resultInfo);
+        ResultInfo resultInfo = CACHE.get(clazz);
+        if (resultInfo != null) {
             return resultInfo;
         }
+        resultInfo = new ResultInfo(clazz);
+        ResultInfo existing = CACHE.putIfAbsent(clazz, resultInfo);
+        return existing != null ? existing : resultInfo;
     }
 
     public static boolean contains(Class entity) {
