@@ -37,14 +37,14 @@ public final class ListMethodUtil {
 
     public static <T> List<T> listByIds(BasicMapper basicMapper, TableInfo tableInfo, Serializable[] ids, Getter<T>[] selectFields) {
         if (ids == null || ids.length == 0) {
-            return new ArrayList();
+            return new ArrayList<>();
         }
         return listByIds(basicMapper, tableInfo, selectFields, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
     public static <T, ID extends Serializable> List<T> listByIds(BasicMapper basicMapper, TableInfo tableInfo, Collection<ID> ids, Getter<T>[] selectFields) {
         if (ids == null || ids.isEmpty()) {
-            return new ArrayList();
+            return new ArrayList<>();
         }
         return listByIds(basicMapper, tableInfo, selectFields, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }

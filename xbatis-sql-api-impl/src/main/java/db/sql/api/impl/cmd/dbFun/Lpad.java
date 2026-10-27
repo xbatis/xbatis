@@ -33,7 +33,7 @@ public class Lpad extends BasicFunction<Lpad> {
     public Lpad(Cmd key, int length, Cmd pad) {
         super(SqlConst.LPAD, key);
         this.length = length;
-        this.pad = Methods.cmd(pad);
+        this.pad = pad;
     }
 
     @Override

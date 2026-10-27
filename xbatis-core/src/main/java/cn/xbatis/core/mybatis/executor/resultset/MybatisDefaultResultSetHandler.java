@@ -919,7 +919,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private <T> List<T> fetchDataWithQuery(FetchInfo fetchInfo, Query<?> query, Collection queryValueList, List<FetchInfo> mergeGroupFetchInfos) {
         if (queryValueList.isEmpty()) {
-            return new ArrayList();
+            return new ArrayList<>();
         }
         if (Objects.nonNull(query.$where().getConditionChain())) {
             query.$where().getConditionChain().getConditionBlocks().clear();
@@ -966,7 +966,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     protected <T> List<T> fetchData(FetchInfo mainFetchInfo, Collection conditionList, boolean single, List<FetchInfo> mergeGroupFetchInfos, Consumer<Query> queryConsumer) {
         if (conditionList.isEmpty()) {
-            return new ArrayList();
+            return new ArrayList<>();
         }
 
         Query<?> query = FetchQuery.create();
