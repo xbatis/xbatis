@@ -41,7 +41,7 @@ public class JsonContainsPath extends BasicFunction<JsonContainsPath> implements
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
         this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
-        sqlBuilder.append(this.allMatch ? "'ONE'" : "'ALL'");
+        sqlBuilder.append(this.allMatch ? "'ALL'" : "'ONE'");
         for (String path : paths) {
             sqlBuilder.append(SqlConst.DELIMITER);
             sqlBuilder.append(SqlConst.SINGLE_QUOT);
