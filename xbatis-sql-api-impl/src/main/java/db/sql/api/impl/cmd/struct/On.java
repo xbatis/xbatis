@@ -116,6 +116,6 @@ public class On implements IOn<On, Join, Table, TableField, Cmd, Object, Conditi
 
     @Override
     public boolean contain(Cmd cmd) {
-        return CmdUtils.contain(cmd, this.conditionChain);
+        return CmdUtils.contain(cmd, this.conditionChain) || CmdUtils.contain(cmd, this.extConditionChain);
     }
 }
