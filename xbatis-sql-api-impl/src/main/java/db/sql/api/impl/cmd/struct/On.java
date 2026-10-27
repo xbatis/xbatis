@@ -70,7 +70,7 @@ public class On implements IOn<On, Join, Table, TableField, Cmd, Object, Conditi
             }
         }
         this.conditionChain().appendCondition(Methods.eq(leftOnColumn, rightOnColumn));
-        return false;
+        return true;
     }
 
     @Override
