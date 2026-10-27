@@ -17,7 +17,8 @@ public class DefaultValueContextUtil {
         Iterator<Map.Entry<String, Object>> it = defaultValueContext.entrySet().iterator();
         while (it.hasNext()) {
             //移除非同级的缓存 例如当前时间
-            if (it.next().getKey().contains("{NOW}")) {
+            String key = it.next().getKey();
+            if (key.contains("{NOW}") || key.contains("{TODAY}")) {
                 it.remove();
             }
         }
