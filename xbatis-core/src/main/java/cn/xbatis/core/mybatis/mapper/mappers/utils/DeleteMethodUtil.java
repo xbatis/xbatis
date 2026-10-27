@@ -45,10 +45,16 @@ public final class DeleteMethodUtil {
     }
 
     public static int deleteByIds(BasicMapper basicMapper, TableInfo tableInfo, Serializable[] ids) {
+        if (ids == null || ids.length == 0) {
+            return 0;
+        }
         return delete(basicMapper, tableInfo, WhereUtil.create(tableInfo, w -> WhereUtil.appendIdsWhere(w, tableInfo, ids)));
     }
 
     public static <ID extends Serializable> int deleteByIds(BasicMapper basicMapper, TableInfo tableInfo, Collection<ID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
         return delete(basicMapper, tableInfo, WhereUtil.create(tableInfo, w -> WhereUtil.appendIdsWhere(w, tableInfo, ids)));
     }
 
