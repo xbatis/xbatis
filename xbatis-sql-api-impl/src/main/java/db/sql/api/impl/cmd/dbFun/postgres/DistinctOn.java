@@ -26,7 +26,7 @@ public class DistinctOn extends BasicFunction<DistinctOn> implements NoAfterDeli
 
     private Cmd[] onKeys;
 
-    public DistinctOn(Cmd... onKeys) {
+    public DistinctOn(Cmd[] onKeys) {
         super(SqlConst.DISTINCT_ON, null);
         this.onKeys = onKeys;
     }

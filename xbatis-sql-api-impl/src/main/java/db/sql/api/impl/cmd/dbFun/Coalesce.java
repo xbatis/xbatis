@@ -32,7 +32,7 @@ public class Coalesce extends BasicFunction<Coalesce> {
 
     private final Cmd[] values;
 
-    public Coalesce(Cmd key, Object... values) {
+    public Coalesce(Cmd key, Object[] values) {
         super(COALESCE, key);
 
         this.values = Arrays.stream(values)

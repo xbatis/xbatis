@@ -29,7 +29,7 @@ public class PostgresFunctions {
         if (Objects.isNull(this.key)) {
             throw new RuntimeException("Need set distinct on key ?");
         }
-        return new DistinctOn(this.key);
+        return new DistinctOn(new Cmd[]{this.key});
     }
 
     public DistinctOn distinctOn(Cmd... onKeys) {

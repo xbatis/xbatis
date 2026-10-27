@@ -32,7 +32,7 @@ public class Concat extends BasicFunction<Concat> {
 
     private final Cmd[] values;
 
-    public Concat(Cmd key, Object... values) {
+    public Concat(Cmd key, Object[] values) {
         super(CONCAT, key);
         this.values = Arrays.stream(values)
                 .filter(Objects::nonNull)

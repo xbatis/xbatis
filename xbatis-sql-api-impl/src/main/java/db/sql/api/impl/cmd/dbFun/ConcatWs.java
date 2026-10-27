@@ -33,7 +33,7 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
 
     private final Cmd split;
 
-    public ConcatWs(Cmd key, String split, Object... values) {
+    public ConcatWs(Cmd key, String split, Object[] values) {
         super(CONCAT_WS, key);
         this.split = Methods.cmd(split);
         this.values = Arrays.stream(values)
