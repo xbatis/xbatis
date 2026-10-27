@@ -834,8 +834,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                         }
 
                         List<FetchPut> needPutFetchPuts = waitFetchPutValueMap.get(secondEntry.getKey()).get(matchValue);
-                        for (FetchPut fetchPut : needPutFetchPuts) {
-                            fetchPut.putValue(matchValue, result);
+                        if (needPutFetchPuts != null) {
+                            for (FetchPut fetchPut : needPutFetchPuts) {
+                                fetchPut.putValue(matchValue, result);
+                            }
                         }
                     }
 
@@ -888,15 +890,17 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
 
                         List<FetchPut> needPutFetchPuts = waitFetchPutValueMap.get(secondEntry.getKey()).get(matchValue);
-                        if (firstFetchInfo.getTargetSelect() == null) {
-                            for (FetchPut fetchPut : needPutFetchPuts) {
-                                fetchPut.putValue(matchValue, result);
-                            }
-                        } else {
-                            for (FetchPut fetchPut : needPutFetchPuts) {
-                                Object value = fetchPut.getFetchInfo().getTargetSelectTableFieldInfo().getValue(result);
-                                value = TypeConvertUtil.convert(value, fetchPut.getFetchInfo().getFieldInfo().getFinalClass());
-                                fetchPut.putValue(matchValue, value);
+                        if (needPutFetchPuts != null) {
+                            if (firstFetchInfo.getTargetSelect() == null) {
+                                for (FetchPut fetchPut : needPutFetchPuts) {
+                                    fetchPut.putValue(matchValue, result);
+                                }
+                            } else {
+                                for (FetchPut fetchPut : needPutFetchPuts) {
+                                    Object value = fetchPut.getFetchInfo().getTargetSelectTableFieldInfo().getValue(result);
+                                    value = TypeConvertUtil.convert(value, fetchPut.getFetchInfo().getFieldInfo().getFinalClass());
+                                    fetchPut.putValue(matchValue, value);
+                                }
                             }
                         }
                     }
