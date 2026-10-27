@@ -19,8 +19,11 @@ import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
+
+import java.util.Arrays;
 
 import static db.sql.api.impl.tookit.SqlConst.CONCAT_WS;
 
@@ -33,19 +36,12 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
     public ConcatWs(Cmd key, String split, Object... values) {
         super(CONCAT_WS, key);
         this.split = Methods.cmd(split);
-        Cmd[] vs = new Cmd[values.length];
-        int i = 0;
-        for (Object value : values) {
-            if (value == null) {
-                continue;
-            }
-            if (value instanceof Cmd) {
-                vs[i++] = (Cmd) value;
-            } else {
-                vs[i++] = Methods.cmd(value);
-            }
-        }
-        this.values = vs;
+        this.values = Arrays.stream(values)
+                .filter(Objects::nonNull)
+                .map(i -> {
+                    return i instanceof Cmd ? i : Methods.cmd(i);
+                })
+                .toArray(Cmd[]::new);
     }
 
     private static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, char delimiter) {

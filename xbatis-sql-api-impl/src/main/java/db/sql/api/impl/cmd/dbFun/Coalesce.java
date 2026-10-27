@@ -17,8 +17,11 @@ package db.sql.api.impl.cmd.dbFun;
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
+
+import java.util.Arrays;
 
 import static db.sql.api.impl.tookit.SqlConst.COALESCE;
 
@@ -32,19 +35,12 @@ public class Coalesce extends BasicFunction<Coalesce> {
     public Coalesce(Cmd key, Object... values) {
         super(COALESCE, key);
 
-        Cmd[] vs = new Cmd[values.length];
-        int i = 0;
-        for (Object value : values) {
-            if (value == null) {
-                continue;
-            }
-            if (value instanceof Cmd) {
-                vs[i++] = (Cmd) value;
-            } else {
-                vs[i++] = Methods.cmd(value);
-            }
-        }
-        this.values = vs;
+        this.values = Arrays.stream(values)
+                .filter(Objects::nonNull)
+                .map(i -> {
+                    return i instanceof Cmd ? i : Methods.cmd(i);
+                })
+                .toArray(Cmd[]::new);
     }
 
     private static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, char delimiter) {
