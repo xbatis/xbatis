@@ -1397,6 +1397,18 @@ public final class Methods {
     }
 
     /**
+     * 日期差计算 column - another；注意顺序
+     *
+     * @param column 列
+     * @return DateDiff
+     */
+    public static DateDiff dateDiff(Cmd column, Object another) {
+        Objects.requireNonNull(column);
+        Objects.requireNonNull(another);
+        return new DateDiff(column, cmd(another));
+    }
+
+    /**
      * 日期增加
      *
      * @param column 列

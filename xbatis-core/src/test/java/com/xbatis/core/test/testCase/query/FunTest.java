@@ -653,10 +653,10 @@ public class FunTest extends BaseTest {
 
     @Test
     public void dateDiff() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
-            //oracle 不支持
-            return;
-        }
+//        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE.getDbModel() == DbModel.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+//            //oracle 不支持
+//            return;
+//        }
 
 
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -668,6 +668,32 @@ public class FunTest extends BaseTest {
                     .returnType(Integer.class)
                     .get();
             assertEquals(diff, 1);
+        }
+    }
+
+
+    @Test
+    public void dateDiff2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer diff = QueryChain.of(sysUserMapper)
+                    .select(Methods.dateDiff(Methods.value("2023-10-10 18:12:11"), "2022-09-10 18:12:10"))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(Integer.class)
+                    .get();
+            assertEquals(diff, 395);
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer diff = QueryChain.of(sysUserMapper)
+                    .select(Methods.dateDiff(Methods.value("2022-10-10 18:12:11"), "2023-09-10 18:12:10"))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(Integer.class)
+                    .get();
+            assertEquals(diff, -335);
         }
     }
 
