@@ -688,11 +688,11 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     Object first = when.getValues().get(0);
                     Object second = when.getValues().get(1);
                     if (dbValue instanceof LocalDateTime) {
-                        if (!(((LocalDateTime) dbValue).isBefore((LocalDateTime)first) || ((LocalDateTime) dbValue).isAfter((LocalDateTime)second))) {
+                        if (!(((LocalDateTime) dbValue).isBefore((LocalDateTime) first) || ((LocalDateTime) dbValue).isAfter((LocalDateTime) second))) {
                             return false;
                         }
                     } else {
-                        if (!(((Number) dbValue).doubleValue() < ((Number)first).doubleValue() || ((Number) dbValue).doubleValue() > ((Number)second).doubleValue())) {
+                        if (!(((Number) dbValue).doubleValue() < ((Number) first).doubleValue() || ((Number) dbValue).doubleValue() > ((Number) second).doubleValue())) {
                             return false;
                         }
                     }
