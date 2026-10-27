@@ -39,7 +39,7 @@ public class QuerySQLUtil {
             if (cmd instanceof ILimit) {
                 findLimit = true;
                 limit = (Limit) cmd;
-                if (limit == null || limit.getLimit() < 0) {
+                if (limit.getLimit() < 0) {
                     findLimit = false;
                 }
                 continue;
@@ -55,13 +55,6 @@ public class QuerySQLUtil {
             //没有分页
             return CmdUtils.join(null, query, context, parentSql, before);
         }
-//        IPagingProcessor pagingProcessor = PagingProcessorFactory.getProcessor(context.getDbType());
-//        if(pagingProcessor instanceof SQLServerRowNumberOverPagingProcessor){
-//            before = before.stream().filter(item->!(item instanceof ISelect) && !(item instanceof IOrderBy)).collect(Collectors.toList());
-//        }
-        //StringBuilder sql = CmdUtils.join(module, query, context, new StringBuilder(200), before);
-        // parentSql.append(pagingProcessor.buildPagingSQL(context, parent, query, sql, limit));
-        //parentSql.append(CmdUtils.join(module, query, context, new StringBuilder(), after));
         return PagingProcessorFactory.getProcessor(context.getDbType()).buildPagingSQL(context, module, parent, query, parentSql, before, after, limit);
     }
 }
