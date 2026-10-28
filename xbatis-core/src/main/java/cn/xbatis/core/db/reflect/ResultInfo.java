@@ -191,7 +191,7 @@ public class ResultInfo {
 
             if (annotationMap.containsKey(NestedResultEntity.class)) {
                 if (resultId) {
-                    throw buildException(clazz, fieldInfo.getField(), "@Fetch", "", " field can't marker @ResultId");
+                    throw buildException(clazz, fieldInfo.getField(), "@NestedResultEntity", "", " field can't marker @ResultId");
                 }
 
                 //内嵌类字段
@@ -420,7 +420,7 @@ public class ResultInfo {
         }
 
         TableFieldInfo tableFieldInfo = currentTableInfo.getFieldInfo(targetFieldName);
-        if (Objects.isNull(nestedResultEntityField) && fieldTypeIsEntity) {
+        if (Objects.nonNull(nestedResultEntityField) && fieldTypeIsEntity) {
             if (!tableFieldInfo.getTableFieldAnnotation().exists()) {
                 return tableCount;
             }
