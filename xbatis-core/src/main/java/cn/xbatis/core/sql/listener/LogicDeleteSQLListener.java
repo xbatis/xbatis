@@ -40,10 +40,7 @@ public class LogicDeleteSQLListener implements SQLListener {
             return;
         }
         Where where;
-        if (source instanceof AbstractDelete) {
-            AbstractDelete delete = (AbstractDelete) source;
-            where = delete.$where();
-        } else if (source instanceof AbstractUpdate) {
+        if (source instanceof AbstractUpdate) {
             BaseUpdate update = (BaseUpdate) source;
             where = update.$where();
         } else if (source instanceof AbstractQuery) {
