@@ -201,7 +201,6 @@ public final class WhereUtil {
             XbatisTableField idXbatisTableField = (XbatisTableField) idTableField;
             List<Cmd> values = new ArrayList<>(ids.length);
             for (Serializable id : ids) {
-                Objects.requireNonNull(id, "id can't be null");
                 values.add(CmdParamUtil.build(idXbatisTableField.getTableFieldInfo(), id));
             }
             where.and(Methods.in(idTableField, values));
