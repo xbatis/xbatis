@@ -20,6 +20,7 @@ import cn.xbatis.db.SplitTableException;
 import cn.xbatis.db.annotations.TableSplitter;
 import db.sql.api.impl.cmd.basic.BasicValue;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -50,8 +51,9 @@ public class TableSplitUtil {
         } else if (value.getClass().isArray()) {
             //假如是数组
             List list = new ArrayList();
-            Object[] arr = (Object[]) value;
-            for (Object o : arr) {
+            int len = Array.getLength(value);
+            for (int i = 0; i < len; i++) {
+                Object o = Array.get(value, i);
                 if (o == null) {
                     continue;
                 }
