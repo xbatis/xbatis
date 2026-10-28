@@ -62,12 +62,14 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
                 }
             }
             try (ResultSet rs = stmt.getGeneratedKeys()) {
-                final ResultSetMetaData rsmd = rs.getMetaData();
+                if (rs != null) {
+                    final ResultSetMetaData rsmd = rs.getMetaData();
 
-                if (rsmd.getColumnCount() < keyProperties.length) {
-                    // Error?
-                } else {
-                    this.assignKeys(configuration, rs, setIdMethod);
+                    if (rsmd.getColumnCount() < keyProperties.length) {
+                        // Error?
+                    } else {
+                        this.assignKeys(configuration, rs, setIdMethod);
+                    }
                 }
             } catch (Exception e) {
                 throw new ExecutorException("Error getting generated key or setting result to parameter object. Cause: " + e, e);
