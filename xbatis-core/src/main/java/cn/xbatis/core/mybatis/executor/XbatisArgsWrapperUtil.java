@@ -52,7 +52,7 @@ public class XbatisArgsWrapperUtil {
                     Where where = (Where) param;
                     if (where != null && where.hasContent()) {
                         cmdSql = ((Cmd) param).sql(null, null, sqlBuilderContext, new StringBuilder());
-                        sql.append(cmdSql.toString().replaceFirst(new String(SqlConst.WHERE), ""));
+                        sql.append(cmdSql.toString().replace(new String(SqlConst.WHERE), ""));
                     } else {
                         Methods.TRUE().sql(null, null, sqlBuilderContext, sql);
                     }
