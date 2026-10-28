@@ -151,7 +151,7 @@ public class ResultInfo {
 
         for (Field field : fieldList) {
             field.setAccessible(true);
-            String fieldPath = path + "." + field.getName();
+            String fieldPath = path == null || path.isEmpty() ? field.getName() : path + "." + field.getName();
 
             FieldInfo fieldInfo = new FieldInfo(root, field);
             Map<Class<? extends Annotation>, Annotation> annotationMap = AnnotationUtil.getAnnotations(root, field, fieldInfo.getTypeClass()
@@ -324,7 +324,7 @@ public class ResultInfo {
 
         for (Field field : FieldUtil.getFields(targetType)) {
             field.setAccessible(true);
-            String fieldPath = path + "." + field.getName();
+            String fieldPath = path == null || path.isEmpty() ? field.getName() : path + "." + field.getName();
             FieldInfo fieldInfo = new FieldInfo(root, field);
             Map<Class<? extends Annotation>, Annotation> annotationMap = AnnotationUtil.getAnnotations(root, field, fieldInfo.getTypeClass()
                     , ResultField.class, ResultCalcField.class, Fetch.class, NestedResultEntity.class, ResultEntityField.class
