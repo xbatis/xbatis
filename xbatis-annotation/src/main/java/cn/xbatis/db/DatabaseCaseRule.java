@@ -26,7 +26,7 @@ public enum DatabaseCaseRule {
     // 全小写
     LOWERCASE,
 
-    DatabaseNamingRule() {
+    DatabaseCaseRule() {
 
     };
 
