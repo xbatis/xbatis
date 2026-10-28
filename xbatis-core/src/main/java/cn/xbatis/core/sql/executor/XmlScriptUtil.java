@@ -46,7 +46,7 @@ public class XmlScriptUtil {
 
         sql = cmd.sql(cmd, cmd, sqlBuilderContext, new StringBuilder()).toString();
         if (ignoreTag != null) {
-            sql = sql.replaceFirst(ignoreTag, "");
+            sql = sql.replace(ignoreTag, "");
         }
         XmlScript xmlScript = new XmlScript(sql, scriptParams);
         return xmlScript;
