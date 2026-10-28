@@ -133,7 +133,7 @@ public final class XbatisGlobalConfig {
             } else if (type == Integer.class) {
                 return (int) (System.currentTimeMillis() / 1000);
             } else if (type == String.class) {
-                return LocalDate.now().toString();
+                return TypeConvertUtil.convert(LocalDateTime.now(), String.class);
             }
             throw new RuntimeException("Inconsistent types：" + type);
         });
