@@ -33,6 +33,7 @@ public final class LambdaUtil {
     private static final Map<Object, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(1024);
     private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap(128);
     private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+    public static volatile boolean CACHE = true;
 
     private LambdaUtil() {
 
@@ -77,7 +78,11 @@ public final class LambdaUtil {
     }
 
     public static <T, R> LambdaFieldInfo<T> getFieldInfo(GetterFun<T, R> getter) {
-        return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter));
+        if (CACHE) {
+            return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter));
+        } else {
+            return getLambdaFieldInfo(getSerializedLambda(getter), getter);
+        }
     }
 
     public static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
