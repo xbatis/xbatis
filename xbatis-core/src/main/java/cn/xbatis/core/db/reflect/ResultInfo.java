@@ -358,9 +358,9 @@ public class ResultInfo {
                 //Fetch
                 Fetch fetch = (Fetch) annotationMap.get(Fetch.class);
                 FieldInfo fetchFieldInfo = new FieldInfo(targetType, sourceField);
-                Class fetchType = fetchFieldInfo.getFinalClass();
+                Class parseType = fetchFieldInfo.getFinalClass();
 
-                tableCount = parseFetch(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), fetchType, field, fetch, tableCount);
+                tableCount = parseFetch(root, fieldPath, parseResult, nestedResultEntity.storey(), tableInfo, nestedResultInfo.getResultFieldInfos(), parseType, field, fetch, tableCount);
                 continue;
             }
 
