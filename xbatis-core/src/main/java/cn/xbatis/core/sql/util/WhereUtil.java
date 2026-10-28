@@ -160,7 +160,6 @@ public final class WhereUtil {
 
         tableInfo.getIdFieldInfos().forEach(item -> {
             Object id = item.getValue(entity);
-
             Objects.requireNonNull(id, "id can't be null");
             where.eq($.field(tableInfo.getType(), item.getField().getName(), 1), CmdParamUtil.build(item, id));
         });
@@ -214,7 +213,6 @@ public final class WhereUtil {
      */
     public static <ID extends Serializable> void appendIdsWhere(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, Collection<ID> ids) {
         Objects.requireNonNull(ids, "id can't be null");
-        ids.forEach(id -> Objects.requireNonNull(id, "id can't be null"));
         appendWhereWithIdTableField(where, tableInfo, idTableField -> {
             XbatisTableField idXbatisTableField = (XbatisTableField) idTableField;
             List<Cmd> values = new ArrayList<>();
