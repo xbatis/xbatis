@@ -19,35 +19,21 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class UUIDv7 {
+    private static final AtomicLong STATE = new AtomicLong(0); // 高48位:ms时间戳 低16位:计数器
     private static final SecureRandom RANDOM = new SecureRandom();
-    private static final AtomicLong LAST_TIMESTAMP = new AtomicLong(0);
-    private static final AtomicLong COUNTER = new AtomicLong(0);
 
     public static UUID next() {
-        long timestamp = System.currentTimeMillis();
-        long lastTime = LAST_TIMESTAMP.get();
-
-        // 处理同一毫秒内的并发
-        if (timestamp == lastTime) {
-            COUNTER.incrementAndGet();
-        } else {
-            COUNTER.set(0);
-            LAST_TIMESTAMP.set(timestamp);
+        long ts = System.currentTimeMillis(), state, counter;
+        long now = ts << 16;
+        while (true) {
+            state = STATE.get();
+            long packed = Math.max(state & ~0xFFFFL, now); // 时钟回拨时沿用旧时间戳
+            counter = (packed == (state & ~0xFFFFL)) ? (state & 0xFFFFL) + 1 : 0;
+            if (counter > 0xFFFL) { Thread.yield(); continue; } // 单毫秒计数耗尽则自旋
+            if (STATE.compareAndSet(state, packed | counter)) { ts = packed >>> 16; break; }
         }
-
-        // 构造UUIDv7
-        long msb = ((timestamp & 0xFFFFFFFFFFFFL) << 16) |
-                (0x7000L) |
-                (RANDOM.nextInt(0x1000) & 0x0FFFL);
-
-        long lsb = RANDOM.nextLong();
-        lsb = (lsb & 0x3FFFFFFFFFFFFFFFL) | 0x8000000000000000L;
-
-        // 如果同一毫秒内，调整低位
-        if (timestamp == lastTime) {
-            lsb ^= COUNTER.get(); // 简单混合计数器
-        }
-
+        long msb = (ts << 16) | 0x7000L | (counter & 0xFFFL);
+        long lsb = (RANDOM.nextLong() & 0x3FFFFFFFFFFFFFFFL) | 0x8000000000000000L;
         return new UUID(msb, lsb);
     }
 
