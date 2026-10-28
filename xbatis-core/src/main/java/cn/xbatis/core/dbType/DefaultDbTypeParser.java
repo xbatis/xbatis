@@ -42,7 +42,13 @@ public class DefaultDbTypeParser implements DbTypeParser {
 
     protected String getKey(String jdbcUrl, int start) {
         int index = jdbcUrl.indexOf(':', start);
+        if (index == -1) {
+            return null;
+        }
         int end = jdbcUrl.indexOf(':', index + 1);
+        if (end == -1) {
+            return null;
+        }
         String key = jdbcUrl.substring(index, end + 1);
         if (":p6spy:".equals(key)) {
             return getKey(jdbcUrl, end);
@@ -52,8 +58,8 @@ public class DefaultDbTypeParser implements DbTypeParser {
 
     protected IDbType getDbType(String jdbcUrl) {
         String dbKey = getKey(jdbcUrl, 0);
-        if (":p6spy:".equals(dbKey)) {
-            dbKey = getKey(jdbcUrl, 9);
+        if (dbKey == null) {
+            return null;
         }
         IDbType dbType = DbTypes.getDbTypeByUrlKey(dbKey);
         if (dbType != null) {
@@ -62,10 +68,7 @@ public class DefaultDbTypeParser implements DbTypeParser {
 
         String lowerDbKey = dbKey.toLowerCase(Locale.ENGLISH);
         if (!lowerDbKey.equals(dbKey)) {
-            dbType = DbTypes.getDbTypeByUrlKey(dbKey);
-            if (dbType != null) {
-                return dbType;
-            }
+            return DbTypes.getDbTypeByUrlKey(lowerDbKey);
         }
         return null;
     }
