@@ -194,13 +194,11 @@ public final class WhereUtil {
      */
     public static void appendIdsWhere(db.sql.api.impl.cmd.struct.Where where, TableInfo tableInfo, Serializable[] ids) {
         Objects.requireNonNull(ids, "id can't be null");
-        for (Serializable id : ids) {
-            Objects.requireNonNull(id, "id can't be null");
-        }
         appendWhereWithIdTableField(where, tableInfo, idTableField -> {
             XbatisTableField idXbatisTableField = (XbatisTableField) idTableField;
             List<Cmd> values = new ArrayList<>(ids.length);
             for (Serializable id : ids) {
+                Objects.requireNonNull(id, "id can't be null");
                 values.add(CmdParamUtil.build(idXbatisTableField.getTableFieldInfo(), id));
             }
             where.and(Methods.in(idTableField, values));
