@@ -270,7 +270,7 @@ public class FetchInfo {
         String[] strs = value.split(",");
         for (int i = 0; i < strs.length; i++) {
             String str = strs[i];
-            String[] ss = str.trim().split(" ");
+            String[] ss = str.trim().split("\\s+");
             if (ss.length > 2) {
                 throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
             }
