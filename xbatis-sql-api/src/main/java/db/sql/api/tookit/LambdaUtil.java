@@ -33,7 +33,7 @@ public final class LambdaUtil {
     private static final Map<Object, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(1024);
     private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap(128);
     private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-    public static volatile boolean CACHE = true;
+    public static boolean CACHE = true;
 
     private LambdaUtil() {
 
