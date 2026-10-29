@@ -74,7 +74,6 @@ public final class DeleteMethodUtil {
         }
 
 
-
         Object version = null;
         if (tableInfo.getVersionFieldInfo() != null) {
             version = tableInfo.getVersionFieldInfo().getValue(entity);
@@ -90,7 +89,7 @@ public final class DeleteMethodUtil {
                         }
                     }
                 }
-                if(isDeleteById){
+                if (isDeleteById) {
                     throw new RuntimeException("Data has no version value");
                 }
             }

@@ -31,9 +31,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class VersionTest2Case extends BaseTest {
 
-    private void eqDate(LocalDateTime a,LocalDateTime b){
+    private void eqDate(LocalDateTime a, LocalDateTime b) {
         if (a == null || b == null) {
-            assertEquals(a,b);
+            assertEquals(a, b);
         }
         Duration d = Duration.between(b, a); // 取绝对值，避免 a 早于 b 时为负
         System.out.println(a + "  -  " + b + "  ===>  " + d.toMillis());
@@ -42,7 +42,7 @@ public class VersionTest2Case extends BaseTest {
 
     @Test
     public void insertTest() {
-        if (TestDataSource.DB_TYPE != DbType.H2){
+        if (TestDataSource.DB_TYPE != DbType.H2) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -53,13 +53,13 @@ public class VersionTest2Case extends BaseTest {
             VersionTest2Mapper.save(versionTest);
             System.out.println(versionTest);
             assertNotNull(versionTest.getId());
-            eqDate(LocalDateTime.now(),  VersionTest2Mapper.getById(versionTest.getId()).getVersion());
+            eqDate(LocalDateTime.now(), VersionTest2Mapper.getById(versionTest.getId()).getVersion());
         }
     }
 
     @Test
     public void updateTest() {
-        if (TestDataSource.DB_TYPE != DbType.H2){
+        if (TestDataSource.DB_TYPE != DbType.H2) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -74,22 +74,22 @@ public class VersionTest2Case extends BaseTest {
             versionTest = VersionTest2Mapper.getById(versionTest.getId());
 
             System.out.println(versionTest);
-            eqDate(LocalDateTime.now(),   versionTest.getVersion());
-            eqDate(LocalDateTime.now(),   VersionTest2Mapper.getById(versionTest.getId()).getVersion());
+            eqDate(LocalDateTime.now(), versionTest.getVersion());
+            eqDate(LocalDateTime.now(), VersionTest2Mapper.getById(versionTest.getId()).getVersion());
 
             versionTest.setName("我是3");
             VersionTest2Mapper.update(versionTest);
             versionTest = VersionTest2Mapper.getById(versionTest.getId());
 
             System.out.println(versionTest);
-            eqDate(LocalDateTime.now(),   versionTest.getVersion());
-            eqDate(LocalDateTime.now(),  VersionTest2Mapper.getById(versionTest.getId()).getVersion());
+            eqDate(LocalDateTime.now(), versionTest.getVersion());
+            eqDate(LocalDateTime.now(), VersionTest2Mapper.getById(versionTest.getId()).getVersion());
         }
     }
 
     @Test
     public void updateForceTest() {
-        if (TestDataSource.DB_TYPE != DbType.H2){
+        if (TestDataSource.DB_TYPE != DbType.H2) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -112,8 +112,8 @@ public class VersionTest2Case extends BaseTest {
             versionTest = VersionTest2Mapper.getById(versionTest.getId());
 
             System.out.println(versionTest);
-            eqDate(LocalDateTime.now(),   versionTest.getVersion());
-            eqDate(LocalDateTime.now(),   VersionTest2Mapper.getById(versionTest.getId()).getVersion());
+            eqDate(LocalDateTime.now(), versionTest.getVersion());
+            eqDate(LocalDateTime.now(), VersionTest2Mapper.getById(versionTest.getId()).getVersion());
 
 
             versionTest.setName("我是4");
@@ -121,14 +121,14 @@ public class VersionTest2Case extends BaseTest {
             versionTest = VersionTest2Mapper.getById(versionTest.getId());
 
             System.out.println(versionTest);
-            eqDate(LocalDateTime.now(),   versionTest.getVersion());
-            eqDate(LocalDateTime.now(),   VersionTest2Mapper.getById(versionTest.getId()).getVersion());
+            eqDate(LocalDateTime.now(), versionTest.getVersion());
+            eqDate(LocalDateTime.now(), VersionTest2Mapper.getById(versionTest.getId()).getVersion());
         }
     }
 
     @Test
     public void insertWithModelTest() {
-        if (TestDataSource.DB_TYPE != DbType.H2){
+        if (TestDataSource.DB_TYPE != DbType.H2) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -145,7 +145,7 @@ public class VersionTest2Case extends BaseTest {
 
     @Test
     public void updateWithModelTest() {
-        if (TestDataSource.DB_TYPE != DbType.H2){
+        if (TestDataSource.DB_TYPE != DbType.H2) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -161,7 +161,7 @@ public class VersionTest2Case extends BaseTest {
             VersionTest2 versionTest2 = VersionTest2Mapper.getById(versionTest.getId());
 
             System.out.println(versionTest);
-            eqDate(LocalDateTime.now(),  versionTest2.getVersion());
+            eqDate(LocalDateTime.now(), versionTest2.getVersion());
             eqDate(LocalDateTime.now(), VersionTest2Mapper.getById(versionTest2.getId()).getVersion());
         }
     }

@@ -26,16 +26,11 @@ public class PutEnumValueInfo {
     private final FieldInfo fieldInfo;
 
     private final String valueColumn;
-
-    private volatile TypeHandler<?> valueTypeHandler;
-
     private final Class<?> valueType;
-
     private final SetFieldInvoker writeFieldInvoker;
-
     private final PutEnumValue annotation;
-
     private final Object defaultValue;
+    private volatile TypeHandler<?> valueTypeHandler;
 
     public PutEnumValueInfo(FieldInfo fieldInfo, PutEnumValue annotation, Class<?> valueType, String valueColumn, TypeHandler<?> valueTypeHandler) {
         this.fieldInfo = fieldInfo;

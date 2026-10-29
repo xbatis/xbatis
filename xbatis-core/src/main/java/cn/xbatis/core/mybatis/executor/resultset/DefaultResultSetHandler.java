@@ -61,6 +61,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
     private static final Object DEFERRED = new Object();
     protected final Configuration configuration;
     protected final MappedStatement mappedStatement;
+    protected final Map<String, String> upperCaseColumnCache = new HashMap<>();
     private final Executor executor;
     private final RowBounds rowBounds;
     private final ParameterHandler parameterHandler;
@@ -69,7 +70,6 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final ObjectFactory objectFactory;
     private final ReflectorFactory reflectorFactory;
-
     // nested resultmaps
     private final Map<CacheKey, Object> nestedResultObjects = new HashMap<>();
     private final Map<String, Object> ancestorObjects = new HashMap<>();
@@ -79,10 +79,10 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
     // Cached Automappings
     private final Map<String, List<UnMappedColumnAutoMapping>> autoMappingsCache = new HashMap<>();
     private final Map<String, List<String>> constructorAutoMappingColumns = new HashMap<>();
-    protected final Map<String, String> upperCaseColumnCache = new HashMap<>();
     private Object previousRowValue;
     // temporary marking flag that indicate using constructor mapping (use field to reduce memory usage)
     private boolean useConstructorMappings;
+    private Boolean isAllColumnUpperCase;
 
     public DefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler,
                                    ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
@@ -119,13 +119,13 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         return this.configuration.isCallSettersOnNulls();
     }
 
-    protected boolean isMapUnderscoreToCamelCase() {
-        return this.configuration.isMapUnderscoreToCamelCase();
-    }
-
     //
     // HANDLE OUTPUT PARAMETER
     //
+
+    protected boolean isMapUnderscoreToCamelCase() {
+        return this.configuration.isMapUnderscoreToCamelCase();
+    }
 
     @Override
     public void handleOutputParameters(CallableStatement cs) throws SQLException {
@@ -303,14 +303,14 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         }
     }
 
+    //
+    // HANDLE ROWS FOR SIMPLE RESULTMAP
+    //
+
     @SuppressWarnings("unchecked")
     private List<Object> collapseSingleResultList(List<Object> multipleResults) {
         return multipleResults.size() == 1 ? (List<Object>) multipleResults.get(0) : multipleResults;
     }
-
-    //
-    // HANDLE ROWS FOR SIMPLE RESULTMAP
-    //
 
     public void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler,
                                 RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
@@ -374,6 +374,10 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         return !context.isStopped() && context.getResultCount() < rowBounds.getLimit();
     }
 
+    //
+    // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
+    //
+
     private void skipRows(ResultSet rs, RowBounds rowBounds) throws SQLException {
         if (rs.getType() != ResultSet.TYPE_FORWARD_ONLY) {
             if (rowBounds.getOffset() != RowBounds.NO_ROW_OFFSET) {
@@ -389,7 +393,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
     }
 
     //
-    // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
+    // GET VALUE FROM ROW FOR NESTED RESULT MAP
     //
 
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
@@ -407,10 +411,6 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         }
         return rowValue;
     }
-
-    //
-    // GET VALUE FROM ROW FOR NESTED RESULT MAP
-    //
 
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix,
                                  Object partialObject) throws SQLException {
@@ -503,6 +503,10 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         return foundValues;
     }
 
+    //
+    // PROPERTY MAPPINGS
+    //
+
     private Object getPropertyMappingValue(ResultSet rs, MetaObject metaResultObject, ResultMapping propertyMapping,
                                            ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
         if (propertyMapping.getNestedQueryId() != null) {
@@ -517,13 +521,6 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
             return typeHandler.getResult(rs, column);
         }
     }
-
-    //
-    // PROPERTY MAPPINGS
-    //
-
-
-    private Boolean isAllColumnUpperCase;
 
     private List<UnMappedColumnAutoMapping> createAutomaticMappings(ResultSetWrapper rsw, ResultMap resultMap,
                                                                     MetaObject metaObject, String columnPrefix) throws SQLException {

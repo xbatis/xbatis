@@ -24,7 +24,6 @@ import db.sql.api.cmd.executor.IExecutor;
 import db.sql.api.cmd.executor.IInsert;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.cmd.struct.IOn;
-import db.sql.api.impl.cmd.executor.AbstractDelete;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
 import db.sql.api.impl.cmd.executor.AbstractUpdate;
 import db.sql.api.impl.cmd.struct.On;

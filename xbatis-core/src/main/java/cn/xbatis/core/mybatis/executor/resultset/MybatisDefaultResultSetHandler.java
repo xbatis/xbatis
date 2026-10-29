@@ -65,6 +65,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
 
     private final Map<FetchInfo, Map<Object, List<Object>>> singleFetchCache = new HashMap<>();
+    // 新增一个实例字段，按 fetchInfo 的 fetchKey 缓存该 fetch 对应的固定 where sql 片段
+    private final Map<String, String> fetchWhereSqlCache = new HashMap<>();
     private BasicMapper basicMapper;
     private Map<Class, List<FetchInfo>> filteredFetchInfosMap;
     //Fetch 信息
@@ -72,12 +74,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     private Map<String, Set<Object>> waitFetchOnValusMap;
     private Map<String, List<FetchPut>> waitFetchPutMap;
     private Map<String, Map<Object, List<FetchPut>>> waitFetchPutValueMap;
-
     private Map<String, Consumer<Where>> fetchFilters;
     private Map<String, Boolean> fetchEnables;
-
     private BaseQuery<?, ?> baseQuery;
-
     private Consumer onRowEvent;
     private Class<?> returnType;
     private Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap;
@@ -127,7 +126,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                                 }
                                 for (FetchInfo item : value) {
                                     Boolean enable = this.fetchEnables.get(item.getFetchKey());
-                                    if (enable==null && !item.getFetch().mergeGroup().isEmpty()) {
+                                    if (enable == null && !item.getFetch().mergeGroup().isEmpty()) {
                                         enable = this.fetchEnables.get(item.getFetch().mergeGroup());
                                     }
                                     if (enable != null && !enable) {
@@ -195,9 +194,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         }
     }
-
-    // 新增一个实例字段，按 fetchInfo 的 fetchKey 缓存该 fetch 对应的固定 where sql 片段
-    private final Map<String, String> fetchWhereSqlCache = new HashMap<>();
 
     private void onRowEvent(Object rowValue) {
         if (Objects.isNull(onRowEvent)) {

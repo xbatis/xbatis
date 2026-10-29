@@ -29,8 +29,14 @@ public class UUIDv7 {
             state = STATE.get();
             long packed = Math.max(state & ~0xFFFFL, now); // 时钟回拨时沿用旧时间戳
             counter = (packed == (state & ~0xFFFFL)) ? (state & 0xFFFFL) + 1 : 0;
-            if (counter > 0xFFFL) { Thread.yield(); continue; } // 单毫秒计数耗尽则自旋
-            if (STATE.compareAndSet(state, packed | counter)) { ts = packed >>> 16; break; }
+            if (counter > 0xFFFL) {
+                Thread.yield();
+                continue;
+            } // 单毫秒计数耗尽则自旋
+            if (STATE.compareAndSet(state, packed | counter)) {
+                ts = packed >>> 16;
+                break;
+            }
         }
         long msb = (ts << 16) | 0x7000L | (counter & 0xFFFL);
         long lsb = (RANDOM.nextLong() & 0x3FFFFFFFFFFFFFFFL) | 0x8000000000000000L;
