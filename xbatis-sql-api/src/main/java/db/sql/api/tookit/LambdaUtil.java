@@ -30,10 +30,17 @@ import java.util.function.Function;
 
 public final class LambdaUtil {
 
-    private static final Map<Object, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(1024);
-    private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap(128);
+    private static final ClassValue<LambdaFieldInfo<?>> LAMBDA_GETTER_FIELD_MAP = new ClassValue<LambdaFieldInfo<?>>() {
+        @Override
+        protected LambdaFieldInfo<?> computeValue(Class<?> type) {
+            return new LambdaFieldInfo<>(null, null);
+        }
+    };
+
+    //实体类映射
+    private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap<>(64);
+
     private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-    public static boolean CACHE = true;
 
     private LambdaUtil() {
 
@@ -54,35 +61,34 @@ public final class LambdaUtil {
         return getFieldInfo(getter).getName();
     }
 
-    private static <T> LambdaFieldInfo<T> getLambdaFieldInfo(SerializedLambda serializedLambda, GetterFun<?, ?> getterFun) {
-        Class type = getClass(serializedLambda, getterFun);
+    public static <T, R> LambdaFieldInfo<T> getFieldInfo(GetterFun<T, R> getter) {
+        LambdaFieldInfo lambdaFieldInfo = LAMBDA_GETTER_FIELD_MAP.get(getter.getClass());
+        if (lambdaFieldInfo.isPresent()) {
+            return lambdaFieldInfo;
+        }
+        SerializedLambda serializedLambda = getSerializedLambda(getter);
+        Class type = getClass(serializedLambda, getter);
+        String fieldName = getFieldName(serializedLambda);
+        lambdaFieldInfo.set(type, fieldName);
+        return lambdaFieldInfo;
+    }
 
-        String fieldName = null;
+    private static String getFieldName(SerializedLambda serializedLambda) {
         // 兼容 Kotlin KProperty 的 Lambda 解析
         if (serializedLambda.getCapturedArgCount() == 1) {
             Object capturedArg = serializedLambda.getCapturedArg(0);
-            try {
-                fieldName = (String) capturedArg.getClass()
-                        .getMethod("getName")
-                        .invoke(capturedArg);
-            } catch (Exception e) {
-                // 忽略这个异常，使用java方式获取方法名
+            if (capturedArg != null) {
+                try {
+                    Class type = capturedArg.getClass();
+                    Method method = type.getMethod("getName");
+                    method.setAccessible(Boolean.TRUE);
+                    return (String) method.invoke(capturedArg);
+                } catch (Exception ignored) {
+                    // 回退到 Java getter 方法名解析
+                }
             }
         }
-
-        if (fieldName == null) {
-            String methodName = serializedLambda.getImplMethodName();
-            fieldName = PropertyNamer.methodToProperty(methodName);
-        }
-        return new LambdaFieldInfo(type, fieldName);
-    }
-
-    public static <T, R> LambdaFieldInfo<T> getFieldInfo(GetterFun<T, R> getter) {
-        if (CACHE) {
-            return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter));
-        } else {
-            return getLambdaFieldInfo(getSerializedLambda(getter), getter);
-        }
+        return PropertyNamer.methodToProperty(serializedLambda.getImplMethodName());
     }
 
     public static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
@@ -91,7 +97,7 @@ public final class LambdaUtil {
             method.setAccessible(Boolean.TRUE);
             return (SerializedLambda) method.invoke(getter);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Unable to resolve lambda: " + getter, e);
         }
     }
 
@@ -100,24 +106,40 @@ public final class LambdaUtil {
         return (Class<T>) CLASS_MAP.computeIfAbsent(classNamePath, key -> {
             String className = getClassName(key);
             try {
-                return getterFun.getClass().getClassLoader().loadClass(className);
-            } catch (ClassNotFoundException e) {
+                return loadClass(className, getterFun);
+            } catch (IllegalArgumentException e) {
                 try {
-                    return Thread.currentThread().getContextClassLoader().loadClass(className);
-                } catch (ClassNotFoundException ex) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException exc) {
-                        throw new RuntimeException(exc);
-                    }
-                    try {
-                        return Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-                    } catch (ClassNotFoundException exc) {
-                        throw new RuntimeException(exc);
-                    }
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    return loadClass(className, getterFun);
+                } catch (IllegalArgumentException ex) {
+                    throw ex;
                 }
             }
         });
+    }
+
+
+    private static Class<?> loadClass(String className, GetterFun<?, ?> getterFun) throws IllegalArgumentException {
+        try {
+            return Class.forName(className, false, getterFun.getClass().getClassLoader());
+        } catch (ClassNotFoundException e) {
+            //忽略
+        }
+        try {
+            return Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+        } catch (ClassNotFoundException e) {
+            //忽略
+        }
+        try {
+            return Class.forName(className, false, LambdaUtil.class.getClassLoader());
+        } catch (ClassNotFoundException e) {
+            //忽略
+            throw new IllegalArgumentException("Unable to load lambda owner class: " + className, e);
+        }
     }
 
     private static String getClassName(String classNamePath) {
@@ -126,14 +148,19 @@ public final class LambdaUtil {
 
     private static String getClassNamePath(SerializedLambda lambda) {
         String type = lambda.getInstantiatedMethodType();
-        return type.substring(2, type.indexOf(";"));
+        int start = type.indexOf('L');
+        int end = type.indexOf(';', start);
+        if (start < 0 || end < 0 || end == start + 1) {
+            throw new IllegalArgumentException("Invalid lambda method type: " + type);
+        }
+        return type.substring(start + 1, end);
     }
 
     public static <T, R> Getter<T> createGetterByField(Class<T> clazz, String field, Class<R> rType) {
-        if (Boolean.class.equals(clazz)) {
+        if (boolean.class.equals(rType)) {
             try {
                 return createGetter(Getter.class, clazz, "is" + PropertyNamer.firstToUpperCase(field), rType);
-            } catch (Exception ignored) {
+            } catch (RuntimeException ignored) {
 
             }
         }
@@ -189,14 +216,10 @@ public final class LambdaUtil {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println();
-    }
-
     public static class LambdaFieldInfo<T> {
 
-        private final Class<T> type;
-        private final String name;
+        private volatile Class<T> type;
+        private volatile String name;
 
         public LambdaFieldInfo(Class<T> type, String name) {
             this.type = type;
@@ -209,6 +232,15 @@ public final class LambdaUtil {
 
         public String getName() {
             return name;
+        }
+
+        protected void set(Class<T> type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+
+        protected boolean isPresent() {
+            return this.type != null && this.name != null;
         }
     }
 
