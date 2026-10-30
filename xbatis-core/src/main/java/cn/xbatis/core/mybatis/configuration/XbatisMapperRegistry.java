@@ -249,12 +249,12 @@ public class XbatisMapperRegistry extends MapperRegistry {
 
     @Override
     public void addMappers(String packageName) {
-        super.addMappers(packageName);
+        this.addMappers(packageName,Object.class);
     }
 
     @Override
     public <T> boolean hasMapper(Class<T> type) {
-        return super.hasMapper(type) || loadingMappers.contains(type);
+        return knownMappers.containsKey(type) || loadingMappers.contains(type);
     }
 
     @Override
