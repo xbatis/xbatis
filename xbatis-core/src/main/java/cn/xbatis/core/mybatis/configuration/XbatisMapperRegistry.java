@@ -25,15 +25,15 @@ import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
+import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.logging.nologging.NoLoggingImpl;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.LockSupport;
 
@@ -48,8 +48,7 @@ public class XbatisMapperRegistry extends MapperRegistry {
     public XbatisMapperRegistry(MybatisConfiguration config) {
         super(config);
         this.config = config;
-        this.knownMappers = getKnownMappers(this);
-
+        this.knownMappers = getKnownMappers(getOldMapperRegistry(config));
         if (this.config.isAsyncInit()) {
             loadExecutor = new ThreadPoolExecutor(
                     0,                  // corePoolSize = 0，核心线程也不常驻
@@ -62,6 +61,19 @@ public class XbatisMapperRegistry extends MapperRegistry {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 loadExecutor.shutdownNow();
             }));
+        }
+    }
+
+    private static MapperRegistry getOldMapperRegistry(Configuration configuration) {
+        Field mapperRegistryField;
+        try {
+            mapperRegistryField = Configuration.class.getDeclaredField("mapperRegistry");
+            mapperRegistryField.setAccessible(true);
+            return (MapperRegistry) mapperRegistryField.get(configuration);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -126,7 +138,7 @@ public class XbatisMapperRegistry extends MapperRegistry {
 
     @Override
     public <T> void addMapper(Class<T> type) {
-        this.addMapper(type, false);
+        this.addMapper(type, config.isAsyncInit());
     }
 
     /**
@@ -136,12 +148,17 @@ public class XbatisMapperRegistry extends MapperRegistry {
      * @param async 是否异步
      * @param <T>   Mapper 类型
      */
-    public <T> void addMapper(Class<T> type, boolean async) {
+    private <T> void addMapper(Class<T> type, boolean async) {
         if (!type.isInterface()) {
             return;
         }
         if (this.hasMapper(type)) {
             throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
+        }
+
+        if (BasicMapper.class.isAssignableFrom(type)) {
+            // BasicMapper 不异步
+            async = false;
         }
 
         if (!async) {
@@ -205,5 +222,43 @@ public class XbatisMapperRegistry extends MapperRegistry {
         }
         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(10));
         checkAndWait(clazz, ++checkTimes);
+    }
+
+    @Override
+    public void addMappers(String packageName, Class<?> superType) {
+        ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<>();
+        resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
+        Set<Class<? extends Class<?>>> mapperSet = resolverUtil.getClasses();
+        for (Class<?> mapperClass : mapperSet) {
+            addMapper(mapperClass, this.config.isAsyncInit());
+        }
+    }
+
+    @Override
+    public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+        final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+        if (mapperProxyFactory == null) {
+            throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
+        }
+        try {
+            return mapperProxyFactory.newInstance(sqlSession);
+        } catch (Exception e) {
+            throw new BindingException("Error getting mapper instance. Cause: " + e, e);
+        }
+    }
+
+    @Override
+    public void addMappers(String packageName) {
+        super.addMappers(packageName);
+    }
+
+    @Override
+    public <T> boolean hasMapper(Class<T> type) {
+        return super.hasMapper(type) || loadingMappers.contains(type);
+    }
+
+    @Override
+    public Collection<Class<?>> getMappers() {
+        return Collections.unmodifiableCollection(knownMappers.keySet());
     }
 }

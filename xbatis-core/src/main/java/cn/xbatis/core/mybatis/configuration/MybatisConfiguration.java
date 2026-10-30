@@ -95,7 +95,7 @@ public class MybatisConfiguration extends Configuration {
         //添加基础 单Mapper
         Class<?> basicMapper = XbatisGlobalConfig.getSingleMapperClass();
         if (!this.hasMapper(basicMapper)) {
-            this.addBasicMapper(basicMapper);
+            mapperRegistry.addMapper(basicMapper);
         }
     }
 
@@ -189,11 +189,6 @@ public class MybatisConfiguration extends Configuration {
         super.addMappedStatement(MappedStatementUtil.wrap(ms));
     }
 
-    private <T> void addBasicMapper(Class<T> type) {
-        //BasicMapper 比较重要
-        mapperRegistry.addMapper(type, asyncInit);
-    }
-
     protected void clearBasicMapperResultMap(Class<?> type) {
         Iterator<Map.Entry<String, ResultMap>> it = resultMaps.entrySet().iterator();
         String removeIdPrefix1 = "$";
@@ -222,7 +217,6 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public <T> void addMapper(Class<T> type) {
-
         if (!initialized) {
             this.onInit();
         }
@@ -237,13 +231,7 @@ public class MybatisConfiguration extends Configuration {
             XbatisGlobalConfig.setSingleMapperClass((Class<? extends BasicMapper>) type);
         }
 
-        if (XbatisGlobalConfig.getSingleMapperClass().isAssignableFrom(type)) {
-            if (!this.hasMapper(type)) {
-                this.addBasicMapper(type);
-            }
-            return;
-        }
-        mapperRegistry.addMapper(type, this.asyncInit);
+        mapperRegistry.addMapper(type);
     }
 
     @Override
