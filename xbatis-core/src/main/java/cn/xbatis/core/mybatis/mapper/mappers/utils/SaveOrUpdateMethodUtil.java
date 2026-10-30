@@ -42,10 +42,7 @@ public class SaveOrUpdateMethodUtil {
     public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, SaveOrUpdateStrategy saveOrUpdateStrategy, Map<String, Object> defaultValueContext) {
         Class<?> entityType = entity.getClass();
 
-        boolean checkById = true;
-        if (saveOrUpdateStrategy.getOn() != null) {
-            checkById = false;
-        }
+        boolean checkById = saveOrUpdateStrategy.getOn() == null;
 
         Where checkWhere = WhereUtil.create(tableInfo);
         if (checkById) {

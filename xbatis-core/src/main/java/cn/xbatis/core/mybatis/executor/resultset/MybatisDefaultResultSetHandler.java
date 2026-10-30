@@ -83,7 +83,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     private Map<Class, List<PutValueInfo>> putValueInfoMap;
     private Map<String, Object> putValueSessionCache;
     private Map<Class, List<CreatedEventInfo>> createdEventInfos;
-    private Map<String, Object> defaultValueContext = new HashMap<>();
+    private final Map<String, Object> defaultValueContext = new HashMap<>();
     private Boolean hasFetchMatchColumn;
     private IDbType dbType;
 
@@ -174,9 +174,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             if (XbatisContextUtil.isCmdCountFromQueryContext(parameterObject)) {
                 return false;
             }
-            if (XbatisContextUtil.getQueryExecution(parameterObject) != null) {
-                return true;
-            }
+            return XbatisContextUtil.getQueryExecution(parameterObject) != null;
         }
         return false;
     }

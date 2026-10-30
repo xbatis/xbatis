@@ -16,7 +16,7 @@ package cn.xbatis.core.mybatis.mapper.context;
 
 public class SelectPreparedContext<T> extends PreparedContext {
 
-    private Class<T> returnType;
+    private final Class<T> returnType;
 
     public SelectPreparedContext(Class<T> returnType, String sql, Object[] params) {
         super(sql, params);

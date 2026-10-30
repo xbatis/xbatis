@@ -49,7 +49,6 @@ public class ModelUpdateCreateUtil {
             }
             //读取回填 修改默认值
             DefaultValueUtil.getAndSetUpdateDefaultValue(insertData, modelFieldInfo, defaultValueContext);
-            return;
         }
 
     }

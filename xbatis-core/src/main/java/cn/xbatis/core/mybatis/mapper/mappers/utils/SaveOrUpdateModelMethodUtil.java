@@ -48,10 +48,7 @@ public class SaveOrUpdateModelMethodUtil {
     }
 
     public static <M extends Model<T>, T> int saveOrUpdate(BasicMapper basicMapper, ModelInfo modelInfo, M model, SaveOrUpdateStrategy saveOrUpdateStrategy, Map<String, Object> defaultValueContext) {
-        boolean checkById = true;
-        if (saveOrUpdateStrategy.getOn() != null) {
-            checkById = false;
-        }
+        boolean checkById = saveOrUpdateStrategy.getOn() == null;
 
         Where checkWhere = WhereUtil.create(modelInfo.getTableInfo());
         if (checkById) {

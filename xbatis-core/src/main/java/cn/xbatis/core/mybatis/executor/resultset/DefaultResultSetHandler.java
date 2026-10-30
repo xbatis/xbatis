@@ -873,7 +873,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
             columnName = columnName.substring(columnPrefix.length());
         }
         return paramName
-                .equalsIgnoreCase(false ? columnName.replace("_", "") : columnName);
+                .equalsIgnoreCase(columnName);
     }
 
     private Object createPrimitiveResultObject(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix)

@@ -24,13 +24,13 @@ public class FetchPut {
 
     public static final Object NULL = new Object();
 
-    private Object rowValue;
+    private final Object rowValue;
 
-    private String cacheKey;
+    private final String cacheKey;
 
-    private Object matchValue;
+    private final Object matchValue;
 
-    private FetchInfo fetchInfo;
+    private final FetchInfo fetchInfo;
 
     private List<Object> values = new ArrayList<>();
 

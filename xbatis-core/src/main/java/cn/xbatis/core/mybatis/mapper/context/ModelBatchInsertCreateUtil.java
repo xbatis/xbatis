@@ -127,7 +127,7 @@ public class ModelBatchInsertCreateUtil {
         for (ModelFieldInfo modelFieldInfo : saveFieldInfoSet) {
             MybatisCmdFactory cmdFactory = insert.$();
             if (table instanceof XbatisTable) {
-                insert.fields(cmdFactory.field((XbatisTable) table, modelFieldInfo.getTableFieldInfo()));
+                insert.fields(cmdFactory.field(table, modelFieldInfo.getTableFieldInfo()));
             } else {
                 insert.fields(insert.$().field(table, modelFieldInfo.getTableFieldInfo().getColumnName(), modelFieldInfo.getTableFieldInfo().isTableId()));
             }

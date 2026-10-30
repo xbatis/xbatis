@@ -148,10 +148,7 @@ public class ModelInsertCreateUtil {
 
             // 看是否是强制字段
             if (!isNeedInsert && (saveStrategy.isAllFieldSave() || (Objects.nonNull(saveStrategy.getForceFields()) && saveStrategy.getForceFields().contains(modelFieldInfo.getField().getName())))) {
-                isNeedInsert = true;
-                if (modelFieldInfo.getTableFieldInfo().isTableId() && !IdUtil.isIdValueExists(value)) {
-                    isNeedInsert = false;
-                }
+                isNeedInsert = !modelFieldInfo.getTableFieldInfo().isTableId() || IdUtil.isIdValueExists(value);
             }
 
             if (isNeedInsert) {

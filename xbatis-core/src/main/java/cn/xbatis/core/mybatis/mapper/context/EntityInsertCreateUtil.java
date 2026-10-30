@@ -152,10 +152,7 @@ public class EntityInsertCreateUtil {
 
             // 看是否是强制字段
             if (!isNeedInsert && (saveStrategy.isAllFieldSave() || (Objects.nonNull(saveStrategy.getForceFields()) && saveStrategy.getForceFields().contains(tableFieldInfo.getField().getName())))) {
-                isNeedInsert = true;
-                if (tableFieldInfo.isTableId() && !IdUtil.isIdValueExists(value)) {
-                    isNeedInsert = false;
-                }
+                isNeedInsert = !tableFieldInfo.isTableId() || IdUtil.isIdValueExists(value);
             }
 
             if (isNeedInsert) {

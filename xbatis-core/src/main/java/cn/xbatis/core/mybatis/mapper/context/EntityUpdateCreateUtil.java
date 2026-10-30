@@ -46,7 +46,6 @@ public class EntityUpdateCreateUtil {
             }
             //读取回填 修改默认值
             DefaultValueUtil.getAndSetUpdateDefaultValue(insertData, tableFieldInfo, defaultValueContext);
-            return;
         }
 
     }
