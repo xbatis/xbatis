@@ -34,14 +34,16 @@ import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 
 public class XbatisMapperRegistry extends MapperRegistry {
 
     protected final Map<Class<?>, MapperProxyFactory<?>> knownMappers;
-    protected final Set<String> loadingMappers = ConcurrentHashMap.newKeySet();
     private final MybatisConfiguration config;
     private ThreadPoolExecutor loadExecutor;
 
@@ -167,15 +169,11 @@ public class XbatisMapperRegistry extends MapperRegistry {
             return;
         }
 
-        if (!loadingMappers.add(type.getName())) {
-            return;
-        }
         knownMappers.put(type, getMapperProxyFactory(type));
         if (async) {
             Runnable runnable = () -> {
                 try {
                     parseMapper(type);
-                    loadingMappers.remove(type.getName());
                 } catch (Exception e) {
                     Log log = LogFactory.getLog(XbatisMapperRegistry.class);
                     if (log instanceof NoLoggingImpl) {
@@ -196,32 +194,26 @@ public class XbatisMapperRegistry extends MapperRegistry {
     }
 
     /**
-     * 如果加载中2秒还未初始化完 就不管了
+     * 如果加载中20秒还未初始化完 就不管了
      *
      * @param mappedStatementId
      */
     public void checkAndWait(String mappedStatementId, boolean validateIncompleteStatements) {
-        if (loadingMappers.isEmpty()) {
-            return;
-        }
         if (config.hasStatement(mappedStatementId, validateIncompleteStatements)) {
             return;
         }
-        checkAndWait(mappedStatementId.substring(0, mappedStatementId.lastIndexOf(".")), 1);
+        checkAndWait(mappedStatementId, 1);
     }
 
-    private void checkAndWait(String clazz, int checkTimes) {
-        if (loadingMappers.isEmpty()) {
+    private void checkAndWait(String mappedStatementId, int checkTimes) {
+        if (config.hasStatement(mappedStatementId, false)) {
             return;
         }
-        if (!loadingMappers.contains(clazz)) {
+        if (checkTimes > 1000) {
             return;
         }
-        if (checkTimes > 200) {
-            return;
-        }
-        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(10));
-        checkAndWait(clazz, ++checkTimes);
+        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(20));
+        checkAndWait(mappedStatementId, ++checkTimes);
     }
 
     @Override
@@ -254,7 +246,7 @@ public class XbatisMapperRegistry extends MapperRegistry {
 
     @Override
     public <T> boolean hasMapper(Class<T> type) {
-        return knownMappers.containsKey(type) || loadingMappers.contains(type);
+        return knownMappers.containsKey(type);
     }
 
     @Override
