@@ -157,14 +157,14 @@ public final class LambdaUtil {
     }
 
     public static <T, R> Getter<T> createGetterByField(Class<T> clazz, String field, Class<R> rType) {
-        if (Boolean.class.equals(rType) || boolean.class.equals(rType)) {
-            try {
+        try {
+            return createGetter(Getter.class, clazz, "get" + PropertyNamer.firstToUpperCase(field), rType);
+        } catch (RuntimeException e) {
+            if (Boolean.class.equals(rType) || boolean.class.equals(rType)) {
                 return createGetter(Getter.class, clazz, "is" + PropertyNamer.firstToUpperCase(field), rType);
-            } catch (RuntimeException ignored) {
-
             }
+            throw e;
         }
-        return createGetter(Getter.class, clazz, "get" + PropertyNamer.firstToUpperCase(field), rType);
     }
 
     public static <T, R> Getter<T> createGetter(Class<T> clazz, String getterName, Class<R> rType) {

@@ -19,10 +19,12 @@ import cn.xbatis.core.db.reflect.ResultInfos;
 import cn.xbatis.core.exception.OptimisticLockException;
 import cn.xbatis.core.tenant.TenantContext;
 import com.alibaba.fastjson.JSON;
+import com.xbatis.core.test.DO.BooleanTest;
 import com.xbatis.core.test.DO.CompositeTest;
 import com.xbatis.core.test.mapper.CompositeTestMapper;
 import com.xbatis.core.test.vo.ResultIdVO;
 import com.xbatis.core.test.vo.SysRoleVo;
+import db.sql.api.tookit.LambdaUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -172,5 +174,11 @@ public class CompositeTestCase extends BaseTest {
 
         ResultInfo resultInfo2 = ResultInfos.get(SysRoleVo.class);
         assertTrue(resultInfo2.getResultFieldInfos().get(0).isResultId());
+    }
+
+    @Test
+    public void createGetterTest() {
+        LambdaUtil.createGetterByField(BooleanTest.class, "exists", Boolean.class);
+        LambdaUtil.createGetter(BooleanTest.class, "getExists", Boolean.class);
     }
 }
