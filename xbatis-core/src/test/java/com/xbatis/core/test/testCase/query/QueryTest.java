@@ -47,7 +47,6 @@ import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -329,7 +328,7 @@ public class QueryTest extends BaseTest {
                 eqSysUser.setUserName("test1");
                 eqSysUser.setRole_id(1);
                 assertEquals(eqSysUser, sysUser);
-            } catch (IOException e) {
+            } catch (Exception e) {
 
             }
         }

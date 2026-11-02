@@ -42,7 +42,7 @@ public class UpdateProxyUtil {
         Class c = f.createClass();
         T obj;
         try {
-            obj = (T) c.newInstance();
+            obj = (T) c.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -1107,7 +1107,7 @@ public interface FunctionInterface extends Cmd {
      * @return Ne
      */
     default In in(Serializable... values) {
-        return Methods.in(this, values);
+        return Methods.in(this, (Object[]) values);
     }
 
     /**
@@ -1139,7 +1139,7 @@ public interface FunctionInterface extends Cmd {
      * @return Ne
      */
     default NotIn notIn(Serializable... values) {
-        return Methods.notIn(this, values);
+        return Methods.notIn(this, (Object[]) values);
     }
 
     /**

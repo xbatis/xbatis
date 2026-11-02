@@ -16,6 +16,7 @@ package com.xbatis.core.test.REQ;
 
 import cn.xbatis.db.annotations.Condition;
 import cn.xbatis.db.annotations.ConditionTarget;
+import cn.xbatis.db.annotations.Conditions;
 import com.xbatis.core.test.DO.SysUser;
 import lombok.Data;
 
@@ -26,8 +27,10 @@ import static cn.xbatis.db.annotations.Condition.Type.LIKE;
 public class KeywordLikeREQ {
 
     //多列模糊匹配 配多个默认为OR行为；AND行为需要使用@Conditions
-    @Condition(property = SysUser.Fields.userName, value = LIKE)
-    @Condition(property = SysUser.Fields.password, value = LIKE)
+    @Conditions({
+            @Condition(property = SysUser.Fields.userName, value = LIKE),
+            @Condition(property = SysUser.Fields.password, value = LIKE)
+    })
     private String keyword;
 
     private Integer id;

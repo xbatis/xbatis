@@ -135,7 +135,7 @@ public class TableInfo {
 
         if (this.isSplitTable) {
             try {
-                this.tableSplitter = splitTable.value().newInstance();
+                this.tableSplitter = splitTable.value().getDeclaredConstructor().newInstance();
                 this.splitTableStrict = splitTable.strict();
             } catch (Exception e) {
                 throw new RuntimeException(e);

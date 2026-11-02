@@ -98,7 +98,10 @@ public final class FieldUtil {
     }
 
     public static Class<?> getFieldType(Class clazz, Field field) {
-        Type type = TypeParameterResolver.resolveFieldType(field, clazz);
+        return getFieldType(TypeParameterResolver.resolveFieldType(field, clazz));
+    }
+
+    public static Class<?> getFieldType(Type type) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             return (Class<?>) parameterizedType.getRawType();
@@ -106,19 +109,17 @@ public final class FieldUtil {
         return (Class<?>) type;
     }
 
+    public static Class<?> getFieldFinalType(Class<?> type, Field field) {
+        return getFieldFinalType(TypeParameterResolver.resolveFieldType(field, type), field);
+    }
 
     /**
      * 获取字段的真正Type,假如是List<T> id，会返回 里面的 T
-     *
-     * @param clazz
+     * @param type
      * @param field
-     * @return 字段最终泛型类型
+     * @return
      */
-    public static Class<?> getFieldFinalType(Class clazz, Field field) {
-        return getFieldFinalType(TypeParameterResolver.resolveFieldType(field, clazz), clazz, field);
-    }
-
-    private static Class<?> getFieldFinalType(Type type, Class clazz, Field field) {
+    public static Class<?> getFieldFinalType(Type type, Field field) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type t = parameterizedType.getActualTypeArguments()[0];
@@ -139,5 +140,4 @@ public final class FieldUtil {
         }
         return field.getType();
     }
-
 }

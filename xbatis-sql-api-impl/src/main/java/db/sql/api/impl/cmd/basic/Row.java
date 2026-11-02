@@ -45,6 +45,6 @@ public class Row implements FunctionInterface {
 
     @Override
     public boolean contain(Cmd cmd) {
-        return CmdUtils.contain(cmd, columns);
+        return CmdUtils.contain(cmd, (Object[]) columns);
     }
 }

@@ -28,8 +28,10 @@ import static cn.xbatis.db.annotations.Condition.Type.*;
 
 @Data
 @ConditionTarget(value = SysUser.class)
-@ConditionGroup(value = {QueryREQ.Fields.id, QueryREQ.Fields.id1}, logic = Logic.OR)
-@ConditionGroup(value = {QueryREQ.Fields.id1, QueryREQ.Fields.id2, QueryREQ.Fields.keyword}, logic = Logic.OR)
+@ConditionGroups({
+        @ConditionGroup(value = {QueryREQ.Fields.id, QueryREQ.Fields.id1}, logic = Logic.OR),
+        @ConditionGroup(value = {QueryREQ.Fields.id1, QueryREQ.Fields.id2, QueryREQ.Fields.keyword}, logic = Logic.OR)
+})
 @FieldNameConstants
 public class QueryREQ implements ObjectConditionLifeCycle {
 

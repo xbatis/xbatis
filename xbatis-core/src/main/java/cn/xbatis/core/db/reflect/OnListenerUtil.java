@@ -37,7 +37,7 @@ public class OnListenerUtil {
             }
             return (LISTENER) CACHE.computeIfAbsent(clazz, key -> {
                 try {
-                    return clazz.newInstance();
+                    return clazz.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

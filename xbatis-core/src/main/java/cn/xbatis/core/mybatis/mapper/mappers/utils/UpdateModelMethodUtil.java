@@ -31,7 +31,6 @@ import cn.xbatis.core.sql.executor.XbatisTableField;
 import cn.xbatis.core.sql.executor.chain.UpdateChain;
 import cn.xbatis.core.util.ModelInfoUtil;
 import cn.xbatis.db.Model;
-import db.sql.api.Cmd;
 import db.sql.api.DbModel;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
@@ -356,7 +355,7 @@ public final class UpdateModelMethodUtil {
             }
             values.add(Methods.tpl(inTpl.toString(), multiValues.toArray()));
         }
-        update.and(Methods.in(Methods.tpl(inTpl.toString(), (Cmd[]) idTableFields), values));
+        update.and(Methods.in(Methods.tpl(inTpl.toString(), (Object[]) idTableFields), values));
     }
 
     private static ICondition buildIdCaseWhen(UpdateChain updateChain, XbatisTableField[] idTableFields, Map<String, List<Serializable>> columnUpdateValues, int index) {
