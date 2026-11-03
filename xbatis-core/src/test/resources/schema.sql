@@ -344,3 +344,15 @@ values (1, 2, 3),
        (0, 1, 2),
        (0, 2, 3),
        (null, 2, 3);
+
+
+CREATE TABLE IF NOT EXISTS role
+(
+    id   INTEGER PRIMARY KEY auto_increment,
+    code INT
+);
+
+insert into role(id, code)
+values (1, 1),
+       (2, 2),
+       (3, 2);

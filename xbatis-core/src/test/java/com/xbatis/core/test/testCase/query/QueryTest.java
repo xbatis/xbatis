@@ -19,13 +19,11 @@ import cn.xbatis.core.sql.executor.Query;
 import cn.xbatis.core.sql.executor.SubQuery;
 import cn.xbatis.core.sql.executor.chain.QueryChain;
 import cn.xbatis.core.sql.util.WhereUtil;
-import com.xbatis.core.test.DO.SysRole;
-import com.xbatis.core.test.DO.SysUser;
-import com.xbatis.core.test.DO.SysUserEncrypt;
-import com.xbatis.core.test.DO.SysUserRoleMiddle;
+import com.xbatis.core.test.DO.*;
 import com.xbatis.core.test.MyDbType;
 import com.xbatis.core.test.REQ.SysUserOrderBys;
 import com.xbatis.core.test.REQ.SysUserOrderBys2;
+import com.xbatis.core.test.enums.BuiltinRole;
 import com.xbatis.core.test.mapper.SysRoleMapper;
 import com.xbatis.core.test.mapper.SysUserEncryptMapper;
 import com.xbatis.core.test.mapper.SysUserMapper;
@@ -1137,6 +1135,39 @@ public class QueryTest extends BaseTest {
                     .get();
             System.out.println(map);
             assertTrue(map.containsKey("roleId"));
+        }
+    }
+
+    @Test
+    public void enumSelectTest() {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<BuiltinRole> roles = QueryChain.of(sysUserMapper.getBasicMapper(), Role.class)
+                    .select(Role::getCode)
+                    .returnType(BuiltinRole.class)
+                    .list();
+
+            System.out.println(roles);
+        }
+    }
+
+    @Test
+    public void enumSelectTest2() {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<BuiltinRole> roles = QueryChain.of(sysUserMapper.getBasicMapper(), Role.class)
+                    .select(Role::getCode)
+                    .join(Role::getId, SysUser::getRole_id)
+                    .returnType(BuiltinRole.class)
+                    .list();
+
+            System.out.println(roles);
         }
     }
 }

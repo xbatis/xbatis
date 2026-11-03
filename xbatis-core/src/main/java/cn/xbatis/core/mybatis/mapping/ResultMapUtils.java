@@ -64,6 +64,9 @@ public final class ResultMapUtils {
             } else if (Map.class.isAssignableFrom(clazz)) {
                 resultMap = new ResultMap.Builder(configuration, id, clazz, Collections.emptyList(), true).build();
                 configuration.addResultMap(resultMap);
+            } else if (clazz.isEnum()) {
+                //枚举不管
+                return null;
             } else if (Objects.nonNull(clazz.getPackage()) && !clazz.getPackage().getName().startsWith("java")) {
                 resultMap = new ResultMap.Builder(configuration, id, clazz, getNormalResultMappings(configuration, clazz), true).build();
                 configuration.addResultMap(resultMap);

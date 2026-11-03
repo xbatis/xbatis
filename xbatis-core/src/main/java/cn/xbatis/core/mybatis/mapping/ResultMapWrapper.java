@@ -47,7 +47,7 @@ public class ResultMapWrapper {
     public static List<ResultMap> replaceResultMap(MybatisConfiguration configuration, List<ResultMap> sourceResultMap) {
         return sourceResultMap.stream().map(item -> {
             //基本数据类型静默处理
-            if (Objects.nonNull(item.getType().getPackage()) && item.getType().getPackage().getName().startsWith("java.lang")) {
+            if (item.getType().isEnum() || (Objects.nonNull(item.getType().getPackage()) && item.getType().getPackage().getName().startsWith("java.lang"))) {
                 return item;
             }
 
