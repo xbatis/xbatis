@@ -37,13 +37,18 @@ public class MultiValueTypeHandler extends GenericTypeHandler<Object> {
     private final boolean isArray;
 
     private final Class<?> genericType;
+
     private final Class<?> clazz;
 
     public MultiValueTypeHandler(Type type) {
-        super((Class) type, null);
+        super((Class) type);
         this.clazz = getTypeClass(type);
         this.isArray = isArray(type);
         this.genericType = getGenericType(type);
+    }
+
+    public MultiValueTypeHandler(Class clazz) {
+        this((Type) clazz);
     }
 
     private static boolean isArray(Type type) {

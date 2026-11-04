@@ -18,6 +18,7 @@ import cn.xbatis.core.util.TypeConvertUtil;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
+import java.lang.reflect.Type;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,6 +34,10 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
     private final Class<E> type;
     private final boolean enumSupport;
     private final Class enumSupportType;
+
+    public EnumTypeHandler(Type type) {
+        this((Class<E>) type);
+    }
 
     public EnumTypeHandler(Class<E> type) {
         if (type == null) {

@@ -97,7 +97,7 @@ public final class MybatisTypeHandlerUtil {
             if (Objects.nonNull(typeHandler)) {
                 return typeHandler;
             }
-            return ((MybatisConfiguration) cfg).getUnknownTypeHandler();
+            return ((MybatisConfiguration) cfg).getTypeHandlerRegistry().getUnknownTypeHandler();
         }
         TypeHandler<?> typeHandler = cfg.getTypeHandlerRegistry().getTypeHandler(typeHandlerClass);
         if (Objects.nonNull(typeHandler)) {

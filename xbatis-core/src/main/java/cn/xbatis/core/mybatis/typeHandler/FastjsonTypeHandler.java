@@ -22,7 +22,10 @@ public class FastjsonTypeHandler extends AbstractJsonTypeHandler {
 
     public FastjsonTypeHandler(Type type) {
         super(type);
+    }
 
+    public FastjsonTypeHandler(Class clazz) {
+        super(clazz);
     }
 
     @Override

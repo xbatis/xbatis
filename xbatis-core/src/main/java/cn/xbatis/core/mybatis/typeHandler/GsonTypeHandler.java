@@ -31,6 +31,11 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler {
         typeToken = TypeToken.get(this.getType());
     }
 
+    public GsonTypeHandler(Class clazz) {
+        super(clazz);
+        typeToken = TypeToken.get(this.getType());
+    }
+
     public static Gson getGson() {
         if (null == GSON) {
             GSON = new Gson();

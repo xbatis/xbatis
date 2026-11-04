@@ -29,6 +29,10 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
         super(type);
     }
 
+    public AbstractJsonTypeHandler(Class clazz) {
+        super(clazz);
+    }
+
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType) throws SQLException {
         if (Objects.isNull(parameter)) {
