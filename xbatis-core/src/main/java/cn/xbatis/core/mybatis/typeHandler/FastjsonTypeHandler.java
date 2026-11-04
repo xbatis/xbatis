@@ -11,30 +11,18 @@
  *  See the License for the specific language governing permissions and limitations under the License.
  *
  */
-
 package cn.xbatis.core.mybatis.typeHandler;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 public class FastjsonTypeHandler extends AbstractJsonTypeHandler {
 
-    protected final ParameterizedType parameterizedType;
-
-    public FastjsonTypeHandler(Class<?> type) {
+    public FastjsonTypeHandler(Type type) {
         super(type);
-        parameterizedType = new ParameterizedTypeImpl(type);
-    }
 
-    public FastjsonTypeHandler(Class<?> type, Class<?> genericType) {
-        super(type, genericType);
-        if (genericType == null) {
-            parameterizedType = new ParameterizedTypeImpl(type);
-        } else {
-            parameterizedType = new ParameterizedTypeImpl(type, genericType);
-        }
     }
 
     @Override
@@ -44,6 +32,6 @@ public class FastjsonTypeHandler extends AbstractJsonTypeHandler {
 
     @Override
     protected Object parseJson(String json) {
-        return JSON.parseObject(json, parameterizedType);
+        return JSON.parseObject(json, this.getType());
     }
 }

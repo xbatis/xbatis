@@ -17,6 +17,11 @@ package cn.xbatis.core.mybatis.typeHandler;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Map;
+
 
 /**
  * GenericTypeHandler，泛型基础 TypeHandler
@@ -28,27 +33,31 @@ public abstract class GenericTypeHandler<T> extends BaseTypeHandler<T> {
     /**
      * 目标类
      */
-    protected final Class<?> type;
+    protected final Type type;
 
-    /**
-     * 目标字段上的泛型
-     */
-    protected final Class<?> genericType;
-
-    public GenericTypeHandler(Class<?> type) {
-        this(type, null);
-    }
-
-    public GenericTypeHandler(Class<?> type, Class<?> genericType) {
+    public GenericTypeHandler(Type type) {
         this.type = type;
-        this.genericType = genericType;
     }
 
-    public Class<?> getType() {
+    protected GenericTypeHandler(Class<?> clazz) {
+        this.type = clazz;
+    }
+
+    protected GenericTypeHandler(Class<?> clazz, Class<?> genericType) {
+        if (genericType == null) {
+            this.type = clazz;
+        } else if (Collection.class.isAssignableFrom(clazz)) {
+            this.type = new ParameterizedTypeImpl(clazz, genericType);
+        } else if (Map.class.isAssignableFrom(clazz)) {
+            this.type = new ParameterizedTypeImpl(clazz, genericType);
+        } else if (clazz.isArray()) {
+            this.type = Array.newInstance(clazz, 0).getClass();
+        } else {
+            this.type = clazz;
+        }
+    }
+
+    public Type getType() {
         return type;
-    }
-
-    public Class<?> getGenericType() {
-        return genericType;
     }
 }

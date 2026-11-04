@@ -19,6 +19,9 @@ import cn.xbatis.core.util.TypeConvertUtil;
 import org.apache.ibatis.type.JdbcType;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,12 +34,51 @@ import java.util.*;
  */
 public class MultiValueTypeHandler extends GenericTypeHandler<Object> {
 
-    public MultiValueTypeHandler(Class<?> type) {
-        this(type, null);
+    private final boolean isArray;
+
+    private final Class<?> genericType;
+    private final Class<?> clazz;
+
+    public MultiValueTypeHandler(Type type) {
+        super((Class) type, null);
+        this.clazz = getTypeClass(type);
+        this.isArray = isArray(type);
+        this.genericType = getGenericType(type);
     }
 
-    public MultiValueTypeHandler(Class<?> type, Class<?> genericType) {
-        super(type, genericType);
+    private static boolean isArray(Type type) {
+        if (type instanceof Class) {
+            return ((Class<?>) type).isArray();
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            return isArray(parameterizedType.getRawType());
+        } else return type instanceof GenericArrayType;
+    }
+
+    public static Class getTypeClass(Type type) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            return ((Class) parameterizedType.getActualTypeArguments()[0]);
+        } else if (type instanceof Class && ((Class<?>) type).isArray()) {
+            return ((Class<?>) type).getComponentType();
+        }
+        if (type instanceof GenericArrayType) {
+            return (Class) ((GenericArrayType) type).getGenericComponentType();
+        }
+        return null;
+    }
+
+    public static Class getGenericType(Type type) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            return ((Class) parameterizedType.getActualTypeArguments()[0]);
+        } else if (type instanceof Class && ((Class<?>) type).isArray()) {
+            return ((Class<?>) type).getComponentType();
+        }
+        if (type instanceof GenericArrayType) {
+            return getGenericType(((GenericArrayType) type).getGenericComponentType());
+        }
+        return null;
     }
 
     @Override
@@ -81,12 +123,13 @@ public class MultiValueTypeHandler extends GenericTypeHandler<Object> {
             return null;
         }
         String[] arr = values.split(",");
-        if (String[].class.isAssignableFrom(this.type)) {
-            return arr;
-        }
 
-        if (this.type.isArray()) {
-            Class componentType = this.genericType == null ? this.type.getComponentType() : this.genericType;
+
+        if (isArray) {
+            if (genericType == null || String.class == genericType || Object.class == genericType) {
+                return arr;
+            }
+            Class componentType = this.genericType;
             List<Object> tmp = new ArrayList<>(arr.length);
             for (String s : arr) {
                 if (s.isEmpty()) {
@@ -98,13 +141,13 @@ public class MultiValueTypeHandler extends GenericTypeHandler<Object> {
             return tmp.toArray(newArr);
         }
 
-        Collection list = CollectionNewUtil.newInstance(this.type);
-        if (this.genericType == null) {
+        Collection list = CollectionNewUtil.newInstance(this.clazz);
+        if (genericType == null || String.class == genericType || Object.class == genericType) {
             Collections.addAll(list, arr);
             return list;
         }
         for (String s : arr) {
-            list.add(TypeConvertUtil.convert(s, this.getGenericType()));
+            list.add(TypeConvertUtil.convert(s, this.genericType));
         }
         return list;
     }

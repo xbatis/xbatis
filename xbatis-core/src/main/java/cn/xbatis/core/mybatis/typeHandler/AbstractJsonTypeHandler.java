@@ -25,12 +25,8 @@ import java.util.Objects;
 
 public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object> {
 
-    public AbstractJsonTypeHandler(Class<?> type) {
+    public AbstractJsonTypeHandler(Type type) {
         super(type);
-    }
-
-    public AbstractJsonTypeHandler(Class<?> type, Class<?> genericType) {
-        super(type, genericType);
     }
 
     @Override
@@ -74,15 +70,6 @@ public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object>
             }
         }
         return parseJson(json);
-    }
-
-    /**
-     * 获取需要序列号的类型
-     *
-     * @return 类型
-     */
-    public Type getDeserializeType() {
-        return Objects.isNull(this.genericType) ? this.type : this.genericType;
     }
 
     /**

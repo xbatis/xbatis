@@ -17,24 +17,13 @@ package cn.xbatis.core.mybatis.typeHandler;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter.Feature;
 
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 public class Fastjson2TypeHandler extends AbstractJsonTypeHandler {
 
-    protected final ParameterizedType parameterizedType;
-
-    public Fastjson2TypeHandler(Class<?> type) {
+    public Fastjson2TypeHandler(Type type) {
         super(type);
-        parameterizedType = new ParameterizedTypeImpl(type);
-    }
 
-    public Fastjson2TypeHandler(Class<?> type, Class<?> genericType) {
-        super(type, genericType);
-        if (genericType == null) {
-            parameterizedType = new ParameterizedTypeImpl(type);
-        } else {
-            parameterizedType = new ParameterizedTypeImpl(type, genericType);
-        }
     }
 
     @Override
@@ -44,6 +33,6 @@ public class Fastjson2TypeHandler extends AbstractJsonTypeHandler {
 
     @Override
     protected Object parseJson(String json) {
-        return JSON.parseObject(json, parameterizedType);
+        return JSON.parseObject(json, this.getType());
     }
 }
