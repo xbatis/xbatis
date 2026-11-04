@@ -120,7 +120,13 @@ public final class FieldUtil {
      * @return
      */
     public static Class<?> getFieldFinalType(Type type, Field field) {
-        if (type instanceof ParameterizedType) {
+        if (type instanceof Class) {
+            Class t = (Class) type;
+            if (t.isArray()) {
+                return t.getComponentType();
+            }
+            return t;
+        } else if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type t = parameterizedType.getActualTypeArguments()[0];
             if (t instanceof Class<?>) {
@@ -132,11 +138,6 @@ public final class FieldUtil {
                 }
             }
             return Object.class;
-        } else if (type instanceof Class) {
-            Class t = (Class) type;
-            if (t.isArray()) {
-                return t.getComponentType();
-            }
         }
         return field.getType();
     }

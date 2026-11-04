@@ -16,35 +16,41 @@ package cn.xbatis.core.db.reflect;
 
 import cn.xbatis.core.util.FieldUtil;
 import lombok.Data;
+import org.apache.ibatis.reflection.TypeParameterResolver;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 
 @Data
-public class FieldInfo {
-
-    private Class<?> clazz;
+public final class FieldInfo {
+    private final Class<?> clazz;
 
     /**
      * 字段
      */
-    private Field field;
+    private final Field field;
 
     /**
      * 是否集合字段
      */
-    private boolean collection;
+    private final boolean collection;
+
+    /**
+     * 字段的type
+     */
+    private final Type fieldType;
 
     /**
      * 字段的类型
      */
-    private Class<?> typeClass;
+    private final Class<?> typeClass;
 
     /**
      * 字段的映射类型 假如是List<T>,则是T的具体类型
      */
-    private Class<?> finalClass;
+    private final Class<?> finalClass;
 
     /**
      * @param clazz 具体类的class，假如是继承，不能父类
@@ -53,8 +59,9 @@ public class FieldInfo {
     public FieldInfo(Class clazz, Field field) {
         this.clazz = clazz;
         this.field = field;
-        this.typeClass = FieldUtil.getFieldType(clazz, field);
-        this.finalClass = FieldUtil.getFieldFinalType(clazz, field);
+        this.fieldType = TypeParameterResolver.resolveFieldType(field, clazz);
+        this.typeClass = FieldUtil.getFieldType(this.fieldType);
+        this.finalClass = FieldUtil.getFieldFinalType(this.fieldType, field);
         this.collection = Collection.class.isAssignableFrom(field.getType());
     }
 }
