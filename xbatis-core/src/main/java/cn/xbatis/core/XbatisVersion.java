@@ -16,7 +16,7 @@ package cn.xbatis.core;
 
 public final class XbatisVersion {
 
-    public static String VERSION = "1.10.13";
+    public static String VERSION = "1.10.15";
 
     public static int compare(String version) {
         String[] parts1 = VERSION.split("\\.");
@@ -45,6 +45,6 @@ public final class XbatisVersion {
     }
 
     public static void main(String[] args) {
-        System.out.println(compare("1.10.13"));
+        System.out.println(compare("1.10.15"));
     }
 }
