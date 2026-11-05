@@ -25,6 +25,7 @@ import cn.xbatis.core.mybatis.mapper.context.PreparedParameterContext;
 import cn.xbatis.core.mybatis.mapping.ResultMapUtils;
 import cn.xbatis.core.mybatis.typeHandler.EnumTypeHandler;
 import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
+import cn.xbatis.db.UnknownTypeHandler;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.ResultMapResolver;
 import org.apache.ibatis.executor.CachingExecutor;
@@ -54,6 +55,7 @@ public class MybatisConfiguration extends Configuration {
 
     private static boolean PRINTED_BANNER = false;
     protected final XbatisMapperRegistry mapperRegistry;
+    private final TypeHandler unknownTypeHandler;
     /**
      * 是否打印 banner
      */
@@ -70,12 +72,14 @@ public class MybatisConfiguration extends Configuration {
     public MybatisConfiguration() {
         super();
         mapperRegistry = new XbatisMapperRegistry(this);
+        unknownTypeHandler = new UnknownTypeHandler(this);
         this.initSetting();
     }
 
     public MybatisConfiguration(Environment environment) {
         super(environment);
         mapperRegistry = new XbatisMapperRegistry(this);
+        unknownTypeHandler = new UnknownTypeHandler(this);
         this.initSetting();
     }
 
@@ -115,6 +119,10 @@ public class MybatisConfiguration extends Configuration {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public TypeHandler getUnknownTypeHandler() {
+        return unknownTypeHandler;
     }
 
     @Override

@@ -19,9 +19,9 @@ import cn.xbatis.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.xbatis.core.mybatis.mapper.context.MybatisParameter;
 import cn.xbatis.core.mybatis.typeHandler.LikeQuerySupport;
 import cn.xbatis.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
+import cn.xbatis.db.UnknownTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

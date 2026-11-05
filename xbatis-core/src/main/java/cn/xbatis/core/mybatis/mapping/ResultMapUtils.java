@@ -18,6 +18,7 @@ import cn.xbatis.core.db.reflect.*;
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import cn.xbatis.core.mybatis.executor.XbatisIdUtil;
 import cn.xbatis.core.util.FieldUtil;
+import cn.xbatis.db.UnknownTypeHandler;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.ResultField;
 import cn.xbatis.db.annotations.ResultId;
@@ -28,7 +29,6 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.*;

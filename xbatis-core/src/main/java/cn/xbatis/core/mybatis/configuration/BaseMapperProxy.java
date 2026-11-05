@@ -36,6 +36,7 @@ import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ParamNameResolver;
 import org.apache.ibatis.session.SqlSession;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -58,6 +59,28 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     protected final Class<T> mapperInterface;
     private final List<MethodInterceptor> interceptors = XbatisGlobalConfig.getMapperMethodInterceptors();
     protected Map<ShareVariableName, Object> shareVariables = new HashMap<>();
+
+    private static final int PARAM_NAME_RESOLVER_CONSTRUCTOR_PARAM_CNT;
+    private static final Constructor<?> PARAM_NAME_RESOLVER_CONSTRUCTOR;
+
+    static {
+        int paramCnt;
+        Constructor<?> constructor;
+        try {
+            constructor = ParamNameResolver.class.getDeclaredConstructor(Configuration.class, Method.class);
+            paramCnt = 2;
+        } catch (NoSuchMethodException e) {
+            try {
+                constructor = ParamNameResolver.class.getDeclaredConstructor(Configuration.class, Method.class, Class.class);
+                paramCnt = 3;
+            } catch (NoSuchMethodException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        PARAM_NAME_RESOLVER_CONSTRUCTOR = constructor;
+        PARAM_NAME_RESOLVER_CONSTRUCTOR_PARAM_CNT = paramCnt;
+    }
+
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
@@ -201,7 +224,17 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     }
 
     private Object paging(Method method, Object[] args) {
-        ParamNameResolver paramNameResolver = new ParamNameResolver(this.sqlSession.getConfiguration(), method);
+        ParamNameResolver paramNameResolver;
+        try {
+            if (PARAM_NAME_RESOLVER_CONSTRUCTOR_PARAM_CNT == 2) {
+                paramNameResolver = (ParamNameResolver) PARAM_NAME_RESOLVER_CONSTRUCTOR.newInstance(this.sqlSession.getConfiguration(), method);
+            } else {
+                paramNameResolver = (ParamNameResolver) PARAM_NAME_RESOLVER_CONSTRUCTOR.newInstance(this.sqlSession.getConfiguration(), method, mapperInterface);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         Object params = paramNameResolver.getNamedParams(args);
         String statementId = mapperInterface.getName() + "." + method.getName();
         IPager<?> pager = (IPager) args[0];

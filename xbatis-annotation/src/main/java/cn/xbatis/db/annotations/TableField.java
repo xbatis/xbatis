@@ -14,9 +14,9 @@
 
 package cn.xbatis.db.annotations;
 
+import cn.xbatis.db.UnknownTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.annotation.*;
 

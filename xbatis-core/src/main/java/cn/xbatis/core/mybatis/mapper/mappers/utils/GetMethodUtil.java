@@ -22,12 +22,12 @@ import cn.xbatis.core.sql.executor.XbatisTableField;
 import cn.xbatis.core.sql.util.QueryUtil;
 import cn.xbatis.core.sql.util.SelectClassUtil;
 import cn.xbatis.core.sql.util.WhereUtil;
+import cn.xbatis.db.UnknownTypeHandler;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.io.Serializable;
 import java.util.function.Consumer;
