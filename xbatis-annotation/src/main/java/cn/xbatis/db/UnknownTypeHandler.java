@@ -10,4 +10,8 @@ public class UnknownTypeHandler extends org.apache.ibatis.type.UnknownTypeHandle
     public UnknownTypeHandler(Configuration configuration) {
         super(configuration);
     }
+
+    public static final boolean isUnknownTypeHandler(Class clazz) {
+        return org.apache.ibatis.type.UnknownTypeHandler.class.isAssignableFrom(clazz);
+    }
 }

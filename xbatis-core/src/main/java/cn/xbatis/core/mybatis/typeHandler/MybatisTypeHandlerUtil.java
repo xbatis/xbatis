@@ -32,7 +32,7 @@ public final class MybatisTypeHandlerUtil {
     private final static Map<Class<? extends TypeHandler<?>>, Map<Type, Map<Class<?>, TypeHandler<?>>>> GENERIC_TYPE_HANDLERS = new ConcurrentHashMap();
 
     public static TypeHandler<?> createTypeHandler(FieldInfo fieldInfo, Class<? extends TypeHandler<?>> typeHandlerClass) {
-        if (typeHandlerClass == UnknownTypeHandler.class) {
+        if (UnknownTypeHandler.isUnknownTypeHandler(typeHandlerClass)) {
             return null;
         }
         ReflectiveOperationException exception;
@@ -53,7 +53,7 @@ public final class MybatisTypeHandlerUtil {
     }
 
     public static TypeHandler<?> createTypeHandler(Class<?> type, Class<? extends TypeHandler<?>> typeHandlerClass) {
-        if (typeHandlerClass == UnknownTypeHandler.class) {
+        if (UnknownTypeHandler.isUnknownTypeHandler(typeHandlerClass)) {
             return null;
         }
 
@@ -88,7 +88,7 @@ public final class MybatisTypeHandlerUtil {
             return getGenericTypeHandler(typeHandlerClass, fieldInfo);
         }
 
-        if (typeHandlerClass == UnknownTypeHandler.class) {
+        if (UnknownTypeHandler.isUnknownTypeHandler(typeHandlerClass)) {
             TypeHandler typeHandler = cfg.getTypeHandlerRegistry().getTypeHandler(fieldInfo.getTypeClass(), jdbcType);
             if (Objects.nonNull(typeHandler)) {
                 return typeHandler;

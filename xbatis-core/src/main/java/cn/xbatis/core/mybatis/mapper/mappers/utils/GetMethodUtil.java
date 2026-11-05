@@ -58,7 +58,7 @@ public final class GetMethodUtil {
             q.select(tableField);
             QueryUtil.fillQueryDefault(q, tableInfo);
             //如果没设置type handler，则返回字段的类型，否则返回是实体类
-            if (tableField.getTableFieldInfo().getTableFieldAnnotation().typeHandler() == UnknownTypeHandler.class) {
+            if (UnknownTypeHandler.isUnknownTypeHandler(tableField.getTableFieldInfo().getTableFieldAnnotation().typeHandler())) {
                 q.setReturnType(tableField.getTableFieldInfo().getFieldInfo().getFinalClass());
             } else {
                 q.setReturnType(fieldInfo.getType());
