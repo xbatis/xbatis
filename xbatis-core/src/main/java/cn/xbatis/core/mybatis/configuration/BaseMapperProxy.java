@@ -34,6 +34,7 @@ import db.sql.api.impl.cmd.executor.DbSelectorCall;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ParamNameResolver;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Constructor;
