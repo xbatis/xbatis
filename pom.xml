@@ -36,8 +36,8 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
         <xbatis.version>1.10.15</xbatis.version>
@@ -82,7 +82,7 @@
         <solon.version>4.1.1</solon.version>
 
         <!-- mybatis 相关 -->
-        <mybatis.version>3.6.0</mybatis.version>
+        <mybatis.version>3.5.19</mybatis.version>
         <mybatis-spring.version>2.1.2</mybatis-spring.version>
 
         <mybatis-freemarker.version>1.3.2</mybatis-freemarker.version>
