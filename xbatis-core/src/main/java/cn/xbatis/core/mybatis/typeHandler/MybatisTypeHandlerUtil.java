@@ -16,10 +16,10 @@ package cn.xbatis.core.mybatis.typeHandler;
 
 import cn.xbatis.core.db.reflect.FieldInfo;
 import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
+import cn.xbatis.db.UnknownTypeHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
@@ -97,7 +97,7 @@ public final class MybatisTypeHandlerUtil {
             if (Objects.nonNull(typeHandler)) {
                 return typeHandler;
             }
-            return ((MybatisConfiguration) cfg).getTypeHandlerRegistry().getUnknownTypeHandler();
+            return ((MybatisConfiguration) cfg).getUnknownTypeHandler();
         }
         TypeHandler<?> typeHandler = cfg.getTypeHandlerRegistry().getTypeHandler(typeHandlerClass);
         if (Objects.nonNull(typeHandler)) {

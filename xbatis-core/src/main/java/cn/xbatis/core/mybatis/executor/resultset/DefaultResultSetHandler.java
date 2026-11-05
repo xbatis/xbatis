@@ -13,7 +13,9 @@
  */
 package cn.xbatis.core.mybatis.executor.resultset;
 
+import cn.xbatis.core.mybatis.configuration.MybatisConfiguration;
 import cn.xbatis.core.util.NamingUtil;
+import cn.xbatis.db.UnknownTypeHandler;
 import org.apache.ibatis.annotations.AutomapConstructor;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
@@ -39,7 +41,6 @@ import org.apache.ibatis.session.*;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
-import org.apache.ibatis.util.MapUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
@@ -516,8 +517,14 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
             addPendingChildRelation(rs, metaResultObject, propertyMapping); // TODO is that OK?
             return DEFERRED;
         } else {
-            final TypeHandler<?> typeHandler = propertyMapping.getTypeHandler();
+            TypeHandler<?> typeHandler = propertyMapping.getTypeHandler();
             final String column = prependPrefix(propertyMapping.getColumn(), columnPrefix);
+            if (typeHandler == null) {
+                typeHandler = typeHandlerRegistry.getTypeHandler(propertyMapping.getJdbcType());
+            }
+            if (typeHandler == null) {
+                typeHandler = UnknownTypeHandler.OBJECT_TYPE_HANDLER;
+            }
             return typeHandler.getResult(rs, column);
         }
     }
@@ -593,6 +600,9 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
                         final TypeHandler<?> typeHandler = rsw.getTypeHandler(propertyType, columnName);
                         autoMapping
                                 .add(new UnMappedColumnAutoMapping(columnName, property, typeHandler, propertyType.isPrimitive()));
+                    } else if (isForMap) {
+                        autoMapping
+                                .add(new UnMappedColumnAutoMapping(columnName, property, UnknownTypeHandler.OBJECT_TYPE_HANDLER, false));
                     } else {
                         configuration.getAutoMappingUnknownColumnBehavior().doAction(mappedStatement, columnName, property,
                                 propertyType);
@@ -646,7 +656,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         PendingRelation deferLoad = new PendingRelation();
         deferLoad.metaObject = metaResultObject;
         deferLoad.propertyMapping = parentMapping;
-        List<PendingRelation> relations = MapUtil.computeIfAbsent(pendingRelations, cacheKey, k -> new ArrayList<>());
+        List<PendingRelation> relations = pendingRelations.computeIfAbsent(cacheKey, k -> new ArrayList<>());
         // issue #255
         relations.add(deferLoad);
         ResultMapping previous = nextResultMaps.get(parentMapping.getResultSet());
@@ -843,7 +853,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
                     constructorArgs.add(value);
                     final String mapKey = resultMap.getId() + ":" + columnPrefix;
                     if (!autoMappingsCache.containsKey(mapKey)) {
-                        MapUtil.computeIfAbsent(constructorAutoMappingColumns, mapKey, k -> new ArrayList<>()).add(columnName);
+                        constructorAutoMappingColumns.computeIfAbsent(mapKey, k -> new ArrayList<>()).add(columnName);
                     }
                     columnNotFound = false;
                     foundValues = value != null || foundValues;
@@ -960,7 +970,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         if (typeHandlerRegistry.hasTypeHandler(parameterType)) {
             typeHandler = typeHandlerRegistry.getTypeHandler(parameterType);
         } else {
-            typeHandler = typeHandlerRegistry.getUnknownTypeHandler();
+            typeHandler = ((MybatisConfiguration) configuration).getUnknownTypeHandler();
         }
         return typeHandler.getResult(rs, prependPrefix(resultMapping.getColumn(), columnPrefix));
     }
@@ -1204,10 +1214,16 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         for (ResultMapping resultMapping : resultMappings) {
             if (resultMapping.isSimple()) {
                 final String column = prependPrefix(resultMapping.getColumn(), columnPrefix);
-                final TypeHandler<?> th = resultMapping.getTypeHandler();
+                TypeHandler<?> th = resultMapping.getTypeHandler();
                 Set<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
                 // Issue #114
                 if (column != null && mappedColumnNames.contains(getUpperCase(column))) {
+                    if (th == null) {
+                        th = typeHandlerRegistry.getTypeHandler(rsw.getJdbcType(column));
+                    }
+                    if (th == null) {
+                        th = UnknownTypeHandler.OBJECT_TYPE_HANDLER;
+                    }
                     final Object value = th.getResult(rsw.getResultSet(), column);
                     if (value != null || configuration.isReturnInstanceForEmptyRow()) {
                         cacheKey.update(column);
