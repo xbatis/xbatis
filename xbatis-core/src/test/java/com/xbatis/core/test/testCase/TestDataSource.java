@@ -120,7 +120,7 @@ public class TestDataSource {
 
     private static DataSource createH2DataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:h2:mem:" + DB_NAME + ";DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL");
         ds.setUsername("sa");
         ds.setPassword("");
@@ -131,7 +131,7 @@ public class TestDataSource {
 
     private static DataSource createMySQLDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:mysql://localhost:3306/" + DB_NAME + "?createDatabaseIfNotExist=true&characterEncoding=utf-8&serverTimezone=" + TIME_ZONE);
         ds.setUsername("root");
         ds.setPassword("123456");
@@ -142,7 +142,7 @@ public class TestDataSource {
 
     private static DataSource createMariadbDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:mariadb://localhost:3307/" + DB_NAME + "?createDatabaseIfNotExist=true&characterEncoding=utf-8&serverTimezone=" + TIME_ZONE);
         ds.setUsername("root");
         ds.setPassword("123456");
@@ -153,7 +153,7 @@ public class TestDataSource {
 
     private static DataSource createPostgresDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
         ds.setUsername("postgres");
         ds.setPassword("123456");
@@ -164,7 +164,7 @@ public class TestDataSource {
 
     private static DataSource createOpenGaussDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:opengauss://localhost:5437/postgres");
         ds.setUsername("gaussdb");
         ds.setPassword("Enmo@123");
@@ -175,7 +175,7 @@ public class TestDataSource {
 
     private static DataSource createOracleDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:oracle:thin:@//localhost:1521/xe");
         ds.setUsername("system");
         ds.setPassword("oracle");
@@ -186,7 +186,7 @@ public class TestDataSource {
 
     private static DataSource createKingbaseDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:kingbase8://localhost:54321/test3");
         ds.setUsername("system");
         ds.setPassword("123456");
@@ -197,7 +197,7 @@ public class TestDataSource {
 
     private static DataSource createClickhouseDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:clickhouse://localhost:8123/test3");
         //ds.setUsername("system");
         //ds.setPassword("123456");
@@ -208,7 +208,7 @@ public class TestDataSource {
 
     private static DataSource createSqlServerDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:sqlserver://localhost:1433;DatabaseName=master;encrypt=false;useUnicode=true;characterEncoding=utf-8;genKeyNameCase=2;serverTimezone=" + TIME_ZONE);
         ds.setUsername("SA");
         ds.setPassword("AbC@128723");
@@ -219,31 +219,31 @@ public class TestDataSource {
 
     private static DataSource createDmDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:dm://localhost:5236/SYSDBA?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=utf-8&columnNameUpperCase=false");
         ds.setUsername("SYSDBA");
         ds.setPassword("SYSDBA001");
         ds.setDriverClassName("dm.jdbc.driver.DmDriver");
         ds.setAutoCommit(false);
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         return ds;
     }
 
     private static DataSource createDB2DataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:db2://localhost:50000/" + DB_NAME);
         ds.setUsername("db2inst1");
         ds.setPassword("123456");
         ds.setDriverClassName("com.ibm.db2.jcc.DB2Driver");
         ds.setAutoCommit(false);
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         return ds;
     }
 
     private static DataSource createSqliteDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:sqlite:target/" + DB_NAME + ".db?date_string_format=yyyy-MM-hh HH:mm:ss");
         ds.setDriverClassName("org.sqlite.JDBC");
         ds.setAutoCommit(false);
@@ -252,7 +252,7 @@ public class TestDataSource {
 
     private static DataSource createOceanBaseDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:oceanbase://localhost:2881/" + DB_NAME + "?rewriteBatchedStatements=TRUE&allowMultiQueries=TRUE&useLocalSessionState=TRUE&useUnicode=TRUE&characterEncoding=utf-8&socketTimeout=10000&connectTimeout=30000");
         ds.setDriverClassName("com.oceanbase.jdbc.Driver");
         ds.setUsername("root");
@@ -263,7 +263,7 @@ public class TestDataSource {
 
     private static DataSource createHighgoDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setMaximumPoolSize(1);
+        ds.setMaximumPoolSize(2);
         ds.setJdbcUrl("jdbc:highgo://localhost:5866/highgo");
         ds.setUsername("highgo");
         ds.setPassword("Highgo@123");
