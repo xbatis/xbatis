@@ -202,6 +202,10 @@ public class XbatisMapperRegistry extends MapperRegistry {
         if (config.hasStatement(mappedStatementId, validateIncompleteStatements)) {
             return;
         }
+        if (mappedStatementId.endsWith("_COUNT")) {
+            //忽略pageHelper count Statement
+            return;
+        }
         checkAndWait(mappedStatementId, 1);
     }
 
