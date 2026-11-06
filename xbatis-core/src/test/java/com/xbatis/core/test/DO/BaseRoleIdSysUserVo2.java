@@ -17,10 +17,14 @@ package com.xbatis.core.test.DO;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.TableId;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ResultEntity(BaseIDSysUser.class)
 public class BaseRoleIdSysUserVo2 extends BaseRoleId<String> {
 

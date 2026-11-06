@@ -20,12 +20,14 @@ import cn.xbatis.db.annotations.ResultEntity;
 import com.xbatis.core.test.DO.Addr;
 import com.xbatis.core.test.DO.FetchAddr;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.List;
 
 @Data
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ResultEntity(FetchAddr.class)
 public class FetchAddrMergeVo extends FetchAddr {
 

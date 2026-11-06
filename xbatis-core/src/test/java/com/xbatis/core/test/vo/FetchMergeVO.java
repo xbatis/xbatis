@@ -19,12 +19,14 @@ import cn.xbatis.db.annotations.ResultEntity;
 import com.xbatis.core.test.DO.FetchMerge;
 import com.xbatis.core.test.DO.SysRole;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.List;
 
 @Data
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ResultEntity(FetchMerge.class)
 public class FetchMergeVO extends FetchMerge {
 

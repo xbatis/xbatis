@@ -21,12 +21,16 @@ import cn.xbatis.db.annotations.TableField;
 import cn.xbatis.db.annotations.TableId;
 import db.sql.api.DbType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
 @Data
 @Table("t_sys_user")
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @FieldNameConstants
 public class SysUser extends SysUserBase {
 

@@ -17,9 +17,13 @@ package com.xbatis.core.test.DO;
 import cn.xbatis.db.annotations.Table;
 import cn.xbatis.db.annotations.TableId;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Table
 @FieldNameConstants
 public class FetchAddr extends FetchAddrBase<Integer> {

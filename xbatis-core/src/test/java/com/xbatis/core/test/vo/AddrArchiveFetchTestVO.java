@@ -18,8 +18,12 @@ import cn.xbatis.db.annotations.NestedResultEntity;
 import cn.xbatis.db.annotations.ResultEntity;
 import com.xbatis.core.test.DO.AddrArchive;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ResultEntity(AddrArchive.class)
 public class AddrArchiveFetchTestVO extends AddrArchive {
 

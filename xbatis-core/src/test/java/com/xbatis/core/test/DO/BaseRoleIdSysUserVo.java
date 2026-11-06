@@ -19,11 +19,15 @@ import cn.xbatis.db.annotations.NestedResultEntity;
 import cn.xbatis.db.annotations.ResultEntity;
 import cn.xbatis.db.annotations.TableId;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ResultEntity(BaseIDSysUser.class)
 public class BaseRoleIdSysUserVo extends BaseRoleId<String> {
 

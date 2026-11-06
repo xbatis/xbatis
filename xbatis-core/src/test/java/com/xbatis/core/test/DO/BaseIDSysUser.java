@@ -17,12 +17,14 @@ package com.xbatis.core.test.DO;
 import cn.xbatis.db.annotations.ForeignKey;
 import cn.xbatis.db.annotations.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table("t_sys_user")
 @FieldNameConstants

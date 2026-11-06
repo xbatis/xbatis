@@ -20,10 +20,14 @@ import com.xbatis.core.test.DO.BaseIDSysUser;
 import com.xbatis.core.test.DO.BaseId;
 import com.xbatis.core.test.DO.SysRole;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class BaseIDSysUserModel extends BaseId<Long> implements Model<BaseIDSysUser> {
 
     private String userName;
