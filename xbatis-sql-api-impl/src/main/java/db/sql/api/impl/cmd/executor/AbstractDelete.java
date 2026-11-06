@@ -193,7 +193,11 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
 
         Joins<Join> js = getJoins();
         if (js == null) {
-            return this.join(mode, $mainTable, $secondTable, consumer);
+            if (this.getFrom() == null || this.getFrom().getTables().contains($mainTable)) {
+                return this.join(mode, $mainTable, $secondTable, consumer);
+            } else {
+                return this.join(mode, $secondTable, $mainTable, consumer);
+            }
         }
 
         Join join = null;
@@ -212,7 +216,13 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
             }
         }
 
-        if (!mainExists && secondExists) {
+        if (!mainExists && !secondExists) {
+            if (this.getFrom() == null || this.getFrom().getTables().contains($mainTable)) {
+                return this.join(mode, $mainTable, $secondTable, consumer);
+            } else {
+                return this.join(mode, $secondTable, $mainTable, consumer);
+            }
+        } else if (!mainExists && secondExists) {
             return this.join(mode, $secondTable, $mainTable, consumer);
         } else {
             if (join != null) {

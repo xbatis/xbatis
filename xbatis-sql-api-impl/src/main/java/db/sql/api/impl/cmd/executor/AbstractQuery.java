@@ -404,11 +404,16 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         if (mainTable == secondTable && mainTableStorey == secondTableStorey) {
             throw new IllegalArgumentException("left and right table cannot be the same");
         }
+
         Table $mainTable = $.table(mainTable, mainTableStorey);
         Table $secondTable = $.table(secondTable, secondTableStorey);
         Joins<Join> js = getJoins();
         if (js == null) {
-            return this.join(mode, $mainTable, $secondTable, consumer);
+            if (this.getFrom() == null || this.getFrom().getTables().contains($mainTable)) {
+                return this.join(mode, $mainTable, $secondTable, consumer);
+            } else {
+                return this.join(mode, $secondTable, $mainTable, consumer);
+            }
         }
 
         Join join = null;
@@ -427,7 +432,13 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
             }
         }
 
-        if (!mainExists && secondExists) {
+        if (!mainExists && !secondExists) {
+            if (this.getFrom() == null || this.getFrom().getTables().contains($mainTable)) {
+                return this.join(mode, $mainTable, $secondTable, consumer);
+            } else {
+                return this.join(mode, $secondTable, $mainTable, consumer);
+            }
+        } else if (!mainExists && secondExists) {
             return this.join(mode, $secondTable, $mainTable, consumer);
         } else {
             if (join != null) {
