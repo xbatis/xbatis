@@ -217,7 +217,7 @@ public final class SQLOptimizeUtils {
      * @return 优化后的 sql
      */
     public static StringBuilder getOptimizedSql(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
-        if (optimizeOptions != null && !optimizeOptions.isOptimizeJoin()) {
+        if (optimizeOptions != null && optimizeOptions.isOptimizeJoin() != null && !optimizeOptions.isOptimizeJoin()) {
             return query.sql(null, null, context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
         }
         if (query.getJoins() == null) {
@@ -314,13 +314,13 @@ public final class SQLOptimizeUtils {
             //不优化直接包裹一层
             return new StringBuilder("SELECT COUNT(*) AS ").append(SqlConst.TOTAL_AS).append(" FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
         }
-        boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
+        boolean optimizeOrderBy = optimizeOptions != null && optimizeOptions.isOptimizeOrderBy() != null ? optimizeOptions.isOptimizeOrderBy() : true;
         if (context.getDbType() == DbType.SQL_SERVER) {
             optimizeOrderBy = true;
         }
-        boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
+        boolean optimizeJoin = optimizeOptions != null && optimizeOptions.isOptimizeJoin() != null ? optimizeOptions.isOptimizeJoin() : true;
         Map<Class, Set<Integer>> disableOptimizeJoinMap = optimizeOptions != null ? optimizeOptions.getDisableOptimizeJoinMap() : null;
-        boolean optimizeCount = optimizeOptions != null ? optimizeOptions.isOptimizeCount() : true;
+        boolean optimizeCount = optimizeOptions != null && optimizeOptions.isOptimizeCount() != null ? optimizeOptions.isOptimizeCount() : true;
         return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, disableOptimizeJoinMap, optimizeCount);
     }
 
@@ -337,10 +337,14 @@ public final class SQLOptimizeUtils {
         if (optimizeOptions != null && optimizeOptions.isAllDisable()) {
             return query.sql(null, null, context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
         }
-        boolean optimizeOrderBy = optimizeOptions != null ? optimizeOptions.isOptimizeOrderBy() : true;
-        boolean optimizeJoin = optimizeOptions != null ? optimizeOptions.isOptimizeJoin() : true;
+        boolean optimizeOrderBy = optimizeOptions != null && optimizeOptions.isOptimizeOrderBy() != null ? optimizeOptions.isOptimizeOrderBy() : true;
+        Boolean optimizeJoin = optimizeOptions != null && optimizeOptions.isOptimizeJoin() != null ? optimizeOptions.isOptimizeJoin() : null;
+        if (optimizeJoin == null) {
+            //直接count查询 不优化left join
+            optimizeJoin = context instanceof CountSqlBuilderFlag ? false : true;
+        }
         Map<Class, Set<Integer>> disableOptimizeJoinMap = optimizeOptions != null ? optimizeOptions.getDisableOptimizeJoinMap() : null;
-        boolean optimizeCount = optimizeOptions != null ? optimizeOptions.isOptimizeCount() : true;
+        boolean optimizeCount = optimizeOptions != null && optimizeOptions.isOptimizeCount() != null ? optimizeOptions.isOptimizeCount() : true;
         return getOptimizedCountSql(query, context, optimizeOrderBy, optimizeJoin, disableOptimizeJoinMap, optimizeCount);
     }
 }

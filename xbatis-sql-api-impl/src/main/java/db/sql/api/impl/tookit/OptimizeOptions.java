@@ -24,12 +24,12 @@ public class OptimizeOptions {
     /**
      * 是否优化OrderBy
      */
-    private boolean optimizeOrderBy = true;
+    private Boolean optimizeOrderBy;
 
     /**
      * 是否优化Join
      */
-    private boolean optimizeJoin = true;
+    private Boolean optimizeJoin;
 
     /**
      * 禁止某个表优化Join
@@ -39,7 +39,7 @@ public class OptimizeOptions {
     /**
      * 是否优化 count
      */
-    private boolean optimizeCount = true;
+    private Boolean optimizeCount;
 
     /**
      * 设置是否优化OrderBy
@@ -47,7 +47,7 @@ public class OptimizeOptions {
      * @param optimizeOrderBy
      * @return 自己
      */
-    public OptimizeOptions optimizeOrderBy(boolean optimizeOrderBy) {
+    public OptimizeOptions optimizeOrderBy(Boolean optimizeOrderBy) {
         this.optimizeOrderBy = optimizeOrderBy;
         return this;
     }
@@ -58,7 +58,7 @@ public class OptimizeOptions {
      * @param optimizeJoin
      * @return 自己
      */
-    public OptimizeOptions optimizeJoin(boolean optimizeJoin) {
+    public OptimizeOptions optimizeJoin(Boolean optimizeJoin) {
         this.optimizeJoin = optimizeJoin;
         return this;
     }
@@ -88,7 +88,7 @@ public class OptimizeOptions {
         return this;
     }
 
-    public OptimizeOptions optimizeCount(boolean optimizeCount) {
+    public OptimizeOptions optimizeCount(Boolean optimizeCount) {
         this.optimizeCount = optimizeCount;
         return this;
     }
@@ -110,8 +110,8 @@ public class OptimizeOptions {
      *
      * @return 是否全部禁用
      */
-    public boolean isAllDisable() {
-        return !optimizeOrderBy && !optimizeJoin && !optimizeCount;
+    public Boolean isAllDisable() {
+        return optimizeOrderBy != null && !optimizeOrderBy && optimizeJoin != null && !optimizeJoin && optimizeCount != null && !optimizeCount;
     }
 
     /**
@@ -119,7 +119,7 @@ public class OptimizeOptions {
      *
      * @return 是否优化
      */
-    public boolean isOptimizeJoin() {
+    public Boolean isOptimizeJoin() {
         return optimizeJoin;
     }
 
@@ -128,7 +128,7 @@ public class OptimizeOptions {
      *
      * @return 是否优化
      */
-    public boolean isOptimizeOrderBy() {
+    public Boolean isOptimizeOrderBy() {
         return optimizeOrderBy;
     }
 
@@ -146,7 +146,7 @@ public class OptimizeOptions {
      *
      * @return 是否优化
      */
-    public boolean isOptimizeCount() {
+    public Boolean isOptimizeCount() {
         return optimizeCount;
     }
 }

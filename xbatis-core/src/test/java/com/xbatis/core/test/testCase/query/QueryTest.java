@@ -1170,4 +1170,24 @@ public class QueryTest extends BaseTest {
             System.out.println(roles);
         }
     }
+
+    @Test
+    public void countDisOptimizeJoinTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            Object obj = QueryChain.of(sysRoleMapper)
+                    .from(SysRole.class)
+                    .leftJoin(SysUser::getRole_id, SysRole::getId)
+                    .count();
+            assertEquals(obj, 3);
+
+            obj = QueryChain.of(sysRoleMapper)
+                    .from(SysRole.class)
+                    .optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(true))
+                    .leftJoin(SysUser::getRole_id, SysRole::getId)
+                    .count();
+            assertEquals(obj, 2);
+
+        }
+    }
 }
