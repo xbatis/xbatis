@@ -131,14 +131,12 @@ public class JoinTest extends BaseTest {
     @Test
     public void leftJoin() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            Integer count = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId, FunctionInterface::count)
+            SysUserMapper mapper = session.getMapper(SysUserMapper.class);
+            Pager pager = QueryChain.of(mapper)
                     .from(SysUser.class)
                     .join(JoinMode.LEFT, SysUser.class, SysRole.class)
-                    .returnType(Integer.class)
-                    .get();
-            assertEquals(Integer.valueOf(3), count, "leftJoin");
+                    .paging(Pager.of(10));
+            assertEquals(Integer.valueOf(3), pager.getTotal(), "leftJoin");
         }
     }
 
